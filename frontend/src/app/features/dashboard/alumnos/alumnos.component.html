@@ -1,0 +1,330 @@
+<div class="space-y-6 font-body">
+  <!-- Top Bar -->
+  <div class="border border-slate-200 p-4 md:p-6 bg-white rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
+    <div>
+      <h1 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase">Gestión de Alumnos</h1>
+      <p class="text-slate-500 text-xs mt-1">Control de alumnos inscritos, estado de cuentas y niveles de suscripción.</p>
+    </div>
+    <div class="flex flex-col gap-2 md:flex-row md:gap-2 w-full md:w-auto">
+      <button 
+        (click)="exportarCSV()" 
+        class="flex items-center justify-center gap-2 px-4 py-2.5 border border-slate-300 bg-white text-slate-700 font-bold text-xs uppercase tracking-widest hover:bg-slate-50 transition-colors rounded-none w-full md:w-auto">
+        <span class="material-symbols-outlined text-sm">download</span>
+        <span>Exportar CSV</span>
+      </button>
+      <button 
+        (click)="openCreateModal()" 
+        class="flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900 text-white font-bold text-xs uppercase tracking-widest hover:bg-slate-800 transition-colors rounded-none w-full md:w-auto">
+        <span class="material-symbols-outlined text-sm">add</span>
+        <span>Crear Alumno</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content Card / Table -->
+  <div class="border border-slate-200 bg-white rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] overflow-hidden">
+    <!-- Filter bar -->
+    <div class="p-4 border-b border-slate-200 bg-slate-50 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div class="relative w-full">
+        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+          <span class="material-symbols-outlined text-base">search</span>
+        </span>
+        <input 
+          [(ngModel)]="searchQuery"
+          (input)="applyFilter()"
+          class="block w-full pl-9 pr-3 py-2 border border-slate-300 bg-white text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-xs rounded-none" 
+          placeholder="Buscar por nombre o correo...">
+      </div>
+      <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">
+        {{ filteredAlumnos.length }} alumnos encontrados
+      </span>
+    </div>
+
+    <!-- MOBILE: Card Stack (hidden on md+) -->
+    <div class="md:hidden divide-y divide-slate-100">
+      <!-- Mobile Empty State -->
+      <div *ngIf="filteredAlumnos.length === 0" class="p-10 text-center text-slate-400">
+        <span class="material-symbols-outlined text-4xl mb-2 text-slate-300">group_off</span>
+        <p class="font-medium text-xs">No se encontraron alumnos registrados.</p>
+      </div>
+      <!-- Mobile Cards -->
+      <div *ngFor="let alumno of filteredAlumnos" class="p-4 space-y-3 bg-white hover:bg-slate-50 transition-colors">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <p class="font-bold text-slate-900 text-sm leading-tight">{{ alumno.nombres }} {{ alumno.apellidos }}</p>
+            <p class="text-xs text-slate-500 mt-0.5 break-all">{{ alumno.correo }}</p>
+          </div>
+          <span [ngClass]="alumno.estado ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-red-50 text-red-700 border-red-200'" class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider border rounded-none shrink-0">
+            {{ alumno.estado ? 'ACTIVO' : 'INACTIVO' }}
+          </span>
+        </div>
+        <div class="flex items-center justify-between gap-2">
+          <span [ngClass]="getSubscriptionClass(alumno.nivelSuscripcion)" class="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider rounded-none">
+            {{ alumno.nivelSuscripcion }}
+          </span>
+          <div class="inline-flex gap-2">
+            <button 
+              (click)="openDetailModal(alumno)" 
+              title="Ver Detalle"
+              class="p-1.5 border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-slate-600 rounded-none transition-colors">
+              <span class="material-symbols-outlined text-base block">visibility</span>
+            </button>
+            <button 
+              (click)="openEditModal(alumno)" 
+              title="Editar Alumno"
+              class="p-1.5 border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-slate-600 rounded-none transition-colors">
+              <span class="material-symbols-outlined text-base block">edit</span>
+            </button>
+            <button 
+              (click)="toggleEstado(alumno)" 
+              [title]="alumno.estado ? 'Desactivar' : 'Activar'"
+              [ngClass]="alumno.estado ? 'border-red-200 text-red-600 hover:bg-red-50' : 'border-emerald-200 text-emerald-600 hover:bg-emerald-50'"
+              class="p-1.5 border rounded-none transition-colors">
+              <span class="material-symbols-outlined text-base block">
+                {{ alumno.estado ? 'block' : 'check_circle' }}
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESKTOP: Full Table (hidden on mobile, visible on md+) -->
+    <div class="hidden md:block overflow-x-auto">
+      <table class="w-full text-left border-collapse text-xs">
+        <thead>
+          <tr class="border-b border-slate-200 bg-slate-100/60 text-slate-700 font-bold uppercase tracking-wider text-[10px]">
+            <th class="p-4">Nombre Completo</th>
+            <th class="p-4">Correo Electrónico</th>
+            <th class="p-4">Suscripción</th>
+            <th class="p-4">Estado</th>
+            <th class="p-4 text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <!-- Empty State -->
+          <tr *ngIf="filteredAlumnos.length === 0">
+            <td colspan="5" class="p-12 text-center text-slate-400">
+              <span class="material-symbols-outlined text-4xl mb-2 text-slate-300">group_off</span>
+              <p class="font-medium text-xs">No se encontraron alumnos registrados.</p>
+            </td>
+          </tr>
+          <!-- Rows -->
+          <tr *ngFor="let alumno of filteredAlumnos" class="hover:bg-slate-50 transition-colors">
+            <td class="p-4 font-bold text-slate-900">
+              {{ alumno.nombres }} {{ alumno.apellidos }}
+            </td>
+            <td class="p-4 text-slate-600">
+              {{ alumno.correo }}
+            </td>
+            <td class="p-4">
+              <span [ngClass]="getSubscriptionClass(alumno.nivelSuscripcion)" class="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider rounded-none">
+                {{ alumno.nivelSuscripcion }}
+              </span>
+            </td>
+            <td class="p-4">
+              <span [ngClass]="alumno.estado ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-red-50 text-red-700 border-red-200'" class="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider border rounded-none">
+                {{ alumno.estado ? 'ACTIVO' : 'INACTIVO' }}
+              </span>
+            </td>
+            <td class="p-4 text-right">
+              <div class="inline-flex gap-2">
+                <button 
+                  (click)="openDetailModal(alumno)" 
+                  title="Ver Detalle"
+                  class="p-1.5 border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-slate-600 rounded-none transition-colors">
+                  <span class="material-symbols-outlined text-base block">visibility</span>
+                </button>
+                <button 
+                  (click)="openEditModal(alumno)" 
+                  title="Editar Alumno"
+                  class="p-1.5 border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-slate-600 rounded-none transition-colors">
+                  <span class="material-symbols-outlined text-base block">edit</span>
+                </button>
+                <button 
+                  (click)="toggleEstado(alumno)" 
+                  [title]="alumno.estado ? 'Desactivar' : 'Activar'"
+                  [ngClass]="alumno.estado ? 'border-red-200 text-red-600 hover:bg-red-50' : 'border-emerald-200 text-emerald-600 hover:bg-emerald-50'"
+                  class="p-1.5 border rounded-none transition-colors">
+                  <span class="material-symbols-outlined text-base block">
+                    {{ alumno.estado ? 'block' : 'check_circle' }}
+                  </span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Create/Edit Modal -->
+  <div *ngIf="showCreateEditModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="w-full max-w-lg mx-4 bg-white border border-slate-200 shadow-2xl rounded-none overflow-y-auto relative max-h-[95vh]">
+      <!-- Modal Header -->
+      <div class="px-4 md:px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between sticky top-0 z-10">
+        <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider">
+          {{ isEditMode ? 'Editar Datos del Alumno' : 'Registrar Nuevo Alumno' }}
+        </h3>
+        <button (click)="closeCreateEditModal()" class="text-slate-400 hover:text-slate-600">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Form -->
+      <form [formGroup]="alumnoForm" (ngSubmit)="onSubmit()" class="p-4 md:p-6 space-y-4">
+        <!-- Error response display -->
+        <div *ngIf="modalErrorMsg" class="flex items-start gap-2 bg-red-50 border border-red-200 text-red-800 p-3 rounded-none text-[11px] font-semibold">
+          <span class="material-symbols-outlined text-red-600 text-base">warning</span>
+          <span>{{ modalErrorMsg }}</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Nombres -->
+          <div>
+            <label class="block text-[10px] font-bold text-slate-700 mb-1 uppercase tracking-widest">Nombres *</label>
+            <input 
+              formControlName="nombres" 
+              type="text" 
+              class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+            <p *ngIf="alumnoForm.get('nombres')?.invalid && alumnoForm.get('nombres')?.touched" class="text-[10px] text-red-600 mt-1">El nombre es requerido.</p>
+          </div>
+          <!-- Apellidos -->
+          <div>
+            <label class="block text-[10px] font-bold text-slate-700 mb-1 uppercase tracking-widest">Apellidos *</label>
+            <input 
+              formControlName="apellidos" 
+              type="text" 
+              class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+            <p *ngIf="alumnoForm.get('apellidos')?.invalid && alumnoForm.get('apellidos')?.touched" class="text-[10px] text-red-600 mt-1">El apellido es requerido.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Correo -->
+          <div>
+            <label class="block text-[10px] font-bold text-slate-700 mb-1 uppercase tracking-widest">Correo Electrónico *</label>
+            <input 
+              formControlName="correo" 
+              type="email" 
+              class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+            <p *ngIf="alumnoForm.get('correo')?.invalid && alumnoForm.get('correo')?.touched" class="text-[10px] text-red-600 mt-1">Ingrese un correo válido.</p>
+          </div>
+          <!-- Telefono -->
+          <div>
+            <label class="block text-[10px] font-bold text-slate-700 mb-1 uppercase tracking-widest">Teléfono</label>
+            <input 
+              formControlName="telefono" 
+              type="text" 
+              class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+              placeholder="Ej. 999999999">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Nivel de suscripcion -->
+          <div>
+            <label class="block text-[10px] font-bold text-slate-700 mb-1 uppercase tracking-widest">Nivel de Suscripción *</label>
+            <select 
+              formControlName="nivelSuscripcionId" 
+              class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+              <option [value]="1">BÁSICO</option>
+              <option [value]="2">INTERMEDIO</option>
+              <option [value]="3">PREMIUM</option>
+            </select>
+          </div>
+          <!-- Estado -->
+          <div>
+            <label class="block text-[10px] font-bold text-slate-700 mb-1 uppercase tracking-widest">Estado</label>
+            <select 
+              formControlName="estado" 
+              class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+              <option [ngValue]="true">ACTIVO</option>
+              <option [ngValue]="false">INACTIVO</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Form Buttons -->
+        <div class="pt-4 border-t border-slate-100 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3">
+          <button 
+            type="button" 
+            (click)="closeCreateEditModal()" 
+            class="px-4 py-2 border border-slate-300 bg-white text-slate-700 font-bold text-xs uppercase tracking-widest hover:bg-slate-50 transition-colors rounded-none w-full sm:w-auto">
+            Cancelar
+          </button>
+          <button 
+            type="submit" 
+            [disabled]="alumnoForm.invalid || isFormSubmitting" 
+            class="px-4 py-2 bg-slate-900 text-white font-bold text-xs uppercase tracking-widest hover:bg-slate-800 transition-colors rounded-none disabled:opacity-55 w-full sm:w-auto">
+            {{ isFormSubmitting ? 'Guardando...' : 'Guardar Alumno' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div *ngIf="showDetailModal && selectedAlumno" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="w-full max-w-md mx-4 bg-white border border-slate-200 shadow-2xl rounded-none overflow-y-auto max-h-[95vh]">
+      <!-- Modal Header -->
+      <div class="px-4 md:px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between sticky top-0 z-10">
+        <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider">Ficha Detallada del Alumno</h3>
+        <button (click)="closeDetailModal()" class="text-slate-400 hover:text-slate-600">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <!-- Detail Body -->
+      <div class="p-4 md:p-6 space-y-6">
+        <div class="flex items-center gap-4 border-b border-slate-100 pb-4">
+          <div class="w-14 h-14 bg-primary/10 border border-primary/20 text-primary flex items-center justify-center text-xl font-bold rounded-none shrink-0">
+            {{ selectedAlumno.nombres.charAt(0) }}{{ selectedAlumno.apellidos.charAt(0) }}
+          </div>
+          <div>
+            <h4 class="text-base font-black text-slate-900 leading-tight">{{ selectedAlumno.nombres }} {{ selectedAlumno.apellidos }}</h4>
+            <span class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Código Alumno: ID-{{ selectedAlumno.id }}</span>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div>
+              <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Correo</span>
+              <span class="block font-medium text-slate-800 mt-0.5 break-all">{{ selectedAlumno.correo }}</span>
+            </div>
+            <div>
+              <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Teléfono</span>
+              <span class="block font-medium text-slate-800 mt-0.5">{{ selectedAlumno.telefono || 'No registrado' }}</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-2">
+            <div>
+              <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Nivel Suscripción</span>
+              <span [ngClass]="getSubscriptionClass(selectedAlumno.nivelSuscripcion)" class="inline-block px-2 py-0.5 text-[9px] font-black uppercase tracking-wider mt-1 rounded-none">
+                {{ selectedAlumno.nivelSuscripcion }}
+              </span>
+            </div>
+            <div>
+              <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Estado Cuenta</span>
+              <span [ngClass]="selectedAlumno.estado ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-red-50 text-red-700 border-red-200'" class="inline-block px-2 py-0.5 text-[9px] font-black uppercase tracking-wider border mt-1 rounded-none">
+                {{ selectedAlumno.estado ? 'ACTIVO' : 'INACTIVO' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 flex justify-end">
+          <button 
+            type="button" 
+            (click)="closeDetailModal()" 
+            class="px-4 py-2 bg-slate-950 text-white font-bold text-xs uppercase tracking-widest hover:bg-slate-800 transition-colors rounded-none w-full sm:w-auto">
+            Cerrar Ficha
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,696 @@
+<div class="space-y-8 font-body" *ngIf="curso">
+  
+  <!-- Back button -->
+  <div class="flex items-center">
+    <a 
+      routerLink="/dashboard/cursos" 
+      class="flex items-center gap-2 text-[10px] font-black text-slate-500 hover:text-slate-950 uppercase tracking-wider transition-all">
+      <span class="material-symbols-outlined text-sm">arrow_back</span>
+      <span>Volver a la lista de cursos</span>
+    </a>
+  </div>
+
+  <!-- Course Header Banner -->
+  <div class="border border-slate-200 bg-white rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.03)] overflow-hidden">
+    <!-- Banner Image -->
+    <div class="h-56 bg-slate-950 border-b border-slate-200 overflow-hidden relative">
+      <img 
+        *ngIf="curso.imagenPortada" 
+        [src]="curso.imagenPortada" 
+        [alt]="curso.nombre" 
+        class="w-full h-full object-cover opacity-50">
+      <div *ngIf="!curso.imagenPortada" class="w-full h-full bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 opacity-90"></div>
+      
+      <!-- Overlay Header Content -->
+      <div class="absolute inset-0 p-8 flex flex-col justify-end text-white bg-gradient-to-t from-black/95 via-black/40 to-transparent">
+        <div class="flex flex-wrap items-center gap-3">
+          <span [ngClass]="getSubscriptionClass(curso.nivelesSuscripcion)" class="px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-none">
+            {{ formatNiveles(curso.nivelesSuscripcion) }}
+          </span>
+          <span [ngClass]="curso.estado ? 'bg-emerald-500/20 text-emerald-350 border-emerald-500/30' : 'bg-red-500/20 text-red-350 border-red-500/30'" class="px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider border rounded-none">
+            {{ curso.estado ? 'Activo' : 'Inactivo' }}
+          </span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-black mt-3 tracking-tight uppercase leading-none">{{ curso.nombre }}</h1>
+        <p class="text-slate-300 text-xs mt-2 max-w-3xl leading-relaxed">{{ curso.descripcion }}</p>
+      </div>
+    </div>
+
+    <!-- Actions Toolbar -->
+    <div class="px-8 py-4 bg-slate-50 flex flex-wrap justify-between items-center gap-4 border-t border-slate-100">
+      <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider">
+        Administración Académica
+      </span>
+      <div class="flex flex-wrap gap-2.5">
+        <button 
+          (click)="openEditCourseModal()" 
+          class="flex items-center gap-2 px-4 py-2 border border-slate-350 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs uppercase tracking-wider transition-all rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.03)]">
+          <span class="material-symbols-outlined text-sm">edit</span>
+          <span>Editar Curso</span>
+        </button>
+        <button 
+          *ngIf="activeTab === 'modulos'"
+          (click)="openCreateModuloModal()" 
+          class="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white hover:bg-slate-800 font-bold text-xs uppercase tracking-wider transition-all rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.15)]">
+          <span class="material-symbols-outlined text-sm">add</span>
+          <span>Agregar Módulo</span>
+        </button>
+        <button 
+          *ngIf="activeTab === 'matriculas'"
+          (click)="exportarMatriculasCSV()" 
+          class="flex items-center gap-2 px-4 py-2 border border-slate-350 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs uppercase tracking-wider transition-all rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.03)]">
+          <span class="material-symbols-outlined text-sm">download</span>
+          <span>Exportar CSV</span>
+        </button>
+        <button 
+          *ngIf="activeTab === 'matriculas'"
+          (click)="openMatriculaModal()" 
+          class="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white hover:bg-slate-800 font-bold text-xs uppercase tracking-wider transition-all rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.15)]">
+          <span class="material-symbols-outlined text-sm">person_add</span>
+          <span>Matricular Alumno</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="flex border-b border-slate-200 bg-white/50 px-2">
+    <button
+      (click)="setTab('modulos')"
+      [ngClass]="activeTab === 'modulos' ? 'border-b-2 border-slate-900 text-slate-900' : 'border-b-2 border-transparent text-slate-500 hover:text-slate-800'"
+      class="flex items-center gap-2 px-5 py-3 text-[10px] font-black uppercase tracking-wider transition-all">
+      <span class="material-symbols-outlined text-sm">view_module</span>
+      <span>Módulos del Curso</span>
+      <span [ngClass]="activeTab === 'modulos' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600'" class="px-1.5 py-0.5 text-[9px] font-black rounded-none transition-colors">{{ modulos.length }}</span>
+    </button>
+    <button
+      (click)="setTab('matriculas')"
+      [ngClass]="activeTab === 'matriculas' ? 'border-b-2 border-slate-900 text-slate-900' : 'border-b-2 border-transparent text-slate-500 hover:text-slate-800'"
+      class="flex items-center gap-2 px-5 py-3 text-[10px] font-black uppercase tracking-wider transition-all">
+      <span class="material-symbols-outlined text-sm">how_to_reg</span>
+      <span>Alumnos Matriculados</span>
+      <span [ngClass]="activeTab === 'matriculas' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600'" class="px-1.5 py-0.5 text-[9px] font-black rounded-none transition-colors">{{ matriculas.length }}</span>
+    </button>
+  </div>
+  <!-- ===================== TAB: MÓDULOS ===================== -->
+  <div *ngIf="activeTab === 'modulos'" class="space-y-6 animate-fadeIn">
+    <!-- Empty State -->
+    <div *ngIf="modulos.length === 0" class="border border-slate-200 p-16 bg-white text-center rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.03)]">
+      <span class="material-symbols-outlined text-5xl text-slate-350 mb-3">folder_zip</span>
+      <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider">Sin Módulos</h3>
+      <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto leading-relaxed">Este curso todavía no contiene módulos organizados. Haz click en "Agregar Módulo" para comenzar a estructurar el contenido.</p>
+    </div>
+
+    <!-- Accordion Modules List -->
+    <div *ngIf="modulos.length > 0" class="space-y-4">
+      <div 
+        *ngFor="let modulo of modulos" 
+        class="border border-slate-200 bg-white rounded-none shadow-[3px_3px_0px_0px_rgba(15,23,42,0.02)] overflow-hidden transition-all">
+        
+        <!-- Accordion Header -->
+        <div 
+          (click)="toggleModuloExpansion(modulo.id)"
+          class="p-4 sm:p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 cursor-pointer hover:bg-slate-50/50 select-none transition-colors border-l-4"
+          [ngClass]="modulo.estado ? 'border-l-slate-900' : 'border-l-slate-300'">
+          
+          <div class="flex items-center gap-4">
+            <!-- Position Badge -->
+            <span class="w-9 h-9 bg-slate-900 text-white font-black text-xs flex items-center justify-center rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.1)] shrink-0">
+              {{ modulo.orden | number:'2.0' }}
+            </span>
+            <div>
+              <h3 class="font-black text-sm text-slate-900 uppercase tracking-tight">{{ modulo.nombre }}</h3>
+              <p class="text-[11px] text-slate-550 line-clamp-1 mt-0.5 max-w-xl">{{ modulo.descripcion }}</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-0 pt-2 sm:pt-0 border-slate-100">
+            <!-- Info indicators -->
+            <div class="flex items-center gap-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              <span [ngClass]="modulo.estado ? 'text-emerald-755 bg-emerald-50 border border-emerald-150' : 'text-slate-505 bg-slate-50 border border-slate-150'" class="px-2 py-0.5 text-[9px] font-black rounded-none">
+                {{ modulo.estado ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+            <!-- Expand Icon -->
+            <span class="material-symbols-outlined text-slate-450 transition-transform duration-200" [ngClass]="expandedModuloId === modulo.id ? 'rotate-180 text-slate-900' : ''">
+              keyboard_arrow_down
+            </span>
+          </div>
+        </div>
+
+        <!-- Accordion Content Panel (Inline management) -->
+        <div *ngIf="expandedModuloId === modulo.id" class="border-t border-slate-200 bg-slate-50/40 p-5 sm:p-6 space-y-6 animate-fadeIn">
+          
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- LEFT COLUMN: VIDEOS -->
+            <div class="space-y-4">
+              <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                <h4 class="text-[10px] font-black text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-sm text-slate-600">videocam</span>
+                  <span>Videos de Clases</span>
+                </h4>
+                <button 
+                  (click)="$event.stopPropagation(); videoFormOpenMap[modulo.id] = !videoFormOpenMap[modulo.id]"
+                  class="text-[9px] font-black text-indigo-650 hover:text-indigo-950 uppercase tracking-wider flex items-center gap-1 transition-colors">
+                  <span class="material-symbols-outlined text-xs">{{ videoFormOpenMap[modulo.id] ? 'close' : 'add' }}</span>
+                  <span>{{ videoFormOpenMap[modulo.id] ? 'Cancelar' : 'Agregar Video' }}</span>
+                </button>
+              </div>
+
+              <!-- Inline Add Video Form -->
+              <div *ngIf="videoFormOpenMap[modulo.id]" class="bg-white border border-slate-200 p-4 space-y-3.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.02)] animate-fadeIn">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div class="space-y-1">
+                    <label class="block text-[8px] font-black text-slate-500 uppercase tracking-wider">Título del Video *</label>
+                    <input 
+                      [(ngModel)]="nuevoVideoTitulo"
+                      type="text" 
+                      placeholder="Ej. Introducción Práctica"
+                      class="w-full px-2.5 py-1.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650">
+                  </div>
+                  <div class="space-y-1">
+                    <label class="block text-[8px] font-black text-slate-500 uppercase tracking-wider">URL de YouTube *</label>
+                    <input 
+                      [(ngModel)]="nuevoVideoUrl"
+                      type="text" 
+                      placeholder="Ej. https://youtube.com/watch?v=..."
+                      class="w-full px-2.5 py-1.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650">
+                  </div>
+                </div>
+                <div class="space-y-1">
+                  <label class="block text-[8px] font-black text-slate-500 uppercase tracking-wider">Breve Descripción</label>
+                  <textarea 
+                    [(ngModel)]="nuevoVideoDesc"
+                    rows="2" 
+                    placeholder="Contenido clave de la lección..."
+                    class="w-full px-2.5 py-1.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650"></textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-1">
+                  <button 
+                    (click)="videoFormOpenMap[modulo.id] = false"
+                    class="px-3 py-1 border border-slate-300 bg-white text-slate-705 font-bold text-[10px] uppercase tracking-wider hover:bg-slate-50 rounded-none">
+                    Cancelar
+                  </button>
+                  <button 
+                    (click)="agregarVideoInline(modulo.id)"
+                    [disabled]="isAddingVideo"
+                    class="px-3 py-1 bg-slate-900 text-white font-bold text-[10px] uppercase tracking-wider hover:bg-slate-800 rounded-none disabled:opacity-50">
+                    {{ isAddingVideo ? 'Guardando...' : 'Guardar Video' }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- Videos List -->
+              <div class="space-y-2.5">
+                <div *ngIf="!videosMap[modulo.id] || videosMap[modulo.id].length === 0" class="text-center py-6 text-slate-400 bg-white border border-slate-150">
+                  <span class="material-symbols-outlined text-3xl text-slate-300">video_library</span>
+                  <p class="text-[10px] mt-1 font-medium">No hay videos en este módulo.</p>
+                </div>
+                <div 
+                  *ngFor="let video of videosMap[modulo.id]" 
+                  class="bg-white border border-slate-200 p-3 flex justify-between items-center gap-3 hover:border-slate-350 transition-colors">
+                  <div class="overflow-hidden">
+                    <span class="text-[8px] font-black text-indigo-600 uppercase tracking-wider block">Lección</span>
+                    <h5 class="font-bold text-slate-800 text-xs truncate max-w-sm uppercase mt-0.5">{{ video.titulo }}</h5>
+                    <p class="text-[10px] text-slate-450 truncate font-mono mt-0.5">{{ video.youtubeUrl }}</p>
+                  </div>
+                  <div class="flex items-center gap-1.5 shrink-0">
+                    <button 
+                      (click)="toggleVideoEstadoInline(modulo.id, video)"
+                      [title]="video.estado ? 'Desactivar' : 'Activar'"
+                      [ngClass]="video.estado ? 'border-red-200 text-red-650 hover:bg-red-50/50' : 'border-emerald-200 text-emerald-650 hover:bg-emerald-50/50'"
+                      class="p-1.5 border rounded-none transition-colors">
+                      <span class="material-symbols-outlined text-xs block">
+                        {{ video.estado ? 'block' : 'check_circle' }}
+                      </span>
+                    </button>
+                    <!-- External Link -->
+                    <a 
+                      [href]="video.youtubeUrl" 
+                      target="_blank"
+                      title="Ver en YouTube"
+                      class="p-1.5 border border-slate-200 hover:border-slate-800 text-slate-500 rounded-none transition-colors">
+                      <span class="material-symbols-outlined text-xs block">open_in_new</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT COLUMN: MATERIALS -->
+            <div class="space-y-4">
+              <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                <h4 class="text-[10px] font-black text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-sm text-slate-600">description</span>
+                  <span>Materiales de Apoyo</span>
+                </h4>
+                <button 
+                  (click)="$event.stopPropagation(); materialFormOpenMap[modulo.id] = !materialFormOpenMap[modulo.id]"
+                  class="text-[9px] font-black text-indigo-650 hover:text-indigo-950 uppercase tracking-wider flex items-center gap-1 transition-colors">
+                  <span class="material-symbols-outlined text-xs">{{ materialFormOpenMap[modulo.id] ? 'close' : 'add' }}</span>
+                  <span>{{ materialFormOpenMap[modulo.id] ? 'Cancelar' : 'Subir Archivo' }}</span>
+                </button>
+              </div>
+
+              <!-- Inline Upload File Form -->
+              <div *ngIf="materialFormOpenMap[modulo.id]" class="bg-white border border-slate-200 p-4 space-y-3.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.02)] animate-fadeIn">
+                <div class="space-y-1">
+                  <label class="block text-[8px] font-black text-slate-500 uppercase tracking-wider">Nombre del Recurso *</label>
+                  <input 
+                    [(ngModel)]="nuevoMaterialNombre"
+                    type="text" 
+                    placeholder="Ej. Guía Práctica Excel"
+                    class="w-full px-2.5 py-1.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650">
+                </div>
+                <div class="space-y-1">
+                  <label class="block text-[8px] font-black text-slate-500 uppercase tracking-wider">Seleccionar Archivo *</label>
+                  <div 
+                    [ngClass]="nuevoMaterialFile ? 'border-indigo-500 bg-indigo-50/10' : 'border-slate-300 bg-slate-50/50'"
+                    class="border-2 border-dashed p-4 text-center hover:bg-slate-55 transition-all relative rounded-none select-none cursor-pointer group">
+                    <input 
+                      type="file" 
+                      (change)="onInlineFileSelected($event)"
+                      accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                      class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                    <div class="space-y-1.5">
+                      <span [ngClass]="nuevoMaterialFile ? 'text-indigo-600' : 'text-slate-400 group-hover:text-slate-600'" class="material-symbols-outlined text-2xl transition-colors">cloud_upload</span>
+                      <div class="text-[11px] font-bold text-slate-700 max-w-xs mx-auto truncate">
+                        {{ nuevoMaterialFile ? nuevoMaterialFile.name : 'Seleccione o arrastre un archivo' }}
+                      </div>
+                      <p class="text-[8px] text-slate-400">PDF, DOC, DOCX, JPG, PNG (Max. 10MB)</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-1">
+                  <button 
+                    (click)="materialFormOpenMap[modulo.id] = false"
+                    class="px-3 py-1 border border-slate-300 bg-white text-slate-705 font-bold text-[10px] uppercase tracking-wider hover:bg-slate-50 rounded-none">
+                    Cancelar
+                  </button>
+                  <button 
+                    (click)="subirMaterialInline(modulo.id)"
+                    [disabled]="isUploadingMaterial"
+                    class="px-3 py-1 bg-slate-900 text-white font-bold text-[10px] uppercase tracking-wider hover:bg-slate-800 rounded-none disabled:opacity-50">
+                    {{ isUploadingMaterial ? 'Subiendo...' : 'Subir Archivo' }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- Materials List -->
+              <div class="space-y-2.5">
+                <div *ngIf="!materialesMap[modulo.id] || materialesMap[modulo.id].length === 0" class="text-center py-6 text-slate-400 bg-white border border-slate-150">
+                  <span class="material-symbols-outlined text-3xl text-slate-300">folder_open</span>
+                  <p class="text-[10px] mt-1 font-medium">No hay materiales cargados en este módulo.</p>
+                </div>
+                <div 
+                  *ngFor="let mat of materialesMap[modulo.id]" 
+                  class="bg-white border border-slate-200 p-3 flex justify-between items-center gap-3 hover:border-slate-350 transition-colors">
+                  <div class="overflow-hidden flex items-center gap-2">
+                    <span class="material-symbols-outlined text-slate-400 text-base shrink-0">{{ getFileIcon(mat.tipoArchivo) }}</span>
+                    <div>
+                      <h5 class="font-bold text-slate-800 text-xs truncate max-w-sm uppercase">{{ mat.nombre }}</h5>
+                      <div class="flex items-center gap-2 mt-0.5">
+                        <span 
+                          [ngClass]="{
+                            'bg-rose-50 text-rose-700 border-rose-200': getCleanFileType(mat.tipoArchivo) === 'PDF',
+                            'bg-blue-50 text-blue-700 border-blue-200': getCleanFileType(mat.tipoArchivo) === 'DOCX' || getCleanFileType(mat.tipoArchivo) === 'DOC',
+                            'bg-emerald-50 text-emerald-700 border-emerald-200': getCleanFileType(mat.tipoArchivo) === 'JPG' || getCleanFileType(mat.tipoArchivo) === 'PNG',
+                            'bg-slate-50 text-slate-700 border-slate-200': getCleanFileType(mat.tipoArchivo) !== 'PDF' && getCleanFileType(mat.tipoArchivo) !== 'DOCX' && getCleanFileType(mat.tipoArchivo) !== 'DOC' && getCleanFileType(mat.tipoArchivo) !== 'JPG' && getCleanFileType(mat.tipoArchivo) !== 'PNG'
+                          }"
+                          class="px-1.5 py-0.2 border text-[8px] font-black uppercase tracking-wider rounded-none shrink-0">
+                          {{ getCleanFileType(mat.tipoArchivo) }}
+                        </span>
+                        <span class="text-[9px] text-slate-450 font-mono">{{ formatBytes(mat.pesoBytes) }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-1.5 shrink-0">
+                    <button 
+                      (click)="toggleMaterialEstadoInline(modulo.id, mat)"
+                      [title]="mat.estado ? 'Desactivar' : 'Activar'"
+                      [ngClass]="mat.estado ? 'border-red-200 text-red-650 hover:bg-red-50/50' : 'border-emerald-200 text-emerald-650 hover:bg-emerald-50/50'"
+                      class="p-1.5 border rounded-none transition-colors">
+                      <span class="material-symbols-outlined text-xs block">
+                        {{ mat.estado ? 'block' : 'check_circle' }}
+                      </span>
+                    </button>
+                    <!-- Download Link -->
+                    <button
+                      (click)="descargarMaterial(mat)"
+                      title="Descargar Archivo"
+                      class="p-1.5 border border-slate-205 hover:border-slate-800 text-slate-500 rounded-none transition-colors">
+                      <span class="material-symbols-outlined text-xs block">download</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Module Configuration Toolbar (Footer of the expanded panel) -->
+          <div class="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-200">
+            <span class="text-[9px] font-black text-slate-450 uppercase tracking-wider mr-auto">
+              Configuración del Módulo:
+            </span>
+            <button 
+              (click)="openEditModuloModal(modulo)" 
+              class="flex items-center gap-1.5 px-3 py-1.5 border border-slate-350 hover:border-slate-800 bg-white text-slate-700 hover:text-slate-900 font-bold text-[10px] uppercase tracking-wider transition-all rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.02)]">
+              <span class="material-symbols-outlined text-xs">edit</span>
+              <span>Editar</span>
+            </button>
+            <button 
+              (click)="toggleModuloEstado(modulo)" 
+              [ngClass]="modulo.estado ? 'border-red-205 text-red-650 hover:bg-red-50/50' : 'border-emerald-205 text-emerald-655 hover:bg-emerald-50/50'"
+              class="flex items-center gap-1.5 px-3 py-1.5 border font-bold text-[10px] uppercase tracking-wider transition-all rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.02)]">
+              <span class="material-symbols-outlined text-xs">{{ modulo.estado ? 'block' : 'check_circle' }}</span>
+              <span>{{ modulo.estado ? 'Desactivar' : 'Activar' }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== TAB: MATRÍCULAS ===================== -->
+  <div *ngIf="activeTab === 'matriculas'" class="animate-fadeIn">
+    <div class="border border-slate-200 bg-white rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.03)] overflow-hidden">
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="border-b border-slate-200 bg-slate-100/60 text-slate-700 font-bold uppercase tracking-wider text-[10px]">
+              <th class="p-4">Alumno</th>
+              <th class="p-4">Correo Electrónico</th>
+              <th class="p-4">Fecha de Inscripción</th>
+              <th class="p-4">Estado</th>
+              <th class="p-4 text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <!-- Empty State -->
+            <tr *ngIf="matriculas.length === 0">
+              <td colspan="5" class="p-12 text-center text-slate-400">
+                <span class="material-symbols-outlined text-4xl mb-2 text-slate-300">group_off</span>
+                <p class="font-medium text-xs">No hay alumnos matriculados en este curso.</p>
+                <p class="text-[10px] text-slate-450 mt-1">Haz click en "Matricular Alumno" para agregar estudiantes.</p>
+              </td>
+            </tr>
+            <!-- Rows -->
+            <tr *ngFor="let matricula of matriculas" class="hover:bg-slate-50/50 transition-colors">
+              <td class="p-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-slate-100 border border-slate-200 text-slate-800 flex items-center justify-center font-black text-[10px] rounded-none">
+                    {{ matricula.alumnoNombres.charAt(0) }}{{ matricula.alumnoApellidos.charAt(0) }}
+                  </div>
+                  <span class="font-bold text-slate-900">{{ matricula.alumnoNombres }} {{ matricula.alumnoApellidos }}</span>
+                </div>
+              </td>
+              <td class="p-4 text-slate-650 font-mono text-[11px]">
+                {{ matricula.alumnoCorreo }}
+              </td>
+              <td class="p-4 text-slate-600">
+                {{ matricula.fechaMatricula | date:'dd/MM/yyyy HH:mm' }}
+              </td>
+              <td class="p-4">
+                <span [ngClass]="matricula.estado ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-red-50 text-red-700 border-red-200'" class="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider border rounded-none">
+                  {{ matricula.estado ? 'ACTIVO' : 'BAJA' }}
+                </span>
+              </td>
+              <td class="p-4 text-right">
+                <button 
+                  (click)="toggleMatriculaEstado(matricula)" 
+                  [title]="matricula.estado ? 'Dar de Baja' : 'Reactivar'"
+                  [ngClass]="matricula.estado ? 'border-red-200 text-red-600 hover:bg-red-50' : 'border-emerald-200 text-emerald-600 hover:bg-emerald-50'"
+                  class="p-1.5 border rounded-none transition-all shadow-[1px_1px_0px_0px_rgba(0,0,0,0.03)]">
+                  <span class="material-symbols-outlined text-base block">
+                    {{ matricula.estado ? 'person_remove' : 'person_add' }}
+                  </span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Footer -->
+      <div class="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
+        <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider">
+          Total: {{ matriculas.length }} alumnos inscritos
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: MATRICULAR ALUMNO ===================== -->
+  <div *ngIf="showMatriculaModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white border border-slate-250 shadow-2xl rounded-none overflow-hidden relative">
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+        <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider">Matricular Alumno</h3>
+        <button (click)="closeMatriculaModal()" class="text-slate-400 hover:text-slate-600 flex">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-5">
+        <!-- Error -->
+        <div *ngIf="matriculaErrorMsg" class="flex items-start gap-2 bg-red-50 border border-red-200 text-red-800 p-3 rounded-none text-[11px] font-semibold animate-fadeIn">
+          <span class="material-symbols-outlined text-red-650 text-base shrink-0">warning</span>
+          <span>{{ matriculaErrorMsg }}</span>
+        </div>
+
+        <!-- Course Name (ReadOnly Badge style) -->
+        <div class="bg-slate-50 border border-slate-200 p-3.5">
+          <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider block">Curso de Destino</span>
+          <span class="text-xs font-bold text-slate-900 uppercase mt-0.5 block">{{ curso.nombre }}</span>
+        </div>
+
+        <!-- Student Select -->
+        <div class="space-y-1.5">
+          <label class="block text-[9px] font-black text-slate-700 uppercase tracking-widest">Seleccionar Alumno *</label>
+          <select 
+            [(ngModel)]="selectedAlumnoId"
+            class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650">
+            <option [ngValue]="null" disabled>-- Seleccione un alumno de la lista --</option>
+            <option *ngFor="let alumno of alumnosDisponibles" [ngValue]="alumno.id">
+              {{ alumno.nombres }} {{ alumno.apellidos }} — {{ alumno.correo }}
+            </option>
+          </select>
+          <p *ngIf="alumnosDisponibles.length === 0" class="text-[10px] text-slate-500 font-medium">No hay alumnos disponibles para matricular en este curso.</p>
+        </div>
+
+        <!-- Buttons -->
+        <div class="pt-4 border-t border-slate-100 flex justify-end gap-3">
+          <button 
+            type="button" 
+            (click)="closeMatriculaModal()" 
+            class="px-4 py-2 border border-slate-350 bg-white text-slate-700 font-bold text-xs uppercase tracking-wider hover:bg-slate-50 transition-colors rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.03)]">
+            Cancelar
+          </button>
+          <button 
+            (click)="onMatriculaSubmit()"
+            [disabled]="!selectedAlumnoId || isMatriculaSubmitting" 
+            class="px-4 py-2 bg-slate-900 text-white font-bold text-xs uppercase tracking-wider hover:bg-slate-800 transition-colors rounded-none disabled:opacity-55 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.15)]">
+            {{ isMatriculaSubmitting ? 'Procesando...' : 'Matricular' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: CREAR/EDITAR MÓDULO ===================== -->
+  <div *ngIf="showModuloModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white border border-slate-250 shadow-2xl rounded-none overflow-hidden relative">
+      <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+        <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider">
+          {{ isEditModuloMode ? 'Editar Módulo' : 'Registrar Nuevo Módulo' }}
+        </h3>
+        <button (click)="closeModuloModal()" class="text-slate-400 hover:text-slate-600 flex">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <form [formGroup]="moduloForm" (ngSubmit)="onModuloSubmit()" class="p-6 space-y-5">
+        <!-- Error alert -->
+        <div *ngIf="moduloErrorMsg" class="flex items-start gap-2 bg-red-50 border border-red-200 text-red-800 p-3 rounded-none text-[11px] font-semibold animate-fadeIn">
+          <span class="material-symbols-outlined text-red-650 text-base shrink-0">warning</span>
+          <span>{{ moduloErrorMsg }}</span>
+        </div>
+
+        <!-- Nombre del Módulo -->
+        <div class="space-y-1">
+          <label class="block text-[9px] font-black text-slate-700 uppercase tracking-widest">Nombre del Módulo *</label>
+          <input 
+            formControlName="nombre" 
+            type="text" 
+            class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650"
+            placeholder="Ej. Fundamentos de Análisis de Datos">
+          <p *ngIf="moduloForm.get('nombre')?.invalid && moduloForm.get('nombre')?.touched" class="text-[9px] font-bold text-red-600 mt-1">El nombre es obligatorio.</p>
+        </div>
+
+        <!-- Descripción -->
+        <div class="space-y-1">
+          <label class="block text-[9px] font-black text-slate-700 uppercase tracking-widest">Descripción *</label>
+          <textarea 
+            formControlName="descripcion" 
+            rows="3" 
+            class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650"
+            placeholder="Escribe el resumen del temario de este módulo..."></textarea>
+          <p *ngIf="moduloForm.get('descripcion')?.invalid && moduloForm.get('descripcion')?.touched" class="text-[9px] font-bold text-red-600 mt-1">La descripción es obligatoria.</p>
+        </div>
+
+        <!-- Orden y Estado -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="block text-[9px] font-black text-slate-700 uppercase tracking-widest">Orden / Posición *</label>
+            <input 
+              formControlName="orden" 
+              type="number" 
+              class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650">
+            <p *ngIf="moduloForm.get('orden')?.invalid && moduloForm.get('orden')?.touched" class="text-[9px] font-bold text-red-600 mt-1">El orden es requerido.</p>
+          </div>
+          <div class="space-y-1">
+            <label class="block text-[9px] font-black text-slate-700 uppercase tracking-widest">Estado</label>
+            <select 
+              formControlName="estado" 
+              class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650">
+              <option [ngValue]="true">ACTIVO</option>
+              <option [ngValue]="false">INACTIVO</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="pt-4 border-t border-slate-100 flex justify-end gap-3">
+          <button 
+            type="button" 
+            (click)="closeModuloModal()" 
+            class="px-4 py-2 border border-slate-350 bg-white text-slate-700 font-bold text-xs uppercase tracking-wider hover:bg-slate-50 transition-colors rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.03)]">
+            Cancelar
+          </button>
+          <button 
+            type="submit" 
+            [disabled]="moduloForm.invalid || isModuloSubmitting" 
+            class="px-4 py-2 bg-slate-900 text-white font-bold text-xs uppercase tracking-wider hover:bg-slate-800 transition-colors rounded-none disabled:opacity-55 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.15)]">
+            {{ isModuloSubmitting ? 'Guardando...' : 'Guardar Módulo' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: EDITAR CURSO ===================== -->
+  <div *ngIf="showEditCourseModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-white border border-slate-250 shadow-2xl rounded-none overflow-hidden relative">
+      <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+        <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider">Modificar Curso</h3>
+        <button (click)="closeEditCourseModal()" class="text-slate-400 hover:text-slate-600 flex">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <form [formGroup]="courseForm" (ngSubmit)="onCourseSubmit()" class="p-6 space-y-5">
+        <div *ngIf="courseErrorMsg" class="flex items-start gap-2 bg-red-50 border border-red-200 text-red-800 p-3 rounded-none text-[11px] font-semibold animate-fadeIn">
+          <span class="material-symbols-outlined text-red-650 text-base shrink-0">warning</span>
+          <span>{{ courseErrorMsg }}</span>
+        </div>
+
+        <!-- Nombre -->
+        <div class="space-y-1">
+          <label class="block text-[9px] font-black text-slate-700 uppercase tracking-widest">Nombre del Curso *</label>
+          <input 
+            formControlName="nombre" 
+            type="text" 
+            class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650">
+          <p *ngIf="courseForm.get('nombre')?.invalid && courseForm.get('nombre')?.touched" class="text-[9px] font-bold text-red-600 mt-1">El nombre del curso es requerido.</p>
+        </div>
+
+        <!-- Descripción -->
+        <div class="space-y-1">
+          <label class="block text-[9px] font-black text-slate-700 uppercase tracking-widest">Descripción del Programa *</label>
+          <textarea 
+            formControlName="descripcion" 
+            rows="3" 
+            class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650"></textarea>
+          <p *ngIf="courseForm.get('descripcion')?.invalid && courseForm.get('descripcion')?.touched" class="text-[9px] font-bold text-red-600 mt-1">La descripción es requerida.</p>
+        </div>
+
+        <!-- Imagen URL -->
+        <div class="space-y-1">
+          <label class="block text-[9px] font-black text-slate-700 uppercase tracking-widest">URL Imagen de Portada</label>
+          <input 
+            formControlName="imagenPortada" 
+            type="text" 
+            class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650"
+            placeholder="Ej. https://images.unsplash.com/...">
+          
+          <!-- Image preview thumbnail -->
+          <div *ngIf="courseForm.get('imagenPortada')?.value" class="mt-2 w-full h-24 border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden">
+            <img [src]="courseForm.get('imagenPortada')?.value" class="w-full h-full object-cover">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Subscription Access (Clickable buttons style) -->
+          <div class="space-y-2">
+            <label class="block text-[9px] font-black text-slate-700 uppercase tracking-widest">Acceso de Planes *</label>
+            <div class="flex flex-col gap-1.5 p-2 bg-slate-50 border border-slate-200">
+              <button 
+                type="button" 
+                (click)="toggleNivel(1)" 
+                [ngClass]="isNivelSelected(1) ? 'bg-indigo-50 border-indigo-650 text-indigo-950 font-bold' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'"
+                class="w-full py-2 border text-center transition-all text-[10px] uppercase font-bold flex items-center justify-center gap-1 rounded-none">
+                <span class="material-symbols-outlined text-xs">{{ isNivelSelected(1) ? 'check_box' : 'check_box_outline_blank' }}</span>
+                <span>Básico</span>
+              </button>
+              <button 
+                type="button" 
+                (click)="toggleNivel(2)" 
+                [ngClass]="isNivelSelected(2) ? 'bg-indigo-50 border-indigo-650 text-indigo-950 font-bold' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'"
+                class="w-full py-2 border text-center transition-all text-[10px] uppercase font-bold flex items-center justify-center gap-1 rounded-none">
+                <span class="material-symbols-outlined text-xs">{{ isNivelSelected(2) ? 'check_box' : 'check_box_outline_blank' }}</span>
+                <span>Intermedio</span>
+              </button>
+              <button 
+                type="button" 
+                (click)="toggleNivel(3)" 
+                [ngClass]="isNivelSelected(3) ? 'bg-indigo-50 border-indigo-650 text-indigo-950 font-bold' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'"
+                class="w-full py-2 border text-center transition-all text-[10px] uppercase font-bold flex items-center justify-center gap-1 rounded-none">
+                <span class="material-symbols-outlined text-xs">{{ isNivelSelected(3) ? 'check_box' : 'check_box_outline_blank' }}</span>
+                <span>Premium</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Estado -->
+          <div class="space-y-1">
+            <label class="block text-[9px] font-black text-slate-700 uppercase tracking-widest">Estado</label>
+            <select 
+              formControlName="estado" 
+              class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650">
+              <option [ngValue]="true">ACTIVO</option>
+              <option [ngValue]="false">INACTIVO</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 flex justify-end gap-3">
+          <button 
+            type="button" 
+            (click)="closeEditCourseModal()" 
+            class="px-4 py-2 border border-slate-350 bg-white text-slate-700 font-bold text-xs uppercase tracking-wider hover:bg-slate-50 transition-colors rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.03)]">
+            Cancelar
+          </button>
+          <button 
+            type="submit" 
+            [disabled]="courseForm.invalid || isCourseSubmitting" 
+            class="px-4 py-2 bg-slate-900 text-white font-bold text-xs uppercase tracking-wider hover:bg-slate-800 transition-colors rounded-none disabled:opacity-55 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.15)]">
+            {{ isCourseSubmitting ? 'Guardando...' : 'Guardar Cambios' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>

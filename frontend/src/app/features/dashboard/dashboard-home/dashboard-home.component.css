@@ -1,0 +1,129 @@
+/* =====================================================
+   DASHBOARD HOME — Card Animations & Hover FX
+   ===================================================== */
+
+/* ── Entrada escalonada de los elementos ── */
+@keyframes cardFadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.metric-card,
+.action-card,
+.quick-card {
+  animation: cardFadeUp 0.4s ease both;
+}
+
+/* ── Tarjetas de métricas ── */
+.metric-card {
+  transition:
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+  cursor: default;
+}
+.metric-card:hover {
+  transform: translateY(-4px) scale(1.015);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.1), 0 0 0 1px rgba(99,120,200,0.15);
+  border-color: rgba(99, 120, 200, 0.25);
+}
+.metric-card:hover .metric-icon {
+  background: linear-gradient(135deg, rgba(99,120,200,0.15), rgba(51,95,153,0.1));
+  border-color: rgba(99,120,200,0.3);
+  color: #335f99;
+  transform: rotate(-6deg) scale(1.1);
+}
+.metric-icon {
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* ── Acciones rápidas ── */
+.action-card {
+  transition:
+    transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+.action-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12), 0 0 0 1.5px rgba(99,120,200,0.2);
+  border-color: rgba(99,120,200,0.3);
+}
+.action-card:hover .action-icon {
+  background: linear-gradient(135deg, #e8eeff, #f0f4ff);
+  border-color: rgba(99,120,200,0.35);
+  color: #335f99;
+  transform: scale(1.15) rotate(-5deg);
+  box-shadow: 0 4px 16px rgba(99,120,200,0.25);
+}
+.action-icon {
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── Tabla / Lista de alumnos recientes ── */
+.dashboard-row {
+  transition: background-color 0.18s ease, transform 0.18s ease;
+}
+.dashboard-row:hover {
+  background-color: rgba(99, 120, 200, 0.04);
+  transform: translateX(2px);
+}
+
+/* ── Welcome banner shine effect ── */
+@keyframes bannerShine {
+  0%   { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(300%) skewX(-15deg); }
+}
+.welcome-banner::after {
+  content: '';
+  position: absolute;
+  inset-y: 0;
+  left: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+  animation: bannerShine 4s ease infinite;
+}
+
+/* ── Botones de acción: press effect ── */
+.btn-action {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.btn-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(51, 95, 153, 0.35);
+}
+.btn-action:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ── Badge de rol parpadeante ── */
+@keyframes roleGlow {
+  0%, 100% { text-shadow: none; }
+  50%       { text-shadow: 0 0 8px rgba(51, 95, 153, 0.5); }
+}
+.role-badge {
+  animation: roleGlow 3s ease-in-out infinite;
+}
+
+/* ── Progress bar en cursos ── */
+.progress-bar {
+  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Animación del número en métricas al aparecer ── */
+@keyframes countUp {
+  from { opacity: 0; transform: scale(0.8) translateY(4px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.metric-number {
+  animation: countUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+}
+
+/* ── Stagger delays para grid de tarjetas ── */
+.metric-card:nth-child(1) { animation-delay: 0.05s; }
+.metric-card:nth-child(2) { animation-delay: 0.12s; }
+.metric-card:nth-child(3) { animation-delay: 0.19s; }
+.action-card:nth-child(1) { animation-delay: 0.08s; }
+.action-card:nth-child(2) { animation-delay: 0.14s; }
+.action-card:nth-child(3) { animation-delay: 0.20s; }
+.action-card:nth-child(4) { animation-delay: 0.26s; }

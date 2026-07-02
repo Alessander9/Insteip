@@ -1,0 +1,316 @@
+<div class="login-shell font-body">
+
+  <!-- Brand panel (desktop) -->
+  <aside class="brand-panel" aria-hidden="true">
+    <div class="brand-mesh"></div>
+    <div class="brand-grid"></div>
+
+    <div class="relative z-10 flex items-center gap-3">
+      <div class="brand-logo">I</div>
+      <div>
+        <p class="text-sm font-extrabold tracking-wider uppercase text-white">INSTEIP</p>
+        <p class="text-[10px] text-slate-400 font-semibold tracking-widest uppercase">Campus Virtual</p>
+      </div>
+    </div>
+
+    <div class="relative z-10 my-auto max-w-lg">
+      <span class="inline-block text-[10px] font-bold uppercase tracking-[0.14em] text-primary-container mb-4">
+        Formación profesional en línea
+      </span>
+
+      <h1 class="brand-headline">
+        Tu espacio de<br>
+        <span>aprendizaje</span><br>
+        certificado
+      </h1>
+
+      <p class="mt-5 text-sm leading-relaxed text-slate-400 max-w-md">
+        Accede a tus cursos, materiales y certificaciones desde un solo lugar. Diseñado para estudiantes y administradores de INSTEIP.
+      </p>
+
+      <div class="brand-accent-line mt-7 mb-6"></div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="feature-pill">
+          <div class="feature-icon">
+            <span class="material-symbols-outlined text-[18px]">play_circle</span>
+          </div>
+          <div>
+            <p class="text-sm font-bold text-slate-100">Cursos en video</p>
+            <p class="text-xs text-slate-400 mt-0.5 leading-snug">Avance guardado automáticamente.</p>
+          </div>
+        </div>
+
+        <div class="feature-pill feature-pill--gold">
+          <div class="feature-icon feature-icon--gold">
+            <span class="material-symbols-outlined text-[18px]">verified</span>
+          </div>
+          <div>
+            <p class="text-sm font-bold text-slate-100">Certificados</p>
+            <p class="text-xs text-slate-400 mt-0.5 leading-snug">Validación pública con código único.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3 mt-8 pt-6 border-t border-slate-800/80">
+        <div class="stat-badge">
+          <p class="text-lg font-black text-primary-container leading-none">+120</p>
+          <p class="text-[9px] text-slate-500 uppercase tracking-widest font-bold mt-1">Alumnos</p>
+        </div>
+        <div class="stat-badge stat-badge--gold">
+          <p class="text-lg font-black text-tertiary-container leading-none">18</p>
+          <p class="text-[9px] text-slate-500 uppercase tracking-widest font-bold mt-1">Programas</p>
+        </div>
+        <div class="flex items-center gap-2 ml-auto text-[10px] text-slate-500">
+          <span class="status-dot"></span>
+          Sistema operativo
+        </div>
+      </div>
+    </div>
+
+    <p class="relative z-10 text-[11px] text-slate-600">© 2026 INSTEIP · Todos los derechos reservados</p>
+  </aside>
+
+  <!-- Form panel -->
+  <main class="form-panel">
+    <div class="mobile-brand">
+      <div class="brand-logo">I</div>
+      <div>
+        <p class="text-sm font-extrabold tracking-wider uppercase text-slate-900">INSTEIP</p>
+        <p class="text-[10px] text-slate-500 font-semibold tracking-widest uppercase">Campus Virtual</p>
+      </div>
+    </div>
+
+    <section class="login-card" aria-labelledby="login-title">
+      <header class="login-card-header">
+        <span class="login-eyebrow">
+          <span class="material-symbols-outlined text-[14px]">lock</span>
+          Acceso seguro
+        </span>
+        <h2 id="login-title" class="login-title">Iniciar sesión</h2>
+        <p class="login-subtitle">
+          Ingresa tus credenciales institucionales para acceder al panel.
+        </p>
+      </header>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5" novalidate>
+
+        @if (errorMessage) {
+          <div class="alert-error" role="alert">
+            <span class="material-symbols-outlined text-base shrink-0">error</span>
+            <div>
+              <span class="block font-bold">No se pudo iniciar sesión</span>
+              <span class="block font-normal mt-0.5 opacity-90">{{ errorMessage }}</span>
+            </div>
+          </div>
+        }
+
+        <div>
+          <label class="field-label" for="email">Correo electrónico</label>
+          <div class="field-input-wrap">
+            <span class="field-icon material-symbols-outlined text-[20px]">mail</span>
+            <input
+              formControlName="correo"
+              class="field-input"
+              id="email"
+              type="email"
+              autocomplete="email"
+              placeholder="correo@institución.com">
+          </div>
+          @if (loginForm.get('correo')?.hasError('required') && loginForm.get('correo')?.touched) {
+            <p class="field-error">
+              <span class="material-symbols-outlined text-[12px]">info</span>
+              El correo es obligatorio.
+            </p>
+          }
+          @if (loginForm.get('correo')?.hasError('email') && loginForm.get('correo')?.touched) {
+            <p class="field-error">
+              <span class="material-symbols-outlined text-[12px]">info</span>
+              El formato de correo no es válido.
+            </p>
+          }
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="field-label mb-0" for="password">Contraseña</label>
+            <button
+              type="button"
+              class="link-muted"
+              (click)="openRecoveryModal()">
+              ¿Olvidaste tu contraseña?
+            </button>
+          </div>
+          <div class="field-input-wrap">
+            <span class="field-icon material-symbols-outlined text-[20px]">lock</span>
+            <input
+              formControlName="password"
+              class="field-input field-input--password"
+              id="password"
+              [type]="hidePassword ? 'password' : 'text'"
+              autocomplete="current-password"
+              placeholder="••••••••">
+            <button
+              type="button"
+              class="field-toggle"
+              (click)="hidePassword = !hidePassword"
+              [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'">
+              <span class="material-symbols-outlined text-[18px]">
+                {{ hidePassword ? 'visibility' : 'visibility_off' }}
+              </span>
+            </button>
+          </div>
+          @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
+            <p class="field-error">
+              <span class="material-symbols-outlined text-[12px]">info</span>
+              La contraseña es obligatoria.
+            </p>
+          }
+        </div>
+
+        <div class="remember-row">
+          <input formControlName="rememberMe" id="remember-me" type="checkbox">
+          <label for="remember-me">Mantener sesión iniciada</label>
+        </div>
+
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="loginForm.invalid || isLoading">
+          @if (isLoading) {
+            <span class="btn-spinner" aria-hidden="true"></span>
+            Verificando acceso...
+          } @else {
+            <span>Ingresar</span>
+            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+          }
+        </button>
+      </form>
+
+      <div class="demo-section">
+        <span class="demo-label">Acceso rápido de prueba</span>
+        <div class="demo-grid">
+          <button type="button" class="demo-btn" (click)="autofill('admin')">
+            <span class="material-symbols-outlined text-[20px] text-primary-container">admin_panel_settings</span>
+            <span class="demo-btn-title">Administrador</span>
+            <span class="demo-btn-email">admin&#64;insteip.com</span>
+          </button>
+          <button type="button" class="demo-btn" (click)="autofill('student')">
+            <span class="material-symbols-outlined text-[20px] text-tertiary-container">school</span>
+            <span class="demo-btn-title">Alumno</span>
+            <span class="demo-btn-email">juan.perez&#64;insteip.com</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="form-footer">
+      <nav class="form-footer-links" aria-label="Enlaces legales">
+        <a href="#">Términos</a>
+        <span aria-hidden="true">·</span>
+        <a href="#">Privacidad</a>
+        <span aria-hidden="true">·</span>
+        <a href="#">Soporte</a>
+      </nav>
+      <p>© 2026 INSTEIP · Campus Virtual</p>
+    </footer>
+  </main>
+</div>
+
+<!-- Recovery modal -->
+@if (showRecoveryModal) {
+  <div
+    class="modal-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="recovery-title"
+    (click)="closeRecoveryModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 id="recovery-title" class="modal-title">
+          <span class="material-symbols-outlined text-[18px] text-primary-container">lock_reset</span>
+          Recuperar contraseña
+        </h3>
+        <button type="button" class="modal-close" (click)="closeRecoveryModal()" aria-label="Cerrar">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <div class="modal-body space-y-4">
+        @if (recoveryError) {
+          <div class="alert-error" role="alert">
+            <span class="material-symbols-outlined text-base shrink-0">warning</span>
+            <span>{{ recoveryError }}</span>
+          </div>
+        }
+
+        @if (recoveryMessage) {
+          <div class="alert-success" role="status">
+            <span class="material-symbols-outlined text-base shrink-0">check_circle</span>
+            <span>{{ recoveryMessage }}</span>
+          </div>
+        }
+
+        @if (recoveryStep === 1) {
+          <div class="space-y-4">
+            <p class="text-xs text-slate-500 leading-relaxed">
+              Ingresa tu correo registrado. Si existe una cuenta asociada, recibirás un código temporal de 6 dígitos.
+            </p>
+            <div>
+              <label class="field-label" for="recovery-email">Correo electrónico</label>
+              <input
+                id="recovery-email"
+                [(ngModel)]="recoveryEmail"
+                type="email"
+                class="modal-input"
+                placeholder="correo@institución.com"
+                autocomplete="email">
+            </div>
+            <button
+              type="button"
+              class="btn-primary"
+              (click)="onRequestToken()"
+              [disabled]="isRecoveryLoading">
+              {{ isRecoveryLoading ? 'Enviando...' : 'Enviar código' }}
+            </button>
+          </div>
+        }
+
+        @if (recoveryStep === 2) {
+          <div class="space-y-4">
+            <p class="text-xs text-slate-500 leading-relaxed">
+              Introduce el código recibido y define tu nueva contraseña.
+            </p>
+            <div>
+              <label class="field-label" for="recovery-token">Código de recuperación</label>
+              <input
+                id="recovery-token"
+                [(ngModel)]="recoveryToken"
+                type="text"
+                class="modal-input modal-input--code"
+                placeholder="123456"
+                inputmode="numeric">
+            </div>
+            <div>
+              <label class="field-label" for="recovery-password">Nueva contraseña</label>
+              <input
+                id="recovery-password"
+                [(ngModel)]="recoveryNewPassword"
+                type="password"
+                class="modal-input"
+                placeholder="Mínimo 6 caracteres"
+                autocomplete="new-password">
+            </div>
+            <button
+              type="button"
+              class="btn-primary"
+              (click)="onResetPassword()"
+              [disabled]="isRecoveryLoading">
+              {{ isRecoveryLoading ? 'Restableciendo...' : 'Restablecer contraseña' }}
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

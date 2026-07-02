@@ -1,0 +1,21 @@
+/* Custom sidebar animations and glassmorphism styling */
+
+:host {
+  display: block;
+}
+
+/* Slide in animation on load */
+@keyframes slideIn {
+  from {
+    transform: translate(-100%, -50%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(0, -50%);
+    opacity: 1;
+  }
+}
+
+.fixed {
+  animation: slideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

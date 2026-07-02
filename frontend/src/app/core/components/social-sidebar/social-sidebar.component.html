@@ -1,0 +1,20 @@
+<!-- Floating Social Media Sidebar (INSTEIP) — solo en páginas públicas -->
+<ng-container *ngIf="isVisible">
+  <div class="fixed left-0 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col items-start pointer-events-none">
+    <div class="pointer-events-auto bg-[#091122]/85 backdrop-blur-md border border-l-0 border-white/10 rounded-r-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] p-2.5 flex flex-col gap-3.5 transition-all duration-300 hover:pr-4 group">
+
+      <a *ngFor="let link of socialLinks"
+         [href]="link.url"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="w-10 h-10 rounded-xl border flex items-center justify-center text-white/80 hover:text-white hover:scale-110 hover:translate-x-1 shadow-lg transition-all duration-300 ease-out"
+         [ngClass]="[link.iconClass, link.shadowClass]"
+         [title]="'Visitar ' + link.name + ' de INSTEIP'">
+        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+          <path [attr.d]="link.svgPath"/>
+        </svg>
+      </a>
+
+    </div>
+  </div>
+</ng-container>

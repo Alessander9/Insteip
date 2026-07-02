@@ -1,0 +1,111 @@
+<div class="min-h-screen bg-slate-50 flex items-center justify-center p-6 font-body text-slate-800">
+  
+  <div class="w-full max-w-lg bg-white border-2 border-slate-900 p-8 rounded-none shadow-[8px_8px_0px_0px_rgba(15,23,42,1)] relative overflow-hidden">
+    
+    <!-- Branding Header inside card -->
+    <div class="flex items-center gap-3 border-b border-slate-200 pb-5 mb-6">
+      <div class="w-8 h-8 bg-slate-900 border border-slate-900 text-white flex items-center justify-center font-black text-sm rounded-none">
+        I
+      </div>
+      <div>
+        <h2 class="text-xs font-black tracking-wider uppercase text-slate-900 leading-none">INSTEIP</h2>
+        <span class="text-[8px] text-slate-400 font-bold uppercase tracking-widest leading-none">Sistema de Verificación Digital</span>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-10">
+      <span class="animate-spin inline-block w-8 h-8 border-4 border-slate-900 border-t-transparent rounded-full mb-3"></span>
+      <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Validando firma...</span>
+    </div>
+
+    <div *ngIf="!isLoading">
+      
+      <!-- ================= SUCCESS VALIDATION STATE ================= -->
+      <div *ngIf="validationData" class="space-y-6">
+        
+        <!-- Validation Status Badge (Brutalist style) -->
+        <div class="border-2 border-emerald-500 bg-emerald-50 text-emerald-800 p-4 text-center rounded-none flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-xl font-black">verified</span>
+          <span class="text-xs font-black uppercase tracking-widest">✓ CERTIFICADO VÁLIDO</span>
+        </div>
+
+        <p class="text-xs text-slate-500 text-center leading-relaxed">
+          El Instituto INSTEIP certifica la autenticidad de la siguiente acreditación académica registrada en nuestros servidores oficiales:
+        </p>
+
+        <!-- Structured Details Grid -->
+        <div class="border border-slate-200 bg-slate-50/50 rounded-none overflow-hidden">
+          <div class="grid grid-cols-3 border-b border-slate-200 divide-x divide-slate-200 text-xs">
+            <div class="p-4 bg-slate-100 font-bold text-slate-500 uppercase tracking-widest text-[9px] flex items-center col-span-1">
+              Alumno
+            </div>
+            <div class="p-4 text-slate-900 font-black uppercase col-span-2">
+              {{ validationData.alumno }}
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 border-b border-slate-200 divide-x divide-slate-200 text-xs">
+            <div class="p-4 bg-slate-100 font-bold text-slate-500 uppercase tracking-widest text-[9px] flex items-center col-span-1">
+              Curso
+            </div>
+            <div class="p-4 text-slate-900 font-black uppercase col-span-2">
+              {{ validationData.curso }}
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 border-b border-slate-200 divide-x divide-slate-200 text-xs">
+            <div class="p-4 bg-slate-100 font-bold text-slate-500 uppercase tracking-widest text-[9px] flex items-center col-span-1">
+              Emitido
+            </div>
+            <div class="p-4 text-slate-700 font-mono text-[11px] col-span-2">
+              {{ validationData.fechaEmision | date:'dd/MM/yyyy' }}
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 divide-x divide-slate-200 text-xs">
+            <div class="p-4 bg-slate-100 font-bold text-slate-500 uppercase tracking-widest text-[9px] flex items-center col-span-1">
+              Código
+            </div>
+            <div class="p-4 text-slate-900 font-mono font-black col-span-2">
+              {{ validationData.codigo }}
+            </div>
+          </div>
+        </div>
+
+        <p class="text-[10px] text-slate-400 text-center italic mt-4">
+          Copia de seguridad registrada bajo protocolo de auditoría académica digital.
+        </p>
+      </div>
+
+      <!-- ================= ERROR / INVALID STATE ================= -->
+      <div *ngIf="errorMsg" class="space-y-6">
+        <div class="border-2 border-red-500 bg-red-50 text-red-800 p-4 text-center rounded-none flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-xl font-black">gpp_bad</span>
+          <span class="text-xs font-black uppercase tracking-widest">✗ CERTIFICADO NO REGISTRADO</span>
+        </div>
+
+        <div class="border border-red-100 bg-red-50/30 p-6 text-center text-xs text-red-800 rounded-none leading-relaxed">
+          {{ errorMsg }}
+        </div>
+
+        <p class="text-xs text-slate-500 text-center leading-relaxed">
+          Verifique que el código copiado coincida exactamente con la credencial del alumno, incluyendo los guiones. Si el error persiste, la credencial puede haber sido alterada.
+        </p>
+      </div>
+
+      <!-- Return back button -->
+      <div class="mt-8 border-t border-slate-200 pt-6 flex justify-center">
+        <a 
+          routerLink="/login" 
+          class="px-5 py-2.5 bg-slate-900 text-white font-bold text-xs uppercase tracking-widest hover:bg-slate-800 transition-colors rounded-none inline-flex items-center gap-2">
+          <span class="material-symbols-outlined text-sm">home</span>
+          <span>Volver al Login</span>
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

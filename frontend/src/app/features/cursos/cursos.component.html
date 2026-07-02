@@ -1,0 +1,104 @@
+<app-navbar></app-navbar>
+<main class="pt-20">
+  <section class="bg-surface py-20 min-h-screen">
+    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+      <div class="text-center mb-16 space-y-3 animate-fade-in-up">
+        <span class="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Catálogo Completo</span>
+        <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">Nuestros Cursos y Programas</h2>
+        <p class="font-body-lg text-on-surface-variant text-base max-w-2xl mx-auto">Explora nuestra oferta educativa especializada en terapias holísticas y alternativas.</p>
+      </div>
+
+      <!-- Search and Filters Bar -->
+      <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-12 bg-surface-container-lowest p-6 rounded-2xl border border-surface-variant/40 shadow-sm animate-fade-in-up delay-100">
+        <!-- Search bar -->
+        <div class="relative w-full md:w-80">
+          <span class="material-symbols-outlined absolute left-3 top-3.5 text-on-surface-variant text-lg">search</span>
+          <input (input)="onSearch($event)" type="text" placeholder="Buscar cursos..." class="w-full pl-10 pr-4 py-3 rounded-lg border border-surface-variant/60 bg-surface text-sm focus:ring-primary focus:border-primary transition-all placeholder-on-surface-variant/60" />
+        </div>
+
+        <!-- Filter tabs & Sort select -->
+        <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+          <!-- Category Tabs -->
+          <div class="flex bg-surface-container p-1 rounded-full w-full sm:w-auto">
+            <button (click)="setFilter('TODOS')" class="px-5 py-2 rounded-full text-xs font-bold transition-all duration-300 w-full sm:w-auto" [ngClass]="filter === 'TODOS' ? 'bg-primary text-on-primary shadow-md' : 'text-on-surface-variant hover:text-primary'">Todos</button>
+            <button (click)="setFilter('CORTOS')" class="px-5 py-2 rounded-full text-xs font-bold transition-all duration-300 w-full sm:w-auto" [ngClass]="filter === 'CORTOS' ? 'bg-primary text-on-primary shadow-md' : 'text-on-surface-variant hover:text-primary'">Cursos Cortos</button>
+            <button (click)="setFilter('DIPLOMADOS')" class="px-5 py-2 rounded-full text-xs font-bold transition-all duration-300 w-full sm:w-auto" [ngClass]="filter === 'DIPLOMADOS' ? 'bg-primary text-on-primary shadow-md' : 'text-on-surface-variant hover:text-primary'">Diplomados</button>
+          </div>
+
+          <!-- Sort select -->
+          <div class="w-full sm:w-auto">
+            <select (change)="onSort($event)" class="w-full rounded-lg border border-surface-variant/60 bg-surface px-4 py-3 text-sm focus:ring-primary focus:border-primary text-on-surface-variant">
+              <option value="POPULARIDAD">Ordenar por: Popularidad</option>
+              <option value="PRECIO_ASC">Precio: menor a mayor</option>
+              <option value="PRECIO_DESC">Precio: mayor a menor</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- No results fallback -->
+      <div *ngIf="filteredCursos().length === 0" class="text-center py-20 bg-surface-container-lowest rounded-2xl border border-surface-variant/30 space-y-4 animate-scale-up">
+        <span class="material-symbols-outlined text-5xl text-on-surface-variant/40">search_off</span>
+        <h3 class="font-headline-md text-primary font-bold">No se encontraron cursos</h3>
+        <p class="text-on-surface-variant text-sm">Prueba buscando con palabras clave diferentes o cambiando los filtros.</p>
+      </div>
+
+      <!-- Grid -->
+      <div *ngIf="filteredCursos().length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div *ngFor="let curso of filteredCursos()" class="bg-surface-container-lowest rounded-3xl border border-surface-variant/30 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 flex flex-col h-full overflow-hidden group animate-scale-up">
+          
+          <!-- Card Header Image -->
+          <div class="relative h-48 w-full overflow-hidden">
+            <img [src]="curso.image" [alt]="curso.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+            
+            <!-- Category Badge -->
+            <span class="absolute top-4 left-4 bg-primary text-white text-[10px] font-extrabold uppercase px-2.5 py-1 rounded shadow-sm">
+              {{ curso.category === 'CORTOS' ? 'Curso Corto' : 'Diplomado' }}
+            </span>
+            
+            <!-- Rating Badge -->
+            <div class="absolute top-4 right-4 flex items-center gap-1 bg-white/95 backdrop-blur-sm px-2 py-0.5 rounded shadow-sm text-[10px] font-extrabold text-primary">
+              <span class="material-symbols-outlined text-[12px] text-amber-500 fill">star</span>
+              {{ curso.rating }}
+            </div>
+            
+            <!-- Duration Badge -->
+            <span class="absolute bottom-4 left-4 text-[10px] font-bold text-white bg-secondary px-2.5 py-1 rounded shadow-sm">
+              {{ curso.duration }}
+            </span>
+          </div>
+
+          <!-- Card Body -->
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-xs text-primary/80 font-medium">
+                <span class="material-symbols-outlined text-base">{{ curso.icon }}</span>
+                <span>Academia Insteip</span>
+              </div>
+              <h3 class="font-headline-md text-lg text-primary font-bold line-clamp-1 group-hover:text-primary-variant transition-colors">{{ curso.title }}</h3>
+              <p class="font-body-md text-xs text-on-surface-variant leading-relaxed line-clamp-3">{{ curso.description }}</p>
+            </div>
+
+            <!-- Card Footer -->
+            <div class="pt-4 border-t border-surface-variant/30 flex items-center justify-between">
+              <div>
+                <span class="font-caption text-on-surface-variant/80 flex items-center gap-1 mb-1 text-[11px] font-medium">
+                  <span class="material-symbols-outlined text-sm">group</span>
+                  {{ curso.students }} alumnos
+                </span>
+                <span class="font-extrabold text-base text-primary">{{ curso.price }}</span>
+              </div>
+              <a [routerLink]="['/cursos', curso.slug]" class="bg-primary text-on-primary font-label-md px-4 py-2 rounded-lg shadow-md hover:bg-primary/95 transition-all duration-300 flex items-center gap-1 text-xs">
+                Ver Detalle
+                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+              </a>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<app-footer></app-footer>

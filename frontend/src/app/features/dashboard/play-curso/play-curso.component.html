@@ -1,0 +1,300 @@
+<div class="space-y-6 font-body text-slate-800" *ngIf="curso">
+  
+  <!-- Breadcrumb / Back Navigation -->
+  <div class="border border-slate-200 bg-white p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.02)]">
+    <div class="flex items-center gap-3">
+      <a 
+        routerLink="/dashboard/mis-cursos" 
+        class="w-9 h-9 border border-slate-200 hover:border-slate-900 bg-white hover:bg-slate-50 flex items-center justify-center transition-colors shrink-0">
+        <span class="material-symbols-outlined text-lg">arrow_back</span>
+      </a>
+      <div class="h-5 w-px bg-slate-200 shrink-0"></div>
+      <div>
+        <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block">Reproductor de Clases</span>
+        <h1 class="text-sm font-black text-slate-900 uppercase tracking-tight">{{ curso.nombre }}</h1>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <!-- Overall progress badge -->
+      <div class="flex flex-col items-end text-right">
+        <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Tu Progreso</span>
+        <span class="text-xs font-black text-indigo-600 font-mono">{{ completedVideos }} / {{ totalVideos }} Clases ({{ completionPercentage }}%)</span>
+      </div>
+      <div class="w-20 bg-slate-100 border border-slate-200 h-2.5 rounded-none overflow-hidden hidden sm:block">
+        <div class="bg-indigo-600 h-full transition-all duration-500" [style.width.%]="completionPercentage"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Layout: stacked on mobile, side-by-side on lg -->
+  <div class="flex flex-col lg:flex-row gap-6">
+    
+    <!-- Left Section: Video Player & Tabs (takes 2/3 on lg) -->
+    <div class="w-full lg:flex-1 space-y-6 min-w-0">
+      
+      <!-- Video Player Frame: full width, aspect-video -->
+      <div #playerContainer class="border border-slate-300 bg-black shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] w-full aspect-video relative overflow-hidden group/player">
+        <iframe 
+          *ngIf="safeEmbedUrl"
+          id="youtube-iframe"
+          [src]="safeEmbedUrl" 
+          class="absolute inset-0 w-full h-full border-none"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen
+          (load)="onIframeLoad()">
+        </iframe>
+        
+        <!-- Anti-leak click-jacking overlays (blocks header titles, share icons and bottom controls share/youtube clicks above the timeline, optimized for mobile & desktop) -->
+        <div *ngIf="safeEmbedUrl" class="absolute top-0 left-0 right-0 h-10 md:h-14 bg-transparent z-10 pointer-events-auto"></div>
+        <div *ngIf="safeEmbedUrl" class="absolute bottom-0 left-0 right-0 h-10 md:h-12 bg-transparent z-10 pointer-events-auto"></div>
+
+        <!-- Custom Safe Fullscreen Toggle Button -->
+        <button 
+          *ngIf="safeEmbedUrl"
+          (click)="toggleFullscreen(playerContainer)"
+          title="Pantalla Completa"
+          class="absolute bottom-12 right-4 z-20 w-8 h-8 bg-slate-900/90 hover:bg-slate-950 text-white flex items-center justify-center transition-all duration-300 border border-slate-700 shadow-md opacity-0 group-hover/player:opacity-100">
+          <span class="material-symbols-outlined text-sm">fullscreen</span>
+        </button>
+        
+        <!-- Empty or missing state -->
+        <div *ngIf="!safeEmbedUrl" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 p-8">
+          <span class="material-symbols-outlined text-5xl mb-2 text-slate-600">movie</span>
+          <p class="text-xs font-black uppercase tracking-wider text-center">Selecciona una clase para comenzar a aprender</p>
+        </div>
+      </div>
+
+      <!-- Active Video Metadata & Actions -->
+      <div class="border border-slate-200 bg-white p-4 sm:p-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.03)] flex flex-col md:flex-row justify-between items-start md:items-center gap-6" *ngIf="currentVideo">
+        <div class="space-y-2 max-w-xl">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="bg-indigo-100 text-indigo-800 text-[8px] font-black uppercase px-2.5 py-0.5 border border-indigo-200">
+              Clase {{ currentVideo.orden }}
+            </span>
+            <span *ngIf="currentVideo.completado" class="bg-emerald-100 text-emerald-800 text-[8px] font-black uppercase px-2.5 py-0.5 border border-emerald-200">
+              Completado
+            </span>
+          </div>
+          <h2 class="text-base font-black text-slate-900 uppercase tracking-tight">{{ currentVideo.titulo }}</h2>
+          <p class="text-slate-500 text-xs leading-relaxed">{{ currentVideo.descripcion }}</p>
+        </div>
+        
+        <!-- Toggle completion button -->
+        <button 
+          (click)="toggleCompletado()"
+          [disabled]="isSavingProgress"
+          [ngClass]="currentVideo.completado ? 'bg-emerald-50 border-emerald-300 text-emerald-800 hover:bg-emerald-100' : 'bg-slate-900 border-slate-900 text-white hover:bg-slate-800'"
+          class="w-full md:w-auto px-5 py-3 border text-xs font-black uppercase tracking-widest transition-all rounded-none inline-flex items-center justify-center gap-2 shrink-0 select-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.1)]">
+          <span class="material-symbols-outlined text-sm font-bold">
+            {{ currentVideo.completado ? 'check_circle' : 'circle' }}
+          </span>
+          <span>{{ currentVideo.completado ? 'Completado' : 'Marcar como completado' }}</span>
+        </button>
+      </div>
+
+      <!-- Accordion Section (Replaces Tabs) -->
+      <div class="space-y-4">
+        
+        <!-- Accordion 1: Materiales de Apoyo -->
+        <div class="border border-slate-200 bg-white shadow-[4px_4px_0px_0px_rgba(15,23,42,0.03)]">
+          <button 
+            (click)="activeTab = (activeTab === 'materiales' ? '' : 'materiales')" 
+            class="w-full px-5 py-4 flex items-center justify-between bg-slate-50 hover:bg-slate-100/75 transition-colors border-b border-slate-200">
+            <span class="text-xs uppercase tracking-widest font-black flex items-center gap-2 text-slate-900">
+              <span class="material-symbols-outlined text-sm">download</span>
+              <span>Materiales de Apoyo</span>
+            </span>
+            <span class="material-symbols-outlined text-slate-500 transition-transform duration-200" [ngClass]="{'rotate-180': activeTab === 'materiales'}">
+              keyboard_arrow_down
+            </span>
+          </button>
+          
+          <div *ngIf="activeTab === 'materiales'" class="p-4 sm:p-6 bg-white border-t border-slate-100 animate-in fade-in slide-in-from-top-1 duration-200">
+            <div class="space-y-4">
+              <ng-container *ngFor="let mod of curso.modulos">
+                <div *ngIf="mod.materiales.length > 0" class="border border-slate-200 p-4 bg-slate-50/50">
+                  <span class="text-[9px] font-black text-indigo-600 bg-indigo-50 border border-indigo-200 px-2.5 py-1 uppercase tracking-widest mb-3 inline-block">
+                    Módulo {{ mod.orden }}: {{ mod.nombre }}
+                  </span>
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+                    <div 
+                      *ngFor="let mat of mod.materiales" 
+                      class="border border-slate-200 bg-white p-3 flex justify-between items-center hover:border-slate-400 transition-colors rounded-none group">
+                      <div class="flex items-center gap-2.5 overflow-hidden">
+                        <div [ngClass]="{
+                          'bg-red-50 text-red-700 border-red-100': getCleanFileType(mat.tipoArchivo) === 'PDF',
+                          'bg-blue-50 text-blue-700 border-blue-100': getCleanFileType(mat.tipoArchivo) === 'DOC',
+                          'bg-amber-50 text-amber-700 border-amber-100': getCleanFileType(mat.tipoArchivo) === 'IMG',
+                          'bg-slate-50 text-slate-700 border-slate-100': getCleanFileType(mat.tipoArchivo) !== 'PDF' && getCleanFileType(mat.tipoArchivo) !== 'DOC' && getCleanFileType(mat.tipoArchivo) !== 'IMG'
+                        }" class="w-9 h-9 border flex items-center justify-center rounded-none shrink-0">
+                          <span class="material-symbols-outlined text-base">description</span>
+                        </div>
+                        <div class="overflow-hidden">
+                          <h4 class="text-xs font-bold text-slate-900 truncate uppercase tracking-tight group-hover:text-indigo-600 transition-colors">{{ mat.nombre }}</h4>
+                          <span class="text-[9px] text-slate-400 font-mono">
+                            {{ getCleanFileType(mat.tipoArchivo) }} • {{ formatBytes(mat.pesoBytes) }}
+                          </span>
+                        </div>
+                      </div>
+                      <button 
+                        (click)="descargarMaterial(mat.archivoUrl, mat.nombre, mat.tipoArchivo)"
+                        class="p-2 border border-slate-200 hover:border-slate-900 text-slate-700 hover:bg-slate-50 transition-colors shrink-0">
+                        <span class="material-symbols-outlined text-sm block">download</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+              
+              <!-- Empty state for materials -->
+              <div class="text-center py-12 text-slate-400 border border-dashed border-slate-200 bg-slate-50/50" *ngIf="!isLoading && curso.modulos.length === 0">
+                <span class="material-symbols-outlined text-3xl mb-1.5 text-slate-300">folder_open</span>
+                <p class="text-xs">No hay materiales de descarga subidos en este curso.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion 2: Información del Curso -->
+        <div class="border border-slate-200 bg-white shadow-[4px_4px_0px_0px_rgba(15,23,42,0.03)]">
+          <button 
+            (click)="activeTab = (activeTab === 'info' ? '' : 'info')" 
+            class="w-full px-5 py-4 flex items-center justify-between bg-slate-50 hover:bg-slate-100/75 transition-colors border-b border-slate-200">
+            <span class="text-xs uppercase tracking-widest font-black flex items-center gap-2 text-slate-900">
+              <span class="material-symbols-outlined text-sm">info</span>
+              <span>Información del Curso</span>
+            </span>
+            <span class="material-symbols-outlined text-slate-500 transition-transform duration-200" [ngClass]="{'rotate-180': activeTab === 'info'}">
+              keyboard_arrow_down
+            </span>
+          </button>
+          
+          <div *ngIf="activeTab === 'info'" class="p-4 sm:p-6 bg-white border-t border-slate-100 text-xs leading-relaxed text-slate-605 animate-in fade-in slide-in-from-top-1 duration-200">
+            <h3 class="text-xs font-black text-slate-900 uppercase tracking-widest mb-2">Sobre este curso</h3>
+            <p>{{ curso.descripcion }}</p>
+            
+            <div class="border border-slate-150 p-4 bg-slate-50 mt-6" *ngIf="currentVideo">
+              <h4 class="font-bold text-slate-800 uppercase mb-1">Detalles de la sesión:</h4>
+              <p class="text-slate-400 font-mono text-[9px]">ID del recurso: {{ currentVideo.youtubeId }} | Duración: {{ currentVideo.duracionSegundos }} segundos.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion 3: Certificado Oficial -->
+        <div class="border border-slate-200 bg-white shadow-[4px_4px_0px_0px_rgba(15,23,42,0.03)]">
+          <button 
+            (click)="activeTab = (activeTab === 'certificado' ? '' : 'certificado')" 
+            class="w-full px-5 py-4 flex items-center justify-between bg-slate-50 hover:bg-slate-100/75 transition-colors border-b border-slate-200">
+            <span class="text-xs uppercase tracking-widest font-black flex items-center gap-2 text-slate-900">
+              <span class="material-symbols-outlined text-sm text-amber-500">workspace_premium</span>
+              <span>Certificado Oficial</span>
+            </span>
+            <span class="material-symbols-outlined text-slate-500 transition-transform duration-200" [ngClass]="{'rotate-180': activeTab === 'certificado'}">
+              keyboard_arrow_down
+            </span>
+          </button>
+          
+          <div *ngIf="activeTab === 'certificado'" class="p-4 sm:p-6 bg-white border-t border-slate-100 animate-in fade-in slide-in-from-top-1 duration-200">
+            <!-- Unlocked State: single column on mobile, row on md -->
+            <div 
+              *ngIf="courseCompleted" 
+              class="border-2 border-slate-900 p-6 sm:p-8 bg-slate-950 text-white rounded-none shadow-[6px_6px_0px_0px_rgba(99,102,241,0.15)] flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
+              <div class="absolute -right-16 -top-16 w-36 h-36 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+              <div class="relative z-10 space-y-2">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="material-symbols-outlined text-amber-400 text-xl">workspace_premium</span>
+                  <span class="text-[9px] font-black text-amber-400 uppercase tracking-widest">¡Felicitaciones! Curso completado</span>
+                </div>
+                <h3 class="text-base font-black text-white uppercase tracking-tight leading-none">Tu Certificado está Listo</h3>
+                <p class="text-slate-400 text-xs">Código de validación oficial: <strong class="font-mono text-amber-200">{{ certificateCode }}</strong></p>
+              </div>
+              <button
+                (click)="descargarCertificado()"
+                class="w-full md:w-auto px-5 py-3 bg-white text-slate-950 text-xs font-bold uppercase tracking-widest hover:bg-slate-100 transition-colors rounded-none shadow-[4px_4px_0px_0px_rgba(255,255,255,0.15)] flex items-center justify-center gap-2 shrink-0 border border-white relative z-10">
+                <span class="material-symbols-outlined text-sm">download</span>
+                <span>Descargar PDF</span>
+              </button>
+            </div>
+
+            <!-- Locked State -->
+            <div *ngIf="!courseCompleted" class="border border-dashed border-slate-300 p-6 sm:p-8 text-center bg-slate-50/50">
+              <span class="material-symbols-outlined text-4xl text-slate-300 mb-2">lock</span>
+              <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Certificado Bloqueado</h3>
+              <p class="text-slate-400 text-xs mt-2 max-w-md mx-auto leading-relaxed">
+                Debes reproducir y marcar como vistos todos los videos contenidos en los distintos módulos del curso para habilitar y descargar tu certificación.
+              </p>
+              
+              <!-- Completion indicator lock check -->
+              <div class="mt-4 max-w-xs mx-auto">
+                <div class="flex justify-between text-[10px] text-slate-500 mb-1">
+                  <span>Progreso de clases</span>
+                  <span>{{ completedVideos }} / {{ totalVideos }} ({{ completionPercentage }}%)</span>
+                </div>
+                <div class="w-full bg-slate-200 h-2 rounded-none overflow-hidden border border-slate-300">
+                  <div class="bg-indigo-600 h-full rounded-none transition-all" [style.width.%]="completionPercentage"></div>
+                </div>
+              </div>
+            </div>
+      </div>
+
+    </div>
+
+    <!-- Right Section: Course Playlist — full width on mobile, fixed w-80 on lg -->
+    <div class="w-full lg:w-80 lg:shrink-0 space-y-6">
+      
+      <!-- Content Panel -->
+      <div class="border border-slate-200 bg-white shadow-[4px_4px_0px_0px_rgba(15,23,42,0.03)] flex flex-col">
+        <div class="p-4 border-b border-slate-200 bg-slate-50">
+          <h3 class="text-xs font-black text-slate-900 uppercase tracking-widest">Contenido del Curso</h3>
+          <p class="text-[9px] text-slate-400 mt-0.5">Progreso y reproducción de clases</p>
+        </div>
+
+        <!-- Module collapsible rows: max-h + scroll on mobile -->
+        <div class="divide-y divide-slate-200 max-h-64 lg:max-h-none overflow-y-auto">
+          <div *ngFor="let mod of curso.modulos" class="p-4 space-y-3">
+            <div class="flex items-start gap-2">
+              <span class="text-[8px] font-black text-indigo-700 bg-indigo-50 border border-indigo-150 px-1.5 py-0.5 shrink-0 select-none uppercase tracking-wider">
+                Mód {{ mod.orden }}
+              </span>
+              <span class="block text-xs font-bold text-slate-900 uppercase tracking-tight leading-tight">
+                {{ mod.nombre }}
+              </span>
+            </div>
+            
+            <!-- Videos list -->
+            <div class="space-y-1.5">
+              <button 
+                *ngFor="let vid of mod.videos"
+                (click)="playVideo(vid)"
+                [ngClass]="currentVideo?.id === vid.id ? 'bg-indigo-50 text-indigo-900 border-indigo-300' : 'bg-white text-slate-600 border-slate-200/60 hover:bg-slate-50'"
+                class="w-full text-left p-3 border text-xs flex items-center justify-between gap-3 transition-colors rounded-none group relative">
+                
+                <!-- Left accent border for active state -->
+                <div *ngIf="currentVideo?.id === vid.id" class="absolute left-0 top-0 bottom-0 w-1 bg-indigo-600"></div>
+
+                <div class="flex items-center gap-2 overflow-hidden">
+                  <span 
+                    [ngClass]="vid.completado ? 'text-emerald-600 font-bold' : 'text-slate-300 group-hover:text-slate-400'"
+                    class="material-symbols-outlined text-sm font-semibold block shrink-0 select-none">
+                    {{ vid.completado ? 'check_circle' : 'circle' }}
+                  </span>
+                  <span class="truncate font-semibold uppercase tracking-tight block">{{ vid.titulo }}</span>
+                </div>
+                <span class="text-[9px] font-mono text-slate-400 shrink-0">
+                  {{ vid.duracionSegundos ? (vid.duracionSegundos / 60 | number:'1.0-0') + 'm' : '' }}
+                </span>
+              </button>
+              
+              <!-- Empty state for module videos -->
+              <p *ngIf="mod.videos.length === 0" class="text-[10px] text-slate-400 italic pl-3">No hay videos en este módulo.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    
+  </div>
+
+</div>

@@ -1,0 +1,188 @@
+<div class="space-y-6 font-body">
+  <div class="border border-slate-200 p-4 sm:p-6 bg-white shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)]">
+    <div class="flex flex-col gap-4">
+      <div>
+        <h1 class="text-2xl font-black uppercase text-slate-900">Auditoría de Seguridad</h1>
+        <p class="text-xs text-slate-500 mt-1">Login, eventos del sistema y trazabilidad operativa del sprint 12.</p>
+      </div>
+      <!-- Tab buttons: horizontal scroll on mobile -->
+      <div class="overflow-x-auto">
+        <div class="flex min-w-max gap-2">
+          <button type="button" (click)="setTab('login')" class="px-4 py-2 text-[10px] font-black uppercase tracking-widest border rounded-none whitespace-nowrap"
+            [ngClass]="activeTab === 'login' ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-200'">
+            Login
+          </button>
+          <button type="button" (click)="setTab('eventos')" class="px-4 py-2 text-[10px] font-black uppercase tracking-widest border rounded-none whitespace-nowrap"
+            [ngClass]="activeTab === 'eventos' ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-200'">
+            Sistema
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards: 2-col on mobile, 4-col on md -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="border border-slate-200 bg-white p-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)]">
+      <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Logins exitosos</p>
+      <h3 class="text-3xl font-black text-slate-900 mt-2">{{ totalExitosos }}</h3>
+    </div>
+    <div class="border border-slate-200 bg-white p-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)]">
+      <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Logins fallidos</p>
+      <h3 class="text-3xl font-black text-slate-900 mt-2">{{ totalFallidos }}</h3>
+    </div>
+    <div class="border border-slate-200 bg-white p-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)]">
+      <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Usuarios bloqueados</p>
+      <h3 class="text-3xl font-black text-slate-900 mt-2">{{ usuariosBloqueados }}</h3>
+    </div>
+    <div class="border border-slate-200 bg-white p-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)]">
+      <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Eventos del sistema</p>
+      <h3 class="text-3xl font-black text-slate-900 mt-2">{{ eventosSistema.length }}</h3>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="border border-slate-200 bg-white p-8 text-center">
+    <span class="text-xs font-black uppercase tracking-widest text-slate-500">Cargando auditoría...</span>
+  </div>
+
+  <div *ngIf="errorMsg" class="border border-red-200 bg-red-50 p-4 text-xs text-red-800 font-semibold">
+    {{ errorMsg }}
+  </div>
+
+  <div *ngIf="!isLoading && !errorMsg">
+    <!-- Summary tables: stack on mobile, side-by-side on xl -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
+      <!-- Last accesses table -->
+      <div class="border border-slate-200 bg-white overflow-hidden shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)]">
+        <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+          <h2 class="text-xs font-black uppercase tracking-widest text-slate-500">Últimos accesos</h2>
+          <span class="text-[10px] font-semibold text-slate-400">Usuario / IP / Navegador / Fecha / Resultado</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs min-w-max">
+            <thead class="bg-slate-50 text-slate-500 uppercase tracking-widest font-black">
+              <tr>
+                <th class="p-3">Usuario</th>
+                <th class="p-3">IP</th>
+                <th class="p-3">Navegador</th>
+                <th class="p-3">Fecha</th>
+                <th class="p-3">Resultado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of ultimosAccesos" class="border-t border-slate-100">
+                <td class="p-3">{{ item.correo || ('Usuario #' + item.usuarioId) }}</td>
+                <td class="p-3">{{ item.ip || '-' }}</td>
+                <td class="p-3">{{ item.userAgent || '-' }}</td>
+                <td class="p-3 whitespace-nowrap">{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="p-3">
+                  <span [ngClass]="item.exitoso ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : 'text-red-700 bg-red-50 border-red-200'"
+                    class="px-2 py-1 border text-[10px] font-black uppercase tracking-widest">
+                    {{ item.exitoso ? 'Exitoso' : 'Fallido' }}
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="ultimosAccesos.length === 0">
+                <td colspan="5" class="p-6 text-center text-slate-500">No hay registros de login.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Last events table -->
+      <div class="border border-slate-200 bg-white overflow-hidden shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)]">
+        <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+          <h2 class="text-xs font-black uppercase tracking-widest text-slate-500">Últimos eventos</h2>
+          <span class="text-[10px] font-semibold text-slate-400">Usuario / Módulo / Acción / Fecha</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs min-w-max">
+            <thead class="bg-slate-50 text-slate-500 uppercase tracking-widest font-black">
+              <tr>
+                <th class="p-3">Usuario</th>
+                <th class="p-3">Módulo</th>
+                <th class="p-3">Acción</th>
+                <th class="p-3">Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of ultimosEventos" class="border-t border-slate-100">
+                <td class="p-3">{{ item.usuarioId || '-' }}</td>
+                <td class="p-3 font-bold uppercase">{{ item.modulo }}</td>
+                <td class="p-3">{{ item.accion }}</td>
+                <td class="p-3 whitespace-nowrap">{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+              </tr>
+              <tr *ngIf="ultimosEventos.length === 0">
+                <td colspan="4" class="p-6 text-center text-slate-500">No hay eventos registrados.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Login full table -->
+    <div *ngIf="activeTab === 'login'" class="border border-slate-200 bg-white overflow-hidden shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)]">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs min-w-max">
+          <thead class="bg-slate-50 text-slate-500 uppercase tracking-widest font-black">
+            <tr>
+              <th class="p-3">Fecha</th>
+              <th class="p-3">Correo</th>
+              <th class="p-3">IP</th>
+              <th class="p-3">Estado</th>
+              <th class="p-3">Motivo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of loginAuditoria" class="border-t border-slate-100">
+              <td class="p-3 whitespace-nowrap">{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td class="p-3">{{ item.correo || ('Usuario #' + item.usuarioId) }}</td>
+              <td class="p-3">{{ item.ip || '-' }}</td>
+              <td class="p-3">
+                <span [ngClass]="item.exitoso ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : 'text-red-700 bg-red-50 border-red-200'"
+                  class="px-2 py-1 border text-[10px] font-black uppercase tracking-widest">
+                  {{ item.exitoso ? 'Exitoso' : 'Fallido' }}
+                </span>
+              </td>
+              <td class="p-3">{{ item.motivo || '-' }}</td>
+            </tr>
+            <tr *ngIf="loginAuditoria.length === 0">
+              <td colspan="5" class="p-6 text-center text-slate-500">No hay registros de login.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab: Eventos full table -->
+    <div *ngIf="activeTab === 'eventos'" class="border border-slate-200 bg-white overflow-hidden shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)]">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs min-w-max">
+          <thead class="bg-slate-50 text-slate-500 uppercase tracking-widest font-black">
+            <tr>
+              <th class="p-3">Fecha</th>
+              <th class="p-3">Módulo</th>
+              <th class="p-3">Acción</th>
+              <th class="p-3">Usuario</th>
+              <th class="p-3">Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of eventosSistema" class="border-t border-slate-100">
+              <td class="p-3 whitespace-nowrap">{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td class="p-3 font-bold uppercase">{{ item.modulo }}</td>
+              <td class="p-3">{{ item.accion }}</td>
+              <td class="p-3">{{ item.usuarioId || '-' }}</td>
+              <td class="p-3">{{ item.descripcion || '-' }}</td>
+            </tr>
+            <tr *ngIf="eventosSistema.length === 0">
+              <td colspan="5" class="p-6 text-center text-slate-500">No hay eventos registrados.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

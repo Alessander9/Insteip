@@ -38,7 +38,7 @@ public class LoginAuditoria {
     @Column(length = 255)
     private String motivo;
 
-    @Column(name = "fecha_login", nullable = false, updatable = false)
+    @Column(name = "fecha", nullable = false, updatable = false)
     @Builder.Default
     private LocalDateTime fecha = LocalDateTime.now();
 }

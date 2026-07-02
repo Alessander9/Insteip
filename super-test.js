@@ -2,6 +2,13 @@ const { chromium } = require('playwright');
 const path = require('path');
 const fs = require('fs');
 
+// Ensure dummy test-material.pdf exists in root
+const uploadFilePath = path.join(__dirname, 'test-material.pdf');
+if (!fs.existsSync(uploadFilePath)) {
+  console.log('   - Generando archivo test-material.pdf temporal para la prueba...');
+  fs.writeFileSync(uploadFilePath, '%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << >> /Contents 4 0 R >>\nendobj\n4 0 obj\n<< /Length 43 >>\nstream\nBT /F1 12 Tf 70 700 Td (E2E Test Dummy PDF) Tj ET\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f \n0000000009 00000 n \n0000000056 00000 n \n0000000111 00000 n \n0000000212 00000 n \ntrailer\n<< /Size 5 /Root 1 0 R >>\nstartxref\n306\n%%EOF');
+}
+
 async function runSuperTest() {
   console.log('================================================================');
   console.log('            INSTEIP - INICIANDO SUPER TEST AUTOMATIZADO          ');
@@ -33,6 +40,7 @@ async function runSuperTest() {
   });
 
   try {
+    let createdMaterialId;
     // ------------------------------------------------------------------
     // STEP 1: LOGIN AS ADMINISTRATOR
     // ------------------------------------------------------------------
@@ -60,37 +68,37 @@ async function runSuperTest() {
 
     // Click "Cursos" rapid access link
     console.log('   - Click en Acceso Rápido: Cursos...');
-    await page.click('a:has-text("Cursos")');
+    await page.click('a:has-text("Cursos"):visible');
     await page.waitForURL('**/dashboard/cursos');
     
     // Go back to Dashboard Home
     console.log('   - Regresando a Dashboard...');
-    await page.click('a[routerLink="/dashboard"]:has-text("Dashboard")');
+    await page.click('a[routerLink="/dashboard"]:has-text("Dashboard"):visible');
     await page.waitForSelector('h1:has-text("Campus Virtual INSTEIP")');
 
     // Click "Alumnos" (Matricular) rapid access link
     console.log('   - Click en Acceso Rápido: Matricular...');
-    await page.click('a:has-text("Matricular")');
+    await page.click('a:has-text("Matricular"):visible');
     await page.waitForURL('**/dashboard/alumnos');
     
     // Go back to Dashboard Home
     console.log('   - Regresando a Dashboard...');
-    await page.click('a[routerLink="/dashboard"]:has-text("Dashboard")');
+    await page.click('a[routerLink="/dashboard"]:has-text("Dashboard"):visible');
     await page.waitForSelector('h1:has-text("Campus Virtual INSTEIP")');
 
     // Click "Auditoría" (Seguridad) rapid access link
     console.log('   - Click en Acceso Rápido: Seguridad...');
-    await page.click('a:has-text("Seguridad")');
+    await page.click('a:has-text("Seguridad"):visible');
     await page.waitForURL('**/dashboard/auditoria');
     
     // Go back to Dashboard Home
     console.log('   - Regresando a Dashboard...');
-    await page.click('a[routerLink="/dashboard"]:has-text("Dashboard")');
+    await page.click('a[routerLink="/dashboard"]:has-text("Dashboard"):visible');
     await page.waitForSelector('h1:has-text("Campus Virtual INSTEIP")');
 
     // Click "Sistema" (Monitoreo) rapid access link
     console.log('   - Click en Acceso Rápido: Monitoreo...');
-    await page.click('a:has-text("Monitoreo")');
+    await page.click('a:has-text("Monitoreo"):visible');
     await page.waitForURL('**/dashboard/sistema');
     
     console.log('✔ Accesos rápidos del panel general verificados.');
@@ -99,7 +107,7 @@ async function runSuperTest() {
     // STEP 3: TEST ALUMNOS VIEW AND BUTTONS (CRUD)
     // ------------------------------------------------------------------
     console.log('\n[3/12] Iniciando pruebas en Gestión de Alumnos...');
-    await page.click('a[routerLink="/dashboard/alumnos"]');
+    await page.click('a[routerLink="/dashboard/alumnos"]:visible');
     await page.waitForURL('**/dashboard/alumnos');
     await page.waitForSelector('h1:has-text("Gestión de Alumnos")');
 
@@ -134,13 +142,13 @@ async function runSuperTest() {
 
     // Open detail modal
     console.log('   - Abriendo ficha detallada del alumno...');
-    await page.click('button[title="Ver Detalle"]');
+    await page.click('button[title="Ver Detalle"]:visible');
     await page.waitForSelector('h3:has-text("Ficha Detallada del Alumno")');
     await page.click('button:has-text("Cerrar Ficha")');
 
     // Open edit modal
     console.log('   - Editando datos del alumno...');
-    await page.click('button[title="Editar Alumno"]');
+    await page.click('button[title="Editar Alumno"]:visible');
     await page.waitForSelector('h3:has-text("Editar Datos del Alumno")');
     await page.fill('input[formControlName="apellidos"]', 'E2E Test Modificado');
     await page.click('button[type="submit"]');
@@ -148,9 +156,9 @@ async function runSuperTest() {
 
     // Toggle status (Deactivate / Activate)
     console.log('   - Probando alternar estado (Activo/Inactivo)...');
-    await page.click('button[title="Desactivar"]');
+    await page.click('button[title="Desactivar"]:visible');
     await page.waitForTimeout(1000);
-    await page.click('button[title="Activar"]');
+    await page.click('button[title="Activar"]:visible');
     await page.waitForTimeout(1000);
     console.log('     ✔ Alternador de estado verificado.');
 
@@ -163,7 +171,7 @@ async function runSuperTest() {
     // STEP 4: TEST CURSOS VIEW AND BUTTONS
     // ------------------------------------------------------------------
     console.log('\n[4/12] Iniciando pruebas en Gestión de Cursos...');
-    await page.click('a[routerLink="/dashboard/cursos"]');
+    await page.click('a[routerLink="/dashboard/cursos"]:visible');
     await page.waitForURL('**/dashboard/cursos');
     await page.waitForSelector('h1:has-text("Gestión de Cursos")');
 
@@ -195,7 +203,7 @@ async function runSuperTest() {
     console.log('   - Buscando curso creado para configurar temario...');
     await page.fill('input[placeholder="Buscar por nombre o descripción..."]', testCourseName);
     await page.waitForTimeout(1000);
-    await page.click('button[title="Administrar Temario y Alumnos"]');
+    await page.click('button[title="Administrar Temario y Alumnos"]:visible');
 
     await page.waitForURL('**/dashboard/cursos/**');
     console.log(`✔ Redirigido a la ficha técnica de: ${testCourseName}`);
@@ -240,9 +248,9 @@ async function runSuperTest() {
 
     // Toggle video status
     console.log('   - Alternando estado del video...');
-    await page.click('button[title="Desactivar"]');
+    await page.click('button[title="Desactivar"]:visible');
     await page.waitForTimeout(500);
-    await page.click('button[title="Activar"]');
+    await page.click('button[title="Activar"]:visible');
     await page.waitForTimeout(500);
 
     // Upload Material Inline
@@ -257,15 +265,20 @@ async function runSuperTest() {
     } else {
       throw new Error('Archivo test-material.pdf no existe.');
     }
-    await page.click('button:has-text("Subir Archivo")');
+    const [responseMaterial] = await Promise.all([
+      page.waitForResponse(res => res.url().includes('/api/materiales') && res.status() === 201),
+      page.click('button:has-text("Subir Archivo")')
+    ]);
+    const responseJsonMaterial = await responseMaterial.json();
+    createdMaterialId = responseJsonMaterial.id;
     await page.waitForSelector('h5:has-text("Guía de Pruebas Automatizadas")');
-    console.log('     ✔ Material de apoyo (PDF) cargado.');
+    console.log(`     ✔ Material de apoyo (PDF) cargado con ID: ${createdMaterialId}`);
 
     // Toggle material status
     console.log('   - Alternando estado del material...');
-    await page.click('button[title="Desactivar"]');
+    await page.click('button[title="Desactivar"]:visible');
     await page.waitForTimeout(500);
-    await page.click('button[title="Activar"]');
+    await page.click('button[title="Activar"]:visible');
     await page.waitForTimeout(500);
 
     // Edit Modulo Inline
@@ -302,9 +315,9 @@ async function runSuperTest() {
 
     // Toggle matricula status (Deactivate / Activate)
     console.log('   - Probando botón: Dar de Baja / Reactivar matrícula...');
-    await page.click('button[title="Dar de Baja"]');
+    await page.click('button[title="Dar de Baja"]:visible');
     await page.waitForTimeout(500);
-    await page.click('button[title="Reactivar"]');
+    await page.click('button[title="Reactivar"]:visible');
     await page.waitForTimeout(500);
 
     // Export matriculas CSV
@@ -322,7 +335,7 @@ async function runSuperTest() {
     // STEP 6: TEST REPORTES & CERTIFICADOS VIEW (ADMIN)
     // ------------------------------------------------------------------
     console.log('\n[6/12] Probando Reportes de Certificados (Admin)...');
-    await page.click('a[routerLink="/dashboard/certificados"]');
+    await page.click('a[routerLink="/dashboard/certificados"]:visible');
     await page.waitForURL('**/dashboard/certificados');
     await page.waitForSelector('h1:has-text("Reporte de Certificados")');
 
@@ -338,7 +351,7 @@ async function runSuperTest() {
     // STEP 7: TEST CONFIGURACIÓN (ADMIN)
     // ------------------------------------------------------------------
     console.log('\n[7/12] Probando Configuración Institucional...');
-    await page.click('a[routerLink="/dashboard/configuracion"]');
+    await page.click('a[routerLink="/dashboard/configuracion"]:visible');
     await page.waitForURL('**/dashboard/configuracion');
     await page.waitForSelector('h1:has-text("Configuración Institucional")');
 
@@ -367,7 +380,7 @@ async function runSuperTest() {
     console.log('\n[8/12] Probando Auditoría de Seguridad y Monitoreo del Sistema...');
     
     // Auditoria
-    await page.click('a[routerLink="/dashboard/auditoria"]');
+    await page.click('a[routerLink="/dashboard/auditoria"]:visible');
     await page.waitForURL('**/dashboard/auditoria');
     await page.waitForSelector('h1:has-text("Auditoría de Seguridad")');
 
@@ -380,7 +393,7 @@ async function runSuperTest() {
     await page.waitForSelector('th:has-text("IP")');
 
     // Sistema
-    await page.click('a[routerLink="/dashboard/sistema"]');
+    await page.click('a[routerLink="/dashboard/sistema"]:visible');
     await page.waitForURL('**/dashboard/sistema');
     await page.waitForSelector('h1:has-text("Monitoreo del Sistema")');
 
@@ -397,7 +410,7 @@ async function runSuperTest() {
     // STEP 9: LOGOUT ADMIN
     // ------------------------------------------------------------------
     console.log('\n[9/12] Finalizando sesión del Administrador...');
-    await page.click('button:has-text("Cerrar Sesión")');
+    await page.click('button:has-text("Cerrar Sesión"):visible');
     await page.waitForURL('**/login');
     console.log('✔ Cierre de sesión completo.');
 
@@ -425,7 +438,7 @@ async function runSuperTest() {
     console.log('\n[11/12] Probando reproductor, descargas y diplomas del estudiante...');
     
     // Visit "Mis Cursos"
-    await page.click('a[routerLink="/dashboard/mis-cursos"]');
+    await page.click('a[routerLink="/dashboard/mis-cursos"]:visible');
     await page.waitForURL('**/dashboard/mis-cursos');
     await page.waitForSelector('h1:has-text("Mis Cursos")');
 
@@ -457,10 +470,24 @@ async function runSuperTest() {
     console.log('   - Descargando material académico...');
     const [downloadMaterialStudent] = await Promise.all([
       page.waitForEvent('download'),
-      page.click('a[download]')
+      page.locator('div.group', { hasText: 'Guía de Pruebas Automatizadas' }).locator('button').click()
     ]);
     const fileMaterialPath = await downloadMaterialStudent.path();
     console.log(`     ✔ Material de apoyo descargado por Alumno en: ${fileMaterialPath}`);
+
+    // Verify HTTP 403 Forbidden on unauthorized downloads
+    console.log('   - Verificando restricción de descarga no autorizada (HTTP 403)...');
+    const token = await page.evaluate(() => localStorage.getItem('token') || sessionStorage.getItem('token'));
+    const unauthorizedResponse = await page.request.get('http://localhost:8081/api/materiales/3/download', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    console.log(`     Código retornado: ${unauthorizedResponse.status()}`);
+    if (unauthorizedResponse.status() !== 403) {
+      throw new Error(`Esperado HTTP 403 al descargar recurso no autorizado, pero se obtuvo: ${unauthorizedResponse.status()}`);
+    }
+    console.log('     ✔ Correctamente denegado con código 403 Forbidden.');
 
     // Check certificate locked state
     console.log('   - Leyendo pestaña: Certificado Oficial (Estado bloqueado)...');
@@ -475,12 +502,13 @@ async function runSuperTest() {
     // Verify unlocked state in Certificado tab
     console.log('   - Leyendo pestaña: Certificado Oficial (Estado desbloqueado)...');
     await page.waitForSelector('h3:has-text("Tu Certificado está Listo")');
+    await page.waitForSelector('strong:has-text("INS-")');
 
     // Click Download Certificate PDF
     console.log('   - Descargando diploma oficial...');
     const [downloadDiploma] = await Promise.all([
       context.waitForEvent('download'),
-      page.click('a:has-text("Descargar PDF")')
+      page.click('button:has-text("Descargar PDF"):visible')
     ]);
     const fileDiplomaPath = await downloadDiploma.path();
     console.log(`     ✔ Diploma PDF descargado correctamente en: ${fileDiplomaPath}`);
@@ -492,7 +520,7 @@ async function runSuperTest() {
 
     // Visit "Mis Certificados" student view
     console.log('   - Navegando a Mis Certificados del Estudiante...');
-    await page.click('a[routerLink="/dashboard/certificados"]');
+    await page.click('a[routerLink="/dashboard/certificados"]:visible');
     await page.waitForURL('**/dashboard/certificados');
     await page.waitForSelector('h1:has-text("Mis Certificados")');
     await page.waitForSelector(`td:has-text("${cleanCertCode}")`);
@@ -502,7 +530,7 @@ async function runSuperTest() {
     console.log('   - Probando descargar PDF desde historial...');
     const [downloadHistorial] = await Promise.all([
       context.waitForEvent('download'),
-      page.click('a[title="Descargar Certificado PDF"]')
+      page.click('button[title="Descargar Certificado PDF"]:visible')
     ]);
     const fileHistorialPath = await downloadHistorial.path();
     console.log(`     ✔ PDF descargado desde historial en: ${fileHistorialPath}`);
@@ -511,7 +539,7 @@ async function runSuperTest() {
     console.log('   - Probando validar firma desde historial (abre nueva pestaña)...');
     const [popup] = await Promise.all([
       context.waitForEvent('page'),
-      page.click('a[title="Validar Certificado"]')
+      page.click('a[title="Validar Certificado"]:visible')
     ]);
     await popup.waitForLoadState();
     await popup.waitForSelector('span:has-text("CERTIFICADO VÁLIDO")');
@@ -520,7 +548,7 @@ async function runSuperTest() {
 
     // Visit "Mi Perfil" student view
     console.log('   - Navegando a Mi Perfil...');
-    await page.click('a[routerLink="/dashboard/perfil"]');
+    await page.click('a[routerLink="/dashboard/perfil"]:visible');
     await page.waitForURL('**/dashboard/perfil');
     await page.waitForSelector('h2:has-text("Tus Logros Académicos")');
     
@@ -534,7 +562,7 @@ async function runSuperTest() {
     console.log('\n[12/12] Probando endpoint de validación pública de firmas...');
     
     // Logout student
-    await page.click('button:has-text("Cerrar Sesión")');
+    await page.click('button:has-text("Cerrar Sesión"):visible');
     await page.waitForURL('**/login');
 
     // Go to public validation URL
@@ -545,6 +573,16 @@ async function runSuperTest() {
     // Wait for certificate details card
     await page.waitForSelector('span:has-text("CERTIFICADO VÁLIDO")');
     await page.waitForSelector(`div:has-text("${cleanCertCode}")`);
+
+    // Verify specific certificate details on public gateway
+    console.log('   - Comprobando que los datos expuestos en la validación sean correctos...');
+    const studentNameVisible = await page.locator('div.col-span-2:has-text("Juan Pérez")').isVisible();
+    const courseNameVisible = await page.locator(`div.col-span-2:has-text("${testCourseName}")`).isVisible();
+    console.log(`     Datos de validación visibles - Alumno: ${studentNameVisible}, Curso: ${courseNameVisible}`);
+    if (!studentNameVisible || !courseNameVisible) {
+      throw new Error('Fallo al validar los datos del estudiante o del curso en la pasarela pública de firmas.');
+    }
+
     console.log('   ✔ Pasarela pública del campus INSTEIP respondió y validó la firma del diploma.');
 
     console.log('\n================================================================');

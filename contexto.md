@@ -15,9 +15,9 @@ Este documento recopila toda la información técnica, de negocio y de infraestr
 
 ---
 
-## 📊 2. Arquitectura de Software
+## 📊 2. Arquitectura de Software e Infraestructura Tecnológica
 
-El sistema está implementado bajo un enfoque desacoplado de cliente-servidor:
+El sistema se basa en una arquitectura desacoplada cliente-servidor:
 
 ```
 [ Frontend: Angular 18 ] <--- (HTTP REST + Bearer JWT) ---> [ Backend: Spring Boot 3 + Java 21 ]
@@ -26,15 +26,34 @@ El sistema está implementado bajo un enfoque desacoplado de cliente-servidor:
                                                           [ Base de Datos: PostgreSQL 15 ]
 ```
 
-### 📁 Estructura del Repositorio
+### 🛠️ Stack Tecnológico Completo
 
-- **`database/`**: Scripts SQL de definición de tablas e inserción de datos semilla, además del orquestador Docker Compose.
-- **`backend/`**: Código fuente de Spring Boot 3, configuración de Maven (`pom.xml`), propiedades de aplicación y suites de pruebas unitarias con JUnit/Mockito.
-- **`frontend/`**: Proyecto de Angular con componentes reactivos, enrutado dinámico, interceptores HTTP, guardianes de ruta y archivos de estilo CSS vainilla.
-- **`manual-assets/`**: Capturas de pantalla tomadas automáticamente del campus virtual en vivo.
-- **`super-test.js`**: Pruebas visuales automatizadas de extremo a extremo (E2E) con Playwright.
-- **`backend-api-super-test.js`**: Pruebas automáticas de integración de todos los endpoints REST de la API.
-- **`generate-manual.js`**: Generador automático del manual visual en HTML y PDF.
+* **Frontend:**
+  * **Framework principal:** Angular 18 (TypeScript, Componentes Reactivos, Lazy Loading).
+  * **Diseño y Estilos:** CSS vainilla para máxima flexibilidad y control, maquetado con Tailwind CSS integrado mediante CDN.
+  * **Interacción Multimedia:** API de iFrames de YouTube para la reproducción e interactividad dinámica de videos.
+* **Backend:**
+  * **Framework principal:** Spring Boot 3 (Java 21).
+  * **Persistencia de Datos:** Spring Data JPA con Hibernate.
+  * **Seguridad y Control:** Spring Security con Tokens Bearer JWT para autenticación/autorización de sesiones y auditoría de accesos.
+  * **Generador de Certificados:** OpenPDF (PDF Generation Library).
+* **Base de Datos y Almacenamiento:**
+  * **Motor Relacional:** PostgreSQL 15 (Orquestado mediante Docker y Docker Compose).
+  * **Almacenamiento Local:** Rutas absolutas normalizadas en disco local para almacenamiento de PDFs, materiales didácticos y copias de seguridad de datos.
+* **Pruebas y QA (Aseguramiento de Calidad):**
+  * **Pruebas de Frontend (E2E):** Playwright (Node.js).
+  * **Pruebas de Backend (Unitarias):** JUnit y Mockito.
+  * **Pruebas de Integración (API REST):** Script personalizado en Node.js.
+  * **Pruebas de Humo en Páginas Públicas:** Selenium WebDriver.
+
+### 📁 Estructura del Repositorio
+* **`database/`**: Scripts SQL de definición de tablas e inserción de datos semilla, además del orquestador Docker Compose.
+* **`backend/`**: Código fuente de Spring Boot 3, configuración de Maven (`pom.xml`), propiedades de aplicación y suites de pruebas unitarias con JUnit/Mockito.
+* **`frontend/`**: Proyecto de Angular con componentes reactivos, enrutado dinámico, interceptores HTTP, guardianes de ruta y archivos de estilo CSS vainilla.
+* **`manual-assets/`**: Capturas de pantalla tomadas automáticamente del campus virtual en vivo.
+* **`super-test.js`**: Pruebas visuales automatizadas de extremo a extremo (E2E) con Playwright.
+* **`backend-api-super-test.js`**: Pruebas automáticas de integración de todos los endpoints REST de la API.
+* **`generate-manual.js`**: Generador automático del manual visual en HTML y PDF.
 
 ---
 

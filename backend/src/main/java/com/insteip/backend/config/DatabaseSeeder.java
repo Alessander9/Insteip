@@ -78,7 +78,11 @@ public class DatabaseSeeder implements CommandLineRunner {
                 usuarioRepository.save(alumno);
             }
         } else {
-            // Asegurar que nombres, apellidos y suscripción premium coincidan exactamente con la demo/ejemplo
+            // Asegurar que nombres, apellidos, suscripción premium y contraseñas coincidan exactamente con el super-test
+            usuarioRepository.findByCorreo("admin@insteip.com").ifPresent(admin -> {
+                admin.setPasswordHash(passwordEncoder.encode("Admin123!"));
+                usuarioRepository.save(admin);
+            });
             usuarioRepository.findByCorreo("juan.perez@insteip.com").ifPresent(juan -> {
                 boolean changed = false;
                 if (!"Juan".equals(juan.getNombres()) || !"Pérez".equals(juan.getApellidos())) {
@@ -90,13 +94,11 @@ public class DatabaseSeeder implements CommandLineRunner {
                         .filter(n -> n.getNombre().equals("PREMIUM"))
                         .findFirst()
                         .orElse(null);
-                if (juan.getNivelSuscripcion() == null && premium != null) {
+                if (premium != null) {
                     juan.setNivelSuscripcion(premium);
-                    changed = true;
                 }
-                if (changed) {
-                    usuarioRepository.save(juan);
-                }
+                juan.setPasswordHash(passwordEncoder.encode("Alumno123!"));
+                usuarioRepository.save(juan);
             });
         }
 

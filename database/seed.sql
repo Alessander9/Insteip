@@ -212,11 +212,12 @@ INSERT INTO videos (modulo_id, titulo, descripcion, youtube_url, youtube_id, dur
 -- =========================================================================
 -- 9. SEED: materiales (Mejorado: Asociados a Módulos)
 -- =========================================================================
-INSERT INTO materiales (modulo_id, nombre, archivo_url, tipo_archivo, peso_bytes) VALUES
+INSERT INTO materiales (modulo_id, nombre, archivo_url, archivo_interno, tipo_archivo, peso_bytes) VALUES
 (
   (SELECT id FROM modulos WHERE nombre = 'Módulo 1: Fundamentos de Angular'),
   'Guía de Instalación del Entorno (PDF)',
   'https://assets.insteip.com/materiales/guia-instalacion.pdf',
+  'guia-instalacion.pdf',
   'application/pdf',
   2548000 -- ~2.4 MB
 ),
@@ -224,6 +225,7 @@ INSERT INTO materiales (modulo_id, nombre, archivo_url, tipo_archivo, peso_bytes
   (SELECT id FROM modulos WHERE nombre = 'Módulo 1: Fundamentos de Angular'),
   'Ejercicios Resueltos - Sesión 1',
   'https://assets.insteip.com/materiales/ejercicios-s1.zip',
+  'ejercicios-s1.zip',
   'application/zip',
   1450000 -- ~1.38 MB
 ),
@@ -231,6 +233,7 @@ INSERT INTO materiales (modulo_id, nombre, archivo_url, tipo_archivo, peso_bytes
   (SELECT id FROM modulos WHERE nombre = 'Módulo 1: Iniciando con Spring Boot'),
   'Código Fuente del Hola Mundo (GitHub)',
   'https://github.com/insteip-cursos/spring-boot-hello-world',
+  'hello-world-link',
   'url',
   NULL
 );

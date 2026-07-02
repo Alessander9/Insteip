@@ -220,7 +220,30 @@ erDiagram
 
 ---
 
-## 📁 2. Estructura del Repositorio
+## 🛠️ 2. Stack Tecnológico Completo
+
+La plataforma INSTEIP utiliza un stack moderno, seguro y optimizado para el aprendizaje en línea:
+
+* **Frontend:**
+  * **Framework:** **Angular 18** (TypeScript, Componentes Reactivos, Lazy Loading, Ruteo Protegido y Gestión de Estados).
+  * **Estilos y Maquetación:** CSS Vainilla combinado con **Tailwind CSS** (integrado mediante CDN para carga rápida) para un diseño académico y moderno de alta fidelidad.
+  * **Multimedia:** Sincronización dinámica de avance con la API de iFrames de YouTube.
+* **Backend:**
+  * **Framework:** **Spring Boot 3** (Java 21) estructurado en capas limpias de Controladores, Servicios y Repositorios.
+  * **Seguridad:** **Spring Security** y Tokens Bearer JWT para autenticación, autorización basada en roles y prevención de fuerza bruta.
+  * **Generación de Archivos:** **OpenPDF** para la compilación y exportación de diplomas académicos a formato PDF.
+* **Base de Datos y Almacenamiento:**
+  * **Base de Datos:** **PostgreSQL 15** para almacenamiento relacional seguro de la información.
+  * **Almacenamiento:** Sistema de archivos del servidor para copias de seguridad de datos y materiales didácticos cargados.
+* **Automatización y Pruebas (QA):**
+  * **Pruebas E2E (UI):** Playwright (Node.js) para la validación visual y flujos interactivos completos.
+  * **Pruebas de Integración (API):** Suite personalizada en Node.js para validación masiva de endpoints REST.
+  * **Pruebas de Humo:** Selenium WebDriver para comprobaciones rápidas de portales públicos y validaciones.
+  * **Pruebas Unitarias:** JUnit y Mockito en el backend.
+
+---
+
+## 📁 3. Estructura del Repositorio
 
 El repositorio se divide en tres directorios principales y herramientas de prueba globales en la raíz:
 
@@ -241,10 +264,11 @@ El repositorio se divide en tres directorios principales y herramientas de prueb
   * [super-test.js](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/super-test.js) - Suite de pruebas visuales automatizadas de extremo a extremo (E2E) con Playwright.
   * [backend-api-super-test.js](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/backend-api-super-test.js) - Script de prueba de integración de endpoints de API REST.
   * [generate-manual.js](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/generate-manual.js) - Generador automatizado del Manual de Usuario Visual en PDF/HTML.
+  * [selenium-test.js](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/selenium-test.js) - Script de pruebas de humo y validación pública de firmas con Selenium WebDriver.
 
 ---
 
-## 🚀 3. Instrucciones de Despliegue Local
+## 🚀 4. Instrucciones de Despliegue Local
 
 Sigue estos cuatro sencillos pasos para tener todo el sistema corriendo de forma local:
 
@@ -274,7 +298,7 @@ La aplicación cliente se compilará y estará disponible en el navegador en la 
 
 ---
 
-## 🧪 4. Guía de QA y Suites de Prueba
+## 🧪 5. Guía de QA y Suites de Prueba
 
 El sistema cuenta con una cobertura integral de QA en backend y frontend para garantizar su correcto funcionamiento.
 
@@ -301,9 +325,16 @@ npm install
 node super-test.js
 ```
 
+### D. Pruebas de Humo en Páginas Públicas (Selenium)
+Para validar accesos públicos y pasarelas de validación externa de firmas con Selenium WebDriver:
+```bash
+# Correr pruebas con Selenium WebDriver
+node selenium-test.js
+```
+
 ---
 
-## 🔑 5. Cuentas Semilla y Credenciales de Prueba
+## 🔑 6. Cuentas Semilla y Credenciales de Prueba
 
 Para interactuar con la plataforma una vez desplegada localmente, puedes usar las siguientes credenciales pre-cargadas desde [seed.sql](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/database/seed.sql):
 
@@ -319,7 +350,7 @@ Para interactuar con la plataforma una vez desplegada localmente, puedes usar la
 
 ---
 
-## ⚙️ 6. Credenciales de Conexión de Base de Datos
+## ⚙️ 7. Credenciales de Conexión de Base de Datos
 * **Host:** `localhost`
 * **Puerto:** `5432`
 * **Base de Datos:** `insteip_db`

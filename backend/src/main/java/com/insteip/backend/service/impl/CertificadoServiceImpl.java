@@ -7,7 +7,7 @@ import com.insteip.backend.repository.*;
 import com.insteip.backend.service.interfaces.CertificadoService;
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
-import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -150,71 +150,143 @@ public class CertificadoServiceImpl implements CertificadoService {
         Path targetPath = Paths.get(UPLOADS_DIR).resolve(filename);
 
         // A4 landscape size
-        Document document = new Document(PageSize.A4.rotate(), 50, 50, 50, 50);
-        PdfWriter.getInstance(document, Files.newOutputStream(targetPath));
+        Document document = new Document(PageSize.A4.rotate(), 50, 50, 35, 35);
+        PdfWriter writer = PdfWriter.getInstance(document, Files.newOutputStream(targetPath));
+        writer.setPageEvent(new CertificatePageBorder());
         
         document.open();
 
-        // 1. Add borders/frame structure
-        // Let's keep a beautiful title header
-        Font titleFont = new Font(Font.HELVETICA, 28, Font.BOLD, new Color(15, 23, 42));
-        Font headerFont = new Font(Font.HELVETICA, 12, Font.BOLD, new Color(71, 85, 105));
-        Font nameFont = new Font(Font.HELVETICA, 24, Font.BOLD, new Color(15, 23, 42));
-        Font bodyFont = new Font(Font.HELVETICA, 14, Font.NORMAL, new Color(51, 65, 85));
-        Font courseFont = new Font(Font.HELVETICA, 18, Font.BOLD, new Color(15, 23, 42));
-        Font dateFont = new Font(Font.HELVETICA, 10, Font.ITALIC, new Color(100, 116, 139));
-        Font metaFont = new Font(Font.COURIER, 9, Font.BOLD, new Color(148, 163, 184));
+        Color primaryColor = new Color(0, 52, 102);     // Brand Navy Blue (#003466)
+        Color secondaryColor = new Color(0, 110, 28);   // Brand Forest Green (#006e1c)
+        Color grayColor = new Color(75, 85, 99);        // Tailwind Gray 600
+        Color lightGrayColor = new Color(156, 163, 175); // Tailwind Gray 400
+
+        Font titleFont = new Font(Font.HELVETICA, 22, Font.BOLD, primaryColor);
+        Font nameFont = new Font(Font.HELVETICA, 24, Font.BOLD, primaryColor);
+        Font bodyFont = new Font(Font.HELVETICA, 11, Font.NORMAL, grayColor);
+        Font italicBodyFont = new Font(Font.HELVETICA, 12, Font.ITALIC, grayColor);
+        Font courseFont = new Font(Font.HELVETICA, 18, Font.BOLD | Font.ITALIC, secondaryColor);
+        Font dateFont = new Font(Font.HELVETICA, 10, Font.ITALIC, grayColor);
+        Font metaFont = new Font(Font.COURIER, 8, Font.BOLD, lightGrayColor);
 
         Paragraph spacer = new Paragraph("\n");
-
-        // Header Title
-        Paragraph insteipHeader = new Paragraph("CAMPUS VIRTUAL INSTEIP", headerFont);
-        insteipHeader.setAlignment(Element.ALIGN_CENTER);
-        document.add(insteipHeader);
         document.add(spacer);
 
-        // Certificate Title
-        Paragraph mainTitle = new Paragraph("CERTIFICADO DE CULMINACIÓN", titleFont);
+        // 1. Header Section: Brand Logo & Subtitle
+        boolean hasLogo = false;
+        try {
+            // Load and align insteip-logo.png
+            Path logoPath = Paths.get("..", "frontend", "src", "assets", "insteip-logo.png").toAbsolutePath().normalize();
+            if (!Files.exists(logoPath)) {
+                logoPath = Paths.get(System.getProperty("user.dir"), "frontend", "src", "assets", "insteip-logo.png").toAbsolutePath().normalize();
+            }
+            if (Files.exists(logoPath)) {
+                Image logoImg = Image.getInstance(logoPath.toString());
+                logoImg.setAlignment(Element.ALIGN_CENTER);
+                logoImg.scaleToFit(140, 42); // Elegant sizing
+                document.add(logoImg);
+                hasLogo = true;
+            }
+        } catch (Exception e) {
+            System.err.println("Could not load branding logo in PDF: " + e.getMessage());
+        }
+
+        if (!hasLogo) {
+            Paragraph fallbackBrand = new Paragraph("INSTEIP", new Font(Font.HELVETICA, 24, Font.BOLD, primaryColor));
+            fallbackBrand.setAlignment(Element.ALIGN_CENTER);
+            document.add(fallbackBrand);
+        }
+
+        Paragraph insteipSubtitle = new Paragraph("INSTITUTO DE TECNOLOGÍA E INNOVACIÓN PROFESIONAL", new Font(Font.HELVETICA, 8, Font.BOLD, grayColor));
+        insteipSubtitle.setAlignment(Element.ALIGN_CENTER);
+        document.add(insteipSubtitle);
+        document.add(spacer);
+
+        // Solid green line divider
+        PdfPTable lineDivider = new PdfPTable(1);
+        lineDivider.setWidthPercentage(85);
+        PdfPCell lineCell = new PdfPCell();
+        lineCell.setBorder(PdfPCell.NO_BORDER);
+        lineCell.setBackgroundColor(secondaryColor);
+        lineCell.setFixedHeight(2f); // 2pt solid line
+        lineDivider.addCell(lineCell);
+        document.add(lineDivider);
+        document.add(spacer);
+
+        // 2. Certificate Body Content
+        Paragraph mainTitle = new Paragraph("CERTIFICADO DE CULMINACIÓN Y EXCELENCIA ACADÉMICA", titleFont);
         mainTitle.setAlignment(Element.ALIGN_CENTER);
         document.add(mainTitle);
         document.add(spacer);
-        document.add(spacer);
 
-        // Body Text 1
-        Paragraph certText1 = new Paragraph("Por cuanto se certifica que el estudiante", bodyFont);
+        Paragraph certText1 = new Paragraph("Se hace constar por medio del presente documento que", italicBodyFont);
         certText1.setAlignment(Element.ALIGN_CENTER);
         document.add(certText1);
         document.add(spacer);
 
-        // Student Name
         Paragraph studentName = new Paragraph(usuario.getNombres().toUpperCase() + " " + usuario.getApellidos().toUpperCase(), nameFont);
         studentName.setAlignment(Element.ALIGN_CENTER);
         document.add(studentName);
         document.add(spacer);
 
-        // Body Text 2
-        Paragraph certText2 = new Paragraph("ha cursado y aprobado satisfactoriamente todos los módulos y evaluaciones del curso:", bodyFont);
+        Paragraph certText2 = new Paragraph("ha cursado y aprobado satisfactoriamente todos los módulos y evaluaciones correspondientes al programa de estudios en:", bodyFont);
         certText2.setAlignment(Element.ALIGN_CENTER);
         document.add(certText2);
         document.add(spacer);
 
-        // Course Name
         Paragraph courseName = new Paragraph("\"" + curso.getNombre().toUpperCase() + "\"", courseFont);
         courseName.setAlignment(Element.ALIGN_CENTER);
         document.add(courseName);
         document.add(spacer);
-        document.add(spacer);
 
-        // Emit Date
+        // Date of emission
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy");
         String formattedDate = cert.getFechaEmision().format(formatter);
         Paragraph emitDate = new Paragraph("Emitido en la plataforma el día " + formattedDate + ".", dateFont);
         emitDate.setAlignment(Element.ALIGN_CENTER);
         document.add(emitDate);
-        
         document.add(spacer);
 
-        // Director Signature Section
+        // 3. Bottom Section (2 Columns: QR Validation and Signature)
+        com.lowagie.text.pdf.PdfPTable footerTable = new com.lowagie.text.pdf.PdfPTable(2);
+        footerTable.setWidthPercentage(90);
+        try {
+            footerTable.setWidths(new float[]{1.2f, 1.0f});
+        } catch (DocumentException de) {
+            // ignore
+        }
+
+        // Left cell: Validation QR and Instructions
+        com.lowagie.text.pdf.PdfPCell leftCell = new com.lowagie.text.pdf.PdfPCell();
+        leftCell.setBorder(com.lowagie.text.pdf.PdfPCell.NO_BORDER);
+        leftCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+        boolean hasQr = false;
+        try {
+            String qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=85x85&data=" 
+                    + java.net.URLEncoder.encode(cert.getUrlValidacion(), java.nio.charset.StandardCharsets.UTF_8);
+            Image qrImage = Image.getInstance(new java.net.URL(qrUrl));
+            qrImage.setAlignment(Element.ALIGN_CENTER);
+            qrImage.scaleAbsolute(65, 65);
+            leftCell.addElement(qrImage);
+            hasQr = true;
+        } catch (Exception e) {
+            System.err.println("Could not generate QR Code: " + e.getMessage());
+        }
+
+        Font qrFont = new Font(Font.HELVETICA, 7, Font.NORMAL, grayColor);
+        Paragraph qrText = new Paragraph(hasQr ? "Escanee para validar la autenticidad académica" : "[ Escanee QR para Validar en Servidor ]", qrFont);
+        qrText.setAlignment(Element.ALIGN_CENTER);
+        leftCell.addElement(qrText);
+        footerTable.addCell(leftCell);
+
+        // Right cell: Signature line & Director details
+        com.lowagie.text.pdf.PdfPCell rightCell = new com.lowagie.text.pdf.PdfPCell();
+        rightCell.setBorder(com.lowagie.text.pdf.PdfPCell.NO_BORDER);
+        rightCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        rightCell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+        rightCell.setPaddingTop(10);
+
         String cargoDir = "Director Académico";
         String firmaDirText = "Firma del Director";
 
@@ -232,34 +304,26 @@ public class CertificadoServiceImpl implements CertificadoService {
             }
         }
 
-        Paragraph directorSignature = new Paragraph("_________________________\n" + firmaDirText + "\n" + cargoDir, bodyFont);
-        directorSignature.setAlignment(Element.ALIGN_CENTER);
-        document.add(directorSignature);
+        // Draw signature divider line
+        Paragraph signLine = new Paragraph("_________________________", new Font(Font.HELVETICA, 10, Font.BOLD, primaryColor));
+        signLine.setAlignment(Element.ALIGN_CENTER);
+        rightCell.addElement(signLine);
+
+        Paragraph signText = new Paragraph(firmaDirText, new Font(Font.HELVETICA, 9, Font.BOLD, primaryColor));
+        signText.setAlignment(Element.ALIGN_CENTER);
+        rightCell.addElement(signText);
+
+        Paragraph cargoText = new Paragraph(cargoDir, new Font(Font.HELVETICA, 8, Font.NORMAL, grayColor));
+        cargoText.setAlignment(Element.ALIGN_CENTER);
+        rightCell.addElement(cargoText);
+
+        footerTable.addCell(rightCell);
+        document.add(footerTable);
         document.add(spacer);
 
-        // QR Code (Fetches from public generator API, falls back gracefully if offline)
-        try {
-            String qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=" 
-                    + java.net.URLEncoder.encode(cert.getUrlValidacion(), java.nio.charset.StandardCharsets.UTF_8);
-            Image qrImage = Image.getInstance(new java.net.URL(qrUrl));
-            qrImage.setAlignment(Element.ALIGN_CENTER);
-            document.add(qrImage);
-
-            Paragraph qrText = new Paragraph("Escanee para validar", dateFont);
-            qrText.setAlignment(Element.ALIGN_CENTER);
-            document.add(qrText);
-        } catch (Exception e) {
-            System.err.println("Could not generate QR Code: " + e.getMessage());
-            Paragraph offlineText = new Paragraph("[ Escanee QR para Validar en Servidor ]", dateFont);
-            offlineText.setAlignment(Element.ALIGN_CENTER);
-            document.add(offlineText);
-        }
-
-        document.add(spacer);
-
-        // Metadata footer
+        // Metadata footer at the very bottom
         Paragraph metaFooter = new Paragraph(
-            "CÓDIGO DE VALIDACIÓN: " + cert.getCodigo() + "  |  NÚMERO DE REGISTRO: " + cert.getNumeroRegistro() + "  |  VALIDAR EN: " + cert.getUrlValidacion(), 
+            "CÓDIGO DE VALIDACIÓN: " + cert.getCodigo() + "  |  NÚMERO DE REGISTRO: " + cert.getNumeroRegistro() + "  |  VALIDACIÓN EN LÍNEA: " + cert.getUrlValidacion(), 
             metaFont
         );
         metaFooter.setAlignment(Element.ALIGN_CENTER);
@@ -282,5 +346,27 @@ public class CertificadoServiceImpl implements CertificadoService {
                         cert.getFechaEmision()
                 ))
                 .collect(java.util.stream.Collectors.toList());
+    }
+}
+
+class CertificatePageBorder extends com.lowagie.text.pdf.PdfPageEventHelper {
+    @Override
+    public void onEndPage(com.lowagie.text.pdf.PdfWriter writer, com.lowagie.text.Document document) {
+        com.lowagie.text.pdf.PdfContentByte cb = writer.getDirectContent();
+        cb.saveState();
+        
+        // Outer border (Navy blue - #003466)
+        cb.setColorStroke(new java.awt.Color(0, 52, 102));
+        cb.setLineWidth(4f);
+        cb.rectangle(20, 20, document.getPageSize().getWidth() - 40, document.getPageSize().getHeight() - 40);
+        cb.stroke();
+        
+        // Inner border (Forest Green - #006e1c)
+        cb.setColorStroke(new java.awt.Color(0, 110, 28));
+        cb.setLineWidth(1.5f);
+        cb.rectangle(26, 26, document.getPageSize().getWidth() - 52, document.getPageSize().getHeight() - 52);
+        cb.stroke();
+        
+        cb.restoreState();
     }
 }

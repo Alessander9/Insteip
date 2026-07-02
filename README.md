@@ -261,7 +261,7 @@ Navega a la carpeta backend y ejecuta el servidor de Spring Boot:
 cd backend
 mvn spring-boot:run
 ```
-El servidor backend iniciará de forma segura en el puerto **`8081`**.
+El servidor backend iniciará de forma segura en el puerto **`8081`**. Puedes configurar una ruta absoluta personalizada para la persistencia física de archivos subidos y copias de seguridad definiendo la variable de entorno `STORAGE_PATH` (su valor por defecto es `uploads` relativo al directorio de ejecución).
 
 ### Paso 3: Ejecutar el Cliente Frontend
 Abre otra terminal, navega a la carpeta frontend, instala las dependencias e inicia el servidor de desarrollo de Angular:

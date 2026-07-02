@@ -8,7 +8,7 @@ Este documento recopila toda la información técnica, de negocio y de infraestr
 
 **INSTEIP** es una plataforma de educación en línea dirigida a estudiantes y administradores que integra:
 - Un **Catálogo de Cursos** público y privado con temarios divididos en módulos y videos de YouTube.
-- Un **Reproductor de Video Interactivo** que mide y persiste el avance de visualización del estudiante en tiempo real.
+- Un **Reproductor de Video Interactivo** que mide y persiste el avance de visualización del estudiante en tiempo real, sincronizado con la API de iFrames de YouTube para detener el registro cuando el video se pausa o finaliza.
 - Un **Generador de Certificados Digitales** en PDF con firmas de directores y códigos únicos de validación pública.
 - Un **Gestor de Pagos Manuales** donde el estudiante solicita suscripciones (`BASICO`, `INTERMEDIO`, `PREMIUM`) mediante transferencia y el administrador valida/aprueba la transacción.
 - Un **Módulo de Auditoría de Seguridad** que registra intentos de sesión, bloqueos de cuenta y acciones administrativas críticas.
@@ -72,11 +72,11 @@ La base de datos relacional de INSTEIP está diseñada en PostgreSQL y cuenta co
     - Campos: `id`, `usuario_id` (FK), `curso_id` (FK), `fecha_matricula`, `estado`.
 14. **`avance_videos`**: Seguimiento de los segundos reproducidos por video de cada alumno.
     - Campos: `id`, `usuario_id` (FK), `video_id` (FK), `ultimo_segundo`, `porcentaje_visto`, `completado`, `fecha_actualizacion`.
-15. **`avance_cursos`**: Seguimiento consolidado del porcentaje de completitud del curso.
+15. **`avance_cursos`**: Seguimiento consolidado del porcentaje de completitud del curso (actualizado de forma sincrónica al registrar avance de videos).
     - Campos: `id`, `usuario_id` (FK), `curso_id` (FK), `porcentaje_avance`, `completado`, `fecha_actualizacion`.
 16. **`certificados`**: Registro de certificados oficiales emitidos.
     - Campos: `id`, `usuario_id` (FK), `curso_id` (FK), `codigo` (UNIQUE), `archivo_pdf`, `fecha_emision`, `url_validacion`, `numero_registro`.
-17. **`plantilla_certificado`**: Configuración visual y firmas digitales del certificado del campus.
+17. **`plantilla_certificado`**: Configuración visual y firmas digitales del certificado del campus (cargadas dinámicamente en el PDF generado).
     - Campos: `id`, `nombre`, `imagen_fondo`, `firma_director`, `cargo_director`, `activo`.
 18. **`configuracion_institucion`**: Parámetros del portal educativo (enlaces de pago, contacto, logotipos).
     - Campos: `id`, `nombre_institucion`, `logo_url`, `correo_contacto`, `telefono`, `qr_yape`, `qr_plin`, `paypal_url`.
@@ -91,8 +91,9 @@ El backend expone servicios REST seguros usando **Spring Security** y **JWT** en
 - **Filtros JWT**: Extrae el token de la cabecera `Authorization: Bearer <token>` y valida la firma.
 - **Control de Fuerza Bruta**: Incrementa `intentos_fallidos` en inicios de sesión incorrectos. Al llegar a 5 intentos consecutivos erróneos, bloquea la cuenta estableciendo `bloqueado_hasta` por 15 minutos.
 - **Acceso Autorizado**: Solo los usuarios con rol `ADMINISTRADOR` pueden consumir las rutas `/api/usuarios`, `/api/cursos` (edición), `/api/sistema`, `/api/auditoria` y `/api/configuracion`.
-- **Descargas Protegidas**: El endpoint de descarga de materiales didácticos (`/api/materiales/{id}/download`) verifica mediante tokens que el usuario esté logueado y tenga una matrícula activa en el curso al que pertenece el recurso.
-- **Generador de Certificados**: Genera documentos PDF apaisados (formato A4 landscape) con diseño institucional y firmas dinámicas utilizando OpenPDF, asignando una URL de validación pública accesible por terceros.
+- **Descargas Protegidas**: El endpoint de descarga de materiales didácticos (`/api/materiales/{id}/download`) verifica mediante tokens que el usuario esté logueado y tenga una matrícula activa en el curso al que pertenece el recurso, retornando un error `403 Forbidden` en caso de accesos no autorizados.
+- **Generador de Certificados**: Genera documentos PDF apaisados (formato A4 landscape) con diseño institucional y firmas dinámicas desde base de datos (`plantilla_certificado`) utilizando OpenPDF, asignando una URL de validación pública accesible por terceros.
+- **Almacenamiento Parametrizado**: Todas las rutas físicas para la persistencia de descargas, certificados y respaldos se definen unificadamente mediante la propiedad `application.storage.path` con resolución de rutas absolutas normalizadas.
 
 ---
 

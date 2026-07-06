@@ -16,6 +16,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
@@ -42,6 +43,8 @@ class MaterialServiceImplTest {
     @Mock private UsuarioRepository usuarioRepository;
     @Mock private MatriculaRepository matriculaRepository;
     @Mock private AuditoriaService auditoriaService;
+    
+    @InjectMocks
     private MaterialServiceImpl materialService;
 
     private String previousUserDir;
@@ -52,12 +55,6 @@ class MaterialServiceImplTest {
         previousUserDir = System.getProperty("user.dir");
         tempWorkspace = Files.createTempDirectory("insteip-material-tests");
         System.setProperty("user.dir", tempWorkspace.toString());
-        materialService = new MaterialServiceImpl();
-        ReflectionTestUtils.setField(materialService, "materialRepository", materialRepository);
-        ReflectionTestUtils.setField(materialService, "moduloRepository", moduloRepository);
-        ReflectionTestUtils.setField(materialService, "usuarioRepository", usuarioRepository);
-        ReflectionTestUtils.setField(materialService, "matriculaRepository", matriculaRepository);
-        ReflectionTestUtils.setField(materialService, "auditoriaService", auditoriaService);
         ReflectionTestUtils.setField(materialService, "storagePathSetting", tempWorkspace.resolve("uploads").toString());
         materialService.init();
     }

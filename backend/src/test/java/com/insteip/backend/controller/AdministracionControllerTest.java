@@ -1,0 +1,166 @@
+package com.insteip.backend.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.insteip.backend.dto.*;
+import com.insteip.backend.security.SecurityConfig;
+import com.insteip.backend.security.JwtAuthenticationFilter;
+import com.insteip.backend.service.interfaces.*;
+import com.insteip.backend.repository.*;
+import com.insteip.backend.entity.Certificado;
+import com.insteip.backend.entity.Usuario;
+import com.insteip.backend.entity.Curso;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(
+    controllers = {
+        UsuarioController.class,
+        MatriculaController.class,
+        PagoController.class,
+        CertificadoController.class,
+        ReportesController.class,
+        AuditoriaController.class,
+        EventoSistemaController.class,
+        ConfiguracionController.class
+    },
+    excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
+                SecurityConfig.class,
+                JwtAuthenticationFilter.class
+        })
+    }
+)
+@AutoConfigureMockMvc(addFilters = false)
+class AdministracionControllerTest {
+
+    @Autowired private MockMvc mockMvc;
+    @Autowired private ObjectMapper objectMapper;
+
+    @MockBean private UsuarioService usuarioService;
+    @MockBean private MatriculaService matriculaService;
+    @MockBean private CertificadoService certificadoService;
+    @MockBean private AuditoriaService auditoriaService;
+    @MockBean private ConfiguracionService configuracionService;
+
+    // Direct repository mocks autowired by controllers
+    @MockBean private UsuarioRepository usuarioRepository;
+    @MockBean private MatriculaRepository matriculaRepository;
+    @MockBean private CertificadoRepository certificadoRepository;
+    @MockBean private CursoRepository cursoRepository;
+    @MockBean private PagoRepository pagoRepository;
+
+    // --- USUARIO CONTROLLER ---
+
+    @Test
+    void listarAlumnos_shouldReturnEmptyPage() throws Exception {
+        when(usuarioService.listarAlumnos(any(), any())).thenReturn(org.springframework.data.domain.Page.empty());
+
+        mockMvc.perform(get("/api/usuarios"))
+                .andExpect(status().isOk());
+    }
+
+    // --- MATRICULA CONTROLLER ---
+
+    @Test
+    void matricularAlumno_shouldReturnMatricula() throws Exception {
+        MatriculaRequestDTO request = new MatriculaRequestDTO(12L, 100L);
+        MatriculaResponseDTO response = new MatriculaResponseDTO(1L, 12L, "Juan", "Perez", "juan@insteip.com", 100L, "Angular", LocalDateTime.now(), true);
+
+        when(matriculaService.matricularAlumno(any(MatriculaRequestDTO.class))).thenReturn(response);
+
+        mockMvc.perform(post("/api/matriculas")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.cursoNombre").value("Angular"));
+    }
+
+    // --- PAGO CONTROLLER ---
+
+    @Test
+    void listarPagos_shouldReturnPagos() throws Exception {
+        when(pagoRepository.findByAprobadoFalse()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/pagos/pendientes"))
+                .andExpect(status().isOk());
+    }
+
+    // --- CERTIFICADO CONTROLLER ---
+
+    @Test
+    void validarCertificado_shouldReturnValidation() throws Exception {
+        Certificado cert = new Certificado();
+        cert.setId(1L);
+        cert.setCodigo("CERT-123");
+        cert.setFechaEmision(LocalDateTime.now());
+        cert.setUsuario(Usuario.builder().id(12L).nombres("Juan").apellidos("Perez").build());
+        cert.setCurso(Curso.builder().id(100L).nombre("Angular").build());
+        cert.setArchivoPdf("test.pdf");
+
+        when(certificadoService.validarCertificado("CERT-123")).thenReturn(cert);
+
+        mockMvc.perform(get("/api/certificados/validar/CERT-123"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.alumno").value("Juan Perez"));
+    }
+
+    // --- REPORTES CONTROLLER ---
+
+    @Test
+    void exportarAlumnos_shouldWriteCsv() throws Exception {
+        when(usuarioRepository.findByRolNombre("ALUMNO")).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/reportes/alumnos"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("text/csv;charset=UTF-8"));
+    }
+
+    // --- AUDITORIA CONTROLLER ---
+
+    @Test
+    void listarLoginAuditoria_shouldReturnList() throws Exception {
+        when(auditoriaService.listarLoginAuditorias(any(), any(), any())).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/auditoria/login"))
+                .andExpect(status().isOk());
+    }
+
+    // --- EVENTOS SISTEMA CONTROLLER ---
+
+    @Test
+    void listarEventosSistema_shouldReturnList() throws Exception {
+        when(auditoriaService.listarEventosSistema()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/eventos"))
+                .andExpect(status().isOk());
+    }
+
+    // --- CONFIGURACION CONTROLLER ---
+
+    @Test
+    void obtenerConfiguracion_shouldReturnConfig() throws Exception {
+        ConfiguracionResponse response = new ConfiguracionResponse(1L, "Insteip", "logo", "mail", "tel", "dir", "yape", "plin", "paypal", "#color1", "#color2");
+        when(configuracionService.obtenerConfiguracion()).thenReturn(response);
+
+        mockMvc.perform(get("/api/configuracion"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nombreInstitucion").value("Insteip"));
+    }
+}

@@ -1,0 +1,25 @@
+# Lista de Tareas: Pruebas Unitarias de Controladores REST
+
+- [x] **Fase 1: Implementación de Pruebas de Autenticación y Dashboards** (Agrupado en `AuthControllerTest.java` y `DashboardsControllerTest.java`)
+  - [x] `AuthControllerTest.java`
+  - [x] `AlumnoDashboardControllerTest.java`
+  - [x] `DocenteDashboardControllerTest.java`
+- [x] **Fase 2: Implementación de Pruebas de Contenidos y Cursos** (Agrupado en `ContenidosControllerTest.java`)
+  - [x] `CursoControllerTest.java`
+  - [x] `ModuloControllerTest.java`
+  - [x] `VideoControllerTest.java`
+  - [x] `MaterialControllerTest.java`
+- [x] **Fase 3: Implementación de Pruebas de Transacciones y Matrículas** (Agrupado en `AdministracionControllerTest.java` y `ContenidosControllerTest.java`)
+  - [x] `MatriculaControllerTest.java`
+  - [x] `PagoControllerTest.java`
+  - [x] `CertificadoControllerTest.java`
+  - [x] `AvanceControllerTest.java`
+- [x] **Fase 4: Implementación de Pruebas de Configuración y Logs** (Agrupado en `AdministracionControllerTest.java` y `DashboardsControllerTest.java`)
+  - [x] `UsuarioControllerTest.java`
+  - [x] `ReportesControllerTest.java`
+  - [x] `AuditoriaControllerTest.java`
+  - [x] `EventoSistemaControllerTest.java`
+  - [x] `ConfiguracionControllerTest.java`
+  - [x] `SistemaControllerTest.java`
+- [x] **Fase 5: Verificación de Suite de Pruebas**
+  - [x] Ejecutar compilación y ejecución de todos los tests de controladores REST.

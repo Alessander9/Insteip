@@ -66,19 +66,31 @@ export const routes: Routes = [
         path: 'cursos/:id', 
         loadComponent: () => import('./features/dashboard/cursos/curso-detalle/curso-detalle.component').then(m => m.CursoDetalleComponent), 
         canActivate: [roleGuard], 
-        data: { roles: ['ADMINISTRADOR'] } 
+        data: { roles: ['ADMINISTRADOR', 'DOCENTE'] } 
       },
       { 
         path: 'modulos/:id/videos', 
         loadComponent: () => import('./features/dashboard/videos/videos.component').then(m => m.VideosComponent), 
         canActivate: [roleGuard], 
-        data: { roles: ['ADMINISTRADOR'] } 
+        data: { roles: ['ADMINISTRADOR', 'DOCENTE'] } 
       },
       { 
         path: 'modulos/:id/materiales', 
         loadComponent: () => import('./features/dashboard/materiales/materiales.component').then(m => m.MaterialesComponent), 
         canActivate: [roleGuard], 
-        data: { roles: ['ADMINISTRADOR'] } 
+        data: { roles: ['ADMINISTRADOR', 'DOCENTE'] } 
+      },
+      { 
+        path: 'mis-cursos-docente', 
+        loadComponent: () => import('./features/dashboard/docente/mis-cursos-docente/mis-cursos-docente.component').then(m => m.MisCursosDocenteComponent), 
+        canActivate: [roleGuard], 
+        data: { roles: ['DOCENTE'] } 
+      },
+      { 
+        path: 'mis-alumnos-docente/:id', 
+        loadComponent: () => import('./features/dashboard/docente/mis-alumnos-docente/mis-alumnos-docente.component').then(m => m.MisAlumnosDocenteComponent), 
+        canActivate: [roleGuard], 
+        data: { roles: ['DOCENTE'] } 
       },
       { 
         path: 'mis-cursos', 

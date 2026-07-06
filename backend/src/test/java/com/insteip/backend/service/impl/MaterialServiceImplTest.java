@@ -59,6 +59,8 @@ class MaterialServiceImplTest {
         ReflectionTestUtils.setField(materialService, "usuarioRepository", usuarioRepository);
         ReflectionTestUtils.setField(materialService, "matriculaRepository", matriculaRepository);
         ReflectionTestUtils.setField(materialService, "auditoriaService", auditoriaService);
+        ReflectionTestUtils.setField(materialService, "storagePathSetting", tempWorkspace.resolve("uploads").toString());
+        materialService.init();
     }
 
     @AfterEach

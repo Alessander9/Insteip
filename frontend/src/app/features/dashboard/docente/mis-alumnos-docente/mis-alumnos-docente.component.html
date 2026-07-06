@@ -1,0 +1,107 @@
+<div class="space-y-8 font-body">
+  
+  <!-- Banner Header -->
+  <div class="border border-slate-200 p-8 bg-white rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-widest mb-1.5">
+        <button (click)="goBack()" class="flex items-center gap-1 hover:text-slate-900 transition-colors">
+          <span class="material-symbols-outlined text-sm">arrow_back</span>
+          <span>Regresar a cursos</span>
+        </button>
+      </div>
+      <h1 class="text-2xl font-black text-slate-900 tracking-tight uppercase leading-none truncate">
+        Estudiantes Matriculados
+      </h1>
+      <p class="text-slate-500 text-xs mt-2" *ngIf="curso">
+        Listado de alumnos inscritos en el curso: <strong class="text-slate-800 uppercase">{{ curso.nombre }}</strong>.
+      </p>
+    </div>
+    
+    <div>
+      <button 
+        (click)="goBack()" 
+        class="py-2.5 px-4 bg-white text-slate-700 hover:text-slate-900 font-bold text-xs uppercase tracking-widest hover:bg-slate-50 transition-colors rounded-none border border-slate-200 flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-sm font-bold">arrow_back</span>
+        <span>Atrás</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex flex-col items-center justify-center p-20 border border-slate-200 bg-white">
+    <span class="animate-spin inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full mb-3"></span>
+    <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Cargando listado de alumnos...</span>
+  </div>
+
+  <!-- No students state -->
+  <div *ngIf="!isLoading && estudiantes.length === 0" class="border border-slate-200 p-12 text-center bg-white">
+    <span class="material-symbols-outlined text-5xl text-slate-300 mb-2">group_off</span>
+    <h3 class="text-sm font-bold text-slate-800 uppercase">Sin Alumnos Inscritos</h3>
+    <p class="text-slate-500 text-xs mt-1.5 max-w-sm mx-auto">Actualmente no hay estudiantes matriculados en este curso.</p>
+  </div>
+
+  <!-- Students List (Table) -->
+  <div *ngIf="!isLoading && estudiantes.length > 0" class="border border-slate-200 bg-white shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-slate-50 border-b border-slate-200 text-[10px] font-black text-slate-500 uppercase tracking-wider">
+            <th class="py-4 px-6">Alumno</th>
+            <th class="py-4 px-6">Correo</th>
+            <th class="py-4 px-6">Progreso</th>
+            <th class="py-4 px-6">Estado</th>
+            <th class="py-4 px-6">Última Actividad</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 text-xs">
+          <tr 
+            *ngFor="let estudiante of estudiantes" 
+            class="hover:bg-slate-50/50 transition-colors">
+            
+            <!-- Estudiante -->
+            <td class="py-4 px-6 font-bold text-slate-900 uppercase">
+              {{ estudiante.nombres }} {{ estudiante.apellidos }}
+            </td>
+            
+            <!-- Correo -->
+            <td class="py-4 px-6 text-slate-500 font-mono">
+              {{ estudiante.correo }}
+            </td>
+            
+            <!-- Progreso -->
+            <td class="py-4 px-6">
+              <div class="flex items-center gap-3 min-w-[150px]">
+                <div class="flex-grow bg-slate-200 h-1.5 rounded-none overflow-hidden">
+                  <div 
+                    class="bg-slate-900 h-full transition-all duration-500" 
+                    [style.width.%]="estudiante.porcentajeAvance">
+                  </div>
+                </div>
+                <span class="font-bold text-slate-900 font-mono">{{ estudiante.porcentajeAvance }}%</span>
+              </div>
+            </td>
+            
+            <!-- Estado -->
+            <td class="py-4 px-6">
+              <span 
+                [ngClass]="{
+                  'bg-emerald-50 text-emerald-700 border-emerald-200': estudiante.completado,
+                  'bg-slate-100 text-slate-500 border-slate-200': !estudiante.completado
+                }"
+                class="text-[9px] font-black uppercase tracking-widest border px-2 py-0.5 rounded-none">
+                {{ estudiante.completado ? 'Completado' : 'En Curso' }}
+              </span>
+            </td>
+            
+            <!-- Última Actividad -->
+            <td class="py-4 px-6 text-slate-400">
+              {{ estudiante.fechaActualizacion | date:'dd/MM/yyyy HH:mm' }}
+            </td>
+            
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

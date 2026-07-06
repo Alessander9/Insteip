@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CursoService } from '../../../../core/services/curso.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { ModuloService } from '../../../../core/services/modulo.service';
 import { MatriculaService } from '../../../../core/services/matricula.service';
 import { AlumnoService } from '../../../../core/services/alumno.service';
@@ -16,6 +17,10 @@ import { VideoResponse, VideoRequest } from '../../../../core/models/video.model
 import { MaterialResponse } from '../../../../core/models/material.model';
 import { ReportesService } from '../../../../core/services/reportes.service';
 import { ArchivoProtegidoService } from '../../../../core/services/archivo-protegido.service';
+import { ToastService } from '../../../../core/services/toast.service';
+import { ConfirmModalComponent } from '../../../../core/components/confirm-modal/confirm-modal.component';
+import { formatBytes, getFileIcon, getCleanFileType, getFileExtension } from '../../../../core/utils/file.utils';
+import { getSubscriptionClass, formatNiveles } from '../../../../core/utils/subscription.utils';
 
 @Component({
   selector: 'app-curso-detalle',
@@ -24,7 +29,8 @@ import { ArchivoProtegidoService } from '../../../../core/services/archivo-prote
     CommonModule,
     RouterModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ConfirmModalComponent
   ],
   templateUrl: './curso-detalle.component.html',
   styleUrls: ['./curso-detalle.component.css']
@@ -41,6 +47,10 @@ export class CursoDetalleComponent implements OnInit {
   private materialService = inject(MaterialService);
   private reportesService = inject(ReportesService);
   private archivoProtegidoService = inject(ArchivoProtegidoService);
+  private toastService = inject(ToastService);
+  private authService = inject(AuthService);
+
+  isDocente = false;
 
   exportarMatriculasCSV(): void {
     this.reportesService.exportarMatriculas().subscribe({
@@ -84,6 +94,13 @@ export class CursoDetalleComponent implements OnInit {
   matriculaErrorMsg = '';
   selectedAlumnoId: number | null = null;
 
+  // Confirm modal controls
+  showConfirmModal = false;
+  confirmModalType: 'success' | 'danger' | 'info' | 'warning' = 'warning';
+  confirmModalTitle = '';
+  confirmModalMessage = '';
+  pendingAction: (() => void) | null = null;
+
   // Modals
   showModuloModal = false;
   showEditCourseModal = false;
@@ -100,31 +117,44 @@ export class CursoDetalleComponent implements OnInit {
 
   // Forms
   moduloForm: FormGroup = this.fb.group({
-    nombre: ['', [Validators.required]],
-    descripcion: ['', [Validators.required]],
-    orden: [1, [Validators.required, Validators.min(1)]],
+    nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+    descripcion: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(2000)]],
+    orden: [1, [Validators.required, Validators.min(1), Validators.max(999)]],
     estado: [true]
   });
 
   selectedSuscripcionIds: number[] = [];
 
   courseForm: FormGroup = this.fb.group({
-    nombre: ['', [Validators.required]],
-    descripcion: ['', [Validators.required]],
-    imagenPortada: [''],
+    nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+    descripcion: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(2000)]],
+    imagenPortada: ['', [Validators.pattern('^https?:\\/\\/.+$')]],
     estado: [true]
   });
 
   ngOnInit(): void {
+    this.authService.getProfile().subscribe(user => {
+      if (user && user.rol === 'DOCENTE') {
+        this.isDocente = true;
+        this.activeTab = 'modulos';
+      }
+    });
+
     this.route.paramMap.subscribe(params => {
       const idParam = params.get('id');
       if (idParam) {
         this.cursoId = Number(idParam);
         this.loadCourseData();
       } else {
-        this.router.navigate(['/dashboard/cursos']);
+        this.router.navigate([this.isDocente ? '/dashboard/mis-cursos-docente' : '/dashboard/cursos']);
       }
     });
+  }
+
+  confirmAction(): void {
+    if (this.pendingAction) {
+      this.pendingAction();
+    }
   }
 
   loadCourseData(): void {
@@ -134,16 +164,16 @@ export class CursoDetalleComponent implements OnInit {
           this.curso = data;
           this.loadModulos();
           this.loadMatriculas();
-        } catch (e) {
+        } catch (e: any) {
           console.error('Error al asignar datos de curso:', e);
-          alert('Excepción al cargar detalles: ' + e);
+          this.toastService.error('Excepción al cargar detalles: ' + e.message);
         }
       },
       error: (err) => {
         console.error('Error al obtener curso', err);
         const errMsg = err.error?.message || err.message || 'Error desconocido';
-        alert('Error al obtener los detalles del curso: ' + errMsg);
-        this.router.navigate(['/dashboard/cursos']);
+        this.toastService.error('Error al obtener los detalles del curso: ' + errMsg);
+        this.router.navigate([this.isDocente ? '/dashboard/mis-cursos-docente' : '/dashboard/cursos']);
       }
     });
   }
@@ -156,12 +186,12 @@ export class CursoDetalleComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error al listar módulos', err);
-          alert('Error al cargar módulos: ' + (err.message || err));
+          this.toastService.error('Error al cargar módulos: ' + (err.error?.message || err.message));
         }
       });
-    } catch (e) {
+    } catch (e: any) {
       console.error('Excepción en loadModulos:', e);
-      alert('Excepción en carga de módulos: ' + e);
+      this.toastService.error('Excepción en carga de módulos: ' + e.message);
     }
   }
 
@@ -173,12 +203,12 @@ export class CursoDetalleComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error al listar matrículas', err);
-          alert('Error al cargar matrículas: ' + (err.message || err));
+          this.toastService.error('Error al cargar matrículas: ' + (err.error?.message || err.message));
         }
       });
-    } catch (e) {
+    } catch (e: any) {
       console.error('Excepción en loadMatriculas:', e);
-      alert('Excepción en carga de matrículas: ' + e);
+      this.toastService.error('Excepción en carga de matrículas: ' + e.message);
     }
   }
 
@@ -232,25 +262,40 @@ export class CursoDetalleComponent implements OnInit {
     this.matriculaService.matricularAlumno(req).subscribe({
       next: () => {
         this.loadMatriculas();
+        this.toastService.success('Alumno matriculado exitosamente en el curso.');
         this.closeMatriculaModal();
       },
       error: (err) => {
         this.isMatriculaSubmitting = false;
         this.matriculaErrorMsg = err.error?.message || 'Error al matricular al alumno.';
+        this.toastService.error(this.matriculaErrorMsg);
       }
     });
   }
 
   toggleMatriculaEstado(matricula: MatriculaResponse): void {
     const nuevoEstado = !matricula.estado;
-    this.matriculaService.cambiarEstado(matricula.id, nuevoEstado).subscribe({
-      next: () => {
-        matricula.estado = nuevoEstado;
-      },
-      error: (err) => {
-        console.error('Error al cambiar estado de matrícula', err);
-      }
-    });
+    const accion = nuevoEstado ? 'Reactivar' : 'Dar de Baja';
+    
+    this.confirmModalType = nuevoEstado ? 'success' : 'danger';
+    this.confirmModalTitle = `¿${accion} Matrícula?`;
+    this.confirmModalMessage = `¿Estás seguro de que deseas ${accion.toLowerCase()} la matrícula del alumno ${matricula.alumnoNombres} ${matricula.alumnoApellidos}?`;
+    
+    this.pendingAction = () => {
+      this.matriculaService.cambiarEstado(matricula.id, nuevoEstado).subscribe({
+        next: () => {
+          matricula.estado = nuevoEstado;
+          this.toastService.success(`Matrícula de ${matricula.alumnoNombres} ${nuevoEstado ? 'reactivada' : 'dada de baja'} exitosamente.`);
+          this.showConfirmModal = false;
+        },
+        error: (err) => {
+          this.toastService.error(err.error?.message || 'Error al cambiar estado de la matrícula.');
+          this.showConfirmModal = false;
+        }
+      });
+    };
+    
+    this.showConfirmModal = true;
   }
 
   // ====== MODULO ACTIONS ======
@@ -287,18 +332,33 @@ export class CursoDetalleComponent implements OnInit {
 
   toggleModuloEstado(modulo: ModuloResponse): void {
     const nuevoEstado = !modulo.estado;
-    this.moduloService.cambiarEstado(modulo.id, nuevoEstado).subscribe({
-      next: () => {
-        modulo.estado = nuevoEstado;
-      },
-      error: (err) => {
-        console.error('Error al cambiar estado del módulo', err);
-      }
-    });
+    const accion = nuevoEstado ? 'Activar' : 'Desactivar';
+    
+    this.confirmModalType = nuevoEstado ? 'success' : 'warning';
+    this.confirmModalTitle = `¿${accion} Módulo?`;
+    this.confirmModalMessage = `¿Estás seguro de que deseas ${accion.toLowerCase()} el módulo "${modulo.nombre}"?`;
+    
+    this.pendingAction = () => {
+      this.moduloService.cambiarEstado(modulo.id, nuevoEstado).subscribe({
+        next: () => {
+          modulo.estado = nuevoEstado;
+          this.toastService.success(`Módulo "${modulo.nombre}" ${nuevoEstado ? 'activado' : 'desactivado'} exitosamente.`);
+          this.showConfirmModal = false;
+        },
+        error: (err) => {
+          this.toastService.error(err.error?.message || 'Error al cambiar estado del módulo.');
+          this.showConfirmModal = false;
+        }
+      });
+    };
+    
+    this.showConfirmModal = true;
   }
 
   onModuloSubmit(): void {
     if (this.moduloForm.invalid) {
+      this.moduloForm.markAllAsTouched();
+      this.toastService.warning('Por favor complete todos los campos requeridos del módulo correctamente.');
       return;
     }
 
@@ -320,12 +380,14 @@ export class CursoDetalleComponent implements OnInit {
             this.moduloService.cambiarEstado(this.selectedModulo!.id, this.moduloForm.value.estado).subscribe({
               next: () => {
                 this.loadModulos();
+                this.toastService.success('Módulo y su estado actualizados con éxito.');
                 this.closeModuloModal();
               },
               error: (err) => this.handleModuloError(err)
             });
           } else {
             this.loadModulos();
+            this.toastService.success('Módulo modificado con éxito.');
             this.closeModuloModal();
           }
         },
@@ -335,6 +397,7 @@ export class CursoDetalleComponent implements OnInit {
       this.moduloService.crearModulo(req).subscribe({
         next: () => {
           this.loadModulos();
+          this.toastService.success('Módulo creado con éxito.');
           this.closeModuloModal();
         },
         error: (err) => this.handleModuloError(err)
@@ -345,6 +408,7 @@ export class CursoDetalleComponent implements OnInit {
   private handleModuloError(err: any): void {
     this.isModuloSubmitting = false;
     this.moduloErrorMsg = err.error?.message || 'Error al procesar el módulo.';
+    this.toastService.error(this.moduloErrorMsg);
   }
 
   // ====== COURSE EDIT ACTIONS ======
@@ -389,7 +453,10 @@ export class CursoDetalleComponent implements OnInit {
   }
 
   onCourseSubmit(): void {
-    if (this.courseForm.invalid || !this.curso) {
+    if (!this.curso) return;
+    if (this.courseForm.invalid) {
+      this.courseForm.markAllAsTouched();
+      this.toastService.warning('Por favor complete todos los campos requeridos del curso correctamente.');
       return;
     }
 
@@ -410,12 +477,14 @@ export class CursoDetalleComponent implements OnInit {
           this.cursoService.cambiarEstado(this.cursoId, this.courseForm.value.estado).subscribe({
             next: () => {
               this.loadCourseData();
+              this.toastService.success('Curso y su estado actualizados con éxito.');
               this.closeEditCourseModal();
             },
             error: (err) => this.handleCourseError(err)
           });
         } else {
           this.loadCourseData();
+          this.toastService.success('Curso modificado con éxito.');
           this.closeEditCourseModal();
         }
       },
@@ -426,30 +495,11 @@ export class CursoDetalleComponent implements OnInit {
   private handleCourseError(err: any): void {
     this.isCourseSubmitting = false;
     this.courseErrorMsg = err.error?.message || 'Error al actualizar el curso.';
+    this.toastService.error(this.courseErrorMsg);
   }
 
-  formatNiveles(niveles: string[]): string {
-    if (!niveles || niveles.length === 0) return 'Ninguno';
-    return niveles.map(n => {
-      if (n === 'BASICO') return 'Básico';
-      if (n === 'INTERMEDIO') return 'Intermedio';
-      if (n === 'PREMIUM') return 'Premium';
-      return n;
-    }).join(' • ');
-  }
-
-  getSubscriptionClass(niveles: string[]): string {
-    if (!niveles || niveles.length === 0) {
-      return 'bg-slate-50 text-slate-700 border border-slate-200';
-    }
-    if (niveles.includes('PREMIUM')) {
-      return 'bg-[#f9e37a]/20 text-[#6d5e00] border border-[#f9e37a]/60';
-    }
-    if (niveles.includes('INTERMEDIO')) {
-      return 'bg-blue-50 text-blue-700 border border-blue-200';
-    }
-    return 'bg-slate-50 text-slate-700 border border-slate-200';
-  }
+  formatNiveles = formatNiveles;
+  getSubscriptionClass = getSubscriptionClass;
 
   // --- Dynamic Inline Syllabus Accordion Methods ---
   
@@ -477,7 +527,7 @@ export class CursoDetalleComponent implements OnInit {
   // Videos
   agregarVideoInline(moduloId: number): void {
     if (!this.nuevoVideoTitulo || !this.nuevoVideoUrl) {
-      alert('Por favor ingrese el título y la URL de YouTube.');
+      this.toastService.warning('Por favor ingrese el título y la URL de YouTube.');
       return;
     }
     this.isAddingVideo = true;
@@ -497,10 +547,11 @@ export class CursoDetalleComponent implements OnInit {
         this.nuevoVideoDesc = '';
         this.videoFormOpenMap[moduloId] = false;
         this.cargarContenidoModulo(moduloId);
+        this.toastService.success('Video agregado exitosamente al módulo.');
       },
       error: (err) => {
         this.isAddingVideo = false;
-        alert('Error al agregar video: ' + (err.error?.message || err.message));
+        this.toastService.error('Error al agregar video: ' + (err.error?.message || err.message));
       }
     });
   }
@@ -510,8 +561,9 @@ export class CursoDetalleComponent implements OnInit {
     this.videoService.cambiarEstado(video.id, nuevoEstado).subscribe({
       next: () => {
         video.estado = nuevoEstado;
+        this.toastService.success(`Video ${nuevoEstado ? 'activado' : 'desactivado'} exitosamente.`);
       },
-      error: (err) => alert('Error al cambiar estado del video: ' + err.message)
+      error: (err) => this.toastService.error('Error al cambiar estado del video: ' + err.message)
     });
   }
 
@@ -520,7 +572,7 @@ export class CursoDetalleComponent implements OnInit {
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 10 * 1024 * 1024) {
-        alert('El archivo supera los 10MB permitidos.');
+        this.toastService.warning('El archivo supera los 10MB permitidos.');
         return;
       }
       this.nuevoMaterialFile = file;
@@ -533,7 +585,7 @@ export class CursoDetalleComponent implements OnInit {
 
   subirMaterialInline(moduloId: number): void {
     if (!this.nuevoMaterialFile || !this.nuevoMaterialNombre) {
-      alert('Debe ingresar un nombre y seleccionar un archivo.');
+      this.toastService.warning('Debe ingresar un nombre y seleccionar un archivo.');
       return;
     }
     this.isUploadingMaterial = true;
@@ -544,10 +596,11 @@ export class CursoDetalleComponent implements OnInit {
         this.nuevoMaterialFile = null;
         this.materialFormOpenMap[moduloId] = false;
         this.cargarContenidoModulo(moduloId);
+        this.toastService.success('Material de apoyo subido exitosamente.');
       },
       error: (err) => {
         this.isUploadingMaterial = false;
-        alert('Error al subir material: ' + (err.error?.message || err.message));
+        this.toastService.error('Error al subir material: ' + (err.error?.message || err.message));
       }
     });
   }
@@ -557,54 +610,23 @@ export class CursoDetalleComponent implements OnInit {
     this.materialService.cambiarEstado(mat.id, nuevoEstado).subscribe({
       next: () => {
         mat.estado = nuevoEstado;
+        this.toastService.success(`Material ${nuevoEstado ? 'activado' : 'desactivado'} exitosamente.`);
       },
-      error: (err) => alert('Error al cambiar estado del material: ' + err.message)
+      error: (err) => this.toastService.error('Error al cambiar estado del material: ' + err.message)
     });
   }
 
   // Helpers
-  getFileIcon(tipo: string): string {
-    const t = (tipo || '').toLowerCase();
-    if (t.includes('pdf')) return 'picture_as_pdf';
-    if (t.includes('word') || t.includes('msword') || t.includes('document')) return 'description';
-    if (t.includes('image') || t.includes('jpeg') || t.includes('jpg') || t.includes('png')) return 'image';
-    return 'article';
-  }
-
-  getCleanFileType(tipo: string): string {
-    const t = (tipo || '').toLowerCase();
-    if (t.includes('pdf')) return 'PDF';
-    if (t.includes('vnd.openxmlformats-officedocument.wordprocessingml.document')) return 'DOCX';
-    if (t.includes('msword') || t.includes('word')) return 'DOC';
-    if (t.includes('jpeg') || t.includes('jpg')) return 'JPG';
-    if (t.includes('png')) return 'PNG';
-    return 'Archivo';
-  }
-
-  formatBytes(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.log(bytes) / Math.log(k);
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  }
+  getFileIcon = getFileIcon;
+  getCleanFileType = getCleanFileType;
+  formatBytes = formatBytes;
 
   descargarMaterial(mat: MaterialResponse): void {
-    const extension = this.getFileExtension(mat.tipoArchivo);
+    const extension = getFileExtension(mat.tipoArchivo);
     const fileName = mat.nombre.toLowerCase().endsWith(`.${extension}`) ? mat.nombre : `${mat.nombre}.${extension}`;
 
     this.archivoProtegidoService.descargar(mat.archivoUrl, fileName).subscribe({
       error: (err) => console.error('Error al descargar material:', err)
     });
-  }
-
-  private getFileExtension(tipo: string): string {
-    const t = (tipo || '').toLowerCase();
-    if (t.includes('pdf')) return 'pdf';
-    if (t.includes('vnd.openxmlformats-officedocument.wordprocessingml.document')) return 'docx';
-    if (t.includes('msword') || t.includes('word')) return 'doc';
-    if (t.includes('jpeg') || t.includes('jpg')) return 'jpg';
-    if (t.includes('png')) return 'png';
-    return 'bin';
   }
 }

@@ -3,7 +3,7 @@
   <!-- Back button -->
   <div class="flex items-center">
     <a 
-      routerLink="/dashboard/cursos" 
+      [routerLink]="isDocente ? '/dashboard/mis-cursos-docente' : '/dashboard/cursos'" 
       class="flex items-center gap-2 text-[10px] font-black text-slate-500 hover:text-slate-950 uppercase tracking-wider transition-all">
       <span class="material-symbols-outlined text-sm">arrow_back</span>
       <span>Volver a la lista de cursos</span>
@@ -43,6 +43,7 @@
       </span>
       <div class="flex flex-wrap gap-2.5">
         <button 
+          *ngIf="!isDocente"
           (click)="openEditCourseModal()" 
           class="flex items-center gap-2 px-4 py-2 border border-slate-350 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs uppercase tracking-wider transition-all rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.03)]">
           <span class="material-symbols-outlined text-sm">edit</span>
@@ -84,6 +85,7 @@
       <span [ngClass]="activeTab === 'modulos' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600'" class="px-1.5 py-0.5 text-[9px] font-black rounded-none transition-colors">{{ modulos.length }}</span>
     </button>
     <button
+      *ngIf="!isDocente"
       (click)="setTab('matriculas')"
       [ngClass]="activeTab === 'matriculas' ? 'border-b-2 border-slate-900 text-slate-900' : 'border-b-2 border-transparent text-slate-500 hover:text-slate-800'"
       class="flex items-center gap-2 px-5 py-3 text-[10px] font-black uppercase tracking-wider transition-all">
@@ -526,7 +528,8 @@
             type="text" 
             class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650"
             placeholder="Ej. Fundamentos de Análisis de Datos">
-          <p *ngIf="moduloForm.get('nombre')?.invalid && moduloForm.get('nombre')?.touched" class="text-[9px] font-bold text-red-600 mt-1">El nombre es obligatorio.</p>
+          <p *ngIf="moduloForm.get('nombre')?.hasError('required') && moduloForm.get('nombre')?.touched" class="text-[9px] font-bold text-red-600 mt-1">El nombre es obligatorio.</p>
+          <p *ngIf="moduloForm.get('nombre')?.hasError('minlength') && moduloForm.get('nombre')?.touched" class="text-[9px] font-bold text-red-600 mt-1">Debe tener al menos 3 caracteres.</p>
         </div>
 
         <!-- Descripción -->
@@ -537,7 +540,8 @@
             rows="3" 
             class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650"
             placeholder="Escribe el resumen del temario de este módulo..."></textarea>
-          <p *ngIf="moduloForm.get('descripcion')?.invalid && moduloForm.get('descripcion')?.touched" class="text-[9px] font-bold text-red-600 mt-1">La descripción es obligatoria.</p>
+          <p *ngIf="moduloForm.get('descripcion')?.hasError('required') && moduloForm.get('descripcion')?.touched" class="text-[9px] font-bold text-red-600 mt-1">La descripción es obligatoria.</p>
+          <p *ngIf="moduloForm.get('descripcion')?.hasError('minlength') && moduloForm.get('descripcion')?.touched" class="text-[9px] font-bold text-red-600 mt-1">Debe tener al menos 10 caracteres.</p>
         </div>
 
         <!-- Orden y Estado -->
@@ -548,13 +552,15 @@
               formControlName="orden" 
               type="number" 
               class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650">
-            <p *ngIf="moduloForm.get('orden')?.invalid && moduloForm.get('orden')?.touched" class="text-[9px] font-bold text-red-600 mt-1">El orden es requerido.</p>
+            <p *ngIf="moduloForm.get('orden')?.hasError('required') && moduloForm.get('orden')?.touched" class="text-[9px] font-bold text-red-600 mt-1">El orden es requerido.</p>
+            <p *ngIf="moduloForm.get('orden')?.hasError('min') && moduloForm.get('orden')?.touched" class="text-[9px] font-bold text-red-600 mt-1">El orden mínimo es 1.</p>
+            <p *ngIf="moduloForm.get('orden')?.hasError('max') && moduloForm.get('orden')?.touched" class="text-[9px] font-bold text-red-600 mt-1">El orden máximo es 999.</p>
           </div>
           <div class="space-y-1">
             <label class="block text-[9px] font-black text-slate-700 uppercase tracking-widest">Estado</label>
             <select 
               formControlName="estado" 
-              class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650">
+              class="w-full px-3 py-2.5 border border-slate-355 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650">
               <option [ngValue]="true">ACTIVO</option>
               <option [ngValue]="false">INACTIVO</option>
             </select>
@@ -603,7 +609,8 @@
             formControlName="nombre" 
             type="text" 
             class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650">
-          <p *ngIf="courseForm.get('nombre')?.invalid && courseForm.get('nombre')?.touched" class="text-[9px] font-bold text-red-600 mt-1">El nombre del curso es requerido.</p>
+          <p *ngIf="courseForm.get('nombre')?.hasError('required') && courseForm.get('nombre')?.touched" class="text-[9px] font-bold text-red-600 mt-1">El nombre del curso es requerido.</p>
+          <p *ngIf="courseForm.get('nombre')?.hasError('minlength') && courseForm.get('nombre')?.touched" class="text-[9px] font-bold text-red-600 mt-1">Mínimo 3 caracteres.</p>
         </div>
 
         <!-- Descripción -->
@@ -613,7 +620,8 @@
             formControlName="descripcion" 
             rows="3" 
             class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650"></textarea>
-          <p *ngIf="courseForm.get('descripcion')?.invalid && courseForm.get('descripcion')?.touched" class="text-[9px] font-bold text-red-600 mt-1">La descripción es requerida.</p>
+          <p *ngIf="courseForm.get('descripcion')?.hasError('required') && courseForm.get('descripcion')?.touched" class="text-[9px] font-bold text-red-600 mt-1">La descripción es requerida.</p>
+          <p *ngIf="courseForm.get('descripcion')?.hasError('minlength') && courseForm.get('descripcion')?.touched" class="text-[9px] font-bold text-red-600 mt-1">Mínimo 10 caracteres.</p>
         </div>
 
         <!-- Imagen URL -->
@@ -624,9 +632,10 @@
             type="text" 
             class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650"
             placeholder="Ej. https://images.unsplash.com/...">
+          <p *ngIf="courseForm.get('imagenPortada')?.hasError('pattern') && courseForm.get('imagenPortada')?.touched" class="text-[9px] font-bold text-red-600 mt-1">Debe ser una dirección URL válida (ej. http:// o https://).</p>
           
           <!-- Image preview thumbnail -->
-          <div *ngIf="courseForm.get('imagenPortada')?.value" class="mt-2 w-full h-24 border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden">
+          <div *ngIf="courseForm.get('imagenPortada')?.value && courseForm.get('imagenPortada')?.valid" class="mt-2 w-full h-24 border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden">
             <img [src]="courseForm.get('imagenPortada')?.value" class="w-full h-full object-cover">
           </div>
         </div>
@@ -690,7 +699,15 @@
           </button>
         </div>
       </form>
-    </div>
-  </div>
+  <!-- Confirm modal -->
+  <app-confirm-modal
+    [visible]="showConfirmModal"
+    [type]="confirmModalType"
+    [title]="confirmModalTitle"
+    [message]="confirmModalMessage"
+    confirmText="Confirmar"
+    (onConfirm)="confirmAction()"
+    (onCancel)="showConfirmModal = false">
+  </app-confirm-modal>
 
 </div>

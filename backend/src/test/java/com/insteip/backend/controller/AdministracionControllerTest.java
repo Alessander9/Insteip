@@ -13,16 +13,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
-import java.time.LocalDate;
 import java.util.Collections;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -53,18 +51,18 @@ class AdministracionControllerTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
 
-    @MockBean private UsuarioService usuarioService;
-    @MockBean private MatriculaService matriculaService;
-    @MockBean private CertificadoService certificadoService;
-    @MockBean private AuditoriaService auditoriaService;
-    @MockBean private ConfiguracionService configuracionService;
+    @MockitoBean private UsuarioService usuarioService;
+    @MockitoBean private MatriculaService matriculaService;
+    @MockitoBean private CertificadoService certificadoService;
+    @MockitoBean private AuditoriaService auditoriaService;
+    @MockitoBean private ConfiguracionService configuracionService;
 
     // Direct repository mocks autowired by controllers
-    @MockBean private UsuarioRepository usuarioRepository;
-    @MockBean private MatriculaRepository matriculaRepository;
-    @MockBean private CertificadoRepository certificadoRepository;
-    @MockBean private CursoRepository cursoRepository;
-    @MockBean private PagoRepository pagoRepository;
+    @MockitoBean private UsuarioRepository usuarioRepository;
+    @MockitoBean private MatriculaRepository matriculaRepository;
+    @MockitoBean private CertificadoRepository certificadoRepository;
+    @MockitoBean private CursoRepository cursoRepository;
+    @MockitoBean private PagoRepository pagoRepository;
 
     // --- USUARIO CONTROLLER ---
 

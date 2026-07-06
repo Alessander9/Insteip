@@ -1,12 +1,15 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, inject, NgZone, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { AlumnoDashboardService, AlumnoPlayCourse, AlumnoPlayVideo, AlumnoPlayModulo } from '../../../core/services/alumno-dashboard.service';
+import { AlumnoDashboardService, AlumnoPlayCourse, AlumnoPlayVideo } from '../../../core/services/alumno-dashboard.service';
 import { CertificadoService } from '../../../core/services/certificado.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ArchivoProtegidoService } from '../../../core/services/archivo-protegido.service';
 import { UserProfile } from '../../../core/models/user-profile.model';
+import { extraerIdYoutube } from '../../../core/utils/youtube.utils';
+import { formatBytes, getCleanFileType, getFileExtension } from '../../../core/utils/file.utils';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-play-curso',
@@ -15,84 +18,185 @@ import { UserProfile } from '../../../core/models/user-profile.model';
   templateUrl: './play-curso.component.html',
   styleUrls: ['./play-curso.component.css']
 })
-export class PlayCursoComponent implements OnInit, OnDestroy {
+export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private studentService = inject(AlumnoDashboardService);
   private certificadoService = inject(CertificadoService);
   private authService = inject(AuthService);
   private archivoProtegidoService = inject(ArchivoProtegidoService);
-  private sanitizer = inject(DomSanitizer);
+  private ngZone = inject(NgZone);
 
   profile: UserProfile | null = null;
   cursoId!: number;
   curso: AlumnoPlayCourse | null = null;
   currentVideo: AlumnoPlayVideo | null = null;
-  safeEmbedUrl: SafeResourceUrl | null = null;
+  embedError = false;
 
   isLoading = true;
-  activeTab = 'materiales'; // 'materiales' | 'info' | 'certificado'
+  isPlayerLoading = false;
+  activeTab: 'materiales' | 'info' | 'certificado' | '' = 'materiales';
   isSavingProgress = false;
   courseCompleted = false;
+  showCompletionModal = false;
+  completionModalSecondsLeft = 0;
+  showNextChapterCountdown = false;
+  nextChapterSecondsLeft = 5;
+  nextChapterLabel = '';
   certificatePdfUrl: string | null = null;
   certificateCode: string | null = null;
   totalVideos = 0;
   completedVideos = 0;
   completionPercentage = 0;
 
-  // Watch progression ticker variables
-  private tickerInterval: any = null;
+  // Ticker tracking
+  private tickerInterval: ReturnType<typeof setInterval> | null = null;
   private secondsWatched = 0;
-  private ytPlayer: any = null;
   private isVideoPlaying = false;
+  private pendingAutoCompleteVideoId: number | null = null;
+
+  // YouTube Player instance
+  private player: any = null;
+  private isPlayerReady = false;
+
+  private isViewInitialized = false;
+  private pendingVideoToPlay: AlumnoPlayVideo | null = null;
+  private completionModalShown = false;
+  private pendingNextVideo: AlumnoPlayVideo | null = null;
+
+  // Robustness: cleanup subject for subscriptions
+  private destroy$ = new Subject<void>();
+  // Robustness: retry timeout reference for cancellation
+  private retryTimeout: ReturnType<typeof setTimeout> | null = null;
+  // Robustness: track script load retries
+  private scriptLoadRetries = 0;
+  private readonly MAX_SCRIPT_RETRIES = 3;
+  // Robustness: track if component is alive
+  private isComponentAlive = true;
+  // Robustness: track unsaved progress
+  private hasUnsavedProgress = false;
+  // Completion modal timers
+  private completionModalTimeout: ReturnType<typeof setTimeout> | null = null;
+  private completionCountdownInterval: ReturnType<typeof setInterval> | null = null;
+  private nextChapterCountdownInterval: ReturnType<typeof setInterval> | null = null;
+  private nextChapterTimeout: ReturnType<typeof setTimeout> | null = null;
 
   ngOnInit(): void {
-    // Cargar la API de iFrames de YouTube si no está presente en el objeto window
-    if (!(window as any)['YT']) {
-      const tag = document.createElement('script');
-      tag.src = 'https://www.youtube.com/iframe_api';
-      const firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-    }
-
-    this.authService.getProfile().subscribe({
-      next: (user) => {
-        this.profile = user;
-      }
+    this.authService.getProfile().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (user) => { this.profile = user; }
     });
 
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(params => {
       const idParam = params.get('id');
-      if (idParam) {
-        this.cursoId = Number(idParam);
-        this.loadCoursePlaySession();
-      } else {
+      if (!idParam) {
         this.router.navigate(['/dashboard/mis-cursos']);
+        return;
       }
+      this.cursoId = Number(idParam);
+      this.loadCoursePlaySession();
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.isViewInitialized = true;
+    if (this.pendingVideoToPlay) {
+      this.playVideo(this.pendingVideoToPlay);
+      this.pendingVideoToPlay = null;
+    }
   }
 
   ngOnDestroy(): void {
+    this.isComponentAlive = false;
+
+    // Cancel all subscriptions
+    this.destroy$.next();
+    this.destroy$.complete();
+
+    // Cancel pending retry timeouts
+    this.cancelRetryTimeout();
+    this.clearCompletionModalTimers();
+    this.clearNextChapterTimers();
+
+    // Stop ticker
     this.stopTicker();
-    if (this.ytPlayer) {
+
+    // Save any unsaved progress before destroying
+    this.saveProgressOnExit();
+
+    // Destroy YouTube player
+    if (this.player) {
       try {
-        this.ytPlayer.destroy();
+        this.player.destroy();
       } catch (e) {}
+      this.player = null;
+      this.isPlayerReady = false;
     }
   }
 
+  /** Save progress when user closes tab or navigates away */
+  @HostListener('window:beforeunload')
+  onBeforeUnload(): void {
+    this.saveProgressOnExit();
+  }
+
+  /** Attempt to persist current progress using sendBeacon (non-blocking) */
+  private saveProgressOnExit(): void {
+    if (!this.hasUnsavedProgress || !this.currentVideo || this.currentVideo.completado) return;
+
+    const duration = this.getCurrentVideoDurationSeconds();
+    const secondsToSend = Math.min(this.secondsWatched, duration);
+
+    // Use sendBeacon for reliable delivery even during page unload
+    try {
+      const token = localStorage.getItem('token');
+      const payload = JSON.stringify({
+        videoId: this.currentVideo.id,
+        ultimoSegundo: secondsToSend,
+        duracionSegundos: duration
+      });
+      const headers = { type: 'application/json' };
+      const blob = new Blob([payload], headers);
+
+      // sendBeacon doesn't support custom headers, so we fall back to sync XHR for auth
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', '/api/avance', false); // synchronous
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      if (token) xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+      xhr.send(payload);
+    } catch (e) {
+      // Best effort — if it fails, progress was already saved periodically
+    }
+
+    this.hasUnsavedProgress = false;
+  }
+
+  private flattenVideos(): AlumnoPlayVideo[] {
+    if (!this.curso) return [];
+    return this.curso.modulos.flatMap(mod => mod.videos);
+  }
+
+  private getNextVideoAfter(videoId: number): AlumnoPlayVideo | null {
+    const videos = this.flattenVideos();
+    const currentIndex = videos.findIndex(v => v.id === videoId);
+    if (currentIndex === -1 || currentIndex + 1 >= videos.length) return null;
+    return videos[currentIndex + 1];
+  }
+
   loadCoursePlaySession(): void {
-    this.studentService.getPlayCourse(this.cursoId).subscribe({
+    this.studentService.getPlayCourse(this.cursoId).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
       next: (data) => {
         this.curso = data;
         this.isLoading = false;
-        
-        // Auto-select first uncompleted video, or first video overall
         this.selectDefaultVideo();
         this.checkOverallCompletion();
       },
-      error: (err) => {
-        console.error('Error loading play session', err);
+      error: () => {
         this.router.navigate(['/dashboard/mis-cursos']);
       }
     });
@@ -103,105 +207,325 @@ export class PlayCursoComponent implements OnInit, OnDestroy {
 
     let targetVideo: AlumnoPlayVideo | null = null;
 
-    // Find first uncompleted video
     for (const mod of this.curso.modulos) {
       for (const vid of mod.videos) {
-        if (!vid.completado) {
-          targetVideo = vid;
-          break;
-        }
+        if (!vid.completado) { targetVideo = vid; break; }
       }
       if (targetVideo) break;
     }
 
-    // If all completed, select the very first video
     if (!targetVideo) {
       for (const mod of this.curso.modulos) {
-        if (mod.videos.length > 0) {
-          targetVideo = mod.videos[0];
-          break;
-        }
+        if (mod.videos.length > 0) { targetVideo = mod.videos[0]; break; }
       }
     }
 
-    if (targetVideo) {
-      this.playVideo(targetVideo);
-    }
+    if (targetVideo) this.playVideo(targetVideo);
   }
 
   playVideo(video: AlumnoPlayVideo): void {
+    // Save progress of previous video before switching
+    if (this.currentVideo && this.hasUnsavedProgress && this.currentVideo.id !== video.id) {
+      this.saveCurrentProgress(false);
+    }
+
     this.stopTicker();
+    this.cancelRetryTimeout();
+    this.clearNextChapterTimers();
+    this.isVideoPlaying = false;
     this.currentVideo = video;
     this.secondsWatched = video.ultimoSegundo || 0;
-    this.isVideoPlaying = false;
-    
-    // Sanitize URL for YouTube embed with parameter configurations to limit control actions
-    const id = video.youtubeId || this.extractIdYoutube(video.youtubeUrl);
-    this.safeEmbedUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-      `https://www.youtube.com/embed/${id}?enablejsapi=1&start=${this.secondsWatched}&controls=1&modestbranding=1&rel=0&showinfo=0&fs=0&iv_load_policy=3&disablekb=1`
-    );
+    this.embedError = false;
+    this.isPlayerLoading = true;
+    this.hasUnsavedProgress = false;
 
-    this.startTicker();
-  }
-
-  extractIdYoutube(url: string): string {
-    if (!url) return '';
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : '';
-  }
-
-  onIframeLoad(): void {
-    const iframe = document.getElementById('youtube-iframe');
-    if (iframe && (window as any)['YT'] && (window as any)['YT'].Player) {
-      this.initYoutubePlayer(iframe);
-    } else if (iframe) {
-      setTimeout(() => this.onIframeLoad(), 500);
+    if (!this.isViewInitialized) {
+      this.pendingVideoToPlay = video;
+      return;
     }
-  }
 
-  initYoutubePlayer(iframe: any): void {
-    if (this.ytPlayer) {
+    const id = (video.youtubeId || '').trim() || extraerIdYoutube(video.youtubeUrl);
+    if (!id) {
+      this.embedError = true;
+      this.isPlayerLoading = false;
+      return;
+    }
+
+    if (this.player && this.isPlayerReady && this.isPlayerIframeValid()) {
       try {
-        this.ytPlayer.destroy();
-      } catch (e) {}
-      this.ytPlayer = null;
+        this.player.loadVideoById({
+          videoId: id,
+          startSeconds: video.ultimoSegundo || 0
+        });
+        this.isPlayerLoading = false;
+        this.startTicker();
+      } catch (e) {
+        console.warn('Player loadVideoById failed, recreating player:', e);
+        this.destroyPlayerSafely();
+        this.initYoutubePlayer(id, video.ultimoSegundo || 0);
+      }
+    } else {
+      this.destroyPlayerSafely();
+      this.initYoutubePlayer(id, video.ultimoSegundo || 0);
+    }
+  }
+
+  /** Verify the player's iframe still exists in the DOM */
+  private isPlayerIframeValid(): boolean {
+    if (!this.player) return false;
+    try {
+      const iframe = this.player.getIframe?.();
+      return !!(iframe && iframe.parentNode && document.body.contains(iframe));
+    } catch {
+      return false;
+    }
+  }
+
+  /** Safely destroy the player without throwing */
+  private destroyPlayerSafely(): void {
+    if (this.player) {
+      try { this.player.destroy(); } catch (e) {}
+      this.player = null;
+      this.isPlayerReady = false;
+    }
+  }
+
+  private initYoutubePlayer(videoId: string, startSeconds: number): void {
+    const YT = (window as any)['YT'];
+
+    if (!YT || !YT.Player) {
+      this.loadYouTubeScript(videoId, startSeconds);
+    } else {
+      this.createPlayer(videoId, startSeconds);
+    }
+  }
+
+  /** Load the YouTube IFrame API script with error handling and retries */
+  private loadYouTubeScript(videoId: string, startSeconds: number): void {
+    // Check if script tag already exists (but API not ready yet)
+    const existingScript = document.querySelector('script[src*="youtube.com/iframe_api"]');
+    if (existingScript) {
+      // Script is loading, just wait for the callback
+      this.setYouTubeReadyCallback(videoId, startSeconds);
+      return;
     }
 
-    this.isVideoPlaying = false;
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+
+    // Robustness: handle script load failure
+    tag.onerror = () => {
+      if (!this.isComponentAlive) return;
+
+      this.scriptLoadRetries++;
+      console.warn(`YouTube API script failed to load (attempt ${this.scriptLoadRetries}/${this.MAX_SCRIPT_RETRIES})`);
+
+      // Remove the failed script tag
+      tag.remove();
+
+      if (this.scriptLoadRetries < this.MAX_SCRIPT_RETRIES) {
+        // Retry with exponential backoff (500ms, 1000ms, 2000ms)
+        const delay = 500 * Math.pow(2, this.scriptLoadRetries - 1);
+        this.retryTimeout = setTimeout(() => {
+          if (this.isComponentAlive) {
+            this.loadYouTubeScript(videoId, startSeconds);
+          }
+        }, delay);
+      } else {
+        this.ngZone.run(() => {
+          this.embedError = true;
+          this.isPlayerLoading = false;
+        });
+      }
+    };
+
+    this.setYouTubeReadyCallback(videoId, startSeconds);
+
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+  }
+
+  /** Set the global onYouTubeIframeAPIReady callback without overwriting existing ones */
+  private setYouTubeReadyCallback(videoId: string, startSeconds: number): void {
+    const existingCallback = (window as any)['onYouTubeIframeAPIReady'];
+
+    (window as any)['onYouTubeIframeAPIReady'] = () => {
+      // Chain previous callback if it existed from another component
+      if (existingCallback && existingCallback !== (window as any)['onYouTubeIframeAPIReady']) {
+        try { existingCallback(); } catch (e) {}
+      }
+      if (this.isComponentAlive) {
+        this.createPlayer(videoId, startSeconds);
+      }
+    };
+  }
+
+  private createPlayer(videoId: string, startSeconds: number, retryCount = 0): void {
+    if (!this.isComponentAlive) return;
+
+    const maxRetries = 10;
+    const playerEl = document.getElementById('youtube-player');
+
+    if (!this.isViewInitialized || !playerEl) {
+      if (retryCount < maxRetries) {
+        // DOM not ready yet (Angular hasn't rendered *ngIf="curso"), retry shortly
+        this.retryTimeout = setTimeout(() => {
+          if (this.isComponentAlive) {
+            this.createPlayer(videoId, startSeconds, retryCount + 1);
+          }
+        }, 100);
+      } else {
+        console.error('YouTube player container not found after retries');
+        this.embedError = true;
+        this.isPlayerLoading = false;
+      }
+      return;
+    }
+
+    // Validate that YT.Player constructor is available
+    const YT = (window as any)['YT'];
+    if (!YT || typeof YT.Player !== 'function') {
+      console.error('YT.Player constructor not available');
+      this.embedError = true;
+      this.isPlayerLoading = false;
+      return;
+    }
+
+    this.destroyPlayerSafely();
 
     try {
-      this.ytPlayer = new (window as any)['YT'].Player(iframe, {
+      this.player = new YT.Player('youtube-player', {
+        height: '100%',
+        width: '100%',
+        videoId: videoId,
+        playerVars: {
+          start: startSeconds,
+          controls: 1,
+          modestbranding: 1,
+          rel: 0,
+          iv_load_policy: 3,
+          enablejsapi: 1,
+          origin: window.location.origin
+        },
         events: {
+          'onReady': () => {
+            if (!this.isComponentAlive) return;
+            this.ngZone.run(() => {
+              this.isPlayerReady = true;
+              this.isPlayerLoading = false;
+              this.startTicker();
+            });
+          },
           'onStateChange': (event: any) => {
-            // YT.PlayerState.PLAYING is 1, YT.PlayerState.PAUSED is 2, YT.PlayerState.ENDED is 0
-            if (event.data === 1) {
-              this.isVideoPlaying = true;
-            } else {
-              this.isVideoPlaying = false;
-            }
+            if (!this.isComponentAlive) return;
+            this.ngZone.run(() => {
+              this.onPlayerStateChange(event);
+            });
+          },
+          'onError': (event: any) => {
+            if (!this.isComponentAlive) return;
+            const errorCode = event?.data;
+            console.warn('YouTube player error, code:', errorCode);
+            this.ngZone.run(() => {
+              this.embedError = true;
+              this.isPlayerLoading = false;
+              this.stopTicker();
+            });
           }
         }
       });
-    } catch (err) {
-      console.error('Error initializing YT Player', err);
-      this.isVideoPlaying = true;
+    } catch (e) {
+      console.error('Error creating YouTube player:', e);
+      this.embedError = true;
+      this.isPlayerLoading = false;
     }
   }
 
+  private onPlayerStateChange(event: any): void {
+    const state = event.data;
+
+    // Dynamically update duration if available
+    if (this.player && typeof this.player.getDuration === 'function' && this.currentVideo) {
+      try {
+        const ytDuration = this.player.getDuration();
+        if (ytDuration > 0) {
+          this.currentVideo.duracionSegundos = ytDuration;
+        }
+      } catch (e) {}
+    }
+
+    // YT.PlayerState.PLAYING is 1
+    if (state === 1) {
+      this.isVideoPlaying = true;
+      this.isPlayerLoading = false;
+    } else if (state === 0) {
+      // YT.PlayerState.ENDED is 0
+      this.isVideoPlaying = false;
+      this.stopTicker();
+      if (this.currentVideo && !this.currentVideo.completado) {
+        this.pendingAutoCompleteVideoId = this.currentVideo.id;
+        this.secondsWatched = this.getCurrentVideoDurationSeconds();
+        if (!this.isSavingProgress) {
+          this.saveCurrentProgress(true);
+        }
+      }
+    } else if (state === 3) {
+      // BUFFERING — show loading
+      this.isPlayerLoading = true;
+      this.isVideoPlaying = false;
+    } else {
+      // PAUSED (2), CUED (5), UNSTARTED (-1)
+      this.isVideoPlaying = false;
+      this.isPlayerLoading = false;
+    }
+  }
+
+  getCurrentVideoLink(): string {
+    return this.currentVideo?.youtubeUrl || '#';
+  }
+
   startTicker(): void {
-    // Save progress periodically every 15 seconds to avoid flooding API
+    this.stopTicker();
     let secondsSinceLastSave = 0;
 
     this.tickerInterval = setInterval(() => {
-      if (this.currentVideo && this.isVideoPlaying) {
-        this.secondsWatched++;
-        secondsSinceLastSave++;
+      if (!this.isComponentAlive) { this.stopTicker(); return; }
 
-        if (secondsSinceLastSave >= 15) {
-          this.saveCurrentProgress(false);
-          secondsSinceLastSave = 0;
+      // Double check current duration dynamically
+      if (this.player && typeof this.player.getDuration === 'function' && this.currentVideo) {
+        try {
+          const ytDuration = this.player.getDuration();
+          if (ytDuration > 0) {
+            this.currentVideo.duracionSegundos = ytDuration;
+          }
+        } catch (e) {}
+      }
+
+      if (!this.currentVideo || !this.isVideoPlaying) return;
+
+      const duration = this.getCurrentVideoDurationSeconds();
+      this.secondsWatched = Math.min(this.secondsWatched + 1, duration);
+      this.hasUnsavedProgress = true;
+      secondsSinceLastSave++;
+
+      // Completion fallback threshold
+      const completionThreshold = Math.max(duration - 2, 1);
+      if (this.secondsWatched >= completionThreshold) {
+        this.isVideoPlaying = false;
+        this.stopTicker();
+
+        if (!this.currentVideo.completado) {
+          this.pendingAutoCompleteVideoId = this.currentVideo.id;
+          if (!this.isSavingProgress) {
+            this.saveCurrentProgress(true);
+          }
         }
+        return;
+      }
+
+      if (secondsSinceLastSave >= 15) {
+        this.saveCurrentProgress(false);
+        secondsSinceLastSave = 0;
       }
     }, 1000);
   }
@@ -213,46 +537,66 @@ export class PlayCursoComponent implements OnInit, OnDestroy {
     }
   }
 
+  /** Cancel any pending retry timeout */
+  private cancelRetryTimeout(): void {
+    if (this.retryTimeout) {
+      clearTimeout(this.retryTimeout);
+      this.retryTimeout = null;
+    }
+  }
+
   saveCurrentProgress(isManualComplete: boolean): void {
     if (!this.currentVideo || this.isSavingProgress) return;
 
-    const secondsToSend = isManualComplete 
-      ? (this.currentVideo.duracionSegundos || 600) 
-      : Math.min(this.secondsWatched, this.currentVideo.duracionSegundos || 600);
+    const duration = this.getCurrentVideoDurationSeconds();
+    const secondsToSend = isManualComplete
+      ? duration
+      : Math.min(this.secondsWatched, duration);
 
     this.isSavingProgress = true;
-    this.studentService.guardarProgreso(this.currentVideo.id, secondsToSend).subscribe({
+    this.studentService.guardarProgreso(this.currentVideo.id, secondsToSend, duration).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
       next: (progress) => {
         this.isSavingProgress = false;
-        
-        // Update local object states
+        this.hasUnsavedProgress = false;
+        const completedByThisSave = progress.completado && this.pendingAutoCompleteVideoId === this.currentVideo?.id;
+
         if (this.currentVideo) {
           this.currentVideo.ultimoSegundo = progress.ultimoSegundo;
           this.currentVideo.porcentajeVisto = progress.porcentajeVisto;
           this.currentVideo.completado = progress.completado;
         }
 
-        // Re-check overall course completion status
         this.checkOverallCompletion();
-      },
-      error: (err) => {
-        this.isSavingProgress = false;
-        console.error('Error saving progress', err);
-      }
-    });
-  }
 
-  toggleCompletado(): void {
-    if (!this.currentVideo) return;
-    const markComplete = !this.currentVideo.completado;
-    
-    if (markComplete) {
-      this.secondsWatched = this.currentVideo.duracionSegundos || 600;
-      this.saveCurrentProgress(true);
-    } else {
-      this.secondsWatched = 0;
-      this.saveCurrentProgress(false);
-    }
+        if (
+          this.currentVideo &&
+          completedByThisSave &&
+          !this.courseCompleted
+        ) {
+          const nextVideo = this.getNextVideoAfter(this.currentVideo.id);
+          if (nextVideo) {
+            this.openNextChapterCountdown(nextVideo);
+          }
+        }
+
+        if (
+          this.currentVideo &&
+          this.pendingAutoCompleteVideoId === this.currentVideo.id &&
+          !this.currentVideo.completado
+        ) {
+          this.pendingAutoCompleteVideoId = null;
+          this.saveCurrentProgress(true);
+          return;
+        }
+
+        if (this.currentVideo?.completado) {
+          this.pendingAutoCompleteVideoId = null;
+        }
+      },
+      error: () => { this.isSavingProgress = false; }
+    });
   }
 
   checkOverallCompletion(): void {
@@ -264,9 +608,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy {
     for (const mod of this.curso.modulos) {
       for (const vid of mod.videos) {
         totalVids++;
-        if (vid.completado) {
-          completedVids++;
-        }
+        if (vid.completado) completedVids++;
       }
     }
 
@@ -274,30 +616,118 @@ export class PlayCursoComponent implements OnInit, OnDestroy {
     this.completedVideos = completedVids;
     this.completionPercentage = totalVids > 0 ? Math.round((completedVids / totalVids) * 100) : 0;
     this.courseCompleted = totalVids > 0 && completedVids === totalVids;
-    
-    if (this.courseCompleted && this.profile) {
+
+    if (this.courseCompleted) {
       this.fetchOrCreateCertificate();
+      this.openCompletionModal();
     }
+  }
+
+  private openCompletionModal(): void {
+    if (this.completionModalShown || !this.courseCompleted) return;
+
+    this.completionModalShown = true;
+    this.showCompletionModal = true;
+    this.clearCompletionModalTimers();
+    this.completionModalSecondsLeft = 6;
+
+    this.completionCountdownInterval = setInterval(() => {
+      if (this.completionModalSecondsLeft > 0) {
+        this.completionModalSecondsLeft--;
+      }
+    }, 1000);
+
+    this.completionModalTimeout = setTimeout(() => {
+      this.closeCompletionModal();
+    }, 6000);
+  }
+
+  closeCompletionModal(): void {
+    this.showCompletionModal = false;
+    this.clearCompletionModalTimers();
+  }
+
+  private clearCompletionModalTimers(): void {
+    if (this.completionModalTimeout) {
+      clearTimeout(this.completionModalTimeout);
+      this.completionModalTimeout = null;
+    }
+    if (this.completionCountdownInterval) {
+      clearInterval(this.completionCountdownInterval);
+      this.completionCountdownInterval = null;
+    }
+    this.completionModalSecondsLeft = 0;
+  }
+
+  private openNextChapterCountdown(nextVideo: AlumnoPlayVideo): void {
+    this.clearNextChapterTimers();
+
+    if (!this.currentVideo || this.courseCompleted) return;
+
+    this.pendingNextVideo = nextVideo;
+    this.showNextChapterCountdown = true;
+    this.nextChapterSecondsLeft = 5;
+    this.nextChapterLabel = nextVideo.titulo;
+
+    this.nextChapterCountdownInterval = setInterval(() => {
+      if (this.nextChapterSecondsLeft > 0) {
+        this.nextChapterSecondsLeft--;
+      }
+    }, 1000);
+
+    this.nextChapterTimeout = setTimeout(() => {
+      const target = this.pendingNextVideo;
+      this.clearNextChapterTimers();
+      if (target && this.isComponentAlive) {
+        this.ngZone.run(() => this.playVideo(target));
+      }
+    }, 5000);
+  }
+
+  closeNextChapterCountdown(): void {
+    this.clearNextChapterTimers();
+  }
+
+  goToNextChapterNow(): void {
+    const target = this.pendingNextVideo;
+    this.clearNextChapterTimers();
+    if (target && this.isComponentAlive) {
+      this.ngZone.run(() => this.playVideo(target));
+    }
+  }
+
+  private clearNextChapterTimers(): void {
+    if (this.nextChapterTimeout) {
+      clearTimeout(this.nextChapterTimeout);
+      this.nextChapterTimeout = null;
+    }
+    if (this.nextChapterCountdownInterval) {
+      clearInterval(this.nextChapterCountdownInterval);
+      this.nextChapterCountdownInterval = null;
+    }
+    this.showNextChapterCountdown = false;
+    this.nextChapterSecondsLeft = 5;
+    this.nextChapterLabel = '';
+    this.pendingNextVideo = null;
   }
 
   fetchOrCreateCertificate(): void {
     if (!this.profile) return;
-    
-    this.certificadoService.generarCertificado(this.cursoId).subscribe({
+
+    this.certificadoService.generarCertificado(this.cursoId).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
       next: (cert) => {
         this.certificatePdfUrl = cert.archivoPdf;
         this.certificateCode = cert.codigo;
       },
-      error: (err) => {
-        console.error('Error handling certificate generation:', err);
-      }
+      error: (err) => console.error('Error al generar certificado:', err)
     });
   }
 
   descargarMaterial(url: string, nombre: string, tipoArchivo: string): void {
-    const extension = this.getFileExtension(tipoArchivo);
+    const extension = getFileExtension(tipoArchivo);
     const fileName = nombre.toLowerCase().endsWith(`.${extension}`) ? nombre : `${nombre}.${extension}`;
-
     this.archivoProtegidoService.descargar(url, fileName).subscribe({
       error: (err) => console.error('Error al descargar material:', err)
     });
@@ -305,7 +735,6 @@ export class PlayCursoComponent implements OnInit, OnDestroy {
 
   descargarCertificado(): void {
     if (!this.certificatePdfUrl || !this.certificateCode) return;
-
     this.archivoProtegidoService.descargar(
       this.certificatePdfUrl,
       `certificado-${this.certificateCode}.pdf`
@@ -314,43 +743,18 @@ export class PlayCursoComponent implements OnInit, OnDestroy {
     });
   }
 
-  setTab(tab: string): void {
-    this.activeTab = tab;
-  }
-
-  formatBytes(bytes: number): string {
-    if (!bytes || bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  }
-
-  getCleanFileType(tipo: string): string {
-    const t = (tipo || '').toLowerCase();
-    if (t.includes('pdf')) return 'PDF';
-    if (t.includes('word') || t.includes('document') || t.includes('docx')) return 'DOC';
-    if (t.includes('image') || t.includes('png') || t.includes('jpg')) return 'IMG';
-    return 'DOC';
-  }
-
-  private getFileExtension(tipo: string): string {
-    const t = (tipo || '').toLowerCase();
-    if (t.includes('pdf')) return 'pdf';
-    if (t.includes('vnd.openxmlformats-officedocument.wordprocessingml.document')) return 'docx';
-    if (t.includes('msword') || t.includes('word')) return 'doc';
-    if (t.includes('jpeg') || t.includes('jpg')) return 'jpg';
-    if (t.includes('png')) return 'png';
-    return 'bin';
-  }
+  formatBytes = formatBytes;
+  getCleanFileType = getCleanFileType;
 
   toggleFullscreen(element: HTMLDivElement): void {
     if (!document.fullscreenElement) {
-      element.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable full-screen mode: ${err.message}`);
-      });
+      element.requestFullscreen().catch(err => console.error(err.message));
     } else {
       document.exitFullscreen();
     }
+  }
+
+  private getCurrentVideoDurationSeconds(): number {
+    return Math.max(1, this.currentVideo?.duracionSegundos || 600);
   }
 }

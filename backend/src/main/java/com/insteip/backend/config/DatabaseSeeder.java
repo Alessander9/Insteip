@@ -84,11 +84,9 @@ public class DatabaseSeeder implements CommandLineRunner {
                 usuarioRepository.save(admin);
             });
             usuarioRepository.findByCorreo("juan.perez@insteip.com").ifPresent(juan -> {
-                boolean changed = false;
                 if (!"Juan".equals(juan.getNombres()) || !"Pérez".equals(juan.getApellidos())) {
                     juan.setNombres("Juan");
                     juan.setApellidos("Pérez");
-                    changed = true;
                 }
                 NivelSuscripcion premium = nivelSuscripcionRepository.findAll().stream()
                         .filter(n -> n.getNombre().equals("PREMIUM"))

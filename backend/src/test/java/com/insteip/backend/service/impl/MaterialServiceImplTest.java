@@ -2,7 +2,6 @@ package com.insteip.backend.service.impl;
 
 import com.insteip.backend.entity.Curso;
 import com.insteip.backend.entity.Material;
-import com.insteip.backend.entity.Matricula;
 import com.insteip.backend.entity.Modulo;
 import com.insteip.backend.entity.Rol;
 import com.insteip.backend.entity.Usuario;

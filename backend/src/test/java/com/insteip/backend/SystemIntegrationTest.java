@@ -2,7 +2,6 @@ package com.insteip.backend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.insteip.backend.dto.*;
 import com.insteip.backend.entity.*;
 import com.insteip.backend.repository.*;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc

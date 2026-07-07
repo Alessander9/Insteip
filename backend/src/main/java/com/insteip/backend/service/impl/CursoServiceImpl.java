@@ -118,7 +118,7 @@ public class CursoServiceImpl implements CursoService {
                 c.getNombre(),
                 c.getDescripcion(),
                 c.getImagenPortada(),
-                c.getNivelesSuscripcion().stream().map(NivelSuscripcion::getNombre).collect(Collectors.toList()),
+                c.getNivelesSuscripcion().stream().map(nivel -> nivel.getNombre()).collect(Collectors.toList()),
                 c.getEstado(),
                 docenteId,
                 docenteNombre

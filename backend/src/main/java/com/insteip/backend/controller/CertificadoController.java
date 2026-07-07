@@ -3,7 +3,6 @@ package com.insteip.backend.controller;
 
 import lombok.RequiredArgsConstructor;
 import com.insteip.backend.entity.Certificado;
-import com.insteip.backend.entity.Usuario;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.service.interfaces.CertificadoService;
 import org.springframework.http.HttpHeaders;
@@ -45,7 +44,7 @@ public class CertificadoController {
             return 2L; // Estudiante seed de prueba por defecto
         }
         return usuarioRepository.findByCorreo(authentication.getName())
-                .map(u -> u.getId())
+                .map(usuario -> usuario.getId())
                 .orElse(2L);
     }
 

@@ -109,7 +109,7 @@ public class SystemIntegrationTest {
         String alumnoRefreshToken = "";
 
         // Obtener datos dinámicos de la base de datos
-        Long testAlumnoId = usuarioRepository.findByCorreo("juan.perez@insteip.com").map(Usuario::getId).orElse(2L);
+        Long testAlumnoId = usuarioRepository.findByCorreo("juan.perez@insteip.com").map(usuario -> usuario.getId()).orElse(2L);
         
         // Buscar un curso en el que Juan Pérez esté matriculado para garantizar permisos de Alumno
         Long testCursoId = 1L;
@@ -131,17 +131,17 @@ public class SystemIntegrationTest {
                 }
             }
         } else {
-            testCursoId = cursoRepository.findAll().stream().filter(Curso::getEstado).findFirst().map(Curso::getId).orElse(1L);
-            testModuloId = moduloRepository.findAll().stream().filter(Modulo::getEstado).findFirst().map(Modulo::getId).orElse(1L);
-            testVideoId = videoRepository.findAll().stream().filter(Video::getEstado).findFirst().map(Video::getId).orElse(1L);
+            testCursoId = cursoRepository.findAll().stream().filter(curso -> curso.getEstado()).findFirst().map(curso -> curso.getId()).orElse(1L);
+            testModuloId = moduloRepository.findAll().stream().filter(modulo -> modulo.getEstado()).findFirst().map(modulo -> modulo.getId()).orElse(1L);
+            testVideoId = videoRepository.findAll().stream().filter(video -> video.getEstado()).findFirst().map(video -> video.getId()).orElse(1L);
         }
 
-        Long testMaterialId = materialRepository.findAll().stream().filter(Material::getEstado).findFirst().map(Material::getId).orElse(1L);
-        Long testMatriculaId = matriculaRepository.findAll().stream().filter(Matricula::getEstado).findFirst().map(Matricula::getId).orElse(1L);
+        Long testMaterialId = materialRepository.findAll().stream().filter(material -> material.getEstado()).findFirst().map(material -> material.getId()).orElse(1L);
+        Long testMatriculaId = matriculaRepository.findAll().stream().filter(matricula -> matricula.getEstado()).findFirst().map(matricula -> matricula.getId()).orElse(1L);
         
-        String testCertCode = certificadoRepository.findAll().stream().findFirst().map(Certificado::getCodigo).orElse("INS-2026-ABX9F2K8");
-        Long testCertId = certificadoRepository.findAll().stream().findFirst().map(Certificado::getId).orElse(1L);
-        Long testSubId = nivelSuscripcionRepository.findAll().stream().findFirst().map(NivelSuscripcion::getId).orElse(1L);
+        String testCertCode = certificadoRepository.findAll().stream().findFirst().map(certificado -> certificado.getCodigo()).orElse("INS-2026-ABX9F2K8");
+        Long testCertId = certificadoRepository.findAll().stream().findFirst().map(certificado -> certificado.getId()).orElse(1L);
+        Long testSubId = nivelSuscripcionRepository.findAll().stream().findFirst().map(nivel -> nivel.getId()).orElse(1L);
 
         Long createdUserId = 0L;
         Long createdCursoId = 0L;
@@ -149,7 +149,6 @@ public class SystemIntegrationTest {
         Long createdVideoId = 0L;
         Long createdMaterialId = 0L;
         Long createdMatriculaId = 0L;
-
         System.out.println("======================================================================");
         System.out.println(">>> INICIANDO SUPER TEST DE INTEGRACIÓN MASIVA Y CHECKLIST INSTEIP <<<");
         System.out.println("======================================================================");

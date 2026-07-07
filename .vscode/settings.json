@@ -1,4 +1,5 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
-    "commentTranslate.targetLanguage": "es"
+    "commentTranslate.targetLanguage": "es",
+    "java.configuration.updateBuildConfiguration": "automatic"
 }

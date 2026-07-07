@@ -4,7 +4,6 @@ package com.insteip.backend.controller;
 import lombok.RequiredArgsConstructor;
 import com.insteip.backend.dto.AvanceProgressRequest;
 import com.insteip.backend.dto.AvanceProgressResponse;
-import com.insteip.backend.entity.Usuario;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.service.interfaces.AvanceService;
 import jakarta.validation.Valid;
@@ -29,7 +28,7 @@ public class AvanceController {
             return 2L; // Estudiante seed de prueba por defecto
         }
         return usuarioRepository.findByCorreo(authentication.getName())
-                .map(u -> u.getId())
+                .map(usuario -> usuario.getId())
                 .orElse(2L);
     }
 

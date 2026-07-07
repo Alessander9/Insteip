@@ -164,7 +164,7 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
 
             List<Material> materiales = materialRepository.findByModuloId(modulo.getId());
             List<AlumnoPlayMaterial> playMateriales = materiales.stream()
-                    .filter(Material::getEstado)
+                    .filter(material -> material.getEstado())
                     .map(m -> new AlumnoPlayMaterial(
                             m.getId(),
                             m.getNombre(),

@@ -1,5 +1,7 @@
 package com.insteip.backend.service.impl;
 
+
+import lombok.RequiredArgsConstructor;
 import com.insteip.backend.entity.*;
 import com.insteip.backend.exception.ResourceNotFoundException;
 import com.insteip.backend.exception.BadRequestException;
@@ -8,11 +10,9 @@ import com.insteip.backend.service.interfaces.CertificadoService;
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.pdf.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.awt.Color;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,31 +23,24 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class CertificadoServiceImpl implements CertificadoService {
 
-    @Autowired
-    private CertificadoRepository certificadoRepository;
+    private final CertificadoRepository certificadoRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private CursoRepository cursoRepository;
+    private final CursoRepository cursoRepository;
 
-    @Autowired
-    private ModuloRepository moduloRepository;
+    private final ModuloRepository moduloRepository;
 
-    @Autowired
-    private VideoRepository videoRepository;
+    private final VideoRepository videoRepository;
 
-    @Autowired
-    private AvanceVideoRepository avanceVideoRepository;
+    private final AvanceVideoRepository avanceVideoRepository;
 
-    @Autowired
-    private com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
+    private final com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
 
-    @Autowired
-    private PlantillaCertificadoRepository plantillaCertificadoRepository;
+    private final PlantillaCertificadoRepository plantillaCertificadoRepository;
 
     @org.springframework.beans.factory.annotation.Value("${application.storage.path}")
     private String storagePathSetting;
@@ -265,7 +258,7 @@ public class CertificadoServiceImpl implements CertificadoService {
         try {
             String qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=85x85&data=" 
                     + java.net.URLEncoder.encode(cert.getUrlValidacion(), java.nio.charset.StandardCharsets.UTF_8);
-            Image qrImage = Image.getInstance(new java.net.URL(qrUrl));
+            Image qrImage = Image.getInstance(java.net.URI.create(qrUrl).toURL());
             qrImage.setAlignment(Element.ALIGN_CENTER);
             qrImage.scaleAbsolute(65, 65);
             leftCell.addElement(qrImage);

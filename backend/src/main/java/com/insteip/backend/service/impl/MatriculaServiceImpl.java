@@ -1,5 +1,7 @@
 package com.insteip.backend.service.impl;
 
+
+import lombok.RequiredArgsConstructor;
 import com.insteip.backend.dto.MatriculaRequestDTO;
 import com.insteip.backend.dto.MatriculaResponseDTO;
 import com.insteip.backend.entity.Curso;
@@ -10,26 +12,22 @@ import com.insteip.backend.repository.CursoRepository;
 import com.insteip.backend.repository.MatriculaRepository;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.service.interfaces.MatriculaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class MatriculaServiceImpl implements MatriculaService {
 
-    @Autowired
-    private MatriculaRepository matriculaRepository;
+    private final MatriculaRepository matriculaRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private CursoRepository cursoRepository;
+    private final CursoRepository cursoRepository;
 
-    @Autowired
-    private com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
+    private final com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
 
     @Override
     public MatriculaResponseDTO matricularAlumno(MatriculaRequestDTO dto) {

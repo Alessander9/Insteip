@@ -5,6 +5,22 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>INSTEIP - Terapias Integrales Virtuales</title>
+  <script>
+    (function () {
+      try {
+        const themeKey = 'insteip-theme';
+        const savedTheme = localStorage.getItem(themeKey);
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const shouldBeDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+
+        if (shouldBeDark) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (error) {
+        // If storage or matchMedia is unavailable, fall back to the default theme.
+      }
+    })();
+  </script>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:wght@600&amp;display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -101,7 +117,41 @@
     }
   </script>
 </head>
-<body class="bg-surface text-on-surface font-body-md antialiased overflow-x-hidden">
+<body class="bg-surface text-on-surface dark:bg-slate-950 dark:text-slate-100 font-body-md antialiased overflow-x-hidden transition-colors duration-300">
+  <!-- Splash Screen -->
+  <div id="splash-screen" class="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#020b1a] transition-opacity duration-500" style="opacity: 1;">
+    <div class="flex flex-col items-center gap-6" style="animation: splash-pulse 2s ease-in-out infinite;">
+      <img src="assets/insteip-logo.png" alt="INSTEIP Logo" class="h-16 md:h-20 object-contain max-w-[280px] select-none pointer-events-none">
+      <div class="flex flex-col items-center gap-3">
+        <div class="w-8 h-8 rounded-full border-4 border-slate-700 border-t-[#4db8ff] animate-spin"></div>
+        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Cargando campus virtual...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const splash = document.getElementById('splash-screen');
+      if (splash) {
+        const hideSplash = () => {
+          splash.style.opacity = '0';
+          setTimeout(() => {
+            if (splash.parentNode) {
+              splash.parentNode.removeChild(splash);
+            }
+          }, 500);
+        };
+        
+        window.addEventListener('load', () => {
+          setTimeout(hideSplash, 400);
+        });
+
+        // Safety fallback
+        setTimeout(hideSplash, 3500);
+      }
+    })();
+  </script>
+
   <app-root></app-root>
 </body>
 </html>

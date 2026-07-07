@@ -1,12 +1,13 @@
 package com.insteip.backend.controller;
 
+
+import lombok.RequiredArgsConstructor;
 import com.insteip.backend.dto.AvanceProgressRequest;
 import com.insteip.backend.dto.AvanceProgressResponse;
 import com.insteip.backend.entity.Usuario;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.service.interfaces.AvanceService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -16,20 +17,19 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/avance")
 @CrossOrigin(origins = "*")
 @PreAuthorize("hasAnyRole('ALUMNO', 'ADMINISTRADOR')")
+@RequiredArgsConstructor
 public class AvanceController {
 
-    @Autowired
-    private AvanceService avanceService;
+    private final AvanceService avanceService;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
     private Long getUsuarioId(Authentication authentication) {
         if (authentication == null) {
             return 2L; // Estudiante seed de prueba por defecto
         }
         return usuarioRepository.findByCorreo(authentication.getName())
-                .map(Usuario::getId)
+                .map(u -> u.getId())
                 .orElse(2L);
     }
 

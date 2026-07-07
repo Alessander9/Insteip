@@ -68,7 +68,8 @@ class AuthServiceImplTest {
                 refreshTokenRepository,
                 jwtService,
                 passwordEncoder,
-                httpServletRequest
+                httpServletRequest,
+                java.util.Optional.empty()
         );
 
         Rol rol = Rol.builder().id(1L).nombre("ADMINISTRADOR").estado(true).build();

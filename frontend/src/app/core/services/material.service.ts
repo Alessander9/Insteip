@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -8,7 +9,7 @@ import { MaterialResponse } from '../models/material.model';
 })
 export class MaterialService {
   private http = inject(HttpClient);
-  private baseApiUrl = 'http://localhost:8081/api';
+  private baseApiUrl = environment.apiUrl + '';
 
   listarMaterialesPorModulo(moduloId: number): Observable<MaterialResponse[]> {
     return this.http.get<MaterialResponse[]>(`${this.baseApiUrl}/modulos/${moduloId}/materiales`);

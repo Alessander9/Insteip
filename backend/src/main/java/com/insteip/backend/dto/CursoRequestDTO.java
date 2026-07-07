@@ -13,5 +13,7 @@ public record CursoRequestDTO(
     String imagenPortada,
     
     @NotNull(message = "Los niveles de suscripción son obligatorios")
-    java.util.List<Long> nivelesSuscripcionIds
+    java.util.List<Long> nivelesSuscripcionIds,
+    
+    Long docenteId
 ){}

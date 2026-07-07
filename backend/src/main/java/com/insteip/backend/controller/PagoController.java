@@ -1,11 +1,12 @@
 package com.insteip.backend.controller;
 
+
+import lombok.RequiredArgsConstructor;
 import com.insteip.backend.entity.Pago;
 import com.insteip.backend.entity.Usuario;
 import com.insteip.backend.repository.PagoRepository;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.service.interfaces.AuditoriaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -21,16 +22,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/pagos")
 @CrossOrigin(origins = "*")
 @PreAuthorize("hasRole('ADMINISTRADOR')")
+@RequiredArgsConstructor
 public class PagoController {
 
-    @Autowired
-    private PagoRepository pagoRepository;
+    private final PagoRepository pagoRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private AuditoriaService auditoriaService;
+    private final AuditoriaService auditoriaService;
 
     @GetMapping("/pendientes")
     public ResponseEntity<List<Map<String, Object>>> obtenerPagosPendientes() {

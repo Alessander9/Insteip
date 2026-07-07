@@ -1,10 +1,11 @@
 package com.insteip.backend.controller;
 
+
+import lombok.RequiredArgsConstructor;
 import com.insteip.backend.entity.Certificado;
 import com.insteip.backend.entity.Usuario;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.service.interfaces.CertificadoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,16 +23,14 @@ import java.nio.file.Paths;
 @RestController
 @RequestMapping("/api/certificados")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class CertificadoController {
 
-    @Autowired
-    private CertificadoService certificadoService;
+    private final CertificadoService certificadoService;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
+    private final com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ALUMNO')")
@@ -46,7 +45,7 @@ public class CertificadoController {
             return 2L; // Estudiante seed de prueba por defecto
         }
         return usuarioRepository.findByCorreo(authentication.getName())
-                .map(Usuario::getId)
+                .map(u -> u.getId())
                 .orElse(2L);
     }
 

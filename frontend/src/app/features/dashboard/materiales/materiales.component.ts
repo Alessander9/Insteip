@@ -7,6 +7,9 @@ import { MaterialService } from '../../../core/services/material.service';
 import { ModuloResponse } from '../../../core/models/modulo.model';
 import { MaterialResponse } from '../../../core/models/material.model';
 import { ArchivoProtegidoService } from '../../../core/services/archivo-protegido.service';
+import { ToastService } from '../../../core/services/toast.service';
+import { ConfirmModalComponent } from '../../../core/components/confirm-modal/confirm-modal.component';
+import { formatBytes, getFileIcon, getCleanFileType, getFileExtension } from '../../../core/utils/file.utils';
 
 @Component({
   selector: 'app-materiales',
@@ -15,7 +18,8 @@ import { ArchivoProtegidoService } from '../../../core/services/archivo-protegid
     CommonModule,
     RouterModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ConfirmModalComponent
   ],
   templateUrl: './materiales.component.html',
   styleUrls: ['./materiales.component.css']
@@ -27,6 +31,7 @@ export class MaterialesComponent implements OnInit {
   private materialService = inject(MaterialService);
   private archivoProtegidoService = inject(ArchivoProtegidoService);
   private fb = inject(FormBuilder);
+  private toastService = inject(ToastService);
 
   moduloId!: number;
   modulo: ModuloResponse | null = null;
@@ -41,11 +46,18 @@ export class MaterialesComponent implements OnInit {
   isFormSubmitted = false;
   modalErrorMsg = '';
 
+  // Confirm modal controls
+  showConfirmModal = false;
+  confirmModalType: 'success' | 'danger' | 'info' | 'warning' = 'warning';
+  confirmModalTitle = '';
+  confirmModalMessage = '';
+  pendingMaterialAction: (() => void) | null = null;
+
   selectedMaterial: MaterialResponse | null = null;
   selectedFile: File | null = null;
 
   materialForm: FormGroup = this.fb.group({
-    nombre: ['', [Validators.required]],
+    nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
     estado: [true]
   });
 
@@ -137,6 +149,15 @@ export class MaterialesComponent implements OnInit {
   onFileSelected(event: any): void {
     const file = event.target.files?.[0];
     if (file) {
+      // Validate file extension
+      const fileExt = file.name.split('.').pop()?.toLowerCase();
+      const dangerousExts = ['exe', 'bat', 'sh', 'cmd', 'js', 'com', 'scr', 'msi', 'vbs'];
+      if (fileExt && dangerousExts.includes(fileExt)) {
+        this.modalErrorMsg = 'No se permiten archivos ejecutables o potencialmente peligrosos (.exe, .bat, .js, etc.).';
+        this.selectedFile = null;
+        return;
+      }
+
       // Validate file size (10MB limit)
       if (file.size > 10 * 1024 * 1024) {
         this.modalErrorMsg = 'El archivo supera el límite de tamaño permitido (10MB).';
@@ -150,26 +171,48 @@ export class MaterialesComponent implements OnInit {
 
   toggleEstado(material: MaterialResponse): void {
     const nuevoEstado = !material.estado;
-    this.materialService.cambiarEstado(material.id, nuevoEstado).subscribe({
-      next: () => {
-        material.estado = nuevoEstado;
-      },
-      error: (err) => {
-        console.error('Error al cambiar estado del material', err);
-      }
-    });
+    const accion = nuevoEstado ? 'Activar' : 'Desactivar';
+    
+    this.confirmModalType = nuevoEstado ? 'success' : 'warning';
+    this.confirmModalTitle = `¿${accion} Material?`;
+    this.confirmModalMessage = `¿Estás seguro de que deseas ${accion.toLowerCase()} el material "${material.nombre}"?`;
+    
+    this.pendingMaterialAction = () => {
+      this.materialService.cambiarEstado(material.id, nuevoEstado).subscribe({
+        next: () => {
+          material.estado = nuevoEstado;
+          this.toastService.success(`Material "${material.nombre}" ${nuevoEstado ? 'activado' : 'desactivado'} con éxito.`);
+          this.showConfirmModal = false;
+        },
+        error: (err) => {
+          this.toastService.error(err.error?.message || 'Error al cambiar el estado del material.');
+          this.showConfirmModal = false;
+        }
+      });
+    };
+    
+    this.showConfirmModal = true;
+  }
+
+  confirmAction(): void {
+    if (this.pendingMaterialAction) {
+      this.pendingMaterialAction();
+    }
   }
 
   onSubmit(): void {
     this.isFormSubmitted = true;
     
     if (this.materialForm.invalid) {
+      this.materialForm.markAllAsTouched();
       this.modalErrorMsg = 'El nombre del recurso es obligatorio.';
+      this.toastService.warning('El nombre del recurso es obligatorio.');
       return;
     }
 
     if (!this.isEditMode && !this.selectedFile) {
       this.modalErrorMsg = 'Debe seleccionar un archivo físico para subir.';
+      this.toastService.warning('Debe seleccionar un archivo físico para subir.');
       return;
     }
 
@@ -186,12 +229,14 @@ export class MaterialesComponent implements OnInit {
             this.materialService.cambiarEstado(this.selectedMaterial!.id, this.materialForm.value.estado).subscribe({
               next: () => {
                 this.loadMateriales();
+                this.toastService.success('Material de apoyo y su estado actualizados con éxito.');
                 this.closeMaterialModal();
               },
               error: (err) => this.handleError(err)
             });
           } else {
             this.loadMateriales();
+            this.toastService.success('Material de apoyo actualizado con éxito.');
             this.closeMaterialModal();
           }
         },
@@ -201,6 +246,7 @@ export class MaterialesComponent implements OnInit {
       this.materialService.subirMaterial(this.moduloId, nombre, this.selectedFile!).subscribe({
         next: () => {
           this.loadMateriales();
+          this.toastService.success('Material de apoyo subido exitosamente.');
           this.closeMaterialModal();
         },
         error: (err) => this.handleError(err)
@@ -208,59 +254,25 @@ export class MaterialesComponent implements OnInit {
     }
   }
 
-  getFileIcon(tipo: string): string {
-    const t = (tipo || '').toLowerCase();
-    if (t.includes('pdf')) {
-      return 'picture_as_pdf';
-    }
-    if (t.includes('word') || t.includes('msword') || t.includes('document')) {
-      return 'description';
-    }
-    if (t.includes('image') || t.includes('jpeg') || t.includes('jpg') || t.includes('png')) {
-      return 'image';
-    }
-    return 'article';
-  }
-
-  getCleanFileType(tipo: string): string {
-    const t = (tipo || '').toLowerCase();
-    if (t.includes('pdf')) return 'PDF';
-    if (t.includes('vnd.openxmlformats-officedocument.wordprocessingml.document')) return 'DOCX';
-    if (t.includes('msword') || t.includes('word')) return 'DOC';
-    if (t.includes('jpeg') || t.includes('jpg')) return 'JPG';
-    if (t.includes('png')) return 'PNG';
-    return 'Archivo';
-  }
-
-  formatBytes(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  }
+  formatBytes = formatBytes;
+  getFileIcon = getFileIcon;
+  getCleanFileType = getCleanFileType;
 
   descargarMaterial(material: MaterialResponse): void {
-    const extension = this.getFileExtension(material.tipoArchivo);
+    const extension = getFileExtension(material.tipoArchivo);
     const fileName = material.nombre.toLowerCase().endsWith(`.${extension}`) ? material.nombre : `${material.nombre}.${extension}`;
 
     this.archivoProtegidoService.descargar(material.archivoUrl, fileName).subscribe({
-      error: (err) => console.error('Error al descargar material:', err)
+      error: (err) => {
+        console.error('Error al descargar material:', err);
+        this.toastService.error('No se pudo descargar el archivo.');
+      }
     });
-  }
-
-  private getFileExtension(tipo: string): string {
-    const t = (tipo || '').toLowerCase();
-    if (t.includes('pdf')) return 'pdf';
-    if (t.includes('vnd.openxmlformats-officedocument.wordprocessingml.document')) return 'docx';
-    if (t.includes('msword') || t.includes('word')) return 'doc';
-    if (t.includes('jpeg') || t.includes('jpg')) return 'jpg';
-    if (t.includes('png')) return 'png';
-    return 'bin';
   }
 
   private handleError(err: any): void {
     this.isFormSubmitting = false;
     this.modalErrorMsg = err.error?.message || 'Error al procesar el material.';
+    this.toastService.error(this.modalErrorMsg);
   }
 }

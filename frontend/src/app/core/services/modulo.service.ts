@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -8,7 +9,7 @@ import { ModuloRequest, ModuloResponse } from '../models/modulo.model';
 })
 export class ModuloService {
   private http = inject(HttpClient);
-  private baseApiUrl = 'http://localhost:8081/api';
+  private baseApiUrl = environment.apiUrl + '';
 
   listarModulosPorCurso(cursoId: number): Observable<ModuloResponse[]> {
     return this.http.get<ModuloResponse[]>(`${this.baseApiUrl}/cursos/${cursoId}/modulos`);

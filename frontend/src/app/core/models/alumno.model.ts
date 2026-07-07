@@ -4,6 +4,7 @@ export interface AlumnoRequest {
   correo: string;
   telefono: string;
   nivelSuscripcionId: number;
+  password?: string;
 }
 
 export interface AlumnoResponse {

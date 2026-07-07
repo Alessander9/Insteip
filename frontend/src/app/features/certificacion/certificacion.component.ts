@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../../core/components/navbar/navbar.component';
 import { FooterComponent } from '../../core/components/footer/footer.component';
+import { CertificadoService } from '../../core/services/certificado.service';
 
 @Component({
   selector: 'app-certificacion',
@@ -11,6 +12,8 @@ import { FooterComponent } from '../../core/components/footer/footer.component';
   styleUrls: []
 })
 export class CertificacionComponent {
+  private certificadoService = inject(CertificadoService);
+
   validationResult: any = null;
   showError = false;
   isLoading = false;
@@ -23,22 +26,24 @@ export class CertificacionComponent {
     this.showError = false;
     this.validationResult = null;
 
-    setTimeout(() => {
-      this.isLoading = false;
-      const codeUpper = cleanCode.toUpperCase();
-      if (codeUpper === 'INST-2026-9842' || codeUpper.startsWith('INST-')) {
+    this.certificadoService.validarCertificado(cleanCode).subscribe({
+      next: (res: any) => {
+        this.isLoading = false;
         this.validationResult = {
-          code: codeUpper,
-          student: 'Alessander de la Cruz',
-          program: 'Diplomado en Terapia Integral',
-          date: '14 de Junio, 2026',
-          status: 'VERIFICADO',
-          grade: 'Sobresaliente'
+          code: res.codigo,
+          student: res.alumno,
+          program: res.curso,
+          date: res.fechaEmision,
+          status: res.valido ? 'VERIFICADO' : 'NO VÁLIDO',
+          grade: 'Aprobado / Acreditado'
         };
-      } else {
+      },
+      error: (err) => {
+        this.isLoading = false;
         this.showError = true;
+        console.error('Error al validar certificado:', err);
       }
-    }, 800);
+    });
   }
 
   limpiar() {

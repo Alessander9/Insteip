@@ -5,6 +5,9 @@ import { Router, RouterModule } from '@angular/router';
 import { CursoService } from '../../../core/services/curso.service';
 import { CursoRequest, CursoResponse } from '../../../core/models/curso.model';
 import { ReportesService } from '../../../core/services/reportes.service';
+import { ToastService } from '../../../core/services/toast.service';
+import { ConfirmModalComponent } from '../../../core/components/confirm-modal/confirm-modal.component';
+import { getSubscriptionClass, formatNiveles } from '../../../core/utils/subscription.utils';
 
 @Component({
   selector: 'app-cursos',
@@ -13,7 +16,8 @@ import { ReportesService } from '../../../core/services/reportes.service';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule
+    RouterModule,
+    ConfirmModalComponent
   ],
   templateUrl: './cursos.component.html',
   styleUrls: ['./cursos.component.css']
@@ -23,6 +27,7 @@ export class CursosComponent implements OnInit {
   private reportesService = inject(ReportesService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private toastService = inject(ToastService);
 
   irADetalle(id: number): void {
     console.log('Intentando navegar a curso:', id);
@@ -71,13 +76,20 @@ export class CursosComponent implements OnInit {
   isFormSubmitting = false;
   modalErrorMsg = '';
 
+  // Confirm modal controls
+  showConfirmModal = false;
+  confirmModalType: 'success' | 'danger' | 'info' | 'warning' = 'warning';
+  confirmModalTitle = '';
+  confirmModalMessage = '';
+  pendingCursoAction: (() => void) | null = null;
+
   selectedCurso: CursoResponse | null = null;
   selectedSuscripcionIds: number[] = [];
 
   cursoForm: FormGroup = this.fb.group({
-    nombre: ['', [Validators.required]],
-    descripcion: ['', [Validators.required]],
-    imagenPortada: [''],
+    nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+    descripcion: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(2000)]],
+    imagenPortada: ['', [Validators.pattern('^https?:\\/\\/.+$')]],
     estado: [true]
   });
 
@@ -162,14 +174,33 @@ export class CursosComponent implements OnInit {
 
   toggleEstado(curso: CursoResponse): void {
     const nuevoEstado = !curso.estado;
-    this.cursoService.cambiarEstado(curso.id, nuevoEstado).subscribe({
-      next: () => {
-        curso.estado = nuevoEstado;
-      },
-      error: (err) => {
-        console.error('Error al cambiar estado del curso', err);
-      }
-    });
+    const accion = nuevoEstado ? 'Activar' : 'Desactivar';
+    
+    this.confirmModalType = nuevoEstado ? 'success' : 'danger';
+    this.confirmModalTitle = `¿${accion} Curso?`;
+    this.confirmModalMessage = `¿Estás seguro de que deseas ${accion.toLowerCase()} el curso "${curso.nombre}"?`;
+    
+    this.pendingCursoAction = () => {
+      this.cursoService.cambiarEstado(curso.id, nuevoEstado).subscribe({
+        next: () => {
+          curso.estado = nuevoEstado;
+          this.toastService.success(`Curso ${nuevoEstado ? 'activado' : 'desactivado'} exitosamente.`);
+          this.showConfirmModal = false;
+        },
+        error: (err) => {
+          this.toastService.error(err.error?.message || 'Error al cambiar el estado del curso.');
+          this.showConfirmModal = false;
+        }
+      });
+    };
+    
+    this.showConfirmModal = true;
+  }
+
+  confirmAction(): void {
+    if (this.pendingCursoAction) {
+      this.pendingCursoAction();
+    }
   }
 
   toggleNivel(id: number): void {
@@ -189,6 +220,8 @@ export class CursosComponent implements OnInit {
 
   onSubmit(): void {
     if (this.cursoForm.invalid) {
+      this.cursoForm.markAllAsTouched();
+      this.toastService.warning('Por favor complete todos los campos requeridos correctamente.');
       return;
     }
 
@@ -210,12 +243,14 @@ export class CursosComponent implements OnInit {
             this.cursoService.cambiarEstado(this.selectedCurso!.id, this.cursoForm.value.estado).subscribe({
               next: () => {
                 this.loadCursos();
+                this.toastService.success('Curso y estado actualizados exitosamente.');
                 this.closeCreateEditModal();
               },
               error: (err) => this.handleError(err)
             });
           } else {
             this.loadCursos();
+            this.toastService.success('Curso actualizado exitosamente.');
             this.closeCreateEditModal();
           }
         },
@@ -225,6 +260,7 @@ export class CursosComponent implements OnInit {
       this.cursoService.crearCurso(req).subscribe({
         next: () => {
           this.loadCursos();
+          this.toastService.success('Curso creado exitosamente.');
           this.closeCreateEditModal();
         },
         error: (err) => this.handleError(err)
@@ -238,28 +274,9 @@ export class CursosComponent implements OnInit {
   private handleError(err: any): void {
     this.isFormSubmitting = false;
     this.modalErrorMsg = err.error?.message || 'Ocurrió un error inesperado al procesar la solicitud.';
+    this.toastService.error(this.modalErrorMsg, 'Error');
   }
 
-  formatNiveles(niveles: string[]): string {
-    if (!niveles || niveles.length === 0) return 'Ninguno';
-    return niveles.map(n => {
-      if (n === 'BASICO') return 'Básico';
-      if (n === 'INTERMEDIO') return 'Intermedio';
-      if (n === 'PREMIUM') return 'Premium';
-      return n;
-    }).join(' • ');
-  }
-
-  getSubscriptionClass(niveles: string[]): string {
-    if (!niveles || niveles.length === 0) {
-      return 'bg-slate-50 text-slate-700 border border-slate-200';
-    }
-    if (niveles.includes('PREMIUM')) {
-      return 'bg-[#f9e37a]/20 text-[#6d5e00] border border-[#f9e37a]/60';
-    }
-    if (niveles.includes('INTERMEDIO')) {
-      return 'bg-blue-50 text-blue-700 border border-blue-200';
-    }
-    return 'bg-slate-50 text-slate-700 border border-slate-200';
-  }
+  formatNiveles = formatNiveles;
+  getSubscriptionClass = getSubscriptionClass;
 }

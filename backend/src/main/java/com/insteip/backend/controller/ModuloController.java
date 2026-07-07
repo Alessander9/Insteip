@@ -1,10 +1,11 @@
 package com.insteip.backend.controller;
 
+
+import lombok.RequiredArgsConstructor;
 import com.insteip.backend.dto.ModuloRequestDTO;
 import com.insteip.backend.dto.ModuloResponseDTO;
 import com.insteip.backend.service.interfaces.ModuloService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,44 +15,48 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/modulos")
 @CrossOrigin(origins = "*")
-@PreAuthorize("hasRole('ADMINISTRADOR')")
+@PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DOCENTE')")
+@RequiredArgsConstructor
 public class ModuloController {
 
-    @Autowired
-    private ModuloService moduloService;
+    private final ModuloService moduloService;
 
-    @Autowired
-    private com.insteip.backend.service.interfaces.VideoService videoService;
+    private final com.insteip.backend.service.interfaces.VideoService videoService;
 
-    @Autowired
-    private com.insteip.backend.service.interfaces.MaterialService materialService;
+    private final com.insteip.backend.service.interfaces.MaterialService materialService;
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessModulo(#id)")
     public ResponseEntity<ModuloResponseDTO> obtenerModulo(@PathVariable Long id) {
         return ResponseEntity.ok(moduloService.obtenerModulo(id));
     }
 
     @GetMapping("/{id}/videos")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessModulo(#id)")
     public ResponseEntity<java.util.List<com.insteip.backend.dto.VideoResponseDTO>> listarVideosPorModulo(@PathVariable Long id) {
         return ResponseEntity.ok(videoService.listarVideosPorModulo(id));
     }
 
     @GetMapping("/{id}/materiales")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessModulo(#id)")
     public ResponseEntity<java.util.List<com.insteip.backend.dto.MaterialResponseDTO>> listarMaterialesPorModulo(@PathVariable Long id) {
         return ResponseEntity.ok(materialService.listarMaterialesPorModulo(id));
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessCurso(#dto.cursoId)")
     public ResponseEntity<ModuloResponseDTO> crearModulo(@Valid @RequestBody ModuloRequestDTO dto) {
         return new ResponseEntity<>(moduloService.crearModulo(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessModulo(#id)")
     public ResponseEntity<ModuloResponseDTO> editarModulo(@PathVariable Long id, @Valid @RequestBody ModuloRequestDTO dto) {
         return ResponseEntity.ok(moduloService.editarModulo(id, dto));
     }
 
     @PatchMapping("/{id}/estado")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessModulo(#id)")
     public ResponseEntity<Void> cambiarEstado(
             @PathVariable Long id,
             @RequestParam(required = false) Boolean estado,

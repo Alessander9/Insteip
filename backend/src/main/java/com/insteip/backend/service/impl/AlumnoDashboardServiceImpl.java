@@ -1,11 +1,12 @@
 package com.insteip.backend.service.impl;
 
+
+import lombok.RequiredArgsConstructor;
 import com.insteip.backend.dto.*;
 import com.insteip.backend.entity.*;
 import com.insteip.backend.exception.ResourceNotFoundException;
 import com.insteip.backend.repository.*;
 import com.insteip.backend.service.interfaces.AlumnoDashboardService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -14,41 +15,33 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private MatriculaRepository matriculaRepository;
+    private final MatriculaRepository matriculaRepository;
 
-    @Autowired
-    private CertificadoRepository certificadoRepository;
+    private final CertificadoRepository certificadoRepository;
 
-    @Autowired
-    private CursoRepository cursoRepository;
+    private final CursoRepository cursoRepository;
 
-    @Autowired
-    private ModuloRepository moduloRepository;
+    private final ModuloRepository moduloRepository;
 
-    @Autowired
-    private VideoRepository videoRepository;
+    private final VideoRepository videoRepository;
 
-    @Autowired
-    private MaterialRepository materialRepository;
+    private final MaterialRepository materialRepository;
 
-    @Autowired
-    private AvanceVideoRepository avanceVideoRepository;
+    private final AvanceVideoRepository avanceVideoRepository;
 
-    @Autowired
-    private AvanceCursoRepository avanceCursoRepository;
+    private final AvanceCursoRepository avanceCursoRepository;
 
     @Override
     public AlumnoDashboardMetrics getMetrics(String correo) {
         Usuario usuario = usuarioRepository.findByCorreo(correo)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
-        List<Matricula> matriculas = matriculaRepository.findByUsuarioId(usuario.getId());
+        List<Matricula> matriculas = matriculaRepository.findByUsuarioIdAndEstadoTrue(usuario.getId());
         long totalCursos = matriculas.size();
 
         long completados = 0;
@@ -76,7 +69,7 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
         Usuario usuario = usuarioRepository.findByCorreo(correo)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
-        List<Matricula> matriculas = matriculaRepository.findByUsuarioId(usuario.getId());
+        List<Matricula> matriculas = matriculaRepository.findByUsuarioIdAndEstadoTrue(usuario.getId());
 
         return matriculas.stream().map(matricula -> {
             Curso curso = matricula.getCurso();
@@ -131,7 +124,7 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
         Curso curso = cursoRepository.findById(cursoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado"));
 
-        boolean isEnrolled = matriculaRepository.existsByUsuarioIdAndCursoId(usuario.getId(), cursoId);
+        boolean isEnrolled = matriculaRepository.existsByUsuarioIdAndCursoIdAndEstadoTrue(usuario.getId(), cursoId);
         if (!isEnrolled) {
             throw new RuntimeException("No estás matriculado en este curso.");
         }

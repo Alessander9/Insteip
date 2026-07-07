@@ -2,6 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../../environments/environment';
+
 export interface AlumnoMetrics {
   cursosInscritos: number;
   cursosCompletados: number;
@@ -71,7 +73,7 @@ export interface AlumnoPlayCourse {
 })
 export class AlumnoDashboardService {
   private http = inject(HttpClient);
-  private baseApiUrl = 'http://localhost:8081/api';
+  private baseApiUrl = environment.apiUrl;
 
   getMetrics(): Observable<AlumnoMetrics> {
     return this.http.get<AlumnoMetrics>(`${this.baseApiUrl}/alumno/dashboard`);
@@ -89,8 +91,8 @@ export class AlumnoDashboardService {
     return this.http.get<AlumnoPlayCourse>(`${this.baseApiUrl}/alumno/cursos/${cursoId}/play`);
   }
 
-  guardarProgreso(videoId: number, ultimoSegundo: number): Observable<any> {
-    return this.http.post<any>(`${this.baseApiUrl}/avance`, { videoId, ultimoSegundo });
+  guardarProgreso(videoId: number, ultimoSegundo: number, duracionSegundos?: number): Observable<any> {
+    return this.http.post<any>(`${this.baseApiUrl}/avance`, { videoId, ultimoSegundo, duracionSegundos });
   }
 
   obtenerProgreso(videoId: number): Observable<any> {

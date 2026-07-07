@@ -1,11 +1,12 @@
 package com.insteip.backend.controller;
 
+
+import lombok.RequiredArgsConstructor;
 import com.insteip.backend.dto.MaterialResponseDTO;
 import com.insteip.backend.entity.Material;
 import com.insteip.backend.exception.ForbiddenException;
 import com.insteip.backend.exception.ResourceNotFoundException;
 import com.insteip.backend.service.interfaces.MaterialService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,13 +19,13 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/materiales")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class MaterialController {
 
-    @Autowired
-    private MaterialService materialService;
+    private final MaterialService materialService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessModulo(#moduloId)")
     public ResponseEntity<MaterialResponseDTO> subirMaterial(
             @RequestParam Long moduloId,
             @RequestParam String nombre,
@@ -33,7 +34,7 @@ public class MaterialController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessMaterial(#id)")
     public ResponseEntity<MaterialResponseDTO> editarMaterial(
             @PathVariable Long id,
             @RequestParam String nombre,
@@ -42,7 +43,7 @@ public class MaterialController {
     }
 
     @PatchMapping("/{id}/estado")
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessMaterial(#id)")
     public ResponseEntity<Void> cambiarEstado(
             @PathVariable Long id,
             @RequestParam(required = false) Boolean estado,
@@ -60,7 +61,7 @@ public class MaterialController {
     }
 
     @GetMapping("/{id}/download")
-    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ALUMNO')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ALUMNO', 'DOCENTE')")
     public ResponseEntity<byte[]> descargarMaterial(@PathVariable Long id) {
         try {
             Material material = materialService.obtenerMaterialEntity(id);

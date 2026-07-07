@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfiguracionService } from '../../../core/services/configuracion.service';
 import { ConfiguracionRequest, ConfiguracionResponse } from '../../../core/models/configuracion.model';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-configuracion',
@@ -14,6 +15,7 @@ import { ConfiguracionRequest, ConfiguracionResponse } from '../../../core/model
 export class ConfiguracionComponent implements OnInit {
   private configService = inject(ConfiguracionService);
   private fb = inject(FormBuilder);
+  private toastService = inject(ToastService);
 
   configForm: FormGroup = this.fb.group({
     nombreInstitucion: ['', [Validators.required]],
@@ -87,12 +89,12 @@ export class ConfiguracionComponent implements OnInit {
     this.configService.actualizarConfiguracion(request).subscribe({
       next: () => {
         this.isSaving = false;
-        this.successMsg = 'Configuración guardada exitosamente.';
-        setTimeout(() => this.successMsg = '', 4000);
+        this.toastService.success('Configuración guardada exitosamente.');
       },
       error: (err) => {
         this.isSaving = false;
         this.errorMsg = err.error?.message || 'Error al guardar la configuración.';
+        this.toastService.error(this.errorMsg);
         console.error(err);
       }
     });

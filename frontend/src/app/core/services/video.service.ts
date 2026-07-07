@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -8,7 +9,7 @@ import { VideoRequest, VideoResponse } from '../models/video.model';
 })
 export class VideoService {
   private http = inject(HttpClient);
-  private baseApiUrl = 'http://localhost:8081/api';
+  private baseApiUrl = environment.apiUrl + '';
 
   listarVideosPorModulo(moduloId: number): Observable<VideoResponse[]> {
     return this.http.get<VideoResponse[]>(`${this.baseApiUrl}/modulos/${moduloId}/videos`);

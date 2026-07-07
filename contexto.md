@@ -8,8 +8,8 @@ Este documento recopila toda la información técnica, de negocio y de infraestr
 
 **INSTEIP** es una plataforma de educación en línea dirigida a estudiantes y administradores que integra:
 - Un **Catálogo de Cursos** público y privado con temarios divididos en módulos y videos de YouTube.
-- Un **Reproductor de Video Interactivo** que mide y persiste el avance de visualización del estudiante en tiempo real, sincronizado con la API de iFrames de YouTube para detener el registro cuando el video se pausa o finaliza.
-- Un **Generador de Certificados Digitales** en PDF con firmas de directores y códigos únicos de validación pública.
+- Un **Reproductor de Video Interactivo** que mide y persiste el avance de visualización del estudiante en tiempo real, sincronizado con la API de iFrames de YouTube para detener el registro cuando el video se pausa o finaliza. Posee bloqueadores de seguridad en cabecera/pie de los videos y mecanismos de robustez para evitar pantallas negras, tolerar errores de conexión de red mediante reintentos con backoff y salvar progresos al salir de la pestaña.
+- Un **Generador de Certificados Digitales** en PDF con firmas de directores y códigos únicos de validación pública. Todos los estudiantes matriculados en la plataforma, sin distinción de su tipo de suscripción, pueden obtener estos certificados oficiales al completar al 100% las clases de un curso.
 - Un **Gestor de Pagos Manuales** donde el estudiante solicita suscripciones (`BASICO`, `INTERMEDIO`, `PREMIUM`) mediante transferencia y el administrador valida/aprueba la transacción.
 - Un **Módulo de Auditoría de Seguridad** que registra intentos de sesión, bloqueos de cuenta y acciones administrativas críticas.
 
@@ -30,7 +30,8 @@ El sistema se basa en una arquitectura desacoplada cliente-servidor:
 
 * **Frontend:**
   * **Framework principal:** Angular 18 (TypeScript, Componentes Reactivos, Lazy Loading).
-  * **Diseño y Estilos:** CSS vainilla para máxima flexibilidad y control, maquetado con Tailwind CSS integrado mediante CDN.
+  * **Diseño y Estilos:** Tailwind CSS integrado mediante CDN como base de utilidades visuales, complementado con CSS global para animaciones, glassmorphism y soporte explícito de light/dark mode.
+  * **Sistema de Tema:** El modo claro/oscuro se controla mediante `ThemeService`, que persiste la preferencia del usuario en `localStorage` usando la clave `insteip-theme`, respeta `prefers-color-scheme` cuando no existe preferencia guardada y aplica la clase `dark` sobre `document.documentElement`.
   * **Interacción Multimedia:** API de iFrames de YouTube para la reproducción e interactividad dinámica de videos.
 * **Backend:**
   * **Framework principal:** Spring Boot 3 (Java 21).
@@ -49,7 +50,8 @@ El sistema se basa en una arquitectura desacoplada cliente-servidor:
 ### 📁 Estructura del Repositorio
 * **`database/`**: Scripts SQL de definición de tablas e inserción de datos semilla, además del orquestador Docker Compose.
 * **`backend/`**: Código fuente de Spring Boot 3, configuración de Maven (`pom.xml`), propiedades de aplicación y suites de pruebas unitarias con JUnit/Mockito.
-* **`frontend/`**: Proyecto de Angular con componentes reactivos, enrutado dinámico, interceptores HTTP, guardianes de ruta y archivos de estilo CSS vainilla.
+* **`frontend/`**: Proyecto de Angular con componentes reactivos, enrutado dinámico, interceptores HTTP, guardianes de ruta, Tailwind vía CDN y estilos globales para animaciones y tema claro/oscuro.
+  * **Archivos de tema relevantes:** `frontend/src/index.html` inicializa el tema antes del primer render para evitar flicker, `frontend/src/styles.css` define el fondo global y `color-scheme`, y `frontend/src/app/core/services/theme.service.ts` centraliza la lógica de conmutación.
 * **`manual-assets/`**: Capturas de pantalla tomadas automáticamente del campus virtual en vivo.
 * **`super-test.js`**: Pruebas visuales automatizadas de extremo a extremo (E2E) con Playwright.
 * **`backend-api-super-test.js`**: Pruebas automáticas de integración de todos los endpoints REST de la API.
@@ -113,12 +115,24 @@ El backend expone servicios REST seguros usando **Spring Security** y **JWT** en
 - **Descargas Protegidas**: El endpoint de descarga de materiales didácticos (`/api/materiales/{id}/download`) verifica mediante tokens que el usuario esté logueado y tenga una matrícula activa en el curso al que pertenece el recurso, retornando un error `403 Forbidden` en caso de accesos no autorizados.
 - **Generador de Certificados**: Genera documentos PDF apaisados (formato A4 landscape) con diseño institucional y firmas dinámicas desde base de datos (`plantilla_certificado`) utilizando OpenPDF, asignando una URL de validación pública accesible por terceros.
 - **Almacenamiento Parametrizado**: Todas las rutas físicas para la persistencia de descargas, certificados y respaldos se definen unificadamente mediante la propiedad `application.storage.path` con resolución de rutas absolutas normalizadas.
+- **Actualización Dinámica de Duraciones**: El backend recibe el parámetro `duracionSegundos` del video en las peticiones de avance (`AvanceProgressRequest`). Si en base de datos la duración del video es `0` o `null`, se actualiza automáticamente al valor detectado real por el reproductor del cliente.
 
 ---
 
 ## 🅰️ 5. Frontend (Angular 18)
 
 Desarrollado con componentes funcionales y modularizado mediante Lazy Loading.
+
+### 🌗 Estado actual del sistema de tema
+
+Actualizado y verificado el **6 de julio de 2026**.
+
+- El tema se aplica antes de que Angular monte la aplicación, evitando el flash inicial de modo incorrecto.
+- La clase `dark` se aplica a nivel de `<html>`, por lo que los componentes deben implementar sus variantes usando `dark:` o selectores equivalentes.
+- `styles.css` define `html.dark, html.dark body { color-scheme: dark; }` y transiciones globales para el cambio de fondo/color.
+- El dashboard ya tiene cobertura importante en modo oscuro en vistas clave como `dashboard-home`, `perfil`, `mis-cursos`, `certificados`, `configuracion`, `videos`, `sistema` y `auditoria`.
+- También se reforzó la cobertura del tema en vistas públicas como `login`, `certificacion`, `validar-certificado` y `por-que-elegirnos`.
+- A nivel operativo, cualquier nueva pantalla o refactor visual debe considerar ambos estados desde el inicio; si se agregan clases Tailwind claras (`bg-white`, `text-slate-900`, `border-slate-200`, etc.), deben venir acompañadas de su variante `dark:`.
 
 ### 🧭 Rutas Principales
 - **Públicas**: `/inicio`, `/programas`, `/recursos`, `/certificacion`, `/por-que-elegirnos`, `/cursos`, `/cursos/:id`, `/login`, y `/certificados/validar/:codigo`.
@@ -138,6 +152,8 @@ La estabilidad de la plataforma se garantiza a través de pruebas en tres nivele
    - `backend-api-super-test.js`: Envía solicitudes directas a los endpoints de la API (CRUDs, generación de certificados, reportes CSV y estatus de monitoreo) con validación de respuestas correctas.
 3. **Pruebas E2E de Frontend**:
    - `super-test.js`: Ejecuta en Playwright flujos completos sobre la UI real (iniciar sesión, interactuar con el temario del administrador, crear cursos, registrar progreso del estudiante y validar la descarga final del certificado).
+4. **Validación de compilación del Frontend**:
+   - `npm run build` en `frontend/`: verificación rápida para detectar errores de templates Angular, clases mal cerradas o roturas en el marcado tras cambios visuales y de tema.
 
 ---
 

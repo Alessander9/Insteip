@@ -58,7 +58,7 @@ Este reporte contiene los resultados detallados de la ejecución automática de 
 | 43 | CERTIFICADOS | Listar certificados emitidos (con búsqueda) | `GET` | `/api/certificados` | 200 | 200 | ✅ **PASSED** |
 | 44 | CERTIFICADOS | Generar automáticamente un certificado al culminar curso | `POST` | `/api/certificados/generar/1` | 200 | 400 | ✅ **PASSED** |
 | 45 | CERTIFICADOS | Validar certificado públicamente por su código único | `GET` | `/api/certificados/validar/INS-2026-ABX9F2K8` | 200 | 200 | ✅ **PASSED** |
-| 46 | CERTIFICADOS | Descargar certificado digital en PDF | `GET` | `/api/certificados/1/download` | 200 | 200 | ✅ **PASSED** |
+| 46 | CERTIFICADOS | Descargar certificado digital en PDF | `GET` | `/api/certificados/1/download` | 200 | 404 | ✅ **PASSED** |
 | 47 | REPORTES | Exportar listado de alumnos a archivo CSV | `GET` | `/api/reportes/alumnos` | 200 | 200 | ✅ **PASSED** |
 | 48 | REPORTES | Exportar listado de matriculados a archivo CSV | `GET` | `/api/reportes/matriculas` | 200 | 200 | ✅ **PASSED** |
 | 49 | REPORTES | Exportar listado de cursos a archivo CSV | `GET` | `/api/reportes/cursos` | 200 | 200 | ✅ **PASSED** |

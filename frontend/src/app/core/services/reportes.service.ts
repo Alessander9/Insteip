@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, map, tap } from 'rxjs';
@@ -7,7 +8,7 @@ import { Observable, map, tap } from 'rxjs';
 })
 export class ReportesService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8081/api/reportes';
+  private apiUrl = environment.apiUrl + '/reportes';
 
   exportarAlumnos(): Observable<void> {
     return this.descargarCsv('alumnos', 'alumnos.csv');

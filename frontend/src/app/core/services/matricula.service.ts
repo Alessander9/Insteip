@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -8,7 +9,7 @@ import { MatriculaRequest, MatriculaResponse } from '../models/matricula.model';
 })
 export class MatriculaService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8081/api/matriculas';
+  private apiUrl = environment.apiUrl + '/matriculas';
 
   matricularAlumno(request: MatriculaRequest): Observable<MatriculaResponse> {
     return this.http.post<MatriculaResponse>(this.apiUrl, request);

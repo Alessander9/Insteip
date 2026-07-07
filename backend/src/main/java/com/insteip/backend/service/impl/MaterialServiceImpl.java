@@ -1,5 +1,7 @@
 package com.insteip.backend.service.impl;
 
+
+import lombok.RequiredArgsConstructor;
 import com.insteip.backend.dto.MaterialResponseDTO;
 import com.insteip.backend.entity.Material;
 import com.insteip.backend.entity.Modulo;
@@ -13,10 +15,8 @@ import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.repository.MatriculaRepository;
 import com.insteip.backend.service.interfaces.MaterialService;
 import com.insteip.backend.service.interfaces.AuditoriaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class MaterialServiceImpl implements MaterialService {
 
     private static final long MAX_FILE_SIZE_BYTES = 10L * 1024L * 1024L;
@@ -45,20 +46,15 @@ public class MaterialServiceImpl implements MaterialService {
             "image/jpeg"
     ));
 
-    @Autowired
-    private MaterialRepository materialRepository;
+    private final MaterialRepository materialRepository;
 
-    @Autowired
-    private ModuloRepository moduloRepository;
+    private final ModuloRepository moduloRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private MatriculaRepository matriculaRepository;
+    private final MatriculaRepository matriculaRepository;
 
-    @Autowired
-    private AuditoriaService auditoriaService;
+    private final AuditoriaService auditoriaService;
 
     @org.springframework.beans.factory.annotation.Value("${application.storage.path}")
     private String storagePathSetting;
@@ -205,8 +201,9 @@ public class MaterialServiceImpl implements MaterialService {
             throw new com.insteip.backend.exception.ForbiddenException("No tiene permisos para acceder a este recurso.");
         }
 
-        boolean isAdmin = usuario.getRol() != null
-                && "ADMINISTRADOR".equalsIgnoreCase(usuario.getRol().getNombre());
+        boolean isAdminOrDocente = usuario.getRol() != null
+                && ("ADMINISTRADOR".equalsIgnoreCase(usuario.getRol().getNombre())
+                || "DOCENTE".equalsIgnoreCase(usuario.getRol().getNombre()));
 
         Modulo modulo = material.getModulo();
         if (material.getEstado() == null || !material.getEstado()
@@ -216,7 +213,7 @@ public class MaterialServiceImpl implements MaterialService {
             throw new com.insteip.backend.exception.ForbiddenException("No tiene permisos para acceder a este recurso.");
         }
 
-        if (!isAdmin) {
+        if (!isAdminOrDocente) {
             Matricula matricula = matriculaRepository.findByUsuarioIdAndCursoId(usuario.getId(), modulo.getCurso().getId())
                     .orElse(null);
             if (matricula == null || matricula.getEstado() == null || !matricula.getEstado()) {

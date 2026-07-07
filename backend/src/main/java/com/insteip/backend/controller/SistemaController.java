@@ -1,6 +1,6 @@
 package com.insteip.backend.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -18,13 +18,11 @@ import java.util.Map;
 @RequestMapping("/api/sistema")
 @CrossOrigin(origins = "*")
 @PreAuthorize("hasRole('ADMINISTRADOR')")
+@RequiredArgsConstructor
 public class SistemaController {
 
-    @Autowired
-    private DataSource dataSource;
-
-    @Autowired
-    private com.insteip.backend.service.impl.BackupScheduler backupScheduler;
+    private final DataSource dataSource;
+    private final com.insteip.backend.service.impl.BackupScheduler backupScheduler;
 
     @PostMapping("/backup")
     public ResponseEntity<Map<String, String>> triggerBackup() {

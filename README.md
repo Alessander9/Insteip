@@ -226,7 +226,7 @@ La plataforma INSTEIP utiliza un stack moderno, seguro y optimizado para el apre
 
 * **Frontend:**
   * **Framework:** **Angular 18** (TypeScript, Componentes Reactivos, Lazy Loading, Ruteo Protegido y Gestión de Estados).
-  * **Estilos y Maquetación:** CSS Vainilla combinado con **Tailwind CSS** (integrado mediante CDN para carga rápida) para un diseño académico y moderno de alta fidelidad.
+  * **Estilos y Maquetación:** Tailwind CSS mediante CDN como capa principal de utilidades, complementado con CSS global para animaciones, glassmorphism y ajustes de tema claro/oscuro.
   * **Multimedia:** Sincronización dinámica de avance con la API de iFrames de YouTube.
 * **Backend:**
   * **Framework:** **Spring Boot 3** (Java 21) estructurado en capas limpias de Controladores, Servicios y Repositorios.

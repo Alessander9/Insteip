@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, tap, throwError } from 'rxjs';
@@ -12,7 +13,7 @@ import { TokenRefreshRequest, TokenRefreshResponse } from '../models/token-refre
 export class AuthService {
   
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8081/api/auth';
+  private apiUrl = environment.apiUrl + '/auth';
 
   login(request: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, request).pipe(

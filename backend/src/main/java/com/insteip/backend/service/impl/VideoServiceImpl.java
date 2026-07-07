@@ -1,5 +1,7 @@
 package com.insteip.backend.service.impl;
 
+
+import lombok.RequiredArgsConstructor;
 import com.insteip.backend.dto.VideoRequestDTO;
 import com.insteip.backend.dto.VideoResponseDTO;
 import com.insteip.backend.entity.Video;
@@ -8,7 +10,6 @@ import com.insteip.backend.exception.ResourceNotFoundException;
 import com.insteip.backend.repository.VideoRepository;
 import com.insteip.backend.repository.ModuloRepository;
 import com.insteip.backend.service.interfaces.VideoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -16,16 +17,14 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class VideoServiceImpl implements VideoService {
 
-    @Autowired
-    private VideoRepository videoRepository;
+    private final VideoRepository videoRepository;
 
-    @Autowired
-    private ModuloRepository moduloRepository;
+    private final ModuloRepository moduloRepository;
 
-    @Autowired
-    private com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
+    private final com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
 
     @Override
     public List<VideoResponseDTO> listarVideosPorModulo(Long moduloId) {

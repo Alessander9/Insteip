@@ -74,12 +74,12 @@
           </div>
         </div>
 
-        <div class="bg-white p-8 rounded-3xl border border-surface-variant/30 shadow-xl space-y-6">
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-surface-variant/30 dark:border-slate-800 shadow-xl dark:shadow-black/20 space-y-6 transition-colors duration-300">
           <h3 class="font-headline-md text-primary font-bold text-lg">Buscar en el Registro de Egresados</h3>
           
           <div class="space-y-4">
             <div class="flex flex-col sm:flex-row gap-3">
-              <input #codigoInput type="text" placeholder="Ej. INST-2026-9842" class="flex-1 px-4 py-3 rounded-lg border border-surface-variant/60 text-sm focus:ring-primary focus:border-primary bg-slate-50 uppercase placeholder-on-surface-variant/50" />
+              <input #codigoInput type="text" placeholder="Ej. INST-2026-9842" class="flex-1 px-4 py-3 rounded-lg border border-surface-variant/60 dark:border-slate-700 text-sm focus:ring-primary focus:border-primary bg-slate-50 dark:bg-slate-800 dark:text-slate-100 uppercase placeholder-on-surface-variant/50 dark:placeholder-slate-500" />
               <button (click)="validarCodigo(codigoInput.value)" class="bg-primary text-on-primary font-bold px-6 py-3 rounded-lg shadow-md hover:bg-primary/95 transition-all text-sm flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined text-base">search</span>
                 Verificar
@@ -93,7 +93,7 @@
             </div>
 
             <!-- Error message -->
-            <div *ngIf="showError" class="p-4 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-start gap-3 animate-scale-up">
+            <div *ngIf="showError" class="p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/40 rounded-xl text-xs text-red-700 dark:text-red-200 flex items-start gap-3 animate-scale-up">
               <span class="material-symbols-outlined text-lg">error</span>
               <div>
                 <p class="font-bold">Código no encontrado</p>
@@ -102,12 +102,12 @@
             </div>
 
             <!-- Validation Result Box -->
-            <div *ngIf="validationResult" class="border border-green-200 bg-green-50/40 rounded-2xl p-6 space-y-4 animate-scale-up">
-              <div class="flex items-center gap-3 border-b border-green-200/50 pb-3">
+            <div *ngIf="validationResult" class="border border-green-200 dark:border-green-900/40 bg-green-50/40 dark:bg-green-950/20 rounded-2xl p-6 space-y-4 animate-scale-up">
+              <div class="flex items-center gap-3 border-b border-green-200/50 dark:border-green-900/30 pb-3">
                 <span class="material-symbols-outlined text-secondary text-2xl font-bold">verified_user</span>
                 <div>
-                  <p class="text-[10px] uppercase font-bold text-secondary">Registro Académico Oficial</p>
-                  <p class="text-xs font-bold text-primary">CÓDIGO: {{ validationResult.code }}</p>
+                  <p class="text-[10px] uppercase font-bold text-secondary dark:text-secondary-fixed">Registro Académico Oficial</p>
+                  <p class="text-xs font-bold text-primary dark:text-primary-fixed">CÓDIGO: {{ validationResult.code }}</p>
                 </div>
                 <span class="ml-auto bg-secondary text-white text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full shadow-sm">
                   {{ validationResult.status }}
@@ -116,24 +116,24 @@
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div>
-                  <p class="text-on-surface-variant/80 font-medium">Estudiante:</p>
-                  <p class="font-bold text-primary text-sm mt-0.5">{{ validationResult.student }}</p>
+                  <p class="text-on-surface-variant/80 dark:text-slate-400 font-medium">Estudiante:</p>
+                  <p class="font-bold text-primary dark:text-primary-fixed text-sm mt-0.5">{{ validationResult.student }}</p>
                 </div>
                 <div>
-                  <p class="text-on-surface-variant/80 font-medium">Programa Académico:</p>
-                  <p class="font-bold text-primary text-sm mt-0.5">{{ validationResult.program }}</p>
+                  <p class="text-on-surface-variant/80 dark:text-slate-400 font-medium">Programa Académico:</p>
+                  <p class="font-bold text-primary dark:text-primary-fixed text-sm mt-0.5">{{ validationResult.program }}</p>
                 </div>
                 <div>
-                  <p class="text-on-surface-variant/80 font-medium">Fecha de Emisión:</p>
-                  <p class="font-bold text-on-surface mt-0.5">{{ validationResult.date }}</p>
+                  <p class="text-on-surface-variant/80 dark:text-slate-400 font-medium">Fecha de Emisión:</p>
+                  <p class="font-bold text-on-surface dark:text-slate-200 mt-0.5">{{ validationResult.date }}</p>
                 </div>
                 <div>
-                  <p class="text-on-surface-variant/80 font-medium">Rendimiento Académico:</p>
-                  <p class="font-bold text-on-surface mt-0.5">{{ validationResult.grade }}</p>
+                  <p class="text-on-surface-variant/80 dark:text-slate-400 font-medium">Rendimiento Académico:</p>
+                  <p class="font-bold text-on-surface dark:text-slate-200 mt-0.5">{{ validationResult.grade }}</p>
                 </div>
               </div>
 
-              <div class="pt-3 border-t border-green-200/50 flex items-center justify-between text-[10px] text-on-surface-variant">
+              <div class="pt-3 border-t border-green-200/50 dark:border-green-900/30 flex items-center justify-between text-[10px] text-on-surface-variant dark:text-slate-400">
                 <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">lock</span> Firmado digitalmente</span>
                 <button (click)="limpiar()" class="text-primary hover:underline font-bold">Limpiar consulta</button>
               </div>
@@ -156,40 +156,40 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         <!-- Step 1 -->
-        <div class="bg-white p-8 rounded-2xl border border-surface-variant/30 relative shadow-sm hover:shadow-md transition-all">
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-surface-variant/30 dark:border-slate-800 relative shadow-sm hover:shadow-md transition-all">
           <span class="absolute -top-4 -left-4 w-10 h-10 bg-primary text-white font-extrabold text-sm flex items-center justify-center rounded-xl shadow-md">1</span>
           <div class="w-12 h-12 bg-primary/5 rounded-xl flex items-center justify-center text-primary mb-6 mt-2">
             <span class="material-symbols-outlined text-2xl">menu_book</span>
           </div>
           <h4 class="font-bold text-primary text-base mb-2">Aprobación del Plan</h4>
-          <p class="text-xs text-on-surface-variant leading-relaxed">Completa todas las lecciones en video, lecturas y prácticas interactivas programadas en tu campus.</p>
+          <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed">Completa todas las lecciones en video, lecturas y prácticas interactivas programadas en tu campus.</p>
         </div>
         <!-- Step 2 -->
-        <div class="bg-white p-8 rounded-2xl border border-surface-variant/30 relative shadow-sm hover:shadow-md transition-all">
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-surface-variant/30 dark:border-slate-800 relative shadow-sm hover:shadow-md transition-all">
           <span class="absolute -top-4 -left-4 w-10 h-10 bg-primary text-white font-extrabold text-sm flex items-center justify-center rounded-xl shadow-md">2</span>
           <div class="w-12 h-12 bg-primary/5 rounded-xl flex items-center justify-center text-primary mb-6 mt-2">
             <span class="material-symbols-outlined text-2xl">assignment_turned_in</span>
           </div>
           <h4 class="font-bold text-primary text-base mb-2">Exámenes de Módulo</h4>
-          <p class="text-xs text-on-surface-variant leading-relaxed">Supera los cuestionarios teóricos de cada unidad con una calificación mínima aprobatoria del 80%.</p>
+          <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed">Supera los cuestionarios teóricos de cada unidad con una calificación mínima aprobatoria del 80%.</p>
         </div>
         <!-- Step 3 -->
-        <div class="bg-white p-8 rounded-2xl border border-surface-variant/30 relative shadow-sm hover:shadow-md transition-all">
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-surface-variant/30 dark:border-slate-800 relative shadow-sm hover:shadow-md transition-all">
           <span class="absolute -top-4 -left-4 w-10 h-10 bg-primary text-white font-extrabold text-sm flex items-center justify-center rounded-xl shadow-md">3</span>
           <div class="w-12 h-12 bg-primary/5 rounded-xl flex items-center justify-center text-primary mb-6 mt-2">
             <span class="material-symbols-outlined text-2xl">clinical_notes</span>
           </div>
           <h4 class="font-bold text-primary text-base mb-2">Proyecto Final</h4>
-          <p class="text-xs text-on-surface-variant leading-relaxed">Presenta un estudio de caso clínico o taller práctico supervisado que demuestre tu competencia real.</p>
+          <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed">Presenta un estudio de caso clínico o taller práctico supervisado que demuestre tu competencia real.</p>
         </div>
         <!-- Step 4 -->
-        <div class="bg-white p-8 rounded-2xl border border-surface-variant/30 relative shadow-sm hover:shadow-md transition-all">
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-surface-variant/30 dark:border-slate-800 relative shadow-sm hover:shadow-md transition-all">
           <span class="absolute -top-4 -left-4 w-10 h-10 bg-secondary text-white font-extrabold text-sm flex items-center justify-center rounded-xl shadow-md">4</span>
           <div class="w-12 h-12 bg-secondary/5 rounded-xl flex items-center justify-center text-secondary mb-6 mt-2">
             <span class="material-symbols-outlined text-2xl">qr_code_2</span>
           </div>
           <h4 class="font-bold text-primary text-base mb-2">Emisión Blockchain</h4>
-          <p class="text-xs text-on-surface-variant leading-relaxed">Obtén tu doble diploma digital inmediato con código QR y enlace permanente seguro.</p>
+          <p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed">Obtén tu doble diploma digital inmediato con código QR y enlace permanente seguro.</p>
         </div>
       </div>
     </div>
@@ -205,20 +205,20 @@
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
-        <div class="bg-white p-6 rounded-2xl border border-surface-variant/30 flex flex-col items-center text-center space-y-4 shadow-sm">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-surface-variant/30 dark:border-slate-800 flex flex-col items-center text-center space-y-4 shadow-sm">
           <span class="material-symbols-outlined text-primary text-4xl">public</span>
           <h4 class="font-bold text-primary text-sm">Global Therapy Alliance</h4>
-          <p class="text-[11px] text-on-surface-variant leading-relaxed">Validación curricular internacional bajo estándares éticos europeos y americanos.</p>
+          <p class="text-[11px] text-on-surface-variant dark:text-slate-400 leading-relaxed">Validación curricular internacional bajo estándares éticos europeos y americanos.</p>
         </div>
-        <div class="bg-white p-6 rounded-2xl border border-surface-variant/30 flex flex-col items-center text-center space-y-4 shadow-sm">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-surface-variant/30 dark:border-slate-800 flex flex-col items-center text-center space-y-4 shadow-sm">
           <span class="material-symbols-outlined text-primary text-4xl">spa</span>
           <h4 class="font-bold text-primary text-sm">Asoc. de Terapias Holísticas</h4>
-          <p class="text-[11px] text-on-surface-variant leading-relaxed">Respaldo gremial oficial para la práctica independiente de masajes y terapias alternativas.</p>
+          <p class="text-[11px] text-on-surface-variant dark:text-slate-400 leading-relaxed">Respaldo gremial oficial para la práctica independiente de masajes y terapias alternativas.</p>
         </div>
-        <div class="bg-white p-6 rounded-2xl border border-surface-variant/30 flex flex-col items-center text-center space-y-4 shadow-sm">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-surface-variant/30 dark:border-slate-800 flex flex-col items-center text-center space-y-4 shadow-sm">
           <span class="material-symbols-outlined text-primary text-4xl">badge</span>
           <h4 class="font-bold text-primary text-sm">Registro RMTC</h4>
-          <p class="text-[11px] text-on-surface-variant leading-relaxed">Incorporación automática de egresados al Registro Mundial de Terapeutas Complementarios.</p>
+          <p class="text-[11px] text-on-surface-variant dark:text-slate-400 leading-relaxed">Incorporación automática de egresados al Registro Mundial de Terapeutas Complementarios.</p>
         </div>
       </div>
     </div>
@@ -233,42 +233,42 @@
       </div>
 
       <div class="max-w-3xl mx-auto space-y-4">
-        <details class="group bg-white rounded-2xl border border-surface-variant/30 p-6 [&_summary::-webkit-details-marker]:hidden">
+        <details class="group bg-white dark:bg-slate-900 rounded-2xl border border-surface-variant/30 dark:border-slate-800 p-6 [&_summary::-webkit-details-marker]:hidden">
           <summary class="flex items-center justify-between cursor-pointer focus:outline-none">
-            <h4 class="font-bold text-primary text-base">¿Tengo que pagar un costo adicional por los certificados?</h4>
+            <h4 class="font-bold text-primary dark:text-primary-fixed text-base">¿Tengo que pagar un costo adicional por los certificados?</h4>
             <span class="material-symbols-outlined text-primary/60 transition group-open:-rotate-180">expand_more</span>
           </summary>
-          <p class="mt-4 text-xs text-on-surface-variant leading-relaxed border-t border-surface-variant/10 pt-4">
+          <p class="mt-4 text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed border-t border-surface-variant/10 dark:border-slate-800 pt-4">
             No. Todos los cursos y diplomados de INSTEIP incluyen la emisión del diploma digital oficial de doble certificación (tanto el institucional de INSTEIP como el del gremio internacional correspondiente) sin ningún tipo de cargo adicional.
           </p>
         </details>
 
-        <details class="group bg-white rounded-2xl border border-surface-variant/30 p-6 [&_summary::-webkit-details-marker]:hidden">
+        <details class="group bg-white dark:bg-slate-900 rounded-2xl border border-surface-variant/30 dark:border-slate-800 p-6 [&_summary::-webkit-details-marker]:hidden">
           <summary class="flex items-center justify-between cursor-pointer focus:outline-none">
-            <h4 class="font-bold text-primary text-base">¿Cómo funciona la validación del código QR?</h4>
+            <h4 class="font-bold text-primary dark:text-primary-fixed text-base">¿Cómo funciona la validación del código QR?</h4>
             <span class="material-symbols-outlined text-primary/60 transition group-open:-rotate-180">expand_more</span>
           </summary>
-          <p class="mt-4 text-xs text-on-surface-variant leading-relaxed border-t border-surface-variant/10 pt-4">
+          <p class="mt-4 text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed border-t border-surface-variant/10 dark:border-slate-800 pt-4">
             Cada diploma cuenta con un código QR y una firma criptográfica única. Al escanear el código QR con cualquier smartphone, redirigirá al validador de INSTEIP (como el simulador en vivo de arriba), confirmando el nombre del alumno, curso completado, fecha y estado de vigencia de forma segura.
           </p>
         </details>
 
-        <details class="group bg-white rounded-2xl border border-surface-variant/30 p-6 [&_summary::-webkit-details-marker]:hidden">
+        <details class="group bg-white dark:bg-slate-900 rounded-2xl border border-surface-variant/30 dark:border-slate-800 p-6 [&_summary::-webkit-details-marker]:hidden">
           <summary class="flex items-center justify-between cursor-pointer focus:outline-none">
-            <h4 class="font-bold text-primary text-base">¿Puedo solicitar el diploma impreso en físico?</h4>
+            <h4 class="font-bold text-primary dark:text-primary-fixed text-base">¿Puedo solicitar el diploma impreso en físico?</h4>
             <span class="material-symbols-outlined text-primary/60 transition group-open:-rotate-180">expand_more</span>
           </summary>
-          <p class="mt-4 text-xs text-on-surface-variant leading-relaxed border-t border-surface-variant/10 pt-4">
+          <p class="mt-4 text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed border-t border-surface-variant/10 dark:border-slate-800 pt-4">
             Sí. Al graduarte, de manera opcional puedes solicitar el envío del certificado impreso en cartulina especial texturizada de alto gramaje, con sellos holográficos y firmas de puño y letra. Esta solicitud tiene un costo adicional que cubre los cargos de imprenta y envío postal según tu país de residencia.
           </p>
         </details>
 
-        <details class="group bg-white rounded-2xl border border-surface-variant/30 p-6 [&_summary::-webkit-details-marker]:hidden">
+        <details class="group bg-white dark:bg-slate-900 rounded-2xl border border-surface-variant/30 dark:border-slate-800 p-6 [&_summary::-webkit-details-marker]:hidden">
           <summary class="flex items-center justify-between cursor-pointer focus:outline-none">
-            <h4 class="font-bold text-primary text-base">¿Tienen validez nacional para ejercer mi profesión?</h4>
+            <h4 class="font-bold text-primary dark:text-primary-fixed text-base">¿Tienen validez nacional para ejercer mi profesión?</h4>
             <span class="material-symbols-outlined text-primary/60 transition group-open:-rotate-180">expand_more</span>
           </summary>
-          <p class="mt-4 text-xs text-on-surface-variant leading-relaxed border-t border-surface-variant/10 pt-4">
+          <p class="mt-4 text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed border-t border-surface-variant/10 dark:border-slate-800 pt-4">
             Sí. Nuestras certificaciones te acreditan como Terapeuta Complementario a través de gremios y alianzas internacionales. En la mayoría de países de habla hispana, las terapias alternativas/holísticas se regulan como actividades independientes de bienestar, permitiéndote abrir tu propio consultorio u ofrecer servicios a domicilio de forma legal con tus diplomas de INSTEIP.
           </p>
         </details>

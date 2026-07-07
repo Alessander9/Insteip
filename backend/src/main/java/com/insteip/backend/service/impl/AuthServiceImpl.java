@@ -10,7 +10,6 @@ import com.insteip.backend.entity.Usuario;
 import com.insteip.backend.entity.LoginAuditoria;
 import com.insteip.backend.entity.RefreshToken;
 import com.insteip.backend.exception.BadRequestException;
-import com.insteip.backend.exception.ForbiddenException;
 import com.insteip.backend.exception.ResourceNotFoundException;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.repository.LoginAuditoriaRepository;
@@ -41,9 +40,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final HttpServletRequest httpServletRequest;
-
-    @org.springframework.beans.factory.annotation.Autowired(required = false)
-    private org.springframework.mail.javamail.JavaMailSender mailSender;
+    private final Optional<org.springframework.mail.javamail.JavaMailSender> mailSender;
 
     @Override
     @Transactional
@@ -250,7 +247,7 @@ public class AuthServiceImpl implements AuthService {
         System.out.println("Token temporal de 15 min: " + token);
         System.out.println("==================================================");
 
-        if (mailSender != null) {
+        mailSender.ifPresent(sender -> {
             try {
                 org.springframework.mail.SimpleMailMessage message = new org.springframework.mail.SimpleMailMessage();
                 message.setTo(correo);
@@ -260,11 +257,11 @@ public class AuthServiceImpl implements AuthService {
                         "CÓDIGO: " + token + "\n\n" +
                         "Si no solicitaste esto, puedes ignorar este mensaje.\n\n" +
                         "Saludos,\nEquipo INSTEIP");
-                mailSender.send(message);
+                sender.send(message);
             } catch (Exception e) {
                 System.err.println("No se pudo enviar el correo de recuperación real (SMTP no configurado). Error: " + e.getMessage());
             }
-        }
+        });
     }
 
     @Override

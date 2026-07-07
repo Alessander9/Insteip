@@ -1,5 +1,7 @@
 package com.insteip.backend.service.impl;
 
+
+import lombok.RequiredArgsConstructor;
 import com.insteip.backend.dto.UsuarioRequestDTO;
 import com.insteip.backend.dto.UsuarioResponseDTO;
 import com.insteip.backend.entity.Usuario;
@@ -11,29 +13,22 @@ import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.repository.RolRepository;
 import com.insteip.backend.repository.NivelSuscripcionRepository;
 import com.insteip.backend.service.interfaces.UsuarioService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UsuarioServiceImpl implements UsuarioService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private RolRepository rolRepository;
+    private final RolRepository rolRepository;
 
-    @Autowired
-    private NivelSuscripcionRepository suscripcionRepository;
+    private final NivelSuscripcionRepository suscripcionRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
+    private final com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
 
     @Override
     public org.springframework.data.domain.Page<UsuarioResponseDTO> listarAlumnos(org.springframework.data.domain.Pageable pageable, String search) {
@@ -75,7 +70,10 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .nombres(dto.nombres())
                 .apellidos(dto.apellidos())
                 .correo(dto.correo())
-                .passwordHash(passwordEncoder.encode("Alumno123!")) // Contraseña por defecto
+                .passwordHash(passwordEncoder.encode(
+                        dto.password() != null && !dto.password().isBlank()
+                                ? dto.password()
+                                : "Alumno123!")) // Contraseña por defecto si no se indica
                 .telefono(dto.telefono())
                 .rol(rol)
                 .nivelSuscripcion(sub)

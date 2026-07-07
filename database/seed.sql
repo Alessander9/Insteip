@@ -6,6 +6,7 @@
 -- =========================================================================
 INSERT INTO roles (nombre) VALUES
 ('ADMINISTRADOR'),
+('DOCENTE'),
 ('ALUMNO')
 ON CONFLICT (nombre) DO NOTHING;
 
@@ -30,6 +31,15 @@ INSERT INTO usuarios (rol_id, nivel_suscripcion_id, nombres, apellidos, correo, 
   'admin@insteip.com',
   '$2a$12$R9h/lIPzMRF.8npxi.fH2Oq7D6k5k1v.6XfT5Zp.0eD17t.i46mye', -- contraseña ej: Admin123!
   '+51 987654321'
+),
+(
+  (SELECT id FROM roles WHERE nombre = 'DOCENTE'),
+  NULL,
+  'Carlos Alberto',
+  'Docente Prado',
+  'docente@insteip.com',
+  '$2a$12$R9h/lIPzMRF.8npxi.fH2Oq7D6k5k1v.6XfT5Zp.0eD17t.i46mye', -- contraseña ej: Admin123! (usamos misma clave)
+  '+51 999111222'
 ),
 (
   (SELECT id FROM roles WHERE nombre = 'ALUMNO'),
@@ -114,21 +124,24 @@ INSERT INTO login_auditoria (usuario_id, correo, ip, user_agent, exitoso, motivo
 -- =========================================================================
 -- 6. SEED: cursos
 -- =========================================================================
-INSERT INTO cursos (nombre, descripcion, imagen_portada) VALUES
+INSERT INTO cursos (nombre, descripcion, imagen_portada, docente_id) VALUES
 (
   'Desarrollo Web Moderno con Angular',
   'Aprende a construir aplicaciones SPA escalables, rápidas y profesionales usando Angular 17+, TypeScript, RxJS y standalone components.',
-  'https://images.unsplash.com/photo-1517694712202-14dd9538aa97'
+  'https://images.unsplash.com/photo-1517694712202-14dd9538aa97',
+  (SELECT id FROM usuarios WHERE correo = 'docente@insteip.com')
 ),
 (
   'Backend Robusto con Spring Boot y JPA',
   'Domina la creación de REST APIs empresariales usando Spring Boot, Spring Security (JWT), PostgreSQL y Spring Data JPA de forma práctica.',
-  'https://images.unsplash.com/photo-1555066931-4365d14bab8c'
+  'https://images.unsplash.com/photo-1555066931-4365d14bab8c',
+  NULL
 ),
 (
   'Arquitectura de Microservicios y DevOps Cloud',
   'Aprende a diseñar, desplegar y escalar microservicios en la nube usando Spring Cloud, Docker, Kubernetes, AWS y pipelines CI/CD con GitHub Actions.',
-  'https://images.unsplash.com/photo-1607799279861-4dd421887fb3'
+  'https://images.unsplash.com/photo-1607799279861-4dd421887fb3',
+  NULL
 );
 
 INSERT INTO curso_niveles_suscripcion (curso_id, nivel_suscripcion_id) VALUES

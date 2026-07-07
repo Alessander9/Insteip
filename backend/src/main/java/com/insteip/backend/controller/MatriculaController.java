@@ -1,10 +1,11 @@
 package com.insteip.backend.controller;
 
+
+import lombok.RequiredArgsConstructor;
 import com.insteip.backend.dto.MatriculaRequestDTO;
 import com.insteip.backend.dto.MatriculaResponseDTO;
 import com.insteip.backend.service.interfaces.MatriculaService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,10 +18,10 @@ import java.util.Map;
 @RequestMapping("/api/matriculas")
 @CrossOrigin(origins = "*")
 @PreAuthorize("hasRole('ADMINISTRADOR')")
+@RequiredArgsConstructor
 public class MatriculaController {
 
-    @Autowired
-    private MatriculaService matriculaService;
+    private final MatriculaService matriculaService;
 
     @PostMapping
     public ResponseEntity<MatriculaResponseDTO> matricularAlumno(@Valid @RequestBody MatriculaRequestDTO dto) {

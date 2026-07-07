@@ -1,62 +1,62 @@
-<div class="space-y-8 font-body">
+<div class="space-y-8 font-body text-slate-800 dark:text-slate-200 transition-colors duration-300">
   
   <!-- Banner Header for Admin -->
-  <div *ngIf="isAdmin" class="border border-slate-200 p-8 bg-white rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] flex items-center justify-between">
+  <div *ngIf="isAdmin" class="border border-slate-200 dark:border-slate-800 p-8 bg-white dark:bg-slate-900 rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] flex items-center justify-between transition-colors duration-300">
     <div>
-      <h1 class="text-2xl font-black text-slate-900 tracking-tight uppercase leading-none">Reporte de Certificados</h1>
-      <p class="text-slate-500 text-xs mt-2">Exporta la lista de certificados oficiales emitidos a los alumnos registrados.</p>
+      <h1 class="text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight uppercase leading-none">Reporte de Certificados</h1>
+      <p class="text-slate-500 dark:text-slate-400 text-xs mt-2">Exporta la lista de certificados oficiales emitidos a los alumnos registrados.</p>
     </div>
     <button 
       (click)="exportarCSV()" 
-      class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-2 rounded-none">
+      class="px-4 py-2 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-2 rounded-none">
       <span class="material-symbols-outlined text-sm">download</span>
       <span>Exportar CSV</span>
     </button>
   </div>
 
   <!-- Banner Header for Student -->
-  <div *ngIf="!isAdmin" class="border border-slate-200 p-8 bg-white rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)]">
-    <h1 class="text-2xl font-black text-slate-900 tracking-tight uppercase leading-none">Mis Certificados</h1>
-    <p class="text-slate-500 text-xs mt-2">Visualiza y descarga los certificados oficiales obtenidos tras culminar exitosamente tus cursos.</p>
+  <div *ngIf="!isAdmin" class="border border-slate-200 dark:border-slate-800 p-8 bg-white dark:bg-slate-900 rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] transition-colors duration-300">
+    <h1 class="text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight uppercase leading-none">Mis Certificados</h1>
+    <p class="text-slate-500 dark:text-slate-400 text-xs mt-2">Visualiza y descarga los certificados oficiales obtenidos tras culminar exitosamente tus cursos.</p>
   </div>
 
   <!-- Loading State -->
-  <div *ngIf="isLoading && !isAdmin" class="flex flex-col items-center justify-center p-20 border border-slate-200 bg-white">
+  <div *ngIf="isLoading && !isAdmin" class="flex flex-col items-center justify-center p-20 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors duration-300">
     <span class="animate-spin inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full mb-3"></span>
-    <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Cargando tus certificados...</span>
+    <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Cargando tus certificados...</span>
   </div>
 
   <!-- No certificates state -->
-  <div *ngIf="!isLoading && !isAdmin && certificados.length === 0" class="border border-slate-200 p-12 text-center bg-white">
-    <span class="material-symbols-outlined text-5xl text-slate-300 mb-2">workspace_premium</span>
-    <h3 class="text-sm font-bold text-slate-800 uppercase">Sin certificados obtenidos</h3>
-    <p class="text-slate-500 text-xs mt-1.5 max-w-sm mx-auto">Completa el 100% de la carga académica de cualquiera de tus cursos inscritos para desbloquear automáticamente la emisión del certificado.</p>
+  <div *ngIf="!isLoading && !isAdmin && certificados.length === 0" class="border border-slate-200 dark:border-slate-800 p-12 text-center bg-white dark:bg-slate-900 transition-colors duration-300">
+    <span class="material-symbols-outlined text-5xl text-slate-300 dark:text-slate-600 mb-2">workspace_premium</span>
+    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase">Sin certificados obtenidos</h3>
+    <p class="text-slate-500 dark:text-slate-400 text-xs mt-1.5 max-w-sm mx-auto">Completa el 100% de la carga académica de cualquiera de tus cursos inscritos para desbloquear automáticamente la emisión del certificado.</p>
   </div>
 
   <!-- Certificates Table -->
-  <div *ngIf="!isLoading && !isAdmin && certificados.length > 0" class="border border-slate-200 bg-white rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] overflow-hidden">
+  <div *ngIf="!isLoading && !isAdmin && certificados.length > 0" class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] overflow-hidden transition-colors duration-300">
     <div class="overflow-x-auto">
       <table class="w-full text-left border-collapse text-xs">
         <thead>
-          <tr class="border-b border-slate-200 bg-slate-100/60 text-slate-700 font-bold uppercase tracking-wider text-[10px]">
+          <tr class="border-b border-slate-200 dark:border-slate-800 bg-slate-100/60 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 font-bold uppercase tracking-wider text-[10px]">
             <th class="p-4">Curso Completado</th>
             <th class="p-4">Código de Registro</th>
             <th class="p-4">Fecha de Emisión</th>
             <th class="p-4 text-right">Descargas</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100">
-          <tr *ngFor="let cert of certificados" class="hover:bg-slate-50 transition-colors">
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+          <tr *ngFor="let cert of certificados" class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
             <!-- Curso -->
-            <td class="p-4 font-bold text-slate-900 uppercase tracking-tight">
+            <td class="p-4 font-bold text-slate-900 dark:text-slate-100 uppercase tracking-tight">
               {{ cert.cursoNombre }}
             </td>
             <!-- Código -->
-            <td class="p-4 font-mono font-bold text-[10px] text-slate-600">
+            <td class="p-4 font-mono font-bold text-[10px] text-slate-600 dark:text-slate-300">
               {{ cert.codigo }}
             </td>
             <!-- Fecha -->
-            <td class="p-4 text-slate-500 font-mono text-[10px]">
+            <td class="p-4 text-slate-500 dark:text-slate-400 font-mono text-[10px]">
               {{ cert.fechaEmision | date:'dd/MM/yyyy HH:mm' }}
             </td>
             <!-- Acciones -->
@@ -66,7 +66,7 @@
                 <button
                   (click)="descargarCertificado(cert)"
                   title="Descargar Certificado PDF" 
-                  class="p-2 border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-slate-700 rounded-none transition-colors inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider">
+                  class="p-2 border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-none transition-colors inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider">
                   <span class="material-symbols-outlined text-sm">download</span>
                   <span>Descargar</span>
                 </button>
@@ -74,7 +74,7 @@
                 <button 
                   (click)="openVerModal(cert)"
                   title="Ver Certificado" 
-                  class="p-2 border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-slate-700 rounded-none transition-colors inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider">
+                  class="p-2 border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-none transition-colors inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider">
                   <span class="material-symbols-outlined text-sm">visibility</span>
                   <span>Ver</span>
                 </button>
@@ -83,7 +83,7 @@
                   [href]="cert.urlValidacion" 
                   target="_blank"
                   title="Validar Certificado" 
-                  class="p-2 border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-slate-700 rounded-none transition-colors inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider">
+                  class="p-2 border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-none transition-colors inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider">
                   <span class="material-symbols-outlined text-sm">verified_user</span>
                   <span>Validar</span>
                 </a>
@@ -96,52 +96,52 @@
   </div>
 
   <!-- Modal for viewing certificate -->
-  <div *ngIf="showModal && selectedCertificado" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-    <div class="bg-white border border-slate-200 shadow-2xl w-full max-w-4xl h-[85vh] flex flex-col rounded-none animate-in fade-in zoom-in-95 duration-200">
+  <div *ngIf="showModal && selectedCertificado" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-4xl h-[85vh] flex flex-col rounded-none animate-in fade-in zoom-in-95 duration-200 transition-colors duration-300">
       <!-- Modal Header -->
-      <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+      <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-800/60">
         <div>
-          <h3 class="text-sm font-black text-slate-900 uppercase tracking-tight">{{ selectedCertificado.cursoNombre }}</h3>
-          <p class="text-[10px] font-mono text-slate-500 mt-0.5">Código: {{ selectedCertificado.codigo }}</p>
+          <h3 class="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight">{{ selectedCertificado.cursoNombre }}</h3>
+          <p class="text-[10px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">Código: {{ selectedCertificado.codigo }}</p>
         </div>
         <button 
           (click)="closeModal()" 
-          class="p-1 hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors">
+          class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 transition-colors">
           <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
 
       <!-- Modal Body (Iframe PDF Viewer) -->
-      <div class="flex-1 bg-slate-100 p-4 relative">
-        <div *ngIf="isPreviewLoading" class="absolute inset-0 flex items-center justify-center bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-widest">
+      <div class="flex-1 bg-slate-100 dark:bg-slate-950 p-4 relative">
+        <div *ngIf="isPreviewLoading" class="absolute inset-0 flex items-center justify-center bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-widest">
           Cargando vista previa...
         </div>
         <iframe 
           *ngIf="!isPreviewLoading && previewPdfUrl"
           [src]="getSafeUrl(previewPdfUrl)" 
-          class="w-full h-full border border-slate-200 bg-white"
+          class="w-full h-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
           frameborder="0">
         </iframe>
       </div>
 
       <!-- Modal Footer -->
-      <div class="p-4 border-t border-slate-200 bg-slate-50 flex justify-between items-center">
+      <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 flex justify-between items-center">
         <a 
           [href]="selectedCertificado.urlValidacion" 
           target="_blank"
-          class="px-4 py-2 border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-slate-700 text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5">
+          class="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5">
           <span class="material-symbols-outlined text-sm">verified_user</span>
           <span>Validar en Línea</span>
         </a>
         <div class="flex gap-2">
           <button 
             (click)="closeModal()" 
-            class="px-4 py-2 border border-slate-200 hover:border-slate-400 hover:bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-widest transition-colors">
+            class="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold uppercase tracking-widest transition-colors">
             Cerrar
           </button>
           <button 
             (click)="descargarCertificado(selectedCertificado)"
-            class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5">
+            class="px-4 py-2 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5">
             <span class="material-symbols-outlined text-sm">download</span>
             <span>Descargar PDF</span>
           </button>

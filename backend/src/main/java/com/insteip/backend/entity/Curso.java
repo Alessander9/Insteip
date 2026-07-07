@@ -38,6 +38,10 @@ public class Curso {
     )
     private java.util.List<NivelSuscripcion> nivelesSuscripcion;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "docente_id")
+    private Usuario docente;
+
     @Column(nullable = false)
     @Builder.Default
     private Boolean estado = true;

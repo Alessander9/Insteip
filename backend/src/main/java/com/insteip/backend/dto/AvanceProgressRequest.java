@@ -10,4 +10,7 @@ public class AvanceProgressRequest {
 
     @NotNull(message = "El último segundo es obligatorio")
     private Integer ultimoSegundo;
+
+    private Integer duracionSegundos;
 }
+

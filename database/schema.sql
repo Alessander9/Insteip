@@ -157,9 +157,18 @@ CREATE TABLE cursos (
     nombre VARCHAR(200) NOT NULL,
     descripcion TEXT,
     imagen_portada TEXT,
+    docente_id BIGINT,
     estado BOOLEAN DEFAULT TRUE,
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_curso_docente
+        FOREIGN KEY (docente_id)
+        REFERENCES usuarios(id)
+        ON DELETE SET NULL
 );
+
+CREATE INDEX idx_cursos_docente ON cursos(docente_id);
+
 
 CREATE TABLE curso_niveles_suscripcion (
     id BIGSERIAL PRIMARY KEY,

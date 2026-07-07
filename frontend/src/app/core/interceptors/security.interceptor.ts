@@ -3,10 +3,12 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { ToastService } from '../services/toast.service';
 
 export const securityInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const router = inject(Router);
+  const toastService = inject(ToastService);
   const token = authService.getToken();
 
   // Solo estas rutas son verdaderamente públicas (no necesitan token)
@@ -30,6 +32,12 @@ export const securityInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError(error => {
+      if (error?.status === 0) {
+        toastService.error('No se pudo establecer conexión con el servidor. Verifica tu conexión de red.', 'Error de Conexión');
+      } else if (error?.status === 500) {
+        toastService.error('Error interno del servidor. Por favor, inténtelo de nuevo más tarde.', 'Error del Servidor');
+      }
+
       if (error?.status !== 401 || isPublicRequest) {
         return throwError(() => error);
       }
@@ -37,6 +45,7 @@ export const securityInterceptor: HttpInterceptorFn = (req, next) => {
       const refreshToken = authService.getRefreshToken();
       if (!refreshToken) {
         authService.logout();
+        toastService.warning('Tu sesión ha expirado. Por favor ingresa tus credenciales nuevamente.', 'Sesión Expirada');
         router.navigate(['/login']);
         return throwError(() => error);
       }
@@ -46,6 +55,7 @@ export const securityInterceptor: HttpInterceptorFn = (req, next) => {
           const newToken = authService.getToken();
           if (!newToken) {
             authService.logout();
+            toastService.warning('Tu sesión ha expirado. Por favor ingresa tus credenciales nuevamente.', 'Sesión Expirada');
             router.navigate(['/login']);
             return throwError(() => error);
           }
@@ -59,6 +69,7 @@ export const securityInterceptor: HttpInterceptorFn = (req, next) => {
         }),
         catchError(refreshError => {
           authService.logout();
+          toastService.warning('Tu sesión ha expirado. Por favor ingresa tus credenciales nuevamente.', 'Sesión Expirada');
           router.navigate(['/login']);
           return throwError(() => refreshError);
         })

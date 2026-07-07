@@ -1,8 +1,9 @@
 package com.insteip.backend.controller;
 
+
+import lombok.RequiredArgsConstructor;
 import com.insteip.backend.dto.*;
 import com.insteip.backend.service.interfaces.AlumnoDashboardService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -13,10 +14,10 @@ import java.util.List;
 @RequestMapping("/api/alumno")
 @CrossOrigin(origins = "*")
 @PreAuthorize("hasAnyRole('ALUMNO', 'ADMINISTRADOR')")
+@RequiredArgsConstructor
 public class AlumnoDashboardController {
 
-    @Autowired
-    private AlumnoDashboardService alumnoDashboardService;
+    private final AlumnoDashboardService alumnoDashboardService;
 
     private String getCorreo(Authentication authentication) {
         if (authentication == null) {

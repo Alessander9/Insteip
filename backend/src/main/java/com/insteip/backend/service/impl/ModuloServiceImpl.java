@@ -1,5 +1,7 @@
 package com.insteip.backend.service.impl;
 
+
+import lombok.RequiredArgsConstructor;
 import com.insteip.backend.dto.ModuloRequestDTO;
 import com.insteip.backend.dto.ModuloResponseDTO;
 import com.insteip.backend.entity.Curso;
@@ -8,22 +10,19 @@ import com.insteip.backend.exception.ResourceNotFoundException;
 import com.insteip.backend.repository.CursoRepository;
 import com.insteip.backend.repository.ModuloRepository;
 import com.insteip.backend.service.interfaces.ModuloService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ModuloServiceImpl implements ModuloService {
 
-    @Autowired
-    private ModuloRepository moduloRepository;
+    private final ModuloRepository moduloRepository;
 
-    @Autowired
-    private CursoRepository cursoRepository;
+    private final CursoRepository cursoRepository;
 
-    @Autowired
-    private com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
+    private final com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
 
     @Override
     public List<ModuloResponseDTO> listarModulosPorCurso(Long cursoId) {

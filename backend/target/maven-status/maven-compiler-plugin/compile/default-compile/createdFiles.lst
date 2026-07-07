@@ -4,6 +4,7 @@ com\insteip\backend\repository\LoginAuditoriaRepository.class
 com\insteip\backend\dto\MatriculaResponseDTO.class
 com\insteip\backend\service\interfaces\AlumnoDashboardService.class
 com\insteip\backend\service\interfaces\MatriculaService.class
+com\insteip\backend\dto\DocenteEstudianteProgressResponse.class
 com\insteip\backend\controller\EventoSistemaController.class
 com\insteip\backend\repository\NivelSuscripcionRepository.class
 com\insteip\backend\dto\LoginResponse$LoginResponseBuilder.class
@@ -62,6 +63,7 @@ com\insteip\backend\service\interfaces\CursoService.class
 com\insteip\backend\config\DatabaseSeeder.class
 com\insteip\backend\entity\Modulo.class
 com\insteip\backend\repository\ConfiguracionInstitucionRepository.class
+com\insteip\backend\security\CursoSecurityService.class
 com\insteip\backend\service\interfaces\MaterialService.class
 com\insteip\backend\entity\Material.class
 com\insteip\backend\repository\PagoRepository.class
@@ -72,6 +74,7 @@ com\insteip\backend\repository\MatriculaRepository.class
 com\insteip\backend\service\impl\CertificadoServiceImpl.class
 com\insteip\backend\service\impl\ModuloServiceImpl.class
 com\insteip\backend\entity\Certificado.class
+com\insteip\backend\controller\DocenteDashboardController.class
 com\insteip\backend\controller\MaterialController.class
 com\insteip\backend\security\ApplicationConfig.class
 com\insteip\backend\service\impl\BackupScheduler.class
@@ -81,6 +84,7 @@ com\insteip\backend\controller\PagoController.class
 com\insteip\backend\repository\CursoRepository.class
 com\insteip\backend\exception\GlobalExceptionHandler.class
 com\insteip\backend\dto\CursoDto.class
+com\insteip\backend\service\impl\DocenteDashboardServiceImpl.class
 com\insteip\backend\repository\AvanceCursoRepository.class
 com\insteip\backend\dto\MaterialRequestDTO.class
 com\insteip\backend\dto\ModuloResponseDTO.class
@@ -132,11 +136,13 @@ com\insteip\backend\entity\Rol.class
 com\insteip\backend\entity\AvanceCurso$AvanceCursoBuilder.class
 com\insteip\backend\service\impl\MatriculaServiceImpl.class
 com\insteip\backend\dto\VideoRequestDTO.class
+com\insteip\backend\service\impl\CertificatePageBorder.class
 com\insteip\backend\repository\RolRepository.class
 com\insteip\backend\entity\PlantillaCertificado.class
 com\insteip\backend\service\impl\VideoServiceImpl.class
 com\insteip\backend\dto\TokenRefreshResponse$TokenRefreshResponseBuilder.class
 com\insteip\backend\service\impl\ConfiguracionServiceImpl.class
+com\insteip\backend\service\interfaces\DocenteDashboardService.class
 com\insteip\backend\dto\ModuloRequestDTO.class
 com\insteip\backend\security\SecurityConfig.class
 com\insteip\backend\dto\AlumnoCertificadoResponse.class

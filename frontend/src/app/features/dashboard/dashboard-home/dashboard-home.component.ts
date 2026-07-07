@@ -1,3 +1,4 @@
+import { environment } from '../../../../environments/environment';
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -130,7 +131,7 @@ export class DashboardHomeComponent implements OnInit {
     });
 
     // Load System status
-    this.http.get<any>('http://localhost:8081/api/sistema/status').subscribe({
+    this.http.get<any>(environment.apiUrl + '/sistema/status').subscribe({
       next: (status) => {
         this.systemStatus = status;
       }

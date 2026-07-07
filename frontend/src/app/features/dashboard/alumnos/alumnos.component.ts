@@ -4,6 +4,9 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { AlumnoService } from '../../../core/services/alumno.service';
 import { AlumnoRequest, AlumnoResponse } from '../../../core/models/alumno.model';
 import { ReportesService } from '../../../core/services/reportes.service';
+import { ToastService } from '../../../core/services/toast.service';
+import { ConfirmModalComponent } from '../../../core/components/confirm-modal/confirm-modal.component';
+import { getSubscriptionClass } from '../../../core/utils/subscription.utils';
 
 @Component({
   selector: 'app-alumnos',
@@ -11,7 +14,8 @@ import { ReportesService } from '../../../core/services/reportes.service';
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ConfirmModalComponent
   ],
   templateUrl: './alumnos.component.html',
   styleUrls: ['./alumnos.component.css']
@@ -20,6 +24,7 @@ export class AlumnosComponent implements OnInit {
   private alumnoService = inject(AlumnoService);
   private reportesService = inject(ReportesService);
   private fb = inject(FormBuilder);
+  private toastService = inject(ToastService);
 
   exportarCSV(): void {
     this.reportesService.exportarAlumnos().subscribe({
@@ -40,14 +45,22 @@ export class AlumnosComponent implements OnInit {
   isFormSubmitting = false;
   modalErrorMsg = '';
 
+  // Confirm modal controls
+  showConfirmModal = false;
+  confirmModalType: 'success' | 'danger' | 'info' | 'warning' = 'warning';
+  confirmModalTitle = '';
+  confirmModalMessage = '';
+  pendingAlumnoAction: (() => void) | null = null;
+
   selectedAlumno: AlumnoResponse | null = null;
 
   alumnoForm: FormGroup = this.fb.group({
-    nombres: ['', [Validators.required]],
-    apellidos: ['', [Validators.required]],
-    correo: ['', [Validators.required, Validators.email]],
-    telefono: [''],
+    nombres: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100), Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$')]],
+    apellidos: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100), Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$')]],
+    correo: ['', [Validators.required, Validators.email, Validators.maxLength(150)]],
+    telefono: ['', [Validators.pattern('^[0-9]{9}$')]],
     nivelSuscripcionId: [1, [Validators.required]],
+    password: ['', [Validators.minLength(6)]],
     estado: [true]
   });
 
@@ -137,18 +150,39 @@ export class AlumnosComponent implements OnInit {
 
   toggleEstado(alumno: AlumnoResponse): void {
     const nuevoEstado = !alumno.estado;
-    this.alumnoService.cambiarEstado(alumno.id, nuevoEstado).subscribe({
-      next: () => {
-        alumno.estado = nuevoEstado;
-      },
-      error: (err) => {
-        console.error('Error al cambiar estado del alumno', err);
-      }
-    });
+    const accion = nuevoEstado ? 'Activar' : 'Desactivar';
+    
+    this.confirmModalType = nuevoEstado ? 'success' : 'danger';
+    this.confirmModalTitle = `¿${accion} Alumno?`;
+    this.confirmModalMessage = `¿Estás seguro de que deseas ${accion.toLowerCase()} la cuenta del alumno ${alumno.nombres} ${alumno.apellidos}?`;
+    
+    this.pendingAlumnoAction = () => {
+      this.alumnoService.cambiarEstado(alumno.id, nuevoEstado).subscribe({
+        next: () => {
+          alumno.estado = nuevoEstado;
+          this.toastService.success(`Alumno ${nuevoEstado ? 'activado' : 'desactivado'} exitosamente.`);
+          this.showConfirmModal = false;
+        },
+        error: (err) => {
+          this.toastService.error(err.error?.message || 'Error al cambiar el estado del alumno.');
+          this.showConfirmModal = false;
+        }
+      });
+    };
+    
+    this.showConfirmModal = true;
+  }
+
+  confirmAction(): void {
+    if (this.pendingAlumnoAction) {
+      this.pendingAlumnoAction();
+    }
   }
 
   onSubmit(): void {
     if (this.alumnoForm.invalid) {
+      this.alumnoForm.markAllAsTouched();
+      this.toastService.warning('Por favor complete todos los campos requeridos correctamente.');
       return;
     }
 
@@ -160,7 +194,8 @@ export class AlumnosComponent implements OnInit {
       apellidos: this.alumnoForm.value.apellidos,
       correo: this.alumnoForm.value.correo,
       telefono: this.alumnoForm.value.telefono || '',
-      nivelSuscripcionId: Number(this.alumnoForm.value.nivelSuscripcionId)
+      nivelSuscripcionId: Number(this.alumnoForm.value.nivelSuscripcionId),
+      password: this.alumnoForm.value.password || undefined
     };
 
     if (this.isEditMode && this.selectedAlumno) {
@@ -172,12 +207,14 @@ export class AlumnosComponent implements OnInit {
             this.alumnoService.cambiarEstado(this.selectedAlumno!.id, this.alumnoForm.value.estado).subscribe({
               next: () => {
                 this.loadAlumnos();
+                this.toastService.success('Datos de alumno y estado actualizados exitosamente.');
                 this.closeCreateEditModal();
               },
               error: (err) => this.handleError(err)
             });
           } else {
             this.loadAlumnos();
+            this.toastService.success('Datos de alumno actualizados exitosamente.');
             this.closeCreateEditModal();
           }
         },
@@ -187,6 +224,7 @@ export class AlumnosComponent implements OnInit {
       this.alumnoService.crearAlumno(req).subscribe({
         next: () => {
           this.loadAlumnos();
+          this.toastService.success('Alumno registrado exitosamente.');
           this.closeCreateEditModal();
         },
         error: (err) => this.handleError(err)
@@ -197,17 +235,8 @@ export class AlumnosComponent implements OnInit {
   private handleError(err: any): void {
     this.isFormSubmitting = false;
     this.modalErrorMsg = err.error?.message || 'Ocurrió un error inesperado al procesar la solicitud.';
+    this.toastService.error(this.modalErrorMsg, 'Error en el Servidor');
   }
 
-  getSubscriptionClass(sub: string): string {
-    switch (sub) {
-      case 'PREMIUM':
-        return 'bg-[#f9e37a]/20 text-[#6d5e00] border border-[#f9e37a]/60';
-      case 'INTERMEDIO':
-        return 'bg-blue-50 text-blue-700 border border-blue-200';
-      case 'BASICO':
-      default:
-        return 'bg-slate-50 text-slate-700 border border-slate-200';
-    }
-  }
+  getSubscriptionClass = getSubscriptionClass;
 }

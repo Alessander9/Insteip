@@ -7,6 +7,9 @@ import { ModuloService } from '../../../core/services/modulo.service';
 import { VideoService } from '../../../core/services/video.service';
 import { ModuloResponse } from '../../../core/models/modulo.model';
 import { VideoRequest, VideoResponse } from '../../../core/models/video.model';
+import { ToastService } from '../../../core/services/toast.service';
+import { ConfirmModalComponent } from '../../../core/components/confirm-modal/confirm-modal.component';
+import { extraerIdYoutube } from '../../../core/utils/youtube.utils';
 
 @Component({
   selector: 'app-videos',
@@ -15,7 +18,8 @@ import { VideoRequest, VideoResponse } from '../../../core/models/video.model';
     CommonModule,
     RouterModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ConfirmModalComponent
   ],
   templateUrl: './videos.component.html',
   styleUrls: ['./videos.component.css']
@@ -27,6 +31,7 @@ export class VideosComponent implements OnInit {
   private videoService = inject(VideoService);
   private fb = inject(FormBuilder);
   private sanitizer = inject(DomSanitizer);
+  private toastService = inject(ToastService);
 
   moduloId!: number;
   modulo: ModuloResponse | null = null;
@@ -40,6 +45,13 @@ export class VideosComponent implements OnInit {
   isFormSubmitting = false;
   modalErrorMsg = '';
 
+  // Confirm modal controls
+  showConfirmModal = false;
+  confirmModalType: 'success' | 'danger' | 'info' | 'warning' = 'warning';
+  confirmModalTitle = '';
+  confirmModalMessage = '';
+  pendingVideoAction: (() => void) | null = null;
+
   selectedVideo: VideoResponse | null = null;
 
   // Youtube Live Preview
@@ -47,10 +59,10 @@ export class VideosComponent implements OnInit {
   safeEmbedUrl: SafeResourceUrl | null = null;
 
   videoForm: FormGroup = this.fb.group({
-    titulo: ['', [Validators.required]],
-    descripcion: ['', [Validators.required]],
-    youtubeUrl: ['', [Validators.required]],
-    orden: [1, [Validators.required, Validators.min(1)]],
+    titulo: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+    descripcion: ['', [Validators.required, Validators.minLength(5)]],
+    youtubeUrl: ['', [Validators.required, Validators.pattern('^(https?:\\/\\/)?(www\\.)?(youtube\\.com|youtu\\.be)\\/.+$')]],
+    orden: [1, [Validators.required, Validators.min(1), Validators.max(999)]],
     estado: [true]
   });
 
@@ -155,18 +167,39 @@ export class VideosComponent implements OnInit {
 
   toggleEstado(video: VideoResponse): void {
     const nuevoEstado = !video.estado;
-    this.videoService.cambiarEstado(video.id, nuevoEstado).subscribe({
-      next: () => {
-        video.estado = nuevoEstado;
-      },
-      error: (err) => {
-        console.error('Error al cambiar estado del video', err);
-      }
-    });
+    const accion = nuevoEstado ? 'Activar' : 'Desactivar';
+    
+    this.confirmModalType = nuevoEstado ? 'success' : 'warning';
+    this.confirmModalTitle = `¿${accion} Video?`;
+    this.confirmModalMessage = `¿Estás seguro de que deseas ${accion.toLowerCase()} el video "${video.titulo}"?`;
+    
+    this.pendingVideoAction = () => {
+      this.videoService.cambiarEstado(video.id, nuevoEstado).subscribe({
+        next: () => {
+          video.estado = nuevoEstado;
+          this.toastService.success(`Video "${video.titulo}" ${nuevoEstado ? 'activado' : 'desactivado'} con éxito.`);
+          this.showConfirmModal = false;
+        },
+        error: (err) => {
+          this.toastService.error(err.error?.message || 'Error al cambiar el estado del video.');
+          this.showConfirmModal = false;
+        }
+      });
+    };
+    
+    this.showConfirmModal = true;
+  }
+
+  confirmAction(): void {
+    if (this.pendingVideoAction) {
+      this.pendingVideoAction();
+    }
   }
 
   onSubmit(): void {
     if (this.videoForm.invalid) {
+      this.videoForm.markAllAsTouched();
+      this.toastService.warning('Por favor complete todos los campos requeridos del video correctamente.');
       return;
     }
 
@@ -189,12 +222,14 @@ export class VideosComponent implements OnInit {
             this.videoService.cambiarEstado(this.selectedVideo!.id, this.videoForm.value.estado).subscribe({
               next: () => {
                 this.loadVideos();
+                this.toastService.success('Video y su estado actualizados con éxito.');
                 this.closeVideoModal();
               },
               error: (err) => this.handleError(err)
             });
           } else {
             this.loadVideos();
+            this.toastService.success('Video modificado con éxito.');
             this.closeVideoModal();
           }
         },
@@ -204,6 +239,7 @@ export class VideosComponent implements OnInit {
       this.videoService.crearVideo(req).subscribe({
         next: () => {
           this.loadVideos();
+          this.toastService.success('Video creado con éxito.');
           this.closeVideoModal();
         },
         error: (err) => this.handleError(err)
@@ -211,15 +247,11 @@ export class VideosComponent implements OnInit {
     }
   }
 
-  extraerIdYoutube(url: string): string {
-    if (!url) return '';
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : '';
-  }
+  extraerIdYoutube = extraerIdYoutube;
 
   private handleError(err: any): void {
     this.isFormSubmitting = false;
     this.modalErrorMsg = err.error?.message || 'Error al procesar el video.';
+    this.toastService.error(this.modalErrorMsg);
   }
 }

@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -8,7 +9,7 @@ import { ConfiguracionRequest, ConfiguracionResponse } from '../models/configura
 })
 export class ConfiguracionService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8081/api/configuracion';
+  private apiUrl = environment.apiUrl + '/configuracion';
 
   obtenerConfiguracion(): Observable<ConfiguracionResponse> {
     return this.http.get<ConfiguracionResponse>(this.apiUrl);

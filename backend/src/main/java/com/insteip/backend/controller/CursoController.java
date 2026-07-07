@@ -1,10 +1,11 @@
 package com.insteip.backend.controller;
 
+
+import lombok.RequiredArgsConstructor;
 import com.insteip.backend.dto.CursoRequestDTO;
 import com.insteip.backend.dto.CursoResponseDTO;
 import com.insteip.backend.service.interfaces.CursoService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,16 +16,16 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/cursos")
 @CrossOrigin(origins = "*")
-@PreAuthorize("hasRole('ADMINISTRADOR')")
+@PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DOCENTE')")
+@RequiredArgsConstructor
 public class CursoController {
 
-    @Autowired
-    private CursoService cursoService;
+    private final CursoService cursoService;
 
-    @Autowired
-    private com.insteip.backend.service.interfaces.ModuloService moduloService;
+    private final com.insteip.backend.service.interfaces.ModuloService moduloService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<org.springframework.data.domain.Page<CursoResponseDTO>> listarCursos(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -34,26 +35,31 @@ public class CursoController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessCurso(#id)")
     public ResponseEntity<CursoResponseDTO> obtenerDetalle(@PathVariable Long id) {
         return ResponseEntity.ok(cursoService.obtenerDetalle(id));
     }
 
     @GetMapping("/{id}/modulos")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessCurso(#id)")
     public ResponseEntity<List<com.insteip.backend.dto.ModuloResponseDTO>> listarModulosPorCurso(@PathVariable Long id) {
         return ResponseEntity.ok(moduloService.listarModulosPorCurso(id));
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<CursoResponseDTO> crearCurso(@Valid @RequestBody CursoRequestDTO dto) {
         return new ResponseEntity<>(cursoService.crearCurso(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<CursoResponseDTO> editarCurso(@PathVariable Long id, @Valid @RequestBody CursoRequestDTO dto) {
         return ResponseEntity.ok(cursoService.editarCurso(id, dto));
     }
 
     @PatchMapping("/{id}/estado")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<Void> cambiarEstado(
             @PathVariable Long id,
             @RequestParam(required = false) Boolean estado,

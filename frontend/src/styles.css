@@ -10,6 +10,17 @@ html, body {
   overflow-x: hidden;
 }
 
+html.dark,
+html.dark body {
+  background-color: #020617;
+  color: #f1f5f9;
+  color-scheme: dark;
+}
+
+body {
+  transition: background-color 300ms ease, color 300ms ease;
+}
+
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
 }

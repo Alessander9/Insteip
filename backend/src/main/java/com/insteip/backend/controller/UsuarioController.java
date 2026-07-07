@@ -1,10 +1,11 @@
 package com.insteip.backend.controller;
 
+
+import lombok.RequiredArgsConstructor;
 import com.insteip.backend.dto.UsuarioRequestDTO;
 import com.insteip.backend.dto.UsuarioResponseDTO;
 import com.insteip.backend.service.interfaces.UsuarioService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,10 +16,10 @@ import java.util.Map;
 @RequestMapping("/api/usuarios")
 @CrossOrigin(origins = "*")
 @PreAuthorize("hasRole('ADMINISTRADOR')")
+@RequiredArgsConstructor
 public class UsuarioController {
 
-    @Autowired
-    private UsuarioService usuarioService;
+    private final UsuarioService usuarioService;
 
     @GetMapping
     public ResponseEntity<org.springframework.data.domain.Page<UsuarioResponseDTO>> listarAlumnos(

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -20,6 +21,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private toastService = inject(ToastService);
 
   loginForm: FormGroup = this.fb.group({
     correo: ['', [Validators.required, Validators.email]],
@@ -142,12 +144,13 @@ export class LoginComponent {
     this.authService.login({ correo, password }).subscribe({
       next: (response: any) => {
         this.isLoading = false;
-        // Redirigir al dashboard tras inicio de sesión exitoso
+        this.toastService.success('¡Bienvenido al campus virtual INSTEIP!');
         this.router.navigate(['/dashboard']);
       },
       error: (err: any) => {
         this.isLoading = false;
         this.errorMessage = err.error?.message || 'Error al conectar con el servidor. Verifique sus credenciales.';
+        this.toastService.error(this.errorMessage, 'Fallo de Autenticación');
       }
     });
   }

@@ -1,21 +1,21 @@
 package com.insteip.backend.service.impl;
 
+
+import lombok.RequiredArgsConstructor;
 import com.insteip.backend.dto.ConfiguracionRequest;
 import com.insteip.backend.dto.ConfiguracionResponse;
 import com.insteip.backend.entity.ConfiguracionInstitucion;
 import com.insteip.backend.repository.ConfiguracionInstitucionRepository;
 import com.insteip.backend.service.interfaces.ConfiguracionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ConfiguracionServiceImpl implements ConfiguracionService {
 
-    @Autowired
-    private ConfiguracionInstitucionRepository repository;
+    private final ConfiguracionInstitucionRepository repository;
 
-    @Autowired
-    private com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
+    private final com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
 
     @Override
     public ConfiguracionResponse obtenerConfiguracion() {

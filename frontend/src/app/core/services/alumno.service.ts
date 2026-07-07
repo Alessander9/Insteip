@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -9,7 +10,7 @@ import { AlumnoRequest, AlumnoResponse } from '../models/alumno.model';
 })
 export class AlumnoService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8081/api/usuarios';
+  private apiUrl = environment.apiUrl + '/usuarios';
 
   listarAlumnos(): Observable<AlumnoResponse[]> {
     return this.http.get<any>(this.apiUrl).pipe(

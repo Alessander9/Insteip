@@ -1,9 +1,0 @@
-com\insteip\backend\controller\DashboardsControllerTest$TestConfig.class
-com\insteip\backend\service\impl\DocenteDashboardServiceImplTest.class
-com\insteip\backend\controller\DashboardsControllerTest.class
-com\insteip\backend\security\CursoSecurityServiceTest.class
-com\insteip\backend\controller\AuthControllerTest.class
-com\insteip\backend\controller\DashboardsControllerTest$StubBackupScheduler.class
-com\insteip\backend\controller\AdministracionControllerTest.class
-com\insteip\backend\controller\ContenidosControllerTest.class
-com\insteip\backend\service\impl\MaterialServiceImplTest.class

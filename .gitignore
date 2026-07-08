@@ -1,2 +1,8 @@
 node_modules
-node_modules
+backend/target/
+backend/uploads/backups/
+backend/uploads/certificados/
+backend/uploads/materiales/
+frontend/.angular/cache/
+frontend/dist/
+run-logs/

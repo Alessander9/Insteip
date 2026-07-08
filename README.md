@@ -15,6 +15,7 @@
 ## Resumen
 
 INSTEIP es una plataforma académica para administrar cursos, módulos, videos, materiales, matrículas, avance del alumno, certificados, auditoría y configuración institucional.
+La documentación del proyecto y los flujos de QA ya están alineados con el estado actual del sistema, incluyendo paneles por rol, filtros unificados y validación pública de certificados.
 
 El sistema está organizado en tres capas:
 
@@ -46,6 +47,7 @@ flowchart LR
 - Gestión de cursos, módulos, videos y materiales.
 - Matrículas y progreso por video/curso.
 - Certificados PDF con validación pública.
+- Diseño premium de certificados con portada institucional, logo reforzado, tipografía más marcada y marca de agua sutil en el PDF.
 - Auditoría de login y eventos del sistema.
 - Reportes CSV.
 - Estado del sistema y backups.
@@ -221,6 +223,12 @@ Base: `/api/certificados`
 - `GET /{id}/download`
 - `GET /validar/{codigo}`
 
+Notas:
+
+- La validación pública expone alumno, curso, fecha y código.
+- Los certificados se regeneran desde el backend cuando el PDF físico falta o debe repararse.
+- La plantilla activa del sistema controla la firma y el cargo institucional.
+
 ### Auditoría
 
 Base: `/api/auditoria`
@@ -283,6 +291,18 @@ cd frontend
 npm install
 npm start
 ```
+
+## QA Reciente
+
+Estado comprobado recientemente:
+
+- `backend`: `./mvnw test -q`
+- `frontend`: `npm run build`
+- `scripts/backend-api-super-test.js`
+- `scripts/selenium-test.js`
+- `scripts/super-test.js`
+
+Los scripts de QA cubren autenticación, roles, paneles, CRUD principales, certificados, validación pública y monitoreo del sistema.
 
 ## QA
 

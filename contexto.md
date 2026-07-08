@@ -110,6 +110,13 @@ Rutas privadas:
 
 La interfaz del admin usa una barra lateral con accesos dinámicos por rol.
 
+La parte de certificados también quedó actualizada visualmente:
+
+- PDF institucional con logo más visible.
+- Jerarquía tipográfica reforzada para título y nombre del alumno.
+- Marca de agua sutil de fondo.
+- QR y firma institucional en el bloque final.
+
 ## 7. API Actual
 
 Base general: `/api`
@@ -145,6 +152,17 @@ El backend expone un CRUD específico para docentes:
 
 Ese flujo usa un DTO propio para docentes y no exige `nivelSuscripcionId`.
 
+Los listados críticos ya trabajan con paginación real y orden por fecha desde backend en:
+
+- alumnos,
+- cursos,
+- docentes,
+- certificados,
+- videos por módulo,
+- materiales por módulo.
+
+Eso unifica búsqueda, sort y paginación en la UI y evita ordenar solo la página visible.
+
 ## 8. Flujo Docente
 
 El docente puede:
@@ -162,8 +180,29 @@ Estado verificado recientemente:
 
 - `backend`: `./mvnw test -q`
 - `frontend`: `npm run build`
+- Selenium smoke: `scripts/selenium-test.js`
+- E2E visual: `scripts/super-test.js`
 
-La suite de backend valida autenticación, usuarios, cursos, módulos, videos, materiales, matrículas, avance, certificados, reportes, sistema y configuración.
+La suite de backend valida autenticación, usuarios, docentes, cursos, módulos, videos, materiales, matrículas, avance, certificados, reportes, sistema y configuración.
+
+Hallazgos recientes ya corregidos:
+
+- descargas protegidas de materiales devuelven `403` cuando corresponde,
+- la validación pública del certificado expone correctamente alumno y curso,
+- el flujo de certificados se ha regenerado con el nuevo estilo visual.
+
+Documento maestro de QA y pruebas completas:
+
+- [docs/QA_TOTAL_SISTEMA.md](/C:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/docs/QA_TOTAL_SISTEMA.md)
+
+Ese documento concentra:
+
+- cobertura por rol,
+- cobertura por pantalla,
+- cobertura por endpoint,
+- casos negativos,
+- validaciones de negocio,
+- y secuencia recomendada de ejecución.
 
 ## 10. Despliegue Local
 
@@ -192,4 +231,6 @@ npm start
 
 - Si cambian rutas o permisos, actualizar este archivo junto con el `README.md`.
 - Si se agrega un nuevo rol o panel, documentarlo aquí con sus endpoints y alcance.
+- `DOCENTE` es el rol operativo del sistema; el frontend y backend ya lo contemplan como panel separado y como asignación de cursos.
+- El módulo de backup depende de `pg_dump`; si no existe en el entorno, el sistema usa un fallback controlado para no romper la ejecución.
 - Este documento sirve como contexto operativo para desarrollo, pruebas y mantenimiento.

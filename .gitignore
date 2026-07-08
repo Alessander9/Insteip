@@ -6,3 +6,13 @@ backend/uploads/materiales/
 frontend/.angular/cache/
 frontend/dist/
 run-logs/
+.metadata/
+manual-assets/
+maven/
+backend-local.log
+manual.html
+*.pdf
+backend-api-super-test.js
+generate-manual.js
+selenium-test.js
+super-test.js

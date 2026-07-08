@@ -52,7 +52,7 @@ Este sprint valida los flujos críticos del sistema INSTEIP después de cerrar s
 ## Estado
 
 - Backend: validado con `mvn test`.
-- Frontend: validado con la suite de pruebas E2E automatizada con Playwright en [super-test.js](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/super-test.js).
+- Frontend: validado con la suite de pruebas E2E automatizada con Playwright en [scripts/super-test.js](/c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/scripts/super-test.js).
 
 ## Observaciones
 

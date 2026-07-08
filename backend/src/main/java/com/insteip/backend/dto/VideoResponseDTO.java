@@ -6,5 +6,6 @@ public record VideoResponseDTO(
     String descripcion,
     String youtubeUrl,
     Integer orden,
-    Boolean estado
+    Boolean estado,
+    java.time.LocalDateTime fechaCreacion
 ){}

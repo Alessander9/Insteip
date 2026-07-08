@@ -1,20 +1,20 @@
 <div class="space-y-6 font-body">
   <!-- Top Bar -->
-  <div class="border border-slate-200 p-4 md:p-6 bg-white rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
+  <div class="border border-slate-200 dark:border-slate-800 p-4 md:p-6 bg-white dark:bg-slate-900 rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] flex flex-col gap-4 md:flex-row md:justify-between md:items-center transition-colors duration-300">
     <div>
-      <h1 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase">Gestión de Alumnos</h1>
-      <p class="text-slate-500 text-xs mt-1">Control de alumnos inscritos, estado de cuentas y niveles de suscripción.</p>
+      <h1 class="text-xl md:text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase">Gestión de Alumnos</h1>
+      <p class="text-slate-500 dark:text-slate-400 text-xs mt-1">Control de alumnos inscritos, estado de cuentas y niveles de suscripción.</p>
     </div>
     <div class="flex flex-col gap-2 md:flex-row md:gap-2 w-full md:w-auto">
       <button 
         (click)="exportarCSV()" 
-        class="flex items-center justify-center gap-2 px-4 py-2.5 border border-slate-300 bg-white text-slate-700 font-bold text-xs uppercase tracking-widest hover:bg-slate-50 transition-colors rounded-none w-full md:w-auto">
+        class="flex items-center justify-center gap-2 px-4 py-2.5 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors duration-305 rounded-none w-full md:w-auto">
         <span class="material-symbols-outlined text-sm">download</span>
         <span>Exportar CSV</span>
       </button>
       <button 
         (click)="openCreateModal()" 
-        class="flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900 text-white font-bold text-xs uppercase tracking-widest hover:bg-slate-800 transition-colors rounded-none w-full md:w-auto">
+        class="flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors duration-300 rounded-none w-full md:w-auto">
         <span class="material-symbols-outlined text-sm">add</span>
         <span>Crear Alumno</span>
       </button>
@@ -22,39 +22,45 @@
   </div>
 
   <!-- Main Content Card / Table -->
-  <div class="border border-slate-200 bg-white rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] overflow-hidden">
+  <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] overflow-hidden transition-colors duration-300">
     <!-- Filter bar -->
-    <div class="p-4 border-b border-slate-200 bg-slate-50 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+    <div class="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between transition-colors duration-300">
       <div class="relative w-full">
-        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
           <span class="material-symbols-outlined text-base">search</span>
         </span>
         <input 
           [(ngModel)]="searchQuery"
           (input)="applyFilter()"
-          class="block w-full pl-9 pr-3 py-2 border border-slate-300 bg-white text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-xs rounded-none" 
+          class="block w-full pl-9 pr-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-xs rounded-none transition-colors duration-300" 
           placeholder="Buscar por nombre o correo...">
       </div>
-      <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">
-        {{ filteredAlumnos.length }} alumnos encontrados
-      </span>
+      <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
+        <select [(ngModel)]="dateSortOrder" (change)="onDateSortChange($any($event.target).value)" class="px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold uppercase tracking-wider">
+          <option value="desc">Fecha desc</option>
+          <option value="asc">Fecha asc</option>
+        </select>
+        <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider whitespace-nowrap">
+          {{ filteredAlumnos.length }} alumnos encontrados
+        </span>
+      </div>
     </div>
 
     <!-- MOBILE: Card Stack (hidden on md+) -->
-    <div class="md:hidden divide-y divide-slate-100">
+    <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
       <!-- Mobile Empty State -->
-      <div *ngIf="filteredAlumnos.length === 0" class="p-10 text-center text-slate-400">
-        <span class="material-symbols-outlined text-4xl mb-2 text-slate-300">group_off</span>
+      <div *ngIf="filteredAlumnos.length === 0" class="p-10 text-center text-slate-400 dark:text-slate-500">
+        <span class="material-symbols-outlined text-4xl mb-2 text-slate-300 dark:text-slate-700">group_off</span>
         <p class="font-medium text-xs">No se encontraron alumnos registrados.</p>
       </div>
       <!-- Mobile Cards -->
-      <div *ngFor="let alumno of filteredAlumnos" class="p-4 space-y-3 bg-white hover:bg-slate-50 transition-colors">
+      <div *ngFor="let alumno of paginatedAlumnos; trackBy: trackByAlumnoId" class="p-4 space-y-3 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors duration-300">
         <div class="flex items-start justify-between gap-2">
           <div>
-            <p class="font-bold text-slate-900 text-sm leading-tight">{{ alumno.nombres }} {{ alumno.apellidos }}</p>
-            <p class="text-xs text-slate-500 mt-0.5 break-all">{{ alumno.correo }}</p>
+            <p class="font-bold text-slate-900 dark:text-white text-sm leading-tight">{{ alumno.nombres }} {{ alumno.apellidos }}</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 break-all">{{ alumno.correo }}</p>
           </div>
-          <span [ngClass]="alumno.estado ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-red-50 text-red-700 border-red-200'" class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider border rounded-none shrink-0">
+          <span [ngClass]="alumno.estado ? 'bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900' : 'bg-red-50 text-red-700 border-red-300 dark:bg-red-950/30 dark:text-red-400 dark:border-red-900'" class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider border rounded-none shrink-0">
             {{ alumno.estado ? 'ACTIVO' : 'INACTIVO' }}
           </span>
         </div>
@@ -66,19 +72,19 @@
             <button 
               (click)="openDetailModal(alumno)" 
               title="Ver Detalle"
-              class="p-1.5 border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-slate-600 rounded-none transition-colors">
+              class="p-1.5 border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-none transition-colors duration-300">
               <span class="material-symbols-outlined text-base block">visibility</span>
             </button>
             <button 
               (click)="openEditModal(alumno)" 
               title="Editar Alumno"
-              class="p-1.5 border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-slate-600 rounded-none transition-colors">
+              class="p-1.5 border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-none transition-colors duration-300">
               <span class="material-symbols-outlined text-base block">edit</span>
             </button>
             <button 
               (click)="toggleEstado(alumno)" 
               [title]="alumno.estado ? 'Desactivar' : 'Activar'"
-              [ngClass]="alumno.estado ? 'border-red-200 text-red-600 hover:bg-red-50' : 'border-emerald-200 text-emerald-600 hover:bg-emerald-50'"
+              [ngClass]="alumno.estado ? 'border-red-200 dark:border-red-900/60 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20' : 'border-emerald-200 dark:border-emerald-900/60 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/20'"
               class="p-1.5 border rounded-none transition-colors">
               <span class="material-symbols-outlined text-base block">
                 {{ alumno.estado ? 'block' : 'check_circle' }}
@@ -93,7 +99,7 @@
     <div class="hidden md:block overflow-x-auto">
       <table class="w-full text-left border-collapse text-xs">
         <thead>
-          <tr class="border-b border-slate-200 bg-slate-100/60 text-slate-700 font-bold uppercase tracking-wider text-[10px]">
+          <tr class="border-b border-slate-200 dark:border-slate-800 bg-slate-100/60 dark:bg-slate-800/40 text-slate-700 dark:text-slate-300 font-bold uppercase tracking-wider text-[10px] transition-colors duration-300">
             <th class="p-4">Nombre Completo</th>
             <th class="p-4">Correo Electrónico</th>
             <th class="p-4">Suscripción</th>
@@ -101,20 +107,20 @@
             <th class="p-4 text-right">Acciones</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100">
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
           <!-- Empty State -->
           <tr *ngIf="filteredAlumnos.length === 0">
-            <td colspan="5" class="p-12 text-center text-slate-400">
-              <span class="material-symbols-outlined text-4xl mb-2 text-slate-300">group_off</span>
+            <td colspan="5" class="p-12 text-center text-slate-400 dark:text-slate-500">
+              <span class="material-symbols-outlined text-4xl mb-2 text-slate-300 dark:text-slate-700">group_off</span>
               <p class="font-medium text-xs">No se encontraron alumnos registrados.</p>
             </td>
           </tr>
           <!-- Rows -->
-          <tr *ngFor="let alumno of filteredAlumnos" class="hover:bg-slate-50 transition-colors">
-            <td class="p-4 font-bold text-slate-900">
+          <tr *ngFor="let alumno of paginatedAlumnos; trackBy: trackByAlumnoId" class="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors duration-300">
+            <td class="p-4 font-bold text-slate-900 dark:text-white">
               {{ alumno.nombres }} {{ alumno.apellidos }}
             </td>
-            <td class="p-4 text-slate-600">
+            <td class="p-4 text-slate-600 dark:text-slate-400">
               {{ alumno.correo }}
             </td>
             <td class="p-4">
@@ -123,7 +129,7 @@
               </span>
             </td>
             <td class="p-4">
-              <span [ngClass]="alumno.estado ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-red-50 text-red-700 border-red-200'" class="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider border rounded-none">
+              <span [ngClass]="alumno.estado ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-450 dark:border-emerald-900' : 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-450 dark:border-red-900'" class="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider border rounded-none">
                 {{ alumno.estado ? 'ACTIVO' : 'INACTIVO' }}
               </span>
             </td>
@@ -132,19 +138,19 @@
                 <button 
                   (click)="openDetailModal(alumno)" 
                   title="Ver Detalle"
-                  class="p-1.5 border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-slate-600 rounded-none transition-colors">
+                  class="p-1.5 border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-none transition-colors duration-300">
                   <span class="material-symbols-outlined text-base block">visibility</span>
                 </button>
                 <button 
                   (click)="openEditModal(alumno)" 
                   title="Editar Alumno"
-                  class="p-1.5 border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-slate-600 rounded-none transition-colors">
+                  class="p-1.5 border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-none transition-colors duration-300">
                   <span class="material-symbols-outlined text-base block">edit</span>
                 </button>
                 <button 
                   (click)="toggleEstado(alumno)" 
                   [title]="alumno.estado ? 'Desactivar' : 'Activar'"
-                  [ngClass]="alumno.estado ? 'border-red-200 text-red-600 hover:bg-red-50' : 'border-emerald-200 text-emerald-600 hover:bg-emerald-50'"
+                  [ngClass]="alumno.estado ? 'border-red-200 dark:border-red-900/60 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20' : 'border-emerald-200 dark:border-emerald-900/60 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/20'"
                   class="p-1.5 border rounded-none transition-colors">
                   <span class="material-symbols-outlined text-base block">
                     {{ alumno.estado ? 'block' : 'check_circle' }}
@@ -156,17 +162,51 @@
         </tbody>
       </table>
     </div>
+
+    <!-- Pagination -->
+    <div *ngIf="filteredAlumnos.length > pageSize" class="px-4 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between transition-colors duration-300">
+      <div class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+        Página {{ currentPage }} de {{ totalPages }}
+      </div>
+
+      <div class="flex items-center gap-2 flex-wrap">
+        <button
+          type="button"
+          (click)="previousPage()"
+          [disabled]="currentPage === 1"
+          class="px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed rounded-none">
+          Anterior
+        </button>
+
+        <button
+          *ngFor="let page of [].constructor(totalPages); let i = index"
+          type="button"
+          (click)="goToPage(i + 1)"
+          [ngClass]="currentPage === (i + 1) ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 border-slate-900 dark:border-slate-100' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'"
+          class="w-10 h-10 border font-black text-[10px] uppercase tracking-widest transition-colors rounded-none">
+          {{ i + 1 }}
+        </button>
+
+        <button
+          type="button"
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages"
+          class="px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed rounded-none">
+          Siguiente
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- Create/Edit Modal -->
-  <div *ngIf="showCreateEditModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="w-full max-w-lg mx-4 bg-white border border-slate-200 shadow-2xl rounded-none overflow-y-auto relative max-h-[95vh]">
+  <div *ngIf="showCreateEditModal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" (click)="closeCreateEditModal()">
+    <div class="w-full max-w-lg mx-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl rounded-none overflow-y-auto relative max-h-[95vh] transition-colors duration-300" (click)="$event.stopPropagation()">
       <!-- Modal Header -->
-      <div class="px-4 md:px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between sticky top-0 z-10">
-        <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider">
+      <div class="px-4 md:px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-between sticky top-0 z-10 transition-colors duration-300">
+        <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">
           {{ isEditMode ? 'Editar Datos del Alumno' : 'Registrar Nuevo Alumno' }}
         </h3>
-        <button (click)="closeCreateEditModal()" class="text-slate-400 hover:text-slate-600">
+        <button (click)="closeCreateEditModal()" class="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 flex transition-colors">
           <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
@@ -174,7 +214,7 @@
       <!-- Modal Form -->
       <form [formGroup]="alumnoForm" (ngSubmit)="onSubmit()" class="p-4 md:p-6 space-y-4">
         <!-- Error response display -->
-        <div *ngIf="modalErrorMsg" class="flex items-start gap-2 bg-red-50 border border-red-200 text-red-800 p-3 rounded-none text-[11px] font-semibold">
+        <div *ngIf="modalErrorMsg" class="flex items-start gap-2 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 text-red-800 dark:text-red-300 p-3 rounded-none text-[11px] font-semibold transition-colors duration-300">
           <span class="material-symbols-outlined text-red-600 text-base">warning</span>
           <span>{{ modalErrorMsg }}</span>
         </div>
@@ -182,52 +222,77 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <!-- Nombres -->
           <div>
-            <label class="block text-[10px] font-bold text-slate-700 mb-1 uppercase tracking-widest">Nombres *</label>
+            <label class="block text-[10px] font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-widest">Nombres *</label>
             <input 
               formControlName="nombres" 
               type="text" 
-              class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
-            <p *ngIf="alumnoForm.get('nombres')?.invalid && alumnoForm.get('nombres')?.touched" class="text-[10px] text-red-600 mt-1">El nombre es requerido.</p>
+              class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors duration-300">
+            <p *ngIf="alumnoForm.get('nombres')?.hasError('required') && alumnoForm.get('nombres')?.touched" class="text-[10px] text-red-600 mt-1">El nombre es requerido.</p>
+            <p *ngIf="alumnoForm.get('nombres')?.hasError('minlength') && alumnoForm.get('nombres')?.touched" class="text-[10px] text-red-600 mt-1">Debe tener al menos 2 caracteres.</p>
+            <p *ngIf="alumnoForm.get('nombres')?.hasError('pattern') && alumnoForm.get('nombres')?.touched" class="text-[10px] text-red-600 mt-1">Solo se permiten letras.</p>
           </div>
           <!-- Apellidos -->
           <div>
-            <label class="block text-[10px] font-bold text-slate-700 mb-1 uppercase tracking-widest">Apellidos *</label>
+            <label class="block text-[10px] font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-widest">Apellidos *</label>
             <input 
               formControlName="apellidos" 
               type="text" 
-              class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
-            <p *ngIf="alumnoForm.get('apellidos')?.invalid && alumnoForm.get('apellidos')?.touched" class="text-[10px] text-red-600 mt-1">El apellido es requerido.</p>
+              class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors duration-300">
+            <p *ngIf="alumnoForm.get('apellidos')?.hasError('required') && alumnoForm.get('apellidos')?.touched" class="text-[10px] text-red-600 mt-1">El apellido es requerido.</p>
+            <p *ngIf="alumnoForm.get('apellidos')?.hasError('minlength') && alumnoForm.get('apellidos')?.touched" class="text-[10px] text-red-600 mt-1">Debe tener al menos 2 caracteres.</p>
+            <p *ngIf="alumnoForm.get('apellidos')?.hasError('pattern') && alumnoForm.get('apellidos')?.touched" class="text-[10px] text-red-600 mt-1">Solo se permiten letras.</p>
           </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <!-- Correo -->
           <div>
-            <label class="block text-[10px] font-bold text-slate-700 mb-1 uppercase tracking-widest">Correo Electrónico *</label>
+            <label class="block text-[10px] font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-widest">Correo Electrónico *</label>
             <input 
               formControlName="correo" 
               type="email" 
-              class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
-            <p *ngIf="alumnoForm.get('correo')?.invalid && alumnoForm.get('correo')?.touched" class="text-[10px] text-red-600 mt-1">Ingrese un correo válido.</p>
+              class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors duration-300">
+            <p *ngIf="alumnoForm.get('correo')?.hasError('required') && alumnoForm.get('correo')?.touched" class="text-[10px] text-red-600 mt-1">El correo es requerido.</p>
+            <p *ngIf="alumnoForm.get('correo')?.hasError('email') && alumnoForm.get('correo')?.touched" class="text-[10px] text-red-600 mt-1">Ingrese un correo válido.</p>
           </div>
           <!-- Telefono -->
           <div>
-            <label class="block text-[10px] font-bold text-slate-700 mb-1 uppercase tracking-widest">Teléfono</label>
+            <label class="block text-[10px] font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-widest">Teléfono</label>
             <input 
               formControlName="telefono" 
               type="text" 
-              class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+              class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors duration-300"
               placeholder="Ej. 999999999">
+            <p *ngIf="alumnoForm.get('telefono')?.hasError('pattern') && alumnoForm.get('telefono')?.touched" class="text-[10px] text-red-600 mt-1">Debe tener exactamente 9 números.</p>
           </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Contraseña -->
+          <div>
+            <label class="block text-[10px] font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-widest">
+              Contraseña {{ isEditMode ? '(opcional)' : '*' }}
+            </label>
+            <input 
+              formControlName="password" 
+              type="password" 
+              class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors duration-300"
+              placeholder="Mínimo 6 caracteres">
+            <p *ngIf="alumnoForm.get('password')?.hasError('minlength') && alumnoForm.get('password')?.touched" class="text-[10px] text-red-600 mt-1">Mínimo 6 caracteres.</p>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">
+              {{ isEditMode ? 'Déjala vacía si no deseas cambiarla.' : 'Si no la defines, se usará Alumno123! por defecto.' }}
+            </p>
+          </div>
+          <div class="hidden md:block"></div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <!-- Nivel de suscripcion -->
           <div>
-            <label class="block text-[10px] font-bold text-slate-700 mb-1 uppercase tracking-widest">Nivel de Suscripción *</label>
+            <label class="block text-[10px] font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-widest">Nivel de Suscripción *</label>
             <select 
               formControlName="nivelSuscripcionId" 
-              class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+              class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors duration-300">
               <option [value]="1">BÁSICO</option>
               <option [value]="2">INTERMEDIO</option>
               <option [value]="3">PREMIUM</option>
@@ -235,10 +300,10 @@
           </div>
           <!-- Estado -->
           <div>
-            <label class="block text-[10px] font-bold text-slate-700 mb-1 uppercase tracking-widest">Estado</label>
+            <label class="block text-[10px] font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-widest">Estado</label>
             <select 
               formControlName="estado" 
-              class="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+              class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors duration-300">
               <option [ngValue]="true">ACTIVO</option>
               <option [ngValue]="false">INACTIVO</option>
             </select>
@@ -246,17 +311,17 @@
         </div>
 
         <!-- Form Buttons -->
-        <div class="pt-4 border-t border-slate-100 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3">
+        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3">
           <button 
             type="button" 
             (click)="closeCreateEditModal()" 
-            class="px-4 py-2 border border-slate-300 bg-white text-slate-700 font-bold text-xs uppercase tracking-widest hover:bg-slate-50 transition-colors rounded-none w-full sm:w-auto">
+            class="px-4 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs uppercase tracking-widest hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors rounded-none w-full sm:w-auto">
             Cancelar
           </button>
           <button 
             type="submit" 
             [disabled]="alumnoForm.invalid || isFormSubmitting" 
-            class="px-4 py-2 bg-slate-900 text-white font-bold text-xs uppercase tracking-widest hover:bg-slate-800 transition-colors rounded-none disabled:opacity-55 w-full sm:w-auto">
+            class="px-4 py-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors rounded-none disabled:opacity-55 w-full sm:w-auto">
             {{ isFormSubmitting ? 'Guardando...' : 'Guardar Alumno' }}
           </button>
         </div>
@@ -265,66 +330,77 @@
   </div>
 
   <!-- Detail Modal -->
-  <div *ngIf="showDetailModal && selectedAlumno" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="w-full max-w-md mx-4 bg-white border border-slate-200 shadow-2xl rounded-none overflow-y-auto max-h-[95vh]">
+  <div *ngIf="showDetailModal && selectedAlumno" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" (click)="closeDetailModal()">
+    <div class="w-full max-w-md mx-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl rounded-none overflow-y-auto max-h-[95vh] transition-colors duration-300" (click)="$event.stopPropagation()">
       <!-- Modal Header -->
-      <div class="px-4 md:px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between sticky top-0 z-10">
-        <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider">Ficha Detallada del Alumno</h3>
-        <button (click)="closeDetailModal()" class="text-slate-400 hover:text-slate-600">
+      <div class="px-4 md:px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-between sticky top-0 z-10 transition-colors duration-300">
+        <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Ficha Detallada del Alumno</h3>
+        <button (click)="closeDetailModal()" class="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
           <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
 
       <!-- Detail Body -->
       <div class="p-4 md:p-6 space-y-6">
-        <div class="flex items-center gap-4 border-b border-slate-100 pb-4">
-          <div class="w-14 h-14 bg-primary/10 border border-primary/20 text-primary flex items-center justify-center text-xl font-bold rounded-none shrink-0">
+        <div class="flex items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
+          <div class="w-14 h-14 bg-indigo-500/10 dark:bg-indigo-500/20 border border-indigo-500/20 dark:border-indigo-500/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl font-bold rounded-none shrink-0">
             {{ selectedAlumno.nombres.charAt(0) }}{{ selectedAlumno.apellidos.charAt(0) }}
           </div>
           <div>
-            <h4 class="text-base font-black text-slate-900 leading-tight">{{ selectedAlumno.nombres }} {{ selectedAlumno.apellidos }}</h4>
-            <span class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Código Alumno: ID-{{ selectedAlumno.id }}</span>
+            <h4 class="text-base font-black text-slate-900 dark:text-white leading-tight">{{ selectedAlumno.nombres }} {{ selectedAlumno.apellidos }}</h4>
+            <span class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-bold">Código Alumno: ID-{{ selectedAlumno.id }}</span>
           </div>
         </div>
 
         <div class="space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <div>
-              <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Correo</span>
-              <span class="block font-medium text-slate-800 mt-0.5 break-all">{{ selectedAlumno.correo }}</span>
+              <span class="block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Correo</span>
+              <span class="block font-medium text-slate-800 dark:text-slate-200 mt-0.5 break-all font-mono">{{ selectedAlumno.correo }}</span>
             </div>
             <div>
-              <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Teléfono</span>
-              <span class="block font-medium text-slate-800 mt-0.5">{{ selectedAlumno.telefono || 'No registrado' }}</span>
+              <span class="block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Teléfono</span>
+              <span class="block font-medium text-slate-800 dark:text-slate-200 mt-0.5">{{ selectedAlumno.telefono || 'No registrado' }}</span>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-2">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-2 border-t border-slate-100 dark:border-slate-800">
             <div>
-              <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Nivel Suscripción</span>
+              <span class="block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Nivel Suscripción</span>
               <span [ngClass]="getSubscriptionClass(selectedAlumno.nivelSuscripcion)" class="inline-block px-2 py-0.5 text-[9px] font-black uppercase tracking-wider mt-1 rounded-none">
                 {{ selectedAlumno.nivelSuscripcion }}
               </span>
             </div>
             <div>
-              <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Estado Cuenta</span>
-              <span [ngClass]="selectedAlumno.estado ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-red-50 text-red-700 border-red-200'" class="inline-block px-2 py-0.5 text-[9px] font-black uppercase tracking-wider border mt-1 rounded-none">
+              <span class="block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Estado Cuenta</span>
+              <span [ngClass]="selectedAlumno.estado ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900' : 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-450 dark:border-red-900'" class="inline-block px-2 py-0.5 text-[9px] font-black uppercase tracking-wider border mt-1 rounded-none">
                 {{ selectedAlumno.estado ? 'ACTIVO' : 'INACTIVO' }}
               </span>
             </div>
           </div>
         </div>
 
-        <div class="pt-4 border-t border-slate-100 flex justify-end">
+        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
           <button 
             type="button" 
             (click)="closeDetailModal()" 
-            class="px-4 py-2 bg-slate-950 text-white font-bold text-xs uppercase tracking-widest hover:bg-slate-800 transition-colors rounded-none w-full sm:w-auto">
+            class="px-4 py-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors rounded-none w-full sm:w-auto">
             Cerrar Ficha
           </button>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Confirm modal -->
+  <app-confirm-modal
+    [visible]="showConfirmModal"
+    [type]="confirmModalType"
+    [title]="confirmModalTitle"
+    [message]="confirmModalMessage"
+    confirmText="Confirmar"
+    (onConfirm)="confirmAction()"
+    (onCancel)="showConfirmModal = false">
+  </app-confirm-modal>
 
 </div>

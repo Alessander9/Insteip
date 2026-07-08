@@ -1,0 +1,139 @@
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ConfirmModalComponent } from '../../../core/components/confirm-modal/confirm-modal.component';
+import { ToastService } from '../../../core/services/toast.service';
+import { getSubscriptionClass } from '../../../core/utils/subscription.utils';
+import { DocenteRequest, DocenteResponse } from '../../../core/models/docente.model';
+import { DocenteService } from '../../../core/services/docente.service';
+
+@Component({
+  selector: 'app-docentes',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, ConfirmModalComponent],
+  templateUrl: './docentes.component.html',
+  styleUrls: ['./docentes.component.css']
+})
+export class DocentesComponent implements OnInit {
+  private docenteService = inject(DocenteService);
+  private fb = inject(FormBuilder);
+  private toastService = inject(ToastService);
+
+  docentes: DocenteResponse[] = [];
+  filteredDocentes: DocenteResponse[] = [];
+  searchQuery = '';
+  dateSortOrder: 'desc' | 'asc' = 'desc';
+  currentPage = 1;
+  readonly pageSize = 10;
+  totalElements = 0;
+
+  showCreateEditModal = false;
+  isEditMode = false;
+  isFormSubmitting = false;
+  modalErrorMsg = '';
+  showConfirmModal = false;
+  confirmModalType: 'success' | 'danger' | 'info' | 'warning' = 'warning';
+  confirmModalTitle = '';
+  confirmModalMessage = '';
+  pendingAction: (() => void) | null = null;
+  selectedDocente: DocenteResponse | null = null;
+
+  docenteForm: FormGroup = this.fb.group({
+    nombres: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
+    apellidos: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
+    correo: ['', [Validators.required, Validators.email, Validators.maxLength(150)]],
+    telefono: [''],
+    password: ['', [Validators.minLength(6)]],
+    estado: [true]
+  });
+
+  ngOnInit(): void { this.loadDocentes(); }
+
+  loadDocentes(): void {
+    this.docenteService.listarDocentes(this.currentPage - 1, this.pageSize, this.searchQuery).subscribe({
+      next: (res) => {
+        this.docentes = Array.isArray(res) ? res : (res?.content ?? []);
+        this.totalElements = Array.isArray(res) ? this.docentes.length : (res?.totalElements ?? this.docentes.length);
+        this.applyFilter();
+      },
+      error: (err) => console.error('Error al listar docentes', err)
+    });
+  }
+
+  applyFilter(): void {
+    this.filteredDocentes = [...this.docentes].sort((a, b) => {
+      const d1 = new Date(a.fechaRegistro).getTime() || 0;
+      const d2 = new Date(b.fechaRegistro).getTime() || 0;
+      return this.dateSortOrder === 'asc' ? d1 - d2 : d2 - d1;
+    });
+  }
+
+  onSearchChange(): void { this.currentPage = 1; this.loadDocentes(); }
+  onDateSortChange(order: string): void { this.dateSortOrder = order === 'asc' ? 'asc' : 'desc'; this.applyFilter(); }
+  get totalPages(): number { return Math.max(1, Math.ceil(this.totalElements / this.pageSize)); }
+  get paginatedDocentes(): DocenteResponse[] { return this.filteredDocentes; }
+  goToPage(page: number): void { if (page < 1 || page > this.totalPages) return; this.currentPage = page; this.loadDocentes(); }
+  previousPage(): void { this.goToPage(this.currentPage - 1); }
+  nextPage(): void { this.goToPage(this.currentPage + 1); }
+  trackByDocenteId(_: number, docente: DocenteResponse): number { return docente.id; }
+
+  openCreateModal(): void {
+    this.isEditMode = false; this.modalErrorMsg = ''; this.selectedDocente = null;
+    this.docenteForm.reset({ nombres: '', apellidos: '', correo: '', telefono: '', password: '', estado: true });
+    this.showCreateEditModal = true;
+  }
+  openEditModal(docente: DocenteResponse): void {
+    this.isEditMode = true; this.modalErrorMsg = ''; this.selectedDocente = docente;
+    this.docenteForm.patchValue({ nombres: docente.nombres, apellidos: docente.apellidos, correo: docente.correo, telefono: docente.telefono, password: '', estado: docente.estado });
+    this.showCreateEditModal = true;
+  }
+  closeCreateEditModal(): void { this.showCreateEditModal = false; this.isFormSubmitting = false; }
+  toggleEstado(docente: DocenteResponse): void {
+    const nuevoEstado = !docente.estado;
+    this.confirmModalType = nuevoEstado ? 'success' : 'danger';
+    this.confirmModalTitle = `¿${nuevoEstado ? 'Activar' : 'Desactivar'} Docente?`;
+    this.confirmModalMessage = `¿Deseas ${nuevoEstado ? 'activar' : 'desactivar'} a ${docente.nombres} ${docente.apellidos}?`;
+    this.pendingAction = () => this.docenteService.cambiarEstado(docente.id, nuevoEstado).subscribe({
+      next: () => { docente.estado = nuevoEstado; this.toastService.success(`Docente ${nuevoEstado ? 'activado' : 'desactivado'} exitosamente.`); this.showConfirmModal = false; },
+      error: (err) => { this.toastService.error(err.error?.message || 'Error al cambiar el estado del docente.'); this.showConfirmModal = false; }
+    });
+    this.showConfirmModal = true;
+  }
+  confirmAction(): void { this.pendingAction?.(); }
+  onSubmit(): void {
+    if (this.docenteForm.invalid) {
+      this.docenteForm.markAllAsTouched();
+      this.toastService.warning('Por favor completa los campos requeridos correctamente.');
+      return;
+    }
+    const req: DocenteRequest = { nombres: this.docenteForm.value.nombres, apellidos: this.docenteForm.value.apellidos, correo: this.docenteForm.value.correo, telefono: this.docenteForm.value.telefono || '', password: this.docenteForm.value.password || undefined };
+    this.isFormSubmitting = true;
+    const call$ = this.isEditMode && this.selectedDocente ? this.docenteService.editarDocente(this.selectedDocente.id, req) : this.docenteService.crearDocente(req);
+    call$.subscribe({
+      next: () => {
+        const stateChanged = this.isEditMode && this.selectedDocente && this.docenteForm.value.estado !== this.selectedDocente.estado;
+        if (stateChanged && this.selectedDocente) {
+          this.docenteService.cambiarEstado(this.selectedDocente.id, this.docenteForm.value.estado).subscribe({
+            next: () => {
+              this.loadDocentes();
+              this.toastService.success('Docente y estado actualizados exitosamente.');
+              this.closeCreateEditModal();
+            },
+            error: (err) => {
+              this.isFormSubmitting = false;
+              this.modalErrorMsg = err.error?.message || 'Error al actualizar el estado del docente.';
+              this.toastService.error(this.modalErrorMsg, 'Error en el Servidor');
+            }
+          });
+          return;
+        }
+        this.loadDocentes();
+        this.toastService.success(this.isEditMode ? 'Docente actualizado exitosamente.' : 'Docente registrado exitosamente.');
+        this.closeCreateEditModal();
+      },
+      error: (err) => { this.isFormSubmitting = false; this.modalErrorMsg = err.error?.message || 'Error al procesar la solicitud.'; this.toastService.error(this.modalErrorMsg, 'Error en el Servidor'); }
+    });
+  }
+
+  getSubscriptionClass = getSubscriptionClass;
+}

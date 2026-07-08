@@ -5,6 +5,10 @@ import { Router, RouterModule } from '@angular/router';
 import { CursoService } from '../../../core/services/curso.service';
 import { CursoRequest, CursoResponse } from '../../../core/models/curso.model';
 import { ReportesService } from '../../../core/services/reportes.service';
+import { ToastService } from '../../../core/services/toast.service';
+import { UsuarioService, DocenteOption } from '../../../core/services/usuario.service';
+import { ConfirmModalComponent } from '../../../core/components/confirm-modal/confirm-modal.component';
+import { getSubscriptionClass, formatNiveles } from '../../../core/utils/subscription.utils';
 
 @Component({
   selector: 'app-cursos',
@@ -13,7 +17,8 @@ import { ReportesService } from '../../../core/services/reportes.service';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule
+    RouterModule,
+    ConfirmModalComponent
   ],
   templateUrl: './cursos.component.html',
   styleUrls: ['./cursos.component.css']
@@ -23,6 +28,8 @@ export class CursosComponent implements OnInit {
   private reportesService = inject(ReportesService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private toastService = inject(ToastService);
+  private usuarioService = inject(UsuarioService);
 
   irADetalle(id: number): void {
     console.log('Intentando navegar a curso:', id);
@@ -51,6 +58,9 @@ export class CursosComponent implements OnInit {
   cursos: CursoResponse[] = [];
   filteredCursos: CursoResponse[] = [];
   searchQuery = '';
+  dateSortOrder: 'desc' | 'asc' = 'desc';
+  currentPage = 1;
+  readonly pageSize = 10;
 
   get totalCursos(): number {
     return this.cursos.length;
@@ -71,18 +81,63 @@ export class CursosComponent implements OnInit {
   isFormSubmitting = false;
   modalErrorMsg = '';
 
+  // Confirm modal controls
+  showConfirmModal = false;
+  confirmModalType: 'success' | 'danger' | 'info' | 'warning' = 'warning';
+  confirmModalTitle = '';
+  confirmModalMessage = '';
+  pendingCursoAction: (() => void) | null = null;
+
   selectedCurso: CursoResponse | null = null;
   selectedSuscripcionIds: number[] = [];
+  docentes: DocenteOption[] = [];
+  docentesFiltrados: DocenteOption[] = [];
+  docenteSearch = '';
+  selectedDocenteId: number | null = null;
+  showDocenteDropdown = false;
 
   cursoForm: FormGroup = this.fb.group({
-    nombre: ['', [Validators.required]],
-    descripcion: ['', [Validators.required]],
-    imagenPortada: [''],
+    nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+    descripcion: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(2000)]],
+    imagenPortada: ['', [Validators.pattern('^https?:\\/\\/.+$')]],
+    docenteId: [null],
     estado: [true]
   });
 
   ngOnInit(): void {
     this.loadCursos();
+    this.loadDocentes();
+  }
+
+  loadDocentes(): void {
+    this.usuarioService.listarDocentes().subscribe({
+      next: (data) => {
+        this.docentes = data || [];
+        this.docentesFiltrados = this.docentes;
+      },
+      error: (err) => console.error('Error loading docentes', err)
+    });
+  }
+
+  filterDocentes(): void {
+    const q = this.docenteSearch.trim().toLowerCase();
+    this.docentesFiltrados = !q ? this.docentes : this.docentes.filter(d =>
+      `${d.nombres} ${d.apellidos}`.toLowerCase().includes(q) ||
+      d.correo.toLowerCase().includes(q)
+    );
+    this.showDocenteDropdown = true;
+  }
+
+  openDocenteDropdown(): void {
+    this.showDocenteDropdown = true;
+    this.filterDocentes();
+  }
+
+  selectDocente(docente: DocenteOption): void {
+    this.selectedDocenteId = docente.id;
+    this.docenteSearch = `${docente.nombres} ${docente.apellidos} — ${docente.correo}`;
+    this.cursoForm.patchValue({ docenteId: docente.id });
+    this.showDocenteDropdown = false;
   }
 
   loadCursos(): void {
@@ -98,16 +153,49 @@ export class CursosComponent implements OnInit {
   }
 
   applyFilter(): void {
-    if (!this.searchQuery.trim()) {
-      this.filteredCursos = [...this.cursos];
-      return;
-    }
-
-    const query = this.searchQuery.toLowerCase();
-    this.filteredCursos = this.cursos.filter(c => 
+    const query = this.searchQuery.trim().toLowerCase();
+    this.filteredCursos = this.cursos.filter(c =>
+      !query ||
       c.nombre.toLowerCase().includes(query) ||
-      c.descripcion.toLowerCase().includes(query)
-    );
+      c.descripcion.toLowerCase().includes(query) ||
+      c.fechaCreacion.toLowerCase().includes(query)
+    ).sort((a, b) => {
+      const d1 = new Date(a.fechaCreacion).getTime() || 0;
+      const d2 = new Date(b.fechaCreacion).getTime() || 0;
+      return this.dateSortOrder === 'asc' ? d1 - d2 : d2 - d1;
+    });
+    this.currentPage = 1;
+  }
+
+  onDateSortChange(order: string): void {
+    this.dateSortOrder = order === 'asc' ? 'asc' : 'desc';
+    this.applyFilter();
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredCursos.length / this.pageSize));
+  }
+
+  get paginatedCursos(): CursoResponse[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredCursos.slice(start, start + this.pageSize);
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+  }
+
+  nextPage(): void {
+    this.goToPage(this.currentPage + 1);
+  }
+
+  previousPage(): void {
+    this.goToPage(this.currentPage - 1);
+  }
+
+  trackByCursoId(_: number, curso: CursoResponse): number {
+    return curso.id;
   }
 
   openCreateModal(): void {
@@ -115,10 +203,14 @@ export class CursosComponent implements OnInit {
     this.modalErrorMsg = '';
     this.selectedCurso = null;
     this.selectedSuscripcionIds = [1]; // Default to Básico
+    this.selectedDocenteId = null;
+    this.docenteSearch = '';
+    this.showDocenteDropdown = false;
     this.cursoForm.reset({
       nombre: '',
       descripcion: '',
       imagenPortada: '',
+      docenteId: null,
       estado: true
     });
     this.showCreateEditModal = true;
@@ -136,10 +228,14 @@ export class CursosComponent implements OnInit {
       if (curso.nivelesSuscripcion.includes('PREMIUM')) this.selectedSuscripcionIds.push(3);
     }
 
+    this.selectedDocenteId = curso.docenteId || null;
+    const docente = this.docentes.find(d => d.id === curso.docenteId);
+    this.docenteSearch = docente ? `${docente.nombres} ${docente.apellidos} — ${docente.correo}` : '';
     this.cursoForm.patchValue({
       nombre: curso.nombre,
       descripcion: curso.descripcion,
       imagenPortada: curso.imagenPortada,
+      docenteId: curso.docenteId || null,
       estado: curso.estado
     });
     this.showCreateEditModal = true;
@@ -162,14 +258,33 @@ export class CursosComponent implements OnInit {
 
   toggleEstado(curso: CursoResponse): void {
     const nuevoEstado = !curso.estado;
-    this.cursoService.cambiarEstado(curso.id, nuevoEstado).subscribe({
-      next: () => {
-        curso.estado = nuevoEstado;
-      },
-      error: (err) => {
-        console.error('Error al cambiar estado del curso', err);
-      }
-    });
+    const accion = nuevoEstado ? 'Activar' : 'Desactivar';
+    
+    this.confirmModalType = nuevoEstado ? 'success' : 'danger';
+    this.confirmModalTitle = `¿${accion} Curso?`;
+    this.confirmModalMessage = `¿Estás seguro de que deseas ${accion.toLowerCase()} el curso "${curso.nombre}"?`;
+    
+    this.pendingCursoAction = () => {
+      this.cursoService.cambiarEstado(curso.id, nuevoEstado).subscribe({
+        next: () => {
+          curso.estado = nuevoEstado;
+          this.toastService.success(`Curso ${nuevoEstado ? 'activado' : 'desactivado'} exitosamente.`);
+          this.showConfirmModal = false;
+        },
+        error: (err) => {
+          this.toastService.error(err.error?.message || 'Error al cambiar el estado del curso.');
+          this.showConfirmModal = false;
+        }
+      });
+    };
+    
+    this.showConfirmModal = true;
+  }
+
+  confirmAction(): void {
+    if (this.pendingCursoAction) {
+      this.pendingCursoAction();
+    }
   }
 
   toggleNivel(id: number): void {
@@ -189,6 +304,8 @@ export class CursosComponent implements OnInit {
 
   onSubmit(): void {
     if (this.cursoForm.invalid) {
+      this.cursoForm.markAllAsTouched();
+      this.toastService.warning('Por favor complete todos los campos requeridos correctamente.');
       return;
     }
 
@@ -199,7 +316,8 @@ export class CursosComponent implements OnInit {
       nombre: this.cursoForm.value.nombre,
       descripcion: this.cursoForm.value.descripcion,
       imagenPortada: this.cursoForm.value.imagenPortada || '',
-      nivelesSuscripcionIds: this.selectedSuscripcionIds
+      nivelesSuscripcionIds: this.selectedSuscripcionIds,
+      docenteId: this.cursoForm.value.docenteId || null
     };
 
     if (this.isEditMode && this.selectedCurso) {
@@ -210,12 +328,14 @@ export class CursosComponent implements OnInit {
             this.cursoService.cambiarEstado(this.selectedCurso!.id, this.cursoForm.value.estado).subscribe({
               next: () => {
                 this.loadCursos();
+                this.toastService.success('Curso y estado actualizados exitosamente.');
                 this.closeCreateEditModal();
               },
               error: (err) => this.handleError(err)
             });
           } else {
             this.loadCursos();
+            this.toastService.success('Curso actualizado exitosamente.');
             this.closeCreateEditModal();
           }
         },
@@ -225,6 +345,7 @@ export class CursosComponent implements OnInit {
       this.cursoService.crearCurso(req).subscribe({
         next: () => {
           this.loadCursos();
+          this.toastService.success('Curso creado exitosamente.');
           this.closeCreateEditModal();
         },
         error: (err) => this.handleError(err)
@@ -238,28 +359,9 @@ export class CursosComponent implements OnInit {
   private handleError(err: any): void {
     this.isFormSubmitting = false;
     this.modalErrorMsg = err.error?.message || 'Ocurrió un error inesperado al procesar la solicitud.';
+    this.toastService.error(this.modalErrorMsg, 'Error');
   }
 
-  formatNiveles(niveles: string[]): string {
-    if (!niveles || niveles.length === 0) return 'Ninguno';
-    return niveles.map(n => {
-      if (n === 'BASICO') return 'Básico';
-      if (n === 'INTERMEDIO') return 'Intermedio';
-      if (n === 'PREMIUM') return 'Premium';
-      return n;
-    }).join(' • ');
-  }
-
-  getSubscriptionClass(niveles: string[]): string {
-    if (!niveles || niveles.length === 0) {
-      return 'bg-slate-50 text-slate-700 border border-slate-200';
-    }
-    if (niveles.includes('PREMIUM')) {
-      return 'bg-[#f9e37a]/20 text-[#6d5e00] border border-[#f9e37a]/60';
-    }
-    if (niveles.includes('INTERMEDIO')) {
-      return 'bg-blue-50 text-blue-700 border border-blue-200';
-    }
-    return 'bg-slate-50 text-slate-700 border border-slate-200';
-  }
+  formatNiveles = formatNiveles;
+  getSubscriptionClass = getSubscriptionClass;
 }

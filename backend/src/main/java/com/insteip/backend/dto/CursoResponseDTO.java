@@ -6,5 +6,8 @@ public record CursoResponseDTO(
     String descripcion,
     String imagenPortada,
     java.util.List<String> nivelesSuscripcion,
-    Boolean estado
+    Boolean estado,
+    Long docenteId,
+    String docenteNombre,
+    java.time.LocalDateTime fechaCreacion
 ){}

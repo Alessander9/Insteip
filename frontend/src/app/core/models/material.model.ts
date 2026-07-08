@@ -5,4 +5,5 @@ export interface MaterialResponse {
   tipoArchivo: string;
   pesoBytes: number;
   estado: boolean;
+  fechaSubida: string;
 }

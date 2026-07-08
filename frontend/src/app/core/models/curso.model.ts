@@ -3,6 +3,7 @@ export interface CursoRequest {
   descripcion: string;
   imagenPortada: string;
   nivelesSuscripcionIds: number[];
+  docenteId?: number;
 }
 
 export interface CursoResponse {
@@ -12,4 +13,7 @@ export interface CursoResponse {
   imagenPortada: string;
   nivelesSuscripcion: string[];
   estado: boolean;
+  docenteId?: number;
+  docenteNombre?: string;
+  fechaCreacion: string;
 }

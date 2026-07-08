@@ -1,21 +1,21 @@
 <div class="space-y-6 font-body animate-fadeIn">
   
   <!-- Header Card -->
-  <div class="border border-slate-200 p-4 md:p-6 bg-white shadow-[4px_4px_0px_0px_rgba(15,23,42,0.03)] flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
+  <div class="border border-slate-200 dark:border-slate-800 p-4 md:p-6 bg-white dark:bg-slate-900 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.03)] flex flex-col gap-4 md:flex-row md:justify-between md:items-center transition-colors duration-300">
     <div>
-      <h1 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase">Gestión de Cursos</h1>
-      <p class="text-slate-500 text-xs mt-1">Administración de programas educativos, contenidos curriculares y restricciones de acceso.</p>
+      <h1 class="text-xl md:text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase">Gestión de Cursos</h1>
+      <p class="text-slate-500 dark:text-slate-400 text-xs mt-1">Administración de programas educativos, contenidos curriculares y restricciones de acceso.</p>
     </div>
     <div class="flex flex-col gap-2 md:flex-row md:gap-2 w-full md:w-auto">
       <button 
         (click)="exportarCSV()" 
-        class="btn-export flex items-center justify-center gap-2 px-4 py-2.5 border border-slate-350 bg-white text-slate-700 hover:text-slate-900 font-black text-xs uppercase tracking-wider hover:bg-slate-50 rounded-none w-full md:w-auto shadow-[2px_2px_0px_0px_rgba(0,0,0,0.03)]">
+        class="btn-export flex items-center justify-center gap-2 px-4 py-2.5 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-black text-xs uppercase tracking-wider hover:bg-slate-50 dark:hover:bg-slate-800 rounded-none w-full md:w-auto shadow-[2px_2px_0px_0px_rgba(0,0,0,0.03)] transition-colors duration-300">
         <span class="material-symbols-outlined text-sm">download</span>
         <span>Exportar CSV</span>
       </button>
       <button 
         (click)="openCreateModal()" 
-        class="btn-create flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900 text-white font-black text-xs uppercase tracking-wider hover:bg-slate-800 rounded-none w-full md:w-auto shadow-[2px_2px_0px_0px_rgba(0,0,0,0.15)]">
+        class="btn-create flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-black text-xs uppercase tracking-wider hover:bg-slate-800 dark:hover:bg-slate-200 rounded-none w-full md:w-auto shadow-[2px_2px_0px_0px_rgba(0,0,0,0.15)] transition-colors duration-300">
         <span class="material-symbols-outlined text-sm">add</span>
         <span>Crear Curso</span>
       </button>
@@ -25,76 +25,82 @@
   <!-- KPI Metrics -->
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
     <!-- Metric 1: Total Courses -->
-    <div class="kpi-card border border-slate-200 bg-white p-5 rounded-none shadow-[3px_3px_0px_0px_rgba(15,23,42,0.02)] flex items-center justify-between">
+    <div class="kpi-card border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 rounded-none shadow-[3px_3px_0px_0px_rgba(15,23,42,0.02)] flex items-center justify-between transition-colors duration-300">
       <div>
-        <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Total de Programas</span>
-        <span class="kpi-number text-2xl font-black text-slate-900 mt-1 font-mono">{{ totalCursos | number:'2.0' }}</span>
+        <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Total de Programas</span>
+        <span class="kpi-number text-2xl font-black text-slate-900 dark:text-white mt-1 font-mono">{{ totalCursos | number:'2.0' }}</span>
       </div>
-      <span class="kpi-icon material-symbols-outlined text-slate-350 text-3xl shrink-0">book</span>
+      <span class="kpi-icon material-symbols-outlined text-slate-300 dark:text-slate-600 text-3xl shrink-0">book</span>
     </div>
 
     <!-- Metric 2: Active Courses -->
-    <div class="kpi-card border border-slate-200 bg-white p-5 rounded-none shadow-[3px_3px_0px_0px_rgba(15,23,42,0.02)] flex items-center justify-between">
+    <div class="kpi-card border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 rounded-none shadow-[3px_3px_0px_0px_rgba(15,23,42,0.02)] flex items-center justify-between transition-colors duration-300">
       <div>
-        <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Cursos Activos</span>
-        <span class="kpi-number text-2xl font-black text-slate-900 mt-1 font-mono">{{ activeCursos | number:'2.0' }}</span>
+        <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Cursos Activos</span>
+        <span class="kpi-number text-2xl font-black text-slate-900 dark:text-white mt-1 font-mono">{{ activeCursos | number:'2.0' }}</span>
       </div>
-      <span class="kpi-icon material-symbols-outlined text-emerald-500/60 text-3xl shrink-0">check_circle</span>
+      <span class="kpi-icon material-symbols-outlined text-emerald-500/60 dark:text-emerald-500/40 text-3xl shrink-0">check_circle</span>
     </div>
 
     <!-- Metric 3: Premium Courses -->
-    <div class="kpi-card border border-slate-200 bg-white p-5 rounded-none shadow-[3px_3px_0px_0px_rgba(15,23,42,0.02)] flex items-center justify-between">
+    <div class="kpi-card border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 rounded-none shadow-[3px_3px_0px_0px_rgba(15,23,42,0.02)] flex items-center justify-between transition-colors duration-300">
       <div>
-        <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Acceso Premium</span>
-        <span class="kpi-number text-2xl font-black text-slate-900 mt-1 font-mono">{{ premiumCursos | number:'2.0' }}</span>
+        <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Acceso Premium</span>
+        <span class="kpi-number text-2xl font-black text-slate-900 dark:text-white mt-1 font-mono">{{ premiumCursos | number:'2.0' }}</span>
       </div>
-      <span class="kpi-icon material-symbols-outlined text-amber-500/60 text-3xl shrink-0">workspace_premium</span>
+      <span class="kpi-icon material-symbols-outlined text-amber-500/60 dark:text-amber-550/40 text-3xl shrink-0">workspace_premium</span>
     </div>
   </div>
 
   <!-- Filter & Course Table -->
-  <div class="border border-slate-200 bg-white shadow-[4px_4px_0px_0px_rgba(15,23,42,0.03)] overflow-hidden">
+  <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.03)] overflow-hidden transition-colors duration-300">
     <!-- Filter bar -->
-    <div class="p-4 border-b border-slate-200 bg-slate-50 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+    <div class="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between transition-colors duration-300">
       <div class="relative w-full">
-        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-450">
+        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
           <span class="material-symbols-outlined text-base">search</span>
         </span>
         <input 
           [(ngModel)]="searchQuery"
           (input)="applyFilter()"
-          class="search-input block w-full pl-9 pr-3 py-2 border border-slate-350 bg-white text-slate-805 placeholder-slate-450 focus:outline-none text-xs rounded-none" 
+          class="search-input block w-full pl-9 pr-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-455 dark:placeholder-slate-500 focus:outline-none text-xs rounded-none transition-colors duration-300" 
           placeholder="Buscar por nombre o descripción...">
       </div>
-      <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider whitespace-nowrap">
-        {{ filteredCursos.length }} de {{ totalCursos }} cursos mostrados
-      </span>
+      <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
+        <select [(ngModel)]="dateSortOrder" (change)="onDateSortChange($any($event.target).value)" class="px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold uppercase tracking-wider">
+          <option value="desc">Fecha desc</option>
+          <option value="asc">Fecha asc</option>
+        </select>
+        <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider whitespace-nowrap">
+          {{ filteredCursos.length }} de {{ totalCursos }} cursos mostrados
+        </span>
+      </div>
     </div>
 
     <!-- MOBILE: Card Stack (hidden on md+) -->
-    <div class="md:hidden divide-y divide-slate-100">
+    <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
       <!-- Mobile Empty State -->
-      <div *ngIf="filteredCursos.length === 0" class="p-10 text-center text-slate-400">
-        <span class="material-symbols-outlined text-4xl mb-2 text-slate-300">book</span>
+      <div *ngIf="filteredCursos.length === 0" class="p-10 text-center text-slate-400 dark:text-slate-500">
+        <span class="material-symbols-outlined text-4xl mb-2 text-slate-300 dark:text-slate-700">book</span>
         <p class="font-medium text-xs">No se encontraron cursos registrados.</p>
       </div>
       <!-- Mobile Cards -->
-      <div *ngFor="let curso of filteredCursos" class="mobile-curso-card p-4 space-y-3 bg-white">
+      <div *ngFor="let curso of paginatedCursos; trackBy: trackByCursoId" class="mobile-curso-card p-4 space-y-3 bg-white dark:bg-slate-900 transition-colors duration-300">
         <!-- Thumbnail + title row -->
         <div class="flex items-center gap-3">
-          <div class="curso-thumb w-16 h-10 border border-slate-200 bg-slate-100 flex-shrink-0 overflow-hidden rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.03)] relative">
+          <div class="curso-thumb w-16 h-10 border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 flex-shrink-0 overflow-hidden rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.03)] relative">
             <img 
               *ngIf="curso.imagenPortada" 
               [src]="curso.imagenPortada" 
               [alt]="curso.nombre" 
               class="w-full h-full object-cover">
-            <div *ngIf="!curso.imagenPortada" class="w-full h-full flex items-center justify-center text-slate-400 bg-slate-50 text-xs">
+            <div *ngIf="!curso.imagenPortada" class="w-full h-full flex items-center justify-center text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900 text-xs">
               <span class="material-symbols-outlined text-base">image</span>
             </div>
           </div>
           <div class="overflow-hidden flex-1">
-            <h4 class="font-bold text-slate-900 text-xs uppercase leading-tight truncate">{{ curso.nombre }}</h4>
-            <p class="text-[10px] text-slate-550 truncate mt-0.5">{{ curso.descripcion }}</p>
+            <h4 class="font-bold text-slate-900 dark:text-white text-xs uppercase leading-tight truncate">{{ curso.nombre }}</h4>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-0.5">{{ curso.descripcion }}</p>
           </div>
         </div>
         <!-- Badges row -->
@@ -102,7 +108,7 @@
           <span [ngClass]="getSubscriptionClass(curso.nivelesSuscripcion)" class="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider rounded-none">
             {{ formatNiveles(curso.nivelesSuscripcion) }}
           </span>
-          <span [ngClass]="curso.estado ? 'bg-emerald-50 text-emerald-700 border-emerald-250' : 'bg-red-50 text-red-700 border-red-250'" class="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider border rounded-none">
+          <span [ngClass]="curso.estado ? 'bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-950/30 dark:text-emerald-450 dark:border-emerald-900' : 'bg-red-50 text-red-700 border-red-300 dark:bg-red-950/30 dark:text-red-450 dark:border-red-900'" class="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider border rounded-none">
             {{ curso.estado ? 'ACTIVO' : 'INACTIVO' }}
           </span>
         </div>
@@ -111,26 +117,26 @@
           <button 
             (click)="irADetalle(curso.id)" 
             title="Administrar Temario y Alumnos"
-            class="action-btn btn-settings p-2 border border-slate-200 text-slate-600 rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.03)]">
+            class="action-btn btn-settings p-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.03)] hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors duration-300">
             <span class="material-symbols-outlined text-sm block">settings</span>
           </button>
           <button 
             (click)="openDetailModal(curso)" 
             title="Ver Ficha Detallada"
-            class="action-btn btn-view p-2 border border-slate-200 text-slate-600 rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.03)]">
+            class="action-btn btn-view p-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.03)] hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors duration-300">
             <span class="material-symbols-outlined text-sm block">visibility</span>
           </button>
           <button 
             (click)="openEditModal(curso)" 
             title="Editar Detalles del Curso"
-            class="action-btn btn-edit p-2 border border-slate-200 text-slate-600 rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.03)]">
+            class="action-btn btn-edit p-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.03)] hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors duration-300">
             <span class="material-symbols-outlined text-sm block">edit</span>
           </button>
           <button 
             (click)="toggleEstado(curso)" 
             [title]="curso.estado ? 'Desactivar Curso' : 'Activar Curso'"
-            [ngClass]="curso.estado ? 'action-btn btn-toggle-off border-red-200 text-red-600' : 'action-btn btn-toggle-on border-emerald-200 text-emerald-600'"
-            class="p-2 border rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.03)]">
+            [ngClass]="curso.estado ? 'action-btn btn-toggle-off border-red-205 dark:border-red-900/60 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20' : 'action-btn btn-toggle-on border-emerald-205 dark:border-emerald-900/60 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/20'"
+            class="p-2 border rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.03)] transition-colors duration-300">
             <span class="material-symbols-outlined text-sm block">
               {{ curso.estado ? 'block' : 'check_circle' }}
             </span>
@@ -143,39 +149,39 @@
     <div class="hidden md:block overflow-x-auto">
       <table class="w-full text-left border-collapse text-xs">
         <thead>
-          <tr class="border-b border-slate-200 bg-slate-100/60 text-slate-700 font-bold uppercase tracking-wider text-[10px]">
+          <tr class="border-b border-slate-200 dark:border-slate-800 bg-slate-100/60 dark:bg-slate-800/40 text-slate-700 dark:text-slate-300 font-bold uppercase tracking-wider text-[10px] transition-colors duration-300">
             <th class="p-4">Curso / Programa</th>
             <th class="p-4">Planes Autorizados</th>
             <th class="p-4">Estado</th>
             <th class="p-4 text-right">Acciones de Gestión</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100">
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
           <!-- Empty State -->
           <tr *ngIf="filteredCursos.length === 0">
-            <td colspan="4" class="p-12 text-center text-slate-400">
-              <span class="material-symbols-outlined text-4xl mb-2 text-slate-300">book</span>
+            <td colspan="4" class="p-12 text-center text-slate-400 dark:text-slate-500">
+              <span class="material-symbols-outlined text-4xl mb-2 text-slate-300 dark:text-slate-800">book</span>
               <p class="font-medium text-xs">No se encontraron cursos registrados.</p>
             </td>
           </tr>
           <!-- Rows -->
-          <tr *ngFor="let curso of filteredCursos" class="curso-row">
+          <tr *ngFor="let curso of paginatedCursos; trackBy: trackByCursoId" class="curso-row hover:bg-slate-50/40 dark:hover:bg-slate-800/20 transition-colors duration-200">
             <!-- Curso Column (Thumbnail + Title & Desc) -->
             <td class="p-4">
               <div class="flex items-center gap-4">
-                <div class="curso-thumb w-16 h-10 border border-slate-200 bg-slate-100 flex-shrink-0 overflow-hidden rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.03)] relative">
+                <div class="curso-thumb w-16 h-10 border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 flex-shrink-0 overflow-hidden rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.03)] relative">
                   <img 
                     *ngIf="curso.imagenPortada" 
                     [src]="curso.imagenPortada" 
                     [alt]="curso.nombre" 
                     class="w-full h-full object-cover">
-                  <div *ngIf="!curso.imagenPortada" class="w-full h-full flex items-center justify-center text-slate-400 bg-slate-50 text-xs">
+                  <div *ngIf="!curso.imagenPortada" class="w-full h-full flex items-center justify-center text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900 text-xs">
                     <span class="material-symbols-outlined text-base">image</span>
                   </div>
                 </div>
                 <div class="overflow-hidden">
-                  <h4 class="font-bold text-slate-900 text-xs uppercase leading-tight truncate max-w-xs">{{ curso.nombre }}</h4>
-                  <p class="text-[10px] text-slate-550 truncate max-w-sm mt-0.5">{{ curso.descripcion }}</p>
+                  <h4 class="font-bold text-slate-900 dark:text-white text-xs uppercase leading-tight truncate max-w-xs">{{ curso.nombre }}</h4>
+                  <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-sm mt-0.5">{{ curso.descripcion }}</p>
                 </div>
               </div>
             </td>
@@ -187,7 +193,7 @@
             </td>
             <!-- Estado Column -->
             <td class="p-4">
-              <span [ngClass]="curso.estado ? 'bg-emerald-50 text-emerald-700 border-emerald-250' : 'bg-red-50 text-red-700 border-red-250'" class="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider border rounded-none">
+              <span [ngClass]="curso.estado ? 'bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-950/30 dark:text-emerald-450 dark:border-emerald-900' : 'bg-red-50 text-red-700 border-red-300 dark:bg-red-950/30 dark:text-red-450 dark:border-red-900'" class="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider border rounded-none">
                 {{ curso.estado ? 'ACTIVO' : 'INACTIVO' }}
               </span>
             </td>
@@ -197,26 +203,26 @@
                 <button 
                   (click)="irADetalle(curso.id)" 
                   title="Administrar Temario y Alumnos"
-                  class="action-btn btn-settings p-2 border border-slate-200 text-slate-600 rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.03)]">
+                  class="action-btn btn-settings p-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.03)] hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors duration-300">
                   <span class="material-symbols-outlined text-sm block">settings</span>
                 </button>
                 <button 
                   (click)="openDetailModal(curso)" 
                   title="Ver Ficha Detallada"
-                  class="action-btn btn-view p-2 border border-slate-200 text-slate-600 rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.03)]">
+                  class="action-btn btn-view p-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.03)] hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors duration-300">
                   <span class="material-symbols-outlined text-sm block">visibility</span>
                 </button>
                 <button 
                   (click)="openEditModal(curso)" 
                   title="Editar Detalles del Curso"
-                  class="action-btn btn-edit p-2 border border-slate-200 text-slate-600 rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.03)]">
+                  class="action-btn btn-edit p-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.03)] hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors duration-300">
                   <span class="material-symbols-outlined text-sm block">edit</span>
                 </button>
                 <button 
                   (click)="toggleEstado(curso)" 
                   [title]="curso.estado ? 'Desactivar Curso' : 'Activar Curso'"
-                  [ngClass]="curso.estado ? 'action-btn btn-toggle-off border-red-200 text-red-600' : 'action-btn btn-toggle-on border-emerald-200 text-emerald-600'"
-                  class="p-2 border rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.03)]">
+                  [ngClass]="curso.estado ? 'action-btn btn-toggle-off border-red-200 dark:border-red-900/60 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20' : 'action-btn btn-toggle-on border-emerald-200 dark:border-emerald-900/60 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/20'"
+                  class="p-2 border rounded-none shadow-[1px_1px_0px_0px_rgba(0,0,0,0.03)] transition-colors duration-300">
                   <span class="material-symbols-outlined text-sm block">
                     {{ curso.estado ? 'block' : 'check_circle' }}
                   </span>
@@ -227,61 +233,98 @@
         </tbody>
       </table>
     </div>
+
+    <!-- Pagination -->
+    <div *ngIf="filteredCursos.length > pageSize" class="px-4 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between transition-colors duration-300">
+      <div class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+        Página {{ currentPage }} de {{ totalPages }}
+      </div>
+
+      <div class="flex items-center gap-2 flex-wrap">
+        <button
+          type="button"
+          (click)="previousPage()"
+          [disabled]="currentPage === 1"
+          class="px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed rounded-none">
+          Anterior
+        </button>
+
+        <button
+          *ngFor="let page of [].constructor(totalPages); let i = index"
+          type="button"
+          (click)="goToPage(i + 1)"
+          [ngClass]="currentPage === (i + 1) ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 border-slate-900 dark:border-slate-100' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'"
+          class="w-10 h-10 border font-black text-[10px] uppercase tracking-widest transition-colors rounded-none">
+          {{ i + 1 }}
+        </button>
+
+        <button
+          type="button"
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages"
+          class="px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed rounded-none">
+          Siguiente
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- Create/Edit Modal -->
-  <div *ngIf="showCreateEditModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="modal-panel w-full max-w-lg mx-4 bg-white border border-slate-250 shadow-2xl rounded-none overflow-y-auto relative max-h-[95vh]">
+  <div *ngIf="showCreateEditModal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" (click)="closeCreateEditModal()">
+    <div class="modal-panel w-full max-w-lg mx-4 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 shadow-2xl rounded-none overflow-y-auto relative max-h-[95vh] transition-colors duration-300" (click)="$event.stopPropagation()">
       <!-- Modal Header -->
-      <div class="px-4 md:px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between sticky top-0 z-10">
-        <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider">
+      <div class="px-4 md:px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-between sticky top-0 z-10 transition-colors duration-300">
+        <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">
           {{ isEditMode ? 'Editar Curso' : 'Registrar Nuevo Curso' }}
         </h3>
-        <button (click)="closeCreateEditModal()" class="text-slate-400 hover:text-slate-600 flex">
+        <button (click)="closeCreateEditModal()" class="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 flex transition-colors">
           <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
 
       <!-- Modal Form -->
       <form [formGroup]="cursoForm" (ngSubmit)="onSubmit()" class="p-4 md:p-6 space-y-5">
-        <div *ngIf="modalErrorMsg" class="flex items-start gap-2 bg-red-50 border border-red-200 text-red-805 p-3 rounded-none text-[11px] font-semibold animate-fadeIn">
-          <span class="material-symbols-outlined text-red-650 text-base shrink-0">warning</span>
+        <div *ngIf="modalErrorMsg" class="flex items-start gap-2 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 text-red-805 dark:text-red-300 p-3 rounded-none text-[11px] font-semibold animate-fadeIn transition-colors duration-300">
+          <span class="material-symbols-outlined text-red-600 text-base shrink-0">warning</span>
           <span>{{ modalErrorMsg }}</span>
         </div>
 
         <!-- Nombre -->
         <div class="space-y-1">
-          <label class="block text-[9px] font-black text-slate-700 uppercase tracking-widest">Nombre del Curso *</label>
+          <label class="block text-[9px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Nombre del Curso *</label>
           <input 
             formControlName="nombre" 
             type="text" 
-            class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650"
+            class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-600 transition-colors duration-300"
             placeholder="Ej. Excel Avanzado y Tablas Dinámicas">
-          <p *ngIf="cursoForm.get('nombre')?.invalid && cursoForm.get('nombre')?.touched" class="text-[9px] font-bold text-red-600 mt-1">El nombre es obligatorio.</p>
+          <p *ngIf="cursoForm.get('nombre')?.hasError('required') && cursoForm.get('nombre')?.touched" class="text-[9px] font-bold text-red-600 mt-1">El nombre es obligatorio.</p>
+          <p *ngIf="cursoForm.get('nombre')?.hasError('minlength') && cursoForm.get('nombre')?.touched" class="text-[9px] font-bold text-red-600 mt-1">Mínimo 3 caracteres.</p>
         </div>
 
         <!-- Descripcion -->
         <div class="space-y-1">
-          <label class="block text-[9px] font-black text-slate-700 uppercase tracking-widest">Descripción del Programa *</label>
+          <label class="block text-[9px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Descripción del Programa *</label>
           <textarea 
             formControlName="descripcion" 
             rows="3" 
-            class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650"
+            class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-600 transition-colors duration-300"
             placeholder="Objetivos del curso, temarios generales y alcances..."></textarea>
-          <p *ngIf="cursoForm.get('descripcion')?.invalid && cursoForm.get('descripcion')?.touched" class="text-[9px] font-bold text-red-600 mt-1">La descripción es obligatoria.</p>
+          <p *ngIf="cursoForm.get('descripcion')?.hasError('required') && cursoForm.get('descripcion')?.touched" class="text-[9px] font-bold text-red-600 mt-1">La descripción es obligatoria.</p>
+          <p *ngIf="cursoForm.get('descripcion')?.hasError('minlength') && cursoForm.get('descripcion')?.touched" class="text-[9px] font-bold text-red-600 mt-1">Mínimo 10 caracteres.</p>
         </div>
 
         <!-- Imagen Portada URL -->
         <div class="space-y-1">
-          <label class="block text-[9px] font-black text-slate-700 uppercase tracking-widest">Imagen de Portada (URL)</label>
+          <label class="block text-[9px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Imagen de Portada (URL)</label>
           <input 
             formControlName="imagenPortada" 
             type="text" 
-            class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-900 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-650"
+            class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-600 transition-colors duration-300"
             placeholder="Ej. https://images.unsplash.com/photo-...">
+          <p *ngIf="cursoForm.get('imagenPortada')?.hasError('pattern') && cursoForm.get('imagenPortada')?.touched" class="text-[9px] font-bold text-red-600 mt-1">Debe ser una dirección URL válida (ej. http:// o https://).</p>
           
           <!-- Image preview thumbnail -->
-          <div *ngIf="cursoForm.get('imagenPortada')?.value" class="mt-2 w-full h-24 border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden">
+          <div *ngIf="cursoForm.get('imagenPortada')?.value && cursoForm.get('imagenPortada')?.valid" class="mt-2 w-full h-24 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex items-center justify-center overflow-hidden transition-colors duration-300">
             <img [src]="cursoForm.get('imagenPortada')?.value" class="w-full h-full object-cover">
           </div>
         </div>
@@ -289,12 +332,12 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <!-- Subscription Access (Redesigned Clickable Badges instead of simple checkboxes) -->
           <div class="space-y-2">
-            <label class="block text-[9px] font-black text-slate-700 uppercase tracking-widest">Acceso de Planes *</label>
-            <div class="flex flex-col gap-1.5 p-2 bg-slate-50 border border-slate-200">
+            <label class="block text-[9px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Acceso de Planes *</label>
+            <div class="flex flex-col gap-1.5 p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-colors duration-300">
               <button 
                 type="button" 
                 (click)="toggleNivel(1)" 
-                [ngClass]="isNivelSelected(1) ? 'bg-indigo-50 border-indigo-650 text-indigo-950 font-bold' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'"
+                [ngClass]="isNivelSelected(1) ? 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-600 dark:border-indigo-500 text-indigo-955 dark:text-indigo-200 font-bold' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'"
                 class="w-full py-2 border text-center transition-all text-[10px] uppercase font-bold flex items-center justify-center gap-1 rounded-none">
                 <span class="material-symbols-outlined text-xs">{{ isNivelSelected(1) ? 'check_box' : 'check_box_outline_blank' }}</span>
                 <span>Básico</span>
@@ -302,7 +345,7 @@
               <button 
                 type="button" 
                 (click)="toggleNivel(2)" 
-                [ngClass]="isNivelSelected(2) ? 'bg-indigo-50 border-indigo-655 text-indigo-950 font-bold' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'"
+                [ngClass]="isNivelSelected(2) ? 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-655 dark:border-indigo-500 text-indigo-955 dark:text-indigo-200 font-bold' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'"
                 class="w-full py-2 border text-center transition-all text-[10px] uppercase font-bold flex items-center justify-center gap-1 rounded-none">
                 <span class="material-symbols-outlined text-xs">{{ isNivelSelected(2) ? 'check_box' : 'check_box_outline_blank' }}</span>
                 <span>Intermedio</span>
@@ -310,7 +353,7 @@
               <button 
                 type="button" 
                 (click)="toggleNivel(3)" 
-                [ngClass]="isNivelSelected(3) ? 'bg-indigo-50 border-indigo-655 text-indigo-950 font-bold' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'"
+                [ngClass]="isNivelSelected(3) ? 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-655 dark:border-indigo-500 text-indigo-955 dark:text-indigo-200 font-bold' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'"
                 class="w-full py-2 border text-center transition-all text-[10px] uppercase font-bold flex items-center justify-center gap-1 rounded-none">
                 <span class="material-symbols-outlined text-xs">{{ isNivelSelected(3) ? 'check_box' : 'check_box_outline_blank' }}</span>
                 <span>Premium</span>
@@ -319,28 +362,55 @@
           </div>
           <!-- Estado -->
           <div class="space-y-1">
-            <label class="block text-[9px] font-black text-slate-700 uppercase tracking-widest">Estado</label>
+            <label class="block text-[9px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Estado</label>
             <select 
               formControlName="estado" 
-              class="w-full px-3 py-2.5 border border-slate-350 bg-white text-slate-905 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-605 focus:border-indigo-650 uppercase font-black">
+              class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-905 dark:text-slate-100 text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-600 uppercase font-black transition-colors duration-300">
               <option [ngValue]="true">ACTIVO</option>
               <option [ngValue]="false">INACTIVO</option>
             </select>
           </div>
         </div>
 
+        <div class="space-y-1.5 relative">
+          <label class="block text-[9px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Docente Asignado</label>
+          <input
+            [ngModelOptions]="{standalone: true}"
+            [(ngModel)]="docenteSearch"
+            type="text"
+            autocomplete="off"
+            placeholder="Buscar por nombre o correo..."
+            (focus)="openDocenteDropdown()"
+            (input)="filterDocentes()"
+            (blur)="showDocenteDropdown = false"
+            class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-600 transition-colors duration-300">
+          <div *ngIf="showDocenteDropdown" class="absolute z-10 w-full mt-1 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 max-h-56 overflow-y-auto">
+            <button
+              type="button"
+              *ngFor="let docente of docentesFiltrados"
+              (mousedown)="selectDocente(docente)"
+              class="w-full text-left px-3 py-2 border-b border-slate-100 dark:border-slate-800 last:border-b-0 hover:bg-slate-50 dark:hover:bg-slate-700/40">
+              <div class="text-xs font-bold text-slate-900 dark:text-white">{{ docente.nombres }} {{ docente.apellidos }}</div>
+              <div class="text-[10px] text-slate-500 dark:text-slate-400">{{ docente.correo }}</div>
+            </button>
+            <div *ngIf="docentesFiltrados.length === 0" class="px-3 py-3 text-[10px] text-slate-500 dark:text-slate-400">
+              No se encontraron docentes.
+            </div>
+          </div>
+        </div>
+
         <!-- Form Buttons -->
-        <div class="pt-4 border-t border-slate-100 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3">
+        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3">
           <button 
             type="button" 
             (click)="closeCreateEditModal()" 
-            class="px-4 py-2 border border-slate-350 bg-white text-slate-700 font-bold text-xs uppercase tracking-wider hover:bg-slate-50 transition-colors rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.03)] w-full sm:w-auto">
+            class="px-4 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-305 font-bold text-xs uppercase tracking-wider hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.03)] w-full sm:w-auto">
             Cancelar
           </button>
           <button 
             type="submit" 
             [disabled]="cursoForm.invalid || isFormSubmitting" 
-            class="px-4 py-2 bg-slate-900 text-white font-bold text-xs uppercase tracking-wider hover:bg-slate-800 transition-colors rounded-none disabled:opacity-55 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.15)] w-full sm:w-auto">
+            class="px-4 py-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs uppercase tracking-wider hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors rounded-none disabled:opacity-55 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.15)] w-full sm:w-auto">
             {{ isFormSubmitting ? 'Guardando...' : 'Guardar Curso' }}
           </button>
         </div>
@@ -349,20 +419,20 @@
   </div>
 
   <!-- Detail Modal -->
-  <div *ngIf="showDetailModal && selectedCurso" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="w-full max-w-md mx-4 bg-white border border-slate-250 shadow-2xl rounded-none overflow-y-auto relative max-h-[95vh]">
+  <div *ngIf="showDetailModal && selectedCurso" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" (click)="closeDetailModal()">
+    <div class="w-full max-w-md mx-4 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 shadow-2xl rounded-none overflow-y-auto relative max-h-[95vh] transition-colors duration-300" (click)="$event.stopPropagation()">
       <!-- Cover Image Banner -->
-      <div class="w-full h-36 md:h-44 bg-slate-950 border-b border-slate-200 overflow-hidden relative">
+      <div class="w-full h-36 md:h-44 bg-slate-950 border-b border-slate-200 dark:border-slate-800 overflow-hidden relative">
         <img 
           *ngIf="selectedCurso.imagenPortada" 
           [src]="selectedCurso.imagenPortada" 
           [alt]="selectedCurso.nombre" 
           class="w-full h-full object-cover opacity-60">
-        <div *ngIf="!selectedCurso.imagenPortada" class="w-full h-full bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 opacity-90 flex flex-col items-center justify-center text-slate-400">
+        <div *ngIf="!selectedCurso.imagenPortada" class="w-full h-full bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 opacity-90 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
           <span class="material-symbols-outlined text-4xl mb-1">image</span>
           <span class="text-[10px] font-bold uppercase tracking-wider">Sin Portada</span>
         </div>
-        <button (click)="closeDetailModal()" class="absolute top-4 right-4 w-8 h-8 rounded-none border border-slate-350 bg-white text-slate-700 flex items-center justify-center shadow-lg hover:bg-slate-50 transition-colors z-10">
+        <button (click)="closeDetailModal()" class="absolute top-4 right-4 w-8 h-8 rounded-none border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center shadow-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors z-10">
           <span class="material-symbols-outlined text-base">close</span>
         </button>
       </div>
@@ -373,26 +443,26 @@
           <span [ngClass]="getSubscriptionClass(selectedCurso.nivelesSuscripcion)" class="inline-block px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-none">
             {{ formatNiveles(selectedCurso.nivelesSuscripcion) }}
           </span>
-          <h3 class="text-base font-black text-slate-900 uppercase mt-2 leading-tight tracking-tight">{{ selectedCurso.nombre }}</h3>
-          <span class="text-[9px] text-slate-400 font-bold uppercase block mt-1">Código Curso: ID-{{ selectedCurso.id }}</span>
+          <h3 class="text-base font-black text-slate-900 dark:text-white uppercase mt-2 leading-tight tracking-tight">{{ selectedCurso.nombre }}</h3>
+          <span class="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase block mt-1">Código Curso: ID-{{ selectedCurso.id }}</span>
         </div>
 
         <div class="space-y-4">
           <div>
-            <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Descripción del Curso</span>
-            <p class="text-xs text-slate-650 mt-1 leading-relaxed whitespace-pre-line">{{ selectedCurso.descripcion }}</p>
+            <span class="block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Descripción del Curso</span>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed whitespace-pre-line">{{ selectedCurso.descripcion }}</p>
           </div>
 
-          <div class="grid grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+          <div class="grid grid-cols-2 gap-4 pt-2 border-t border-slate-100 dark:border-slate-800">
             <div>
-              <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Estado en Catálogo</span>
-              <span [ngClass]="selectedCurso.estado ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-red-50 text-red-700 border-red-200'" class="inline-block px-2 py-0.5 text-[9px] font-black uppercase tracking-wider border mt-1 rounded-none">
+              <span class="block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Estado en Catálogo</span>
+              <span [ngClass]="selectedCurso.estado ? 'bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900' : 'bg-red-50 text-red-700 border-red-300 dark:bg-red-950/30 dark:text-red-400 dark:border-red-900'" class="inline-block px-2 py-0.5 text-[9px] font-black uppercase tracking-wider border mt-1 rounded-none">
                 {{ selectedCurso.estado ? 'ACTIVO' : 'INACTIVO' }}
               </span>
             </div>
             <div>
-              <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">Contenidos</span>
-              <span class="block text-[10px] font-semibold text-slate-500 mt-1.5 flex items-center gap-1">
+              <span class="block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Contenidos</span>
+              <span class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mt-1.5 flex items-center gap-1">
                 <span class="material-symbols-outlined text-sm">view_module</span>
                 <span>Administración activa</span>
               </span>
@@ -400,16 +470,27 @@
           </div>
         </div>
 
-        <div class="pt-4 border-t border-slate-100 flex justify-end">
+        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
           <button 
             type="button" 
             (click)="closeDetailModal()" 
-            class="px-4 py-2 bg-slate-900 text-white font-bold text-xs uppercase tracking-wider hover:bg-slate-800 transition-colors rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.15)] w-full sm:w-auto">
+            class="px-4 py-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs uppercase tracking-wider hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.15)] w-full sm:w-auto">
             Cerrar Ficha
           </button>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Confirm modal -->
+  <app-confirm-modal
+    [visible]="showConfirmModal"
+    [type]="confirmModalType"
+    [title]="confirmModalTitle"
+    [message]="confirmModalMessage"
+    confirmText="Confirmar"
+    (onConfirm)="confirmAction()"
+    (onCancel)="showConfirmModal = false">
+  </app-confirm-modal>
 
 </div>

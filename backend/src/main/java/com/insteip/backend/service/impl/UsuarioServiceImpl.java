@@ -1,6 +1,9 @@
 package com.insteip.backend.service.impl;
 
+
+import lombok.RequiredArgsConstructor;
 import com.insteip.backend.dto.UsuarioRequestDTO;
+import com.insteip.backend.dto.DocenteRequestDTO;
 import com.insteip.backend.dto.UsuarioResponseDTO;
 import com.insteip.backend.entity.Usuario;
 import com.insteip.backend.entity.Rol;
@@ -11,31 +14,26 @@ import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.repository.RolRepository;
 import com.insteip.backend.repository.NivelSuscripcionRepository;
 import com.insteip.backend.service.interfaces.UsuarioService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class UsuarioServiceImpl implements UsuarioService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private RolRepository rolRepository;
+    private final RolRepository rolRepository;
 
-    @Autowired
-    private NivelSuscripcionRepository suscripcionRepository;
+    private final NivelSuscripcionRepository suscripcionRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
+    private final com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
 
     @Override
+    @Transactional(readOnly = true)
     public org.springframework.data.domain.Page<UsuarioResponseDTO> listarAlumnos(org.springframework.data.domain.Pageable pageable, String search) {
         org.springframework.data.domain.Page<Usuario> usuariosPage;
         if (search != null && !search.trim().isEmpty()) {
@@ -44,6 +42,29 @@ public class UsuarioServiceImpl implements UsuarioService {
             usuariosPage = usuarioRepository.findByRolNombre("ALUMNO", pageable);
         }
         return usuariosPage.map(this::convertToResponseDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public org.springframework.data.domain.Page<UsuarioResponseDTO> listarDocentes(org.springframework.data.domain.Pageable pageable, String search) {
+        org.springframework.data.domain.Page<Usuario> docentesPage;
+        if (search != null && !search.trim().isEmpty()) {
+            docentesPage = usuarioRepository.findDocentesPagedAndSearched(search.trim(), pageable);
+        } else {
+            docentesPage = usuarioRepository.findByRolNombre("DOCENTE", pageable);
+        }
+        return docentesPage.map(this::convertToResponseDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UsuarioResponseDTO obtenerDocente(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Docente no encontrado con id: " + id));
+        if (!"DOCENTE".equals(usuario.getRol().getNombre())) {
+            throw new BadRequestException("El usuario con id " + id + " no es un Docente");
+        }
+        return convertToResponseDto(usuario);
     }
 
     @Override
@@ -75,7 +96,10 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .nombres(dto.nombres())
                 .apellidos(dto.apellidos())
                 .correo(dto.correo())
-                .passwordHash(passwordEncoder.encode("Alumno123!")) // Contraseña por defecto
+                .passwordHash(passwordEncoder.encode(
+                        dto.password() != null && !dto.password().isBlank()
+                                ? dto.password()
+                                : "Alumno123!")) // Contraseña por defecto si no se indica
                 .telefono(dto.telefono())
                 .rol(rol)
                 .nivelSuscripcion(sub)
@@ -84,6 +108,34 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         Usuario saved = usuarioRepository.save(usuario);
         auditoriaService.registrarEvento("ALUMNOS", "CREAR", "Creado alumno: " + saved.getNombres() + " " + saved.getApellidos() + " (ID: " + saved.getId() + ")");
+        return convertToResponseDto(saved);
+    }
+
+    @Override
+    public UsuarioResponseDTO crearDocente(DocenteRequestDTO dto) {
+        if (usuarioRepository.existsByCorreo(dto.correo())) {
+            throw new BadRequestException("El correo ya está registrado");
+        }
+
+        Rol rol = rolRepository.findByNombre("DOCENTE")
+                .orElseThrow(() -> new ResourceNotFoundException("Rol DOCENTE no encontrado"));
+
+        Usuario usuario = Usuario.builder()
+                .nombres(dto.nombres())
+                .apellidos(dto.apellidos())
+                .correo(dto.correo())
+                .passwordHash(passwordEncoder.encode(
+                        dto.password() != null && !dto.password().isBlank()
+                                ? dto.password()
+                                : "Docente123!"))
+                .telefono(dto.telefono())
+                .rol(rol)
+                .nivelSuscripcion(null)
+                .estado(true)
+                .build();
+
+        Usuario saved = usuarioRepository.save(usuario);
+        auditoriaService.registrarEvento("DOCENTES", "CREAR", "Creado docente: " + saved.getNombres() + " " + saved.getApellidos() + " (ID: " + saved.getId() + ")");
         return convertToResponseDto(saved);
     }
 
@@ -119,6 +171,29 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    public UsuarioResponseDTO editarDocente(Long id, DocenteRequestDTO dto) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
+
+        if (!"DOCENTE".equals(usuario.getRol().getNombre())) {
+            throw new BadRequestException("El usuario con id " + id + " no es un Docente y no puede ser editado");
+        }
+
+        if (!usuario.getCorreo().equalsIgnoreCase(dto.correo()) && usuarioRepository.existsByCorreo(dto.correo())) {
+            throw new BadRequestException("El correo ya está registrado por otro usuario");
+        }
+
+        usuario.setNombres(dto.nombres());
+        usuario.setApellidos(dto.apellidos());
+        usuario.setCorreo(dto.correo());
+        usuario.setTelefono(dto.telefono());
+
+        Usuario saved = usuarioRepository.save(usuario);
+        auditoriaService.registrarEvento("DOCENTES", "EDITAR", "Editado docente: " + saved.getNombres() + " " + saved.getApellidos() + " (ID: " + saved.getId() + ")");
+        return convertToResponseDto(saved);
+    }
+
+    @Override
     public void cambiarEstado(Long id, Boolean estado) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
@@ -126,6 +201,19 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario saved = usuarioRepository.save(usuario);
         auditoriaService.registrarEvento("ALUMNOS", estado ? "ACTIVAR" : "DESACTIVAR", 
                 (estado ? "Activado" : "Desactivado") + " alumno: " + saved.getNombres() + " " + saved.getApellidos() + " (ID: " + saved.getId() + ")");
+    }
+
+    @Override
+    public void cambiarEstadoDocente(Long id, Boolean estado) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
+        if (!"DOCENTE".equals(usuario.getRol().getNombre())) {
+            throw new BadRequestException("El usuario con id " + id + " no es un Docente");
+        }
+        usuario.setEstado(estado);
+        Usuario saved = usuarioRepository.save(usuario);
+        auditoriaService.registrarEvento("DOCENTES", estado ? "ACTIVAR" : "DESACTIVAR",
+                (estado ? "Activado" : "Desactivado") + " docente: " + saved.getNombres() + " " + saved.getApellidos() + " (ID: " + saved.getId() + ")");
     }
 
     private UsuarioResponseDTO convertToResponseDto(Usuario u) {
@@ -136,7 +224,8 @@ public class UsuarioServiceImpl implements UsuarioService {
                 u.getCorreo(),
                 u.getTelefono(),
                 u.getNivelSuscripcion() != null ? u.getNivelSuscripcion().getNombre() : "NINGUNO",
-                u.getEstado()
+                u.getEstado(),
+                u.getFechaRegistro()
         );
     }
 }

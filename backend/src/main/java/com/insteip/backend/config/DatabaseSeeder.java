@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 
@@ -23,6 +24,9 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final AvanceVideoRepository avanceVideoRepository;
     private final MatriculaRepository matriculaRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @Value("${application.frontend.base-url:http://localhost:4200}")
+    private String frontendBaseUrl;
 
     @Override
     public void run(String... args) throws Exception {
@@ -180,7 +184,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                         .curso(excel)
                         .codigo("INS-2026-ABX9F2K8")
                         .archivoPdf("")
-                        .urlValidacion("http://localhost:4200/certificados/validar/INS-2026-ABX9F2K8")
+                        .urlValidacion(frontendBaseUrl + "/certificados/validar/INS-2026-ABX9F2K8")
                         .numeroRegistro("REG-2026-0001")
                         .fechaEmision(LocalDateTime.of(2026, 6, 4, 12, 0))
                         .build();
@@ -189,4 +193,3 @@ public class DatabaseSeeder implements CommandLineRunner {
         }
     }
 }
-

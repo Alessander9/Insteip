@@ -7,6 +7,7 @@ import com.insteip.backend.exception.ResourceNotFoundException;
 import com.insteip.backend.exception.BadRequestException;
 import com.insteip.backend.repository.*;
 import com.insteip.backend.service.interfaces.CertificadoService;
+import com.insteip.backend.util.ProgresoAcademicoUtils;
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.pdf.*;
@@ -42,8 +43,14 @@ public class CertificadoServiceImpl implements CertificadoService {
 
     private final PlantillaCertificadoRepository plantillaCertificadoRepository;
 
-    @org.springframework.beans.factory.annotation.Value("${application.storage.path}")
+    @org.springframework.beans.factory.annotation.Value("${application.storage.path:uploads}")
     private String storagePathSetting;
+
+    @org.springframework.beans.factory.annotation.Value("${application.api.base-url:http://localhost:8081}")
+    private String apiBaseUrl;
+
+    @org.springframework.beans.factory.annotation.Value("${application.frontend.base-url:http://localhost:4200}")
+    private String frontendBaseUrl;
 
     private String UPLOADS_DIR;
 
@@ -72,36 +79,8 @@ public class CertificadoServiceImpl implements CertificadoService {
 
         // 2. Return existing if already generated
         return certificadoRepository.findByUsuarioIdAndCursoId(usuarioId, cursoId)
-                .orElseGet(() -> {
-                    String codigoUnico = "INS-2026-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-                    String numRegistro = "REG-" + System.currentTimeMillis() / 1000;
-                    
-                    Certificado cert = Certificado.builder()
-                            .usuario(usuario)
-                            .curso(curso)
-                            .codigo(codigoUnico)
-                            .archivoPdf("") // Updated below
-                            .urlValidacion("http://localhost:4200/certificados/validar/" + codigoUnico)
-                            .numeroRegistro(numRegistro)
-                            .fechaEmision(LocalDateTime.now())
-                            .build();
-
-                    cert = certificadoRepository.save(cert);
-
-                    // 3. Write physical PDF to local disk using OpenPDF
-                    try {
-                        writePdfOnDisk(cert, usuario, curso);
-                    } catch (Exception e) {
-                        certificadoRepository.delete(cert);
-                        throw new RuntimeException("Error al generar el archivo físico del certificado: " + e.getMessage());
-                    }
-
-                    // 4. Update url with direct stream link
-                    cert.setArchivoPdf("http://localhost:8081/api/certificados/" + cert.getId() + "/download");
-                    Certificado saved = certificadoRepository.save(cert);
-                    auditoriaService.registrarEvento("CERTIFICADO", "GENERAR", "Generado certificado para curso ID: " + cursoId + " y usuario ID: " + usuarioId);
-                    return saved;
-                });
+                .map(existing -> repairIfNeeded(existing, usuario, curso))
+                .orElseGet(() -> createCertificate(usuario, curso, usuarioId, cursoId));
     }
 
     @Override
@@ -129,13 +108,73 @@ public class CertificadoServiceImpl implements CertificadoService {
                 totalVideos++;
                 AvanceVideo avance = avanceVideoRepository.findByUsuarioIdAndVideoId(usuarioId, video.getId())
                         .orElse(null);
-                if (avance != null && avance.getCompletado()) {
+                if (ProgresoAcademicoUtils.isVideoCompletado(video, avance)) {
                     completedVideos++;
                 }
             }
         }
 
         return completedVideos == totalVideos;
+    }
+
+    private Certificado repairIfNeeded(Certificado cert, Usuario usuario, Curso curso) {
+        boolean needsRepair = cert.getArchivoPdf() == null || cert.getArchivoPdf().isBlank();
+        if (!needsRepair) {
+            try {
+                String fileName = cert.getCodigo() + ".pdf";
+                Path filePath = Paths.get(UPLOADS_DIR).resolve(fileName);
+                needsRepair = !Files.exists(filePath);
+            } catch (Exception e) {
+                needsRepair = true;
+            }
+        }
+
+        if (!needsRepair) {
+            return cert;
+        }
+
+        try {
+            writePdfOnDisk(cert, usuario, curso);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al reparar el archivo físico del certificado: " + e.getMessage());
+        }
+
+        cert.setUrlValidacion(frontendBaseUrl + "/certificados/validar/" + cert.getCodigo());
+        cert.setArchivoPdf(resolvePdfUrl(cert));
+        return certificadoRepository.save(cert);
+    }
+
+    private Certificado createCertificate(Usuario usuario, Curso curso, Long usuarioId, Long cursoId) {
+        String codigoUnico = "INS-2026-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        String numRegistro = "REG-" + System.currentTimeMillis() / 1000;
+
+        Certificado cert = Certificado.builder()
+                .usuario(usuario)
+                .curso(curso)
+                .codigo(codigoUnico)
+                .archivoPdf("") // Updated below
+                .urlValidacion(frontendBaseUrl + "/certificados/validar/" + codigoUnico)
+                .numeroRegistro(numRegistro)
+                .fechaEmision(LocalDateTime.now())
+                .build();
+
+        cert = certificadoRepository.save(cert);
+
+        try {
+            writePdfOnDisk(cert, usuario, curso);
+        } catch (Exception e) {
+            certificadoRepository.delete(cert);
+            throw new RuntimeException("Error al generar el archivo físico del certificado: " + e.getMessage());
+        }
+
+        cert.setArchivoPdf(resolvePdfUrl(cert));
+        Certificado saved = certificadoRepository.save(cert);
+        auditoriaService.registrarEvento("CERTIFICADO", "GENERAR", "Generado certificado para curso ID: " + cursoId + " y usuario ID: " + usuarioId);
+        return saved;
+    }
+
+    private String resolvePdfUrl(Certificado cert) {
+        return apiBaseUrl + "/api/certificados/" + cert.getId() + "/download";
     }
 
     private void writePdfOnDisk(Certificado cert, Usuario usuario, Curso curso) throws DocumentException, IOException {
@@ -332,9 +371,14 @@ public class CertificadoServiceImpl implements CertificadoService {
                         cert.getId(),
                         cert.getUsuario().getId(),
                         cert.getCurso().getId(),
+                        cert.getUsuario().getNombres() + " " + cert.getUsuario().getApellidos(),
+                        cert.getUsuario().getCorreo(),
+                        cert.getCurso().getNombre(),
                         cert.getCodigo(),
-                        cert.getArchivoPdf(),
-                        cert.getUrlValidacion(),
+                        cert.getArchivoPdf() == null || cert.getArchivoPdf().isBlank() ? resolvePdfUrl(cert) : cert.getArchivoPdf(),
+                        cert.getUrlValidacion() == null || cert.getUrlValidacion().isBlank()
+                                ? frontendBaseUrl + "/certificados/validar/" + cert.getCodigo()
+                                : cert.getUrlValidacion(),
                         cert.getNumeroRegistro(),
                         cert.getFechaEmision()
                 ))

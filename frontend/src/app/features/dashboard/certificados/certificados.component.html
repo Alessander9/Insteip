@@ -34,11 +34,13 @@
   </div>
 
   <!-- Certificates Table -->
-  <div *ngIf="!isLoading && !isAdmin && certificados.length > 0" class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] overflow-hidden transition-colors duration-300">
+  <div *ngIf="!isLoading && certificados.length > 0" class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] overflow-hidden transition-colors duration-300">
     <div class="overflow-x-auto">
       <table class="w-full text-left border-collapse text-xs">
         <thead>
           <tr class="border-b border-slate-200 dark:border-slate-800 bg-slate-100/60 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 font-bold uppercase tracking-wider text-[10px]">
+            <th class="p-4" *ngIf="isAdmin">Alumno</th>
+            <th class="p-4" *ngIf="isAdmin">Correo</th>
             <th class="p-4">Curso Completado</th>
             <th class="p-4">Código de Registro</th>
             <th class="p-4">Fecha de Emisión</th>
@@ -47,9 +49,15 @@
         </thead>
         <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
           <tr *ngFor="let cert of certificados" class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+            <td *ngIf="isAdmin" class="p-4 font-semibold text-slate-700 dark:text-slate-300">
+              {{ getAlumnoNombre(cert) }}
+            </td>
+            <td *ngIf="isAdmin" class="p-4 text-slate-500 dark:text-slate-400 font-mono text-[10px]">
+              {{ getAlumnoCorreo(cert) }}
+            </td>
             <!-- Curso -->
             <td class="p-4 font-bold text-slate-900 dark:text-slate-100 uppercase tracking-tight">
-              {{ cert.cursoNombre }}
+              {{ getCursoNombre(cert) }}
             </td>
             <!-- Código -->
             <td class="p-4 font-mono font-bold text-[10px] text-slate-600 dark:text-slate-300">

@@ -7,6 +7,7 @@ import com.insteip.backend.entity.*;
 import com.insteip.backend.exception.ResourceNotFoundException;
 import com.insteip.backend.repository.*;
 import com.insteip.backend.service.interfaces.AlumnoDashboardService;
+import com.insteip.backend.util.ProgresoAcademicoUtils;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -48,8 +49,9 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
         for (Matricula matricula : matriculas) {
             AvanceCurso avance = avanceCursoRepository.findByUsuarioIdAndCursoId(usuario.getId(), matricula.getCurso().getId())
                     .orElse(null);
+            avance = normalizeAvanceCursoIfNeeded(usuario, matricula.getCurso(), avance);
             if (avance != null) {
-                if (avance.getCompletado()) {
+                if (avance.getCompletado() || isCursoCompletado(usuario.getId(), matricula.getCurso())) {
                     completados++;
                 }
             } else {
@@ -75,6 +77,7 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
             Curso curso = matricula.getCurso();
             AvanceCurso avanceRecord = avanceCursoRepository.findByUsuarioIdAndCursoId(usuario.getId(), curso.getId())
                     .orElse(null);
+            avanceRecord = normalizeAvanceCursoIfNeeded(usuario, curso, avanceRecord);
             
             BigDecimal avance;
             boolean completado;
@@ -82,6 +85,10 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
             if (avanceRecord != null) {
                 avance = avanceRecord.getPorcentajeAvance();
                 completado = avanceRecord.getCompletado();
+                if (!completado && isCursoCompletado(usuario.getId(), curso)) {
+                    avance = BigDecimal.valueOf(100.00).setScale(2, RoundingMode.HALF_UP);
+                    completado = true;
+                }
             } else {
                 avance = getCursoAvance(usuario.getId(), curso);
                 completado = isCursoCompletado(usuario.getId(), curso);
@@ -111,8 +118,12 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
                 c.getCodigo(),
                 c.getCurso().getNombre(),
                 c.getFechaEmision(),
-                c.getArchivoPdf(),
-                c.getUrlValidacion()
+                c.getArchivoPdf() == null || c.getArchivoPdf().isBlank()
+                        ? "http://localhost:8081/api/certificados/" + c.getId() + "/download"
+                        : c.getArchivoPdf(),
+                c.getUrlValidacion() == null || c.getUrlValidacion().isBlank()
+                        ? "http://localhost:4200/certificados/validar/" + c.getCodigo()
+                        : c.getUrlValidacion()
         )).collect(Collectors.toList());
     }
 
@@ -143,10 +154,11 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
 
                 AvanceVideo avance = avanceVideoRepository.findByUsuarioIdAndVideoId(usuario.getId(), video.getId())
                         .orElse(null);
+                avance = normalizeAvanceVideoIfNeeded(avance, video);
 
                 int ultimoSegundo = avance != null ? avance.getUltimoSegundo() : 0;
                 BigDecimal porcentajeVisto = avance != null ? avance.getPorcentajeVisto() : BigDecimal.ZERO;
-                boolean completado = avance != null ? avance.getCompletado() : false;
+                boolean completado = ProgresoAcademicoUtils.isVideoCompletado(video, avance);
 
                 playVideos.add(new AlumnoPlayVideo(
                         video.getId(),
@@ -206,7 +218,7 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
                 totalVideos++;
                 AvanceVideo avance = avanceVideoRepository.findByUsuarioIdAndVideoId(usuarioId, video.getId())
                         .orElse(null);
-                if (avance != null && avance.getCompletado()) {
+                if (ProgresoAcademicoUtils.isVideoCompletado(video, avance)) {
                     completedVideos++;
                 }
             }
@@ -230,7 +242,7 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
                 totalVideos++;
                 AvanceVideo avance = avanceVideoRepository.findByUsuarioIdAndVideoId(usuarioId, video.getId())
                         .orElse(null);
-                if (avance != null && avance.getCompletado()) {
+                if (ProgresoAcademicoUtils.isVideoCompletado(video, avance)) {
                     completedVideos++;
                 }
             }
@@ -252,5 +264,52 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
                     return n.getNombre();
                 })
                 .collect(Collectors.joining(" • "));
+    }
+
+    private AvanceVideo normalizeAvanceVideoIfNeeded(AvanceVideo avance, Video video) {
+        if (avance == null) return null;
+
+        int duration = ProgresoAcademicoUtils.resolveDuracionVideo(video);
+        boolean shouldBeComplete = ProgresoAcademicoUtils.isVideoCompletado(video, avance);
+        boolean needsNormalization = shouldBeComplete && (
+                !Boolean.TRUE.equals(avance.getCompletado())
+                || (avance.getUltimoSegundo() != null && avance.getUltimoSegundo() < duration)
+                || (avance.getPorcentajeVisto() != null && avance.getPorcentajeVisto().doubleValue() < 100.0)
+        );
+
+        if (needsNormalization) {
+            avance.setUltimoSegundo(duration);
+            avance.setPorcentajeVisto(BigDecimal.valueOf(100).setScale(2, RoundingMode.HALF_UP));
+            avance.setCompletado(true);
+            avance.setFechaActualizacion(java.time.LocalDateTime.now());
+            return avanceVideoRepository.save(avance);
+        }
+
+        return avance;
+    }
+
+    private AvanceCurso normalizeAvanceCursoIfNeeded(Usuario usuario, Curso curso, AvanceCurso avanceCurso) {
+        boolean shouldBeComplete = isCursoCompletado(usuario.getId(), curso);
+        if (!shouldBeComplete) return avanceCurso;
+
+        if (avanceCurso == null) {
+            avanceCurso = AvanceCurso.builder()
+                    .usuario(usuario)
+                    .curso(curso)
+                    .build();
+        }
+
+        boolean needsNormalization = !Boolean.TRUE.equals(avanceCurso.getCompletado())
+                || avanceCurso.getPorcentajeAvance() == null
+                || avanceCurso.getPorcentajeAvance().doubleValue() < 100.0;
+
+        if (needsNormalization) {
+            avanceCurso.setPorcentajeAvance(BigDecimal.valueOf(100.00).setScale(2, RoundingMode.HALF_UP));
+            avanceCurso.setCompletado(true);
+            avanceCurso.setFechaActualizacion(java.time.LocalDateTime.now());
+            return avanceCursoRepository.save(avanceCurso);
+        }
+
+        return avanceCurso;
     }
 }

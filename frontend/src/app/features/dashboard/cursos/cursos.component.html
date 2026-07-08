@@ -79,7 +79,7 @@
         <p class="font-medium text-xs">No se encontraron cursos registrados.</p>
       </div>
       <!-- Mobile Cards -->
-      <div *ngFor="let curso of filteredCursos" class="mobile-curso-card p-4 space-y-3 bg-white dark:bg-slate-900 transition-colors duration-300">
+      <div *ngFor="let curso of paginatedCursos; trackBy: trackByCursoId" class="mobile-curso-card p-4 space-y-3 bg-white dark:bg-slate-900 transition-colors duration-300">
         <!-- Thumbnail + title row -->
         <div class="flex items-center gap-3">
           <div class="curso-thumb w-16 h-10 border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 flex-shrink-0 overflow-hidden rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.03)] relative">
@@ -159,7 +159,7 @@
             </td>
           </tr>
           <!-- Rows -->
-          <tr *ngFor="let curso of filteredCursos" class="curso-row hover:bg-slate-50/40 dark:hover:bg-slate-800/20 transition-colors duration-200">
+          <tr *ngFor="let curso of paginatedCursos; trackBy: trackByCursoId" class="curso-row hover:bg-slate-50/40 dark:hover:bg-slate-800/20 transition-colors duration-200">
             <!-- Curso Column (Thumbnail + Title & Desc) -->
             <td class="p-4">
               <div class="flex items-center gap-4">
@@ -226,6 +226,40 @@
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="filteredCursos.length > pageSize" class="px-4 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between transition-colors duration-300">
+      <div class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+        Página {{ currentPage }} de {{ totalPages }}
+      </div>
+
+      <div class="flex items-center gap-2 flex-wrap">
+        <button
+          type="button"
+          (click)="previousPage()"
+          [disabled]="currentPage === 1"
+          class="px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed rounded-none">
+          Anterior
+        </button>
+
+        <button
+          *ngFor="let page of [].constructor(totalPages); let i = index"
+          type="button"
+          (click)="goToPage(i + 1)"
+          [ngClass]="currentPage === (i + 1) ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 border-slate-900 dark:border-slate-100' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'"
+          class="w-10 h-10 border font-black text-[10px] uppercase tracking-widest transition-colors rounded-none">
+          {{ i + 1 }}
+        </button>
+
+        <button
+          type="button"
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages"
+          class="px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed rounded-none">
+          Siguiente
+        </button>
+      </div>
     </div>
   </div>
 

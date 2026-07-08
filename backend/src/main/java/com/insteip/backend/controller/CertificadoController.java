@@ -9,11 +9,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,13 +31,14 @@ public class CertificadoController {
 
     private final com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
 
+    @Value("${application.storage.path:uploads}")
+    private String storagePathSetting;
+
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ALUMNO')")
     public ResponseEntity<java.util.List<com.insteip.backend.dto.CertificadoResponseDTO>> listarCertificados(@RequestParam(required = false) String search) {
         return ResponseEntity.ok(certificadoService.listarCertificados(search));
     }
-
-    private final String UPLOADS_DIR = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "certificados";
 
     private Long getUsuarioId(Authentication authentication) {
         if (authentication == null) {
@@ -59,9 +60,16 @@ public class CertificadoController {
                 cert.getId(),
                 cert.getUsuario().getId(),
                 cert.getCurso().getId(),
+                cert.getUsuario().getNombres() + " " + cert.getUsuario().getApellidos(),
+                cert.getUsuario().getCorreo(),
+                cert.getCurso().getNombre(),
                 cert.getCodigo(),
-                cert.getArchivoPdf(),
-                cert.getUrlValidacion(),
+                (cert.getArchivoPdf() == null || cert.getArchivoPdf().isBlank())
+                        ? "http://localhost:8081/api/certificados/" + cert.getId() + "/download"
+                        : cert.getArchivoPdf(),
+                (cert.getUrlValidacion() == null || cert.getUrlValidacion().isBlank())
+                        ? "http://localhost:4200/certificados/validar/" + cert.getCodigo()
+                        : cert.getUrlValidacion(),
                 cert.getNumeroRegistro(),
                 cert.getFechaEmision()
         );
@@ -72,9 +80,10 @@ public class CertificadoController {
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ALUMNO')")
     public ResponseEntity<byte[]> descargarCertificado(@PathVariable Long id) {
         Certificado cert = certificadoService.obtenerCertificado(id);
-        
-        Path filePath = Paths.get(UPLOADS_DIR).resolve(cert.getCodigo() + ".pdf");
-        if (!Files.exists(filePath)) {
+
+        Path basePath = Paths.get(storagePathSetting).toAbsolutePath().normalize().resolve("certificados");
+        Path filePath = basePath.resolve(cert.getCodigo() + ".pdf").normalize();
+        if (!filePath.startsWith(basePath) || !Files.exists(filePath)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 

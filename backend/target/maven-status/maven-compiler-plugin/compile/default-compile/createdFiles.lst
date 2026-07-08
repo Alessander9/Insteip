@@ -17,7 +17,6 @@ com\insteip\backend\service\impl\AvanceServiceImpl.class
 com\insteip\backend\dto\AlumnoPlayMaterial.class
 com\insteip\backend\entity\LoginAuditoria$LoginAuditoriaBuilder.class
 com\insteip\backend\repository\AvanceVideoRepository.class
-com\insteip\backend\controller\CertificadoController.class
 com\insteip\backend\dto\UserProfileResponse.class
 com\insteip\backend\controller\ModuloController.class
 com\insteip\backend\entity\Rol$RolBuilder.class

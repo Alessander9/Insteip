@@ -8,6 +8,7 @@ import { ArchivoProtegidoService } from '../../../core/services/archivo-protegid
 import { UserProfile } from '../../../core/models/user-profile.model';
 import { extraerIdYoutube } from '../../../core/utils/youtube.utils';
 import { formatBytes, getCleanFileType, getFileExtension } from '../../../core/utils/file.utils';
+import { environment } from '../../../../environments/environment';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -148,7 +149,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.hasUnsavedProgress || !this.currentVideo || this.currentVideo.completado) return;
 
     const duration = this.getCurrentVideoDurationSeconds();
-    const secondsToSend = Math.min(this.secondsWatched, duration);
+    const secondsToSend = Math.min(duration, Math.max(0, Math.ceil(this.secondsWatched)));
 
     // Use sendBeacon for reliable delivery even during page unload
     try {
@@ -163,7 +164,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
 
       // sendBeacon doesn't support custom headers, so we fall back to sync XHR for auth
       const xhr = new XMLHttpRequest();
-      xhr.open('POST', '/api/avance', false); // synchronous
+      xhr.open('POST', `${environment.apiUrl}/avance`, false); // synchronous
       xhr.setRequestHeader('Content-Type', 'application/json');
       if (token) xhr.setRequestHeader('Authorization', 'Bearer ' + token);
       xhr.send(payload);
@@ -186,6 +187,35 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     return videos[currentIndex + 1];
   }
 
+  private syncVideoCompletionState(videoId: number, progress: Partial<AlumnoPlayVideo>): void {
+    if (!this.curso) return;
+
+    for (const modulo of this.curso.modulos) {
+      for (const video of modulo.videos) {
+        if (video.id !== videoId) continue;
+        if (progress.ultimoSegundo !== undefined) video.ultimoSegundo = progress.ultimoSegundo;
+        if (progress.porcentajeVisto !== undefined) video.porcentajeVisto = progress.porcentajeVisto;
+        if (progress.completado !== undefined) video.completado = progress.completado;
+      }
+    }
+  }
+
+  private forceCompleteCurrentVideo(): void {
+    if (!this.currentVideo || this.currentVideo.completado) return;
+
+    this.pendingAutoCompleteVideoId = this.currentVideo.id;
+    this.secondsWatched = this.getCurrentVideoDurationSeconds();
+    this.currentVideo.ultimoSegundo = this.secondsWatched;
+    this.currentVideo.porcentajeVisto = 100;
+    this.currentVideo.completado = true;
+    this.syncVideoCompletionState(this.currentVideo.id, {
+      ultimoSegundo: this.secondsWatched,
+      porcentajeVisto: 100,
+      completado: true
+    });
+    this.checkOverallCompletion(true);
+  }
+
   loadCoursePlaySession(): void {
     this.studentService.getPlayCourse(this.cursoId).pipe(
       takeUntil(this.destroy$)
@@ -194,7 +224,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
         this.curso = data;
         this.isLoading = false;
         this.selectDefaultVideo();
-        this.checkOverallCompletion();
+        this.checkOverallCompletion(false);
       },
       error: () => {
         this.router.navigate(['/dashboard/mis-cursos']);
@@ -234,7 +264,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     this.clearNextChapterTimers();
     this.isVideoPlaying = false;
     this.currentVideo = video;
-    this.secondsWatched = video.ultimoSegundo || 0;
+    this.secondsWatched = this.getPlaybackStartSeconds(video);
     this.embedError = false;
     this.isPlayerLoading = true;
     this.hasUnsavedProgress = false;
@@ -255,18 +285,18 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
       try {
         this.player.loadVideoById({
           videoId: id,
-          startSeconds: video.ultimoSegundo || 0
+          startSeconds: this.getPlaybackStartSeconds(video)
         });
         this.isPlayerLoading = false;
         this.startTicker();
       } catch (e) {
         console.warn('Player loadVideoById failed, recreating player:', e);
         this.destroyPlayerSafely();
-        this.initYoutubePlayer(id, video.ultimoSegundo || 0);
+        this.initYoutubePlayer(id, this.getPlaybackStartSeconds(video));
       }
     } else {
       this.destroyPlayerSafely();
-      this.initYoutubePlayer(id, video.ultimoSegundo || 0);
+      this.initYoutubePlayer(id, this.getPlaybackStartSeconds(video));
     }
   }
 
@@ -463,8 +493,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
       this.isVideoPlaying = false;
       this.stopTicker();
       if (this.currentVideo && !this.currentVideo.completado) {
-        this.pendingAutoCompleteVideoId = this.currentVideo.id;
-        this.secondsWatched = this.getCurrentVideoDurationSeconds();
+        this.forceCompleteCurrentVideo();
         if (!this.isSavingProgress) {
           this.saveCurrentProgress(true);
         }
@@ -504,22 +533,24 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!this.currentVideo || !this.isVideoPlaying) return;
 
       const duration = this.getCurrentVideoDurationSeconds();
-      this.secondsWatched = Math.min(this.secondsWatched + 1, duration);
+      const playerSeconds = this.player && typeof this.player.getCurrentTime === 'function'
+        ? Number(this.player.getCurrentTime() || 0)
+        : this.secondsWatched + 1;
+      this.secondsWatched = Math.min(Math.max(0, playerSeconds), duration);
       this.hasUnsavedProgress = true;
       secondsSinceLastSave++;
 
-      // Completion fallback threshold
-      const completionThreshold = Math.max(duration - 2, 1);
+      // Completion fallback threshold: wait until the video is effectively finished,
+      // but do not cut playback a full second early.
+      const completionThreshold = Math.max(duration - 0.25, 1);
       if (this.secondsWatched >= completionThreshold) {
-        this.isVideoPlaying = false;
-        this.stopTicker();
-
         if (!this.currentVideo.completado) {
-          this.pendingAutoCompleteVideoId = this.currentVideo.id;
+          this.forceCompleteCurrentVideo();
           if (!this.isSavingProgress) {
             this.saveCurrentProgress(true);
           }
         }
+        this.stopTicker();
         return;
       }
 
@@ -551,7 +582,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     const duration = this.getCurrentVideoDurationSeconds();
     const secondsToSend = isManualComplete
       ? duration
-      : Math.min(this.secondsWatched, duration);
+      : Math.min(duration, Math.max(0, Math.ceil(this.secondsWatched)));
 
     this.isSavingProgress = true;
     this.studentService.guardarProgreso(this.currentVideo.id, secondsToSend, duration).pipe(
@@ -560,15 +591,29 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
       next: (progress) => {
         this.isSavingProgress = false;
         this.hasUnsavedProgress = false;
-        const completedByThisSave = progress.completado && this.pendingAutoCompleteVideoId === this.currentVideo?.id;
+        const isAutoCompleteAttempt = this.pendingAutoCompleteVideoId === this.currentVideo?.id;
+        const completedByThisSave = progress.completado && isAutoCompleteAttempt;
+        const normalizedProgress = isAutoCompleteAttempt
+          ? {
+              ...progress,
+              ultimoSegundo: duration,
+              porcentajeVisto: 100,
+              completado: true
+            }
+          : progress;
 
         if (this.currentVideo) {
-          this.currentVideo.ultimoSegundo = progress.ultimoSegundo;
-          this.currentVideo.porcentajeVisto = progress.porcentajeVisto;
-          this.currentVideo.completado = progress.completado;
+          this.syncVideoCompletionState(this.currentVideo.id, {
+            ultimoSegundo: normalizedProgress.ultimoSegundo,
+            porcentajeVisto: normalizedProgress.porcentajeVisto,
+            completado: normalizedProgress.completado
+          });
+          if (normalizedProgress.completado) {
+            this.currentVideo.completado = true;
+          }
         }
 
-        this.checkOverallCompletion();
+        this.checkOverallCompletion(normalizedProgress.completado === true);
 
         if (
           this.currentVideo &&
@@ -581,11 +626,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         }
 
-        if (
-          this.currentVideo &&
-          this.pendingAutoCompleteVideoId === this.currentVideo.id &&
-          !this.currentVideo.completado
-        ) {
+        if (this.currentVideo && isAutoCompleteAttempt && !this.currentVideo.completado) {
           this.pendingAutoCompleteVideoId = null;
           this.saveCurrentProgress(true);
           return;
@@ -599,7 +640,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  checkOverallCompletion(): void {
+  checkOverallCompletion(showCelebration = false): void {
     if (!this.curso) return;
 
     let totalVids = 0;
@@ -619,7 +660,9 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if (this.courseCompleted) {
       this.fetchOrCreateCertificate();
-      this.openCompletionModal();
+      if (showCelebration) {
+        this.openCompletionModal();
+      }
     }
   }
 
@@ -712,8 +755,6 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   fetchOrCreateCertificate(): void {
-    if (!this.profile) return;
-
     this.certificadoService.generarCertificado(this.cursoId).pipe(
       takeUntil(this.destroy$)
     ).subscribe({
@@ -756,5 +797,15 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private getCurrentVideoDurationSeconds(): number {
     return Math.max(1, this.currentVideo?.duracionSegundos || 600);
+  }
+
+  private getPlaybackStartSeconds(video: AlumnoPlayVideo): number {
+    if (video.completado) {
+      return 0;
+    }
+
+    const duration = Math.max(1, video.duracionSegundos || 0);
+    const watched = Math.max(0, video.ultimoSegundo || 0);
+    return Math.min(watched, duration - 1);
   }
 }

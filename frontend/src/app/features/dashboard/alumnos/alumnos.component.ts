@@ -37,6 +37,8 @@ export class AlumnosComponent implements OnInit {
   alumnos: AlumnoResponse[] = [];
   filteredAlumnos: AlumnoResponse[] = [];
   searchQuery = '';
+  currentPage = 1;
+  readonly pageSize = 10;
 
   // Modal controls
   showCreateEditModal = false;
@@ -83,6 +85,7 @@ export class AlumnosComponent implements OnInit {
   applyFilter(): void {
     if (!this.searchQuery.trim()) {
       this.filteredAlumnos = [...this.alumnos];
+      this.currentPage = 1;
       return;
     }
 
@@ -92,6 +95,33 @@ export class AlumnosComponent implements OnInit {
       a.apellidos.toLowerCase().includes(query) ||
       a.correo.toLowerCase().includes(query)
     );
+    this.currentPage = 1;
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredAlumnos.length / this.pageSize));
+  }
+
+  get paginatedAlumnos(): AlumnoResponse[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredAlumnos.slice(start, start + this.pageSize);
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+  }
+
+  nextPage(): void {
+    this.goToPage(this.currentPage + 1);
+  }
+
+  previousPage(): void {
+    this.goToPage(this.currentPage - 1);
+  }
+
+  trackByAlumnoId(_: number, alumno: AlumnoResponse): number {
+    return alumno.id;
   }
 
   openCreateModal(): void {

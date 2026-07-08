@@ -49,6 +49,7 @@ C:\Users\Alessander\Desktop\TRABAJOS\ACTUALES\Insteip\backend\src\main\java\com\
 C:\Users\Alessander\Desktop\TRABAJOS\ACTUALES\Insteip\backend\src\main\java\com\insteip\backend\dto\CursoResponseDTO.java
 C:\Users\Alessander\Desktop\TRABAJOS\ACTUALES\Insteip\backend\src\main\java\com\insteip\backend\exception\ForbiddenException.java
 C:\Users\Alessander\Desktop\TRABAJOS\ACTUALES\Insteip\backend\src\main\java\com\insteip\backend\controller\SistemaController.java
+C:\Users\Alessander\Desktop\TRABAJOS\ACTUALES\Insteip\backend\src\main\java\com\insteip\backend\util\ProgresoAcademicoUtils.java
 C:\Users\Alessander\Desktop\TRABAJOS\ACTUALES\Insteip\backend\src\main\java\com\insteip\backend\entity\AvanceCurso.java
 C:\Users\Alessander\Desktop\TRABAJOS\ACTUALES\Insteip\backend\src\main\java\com\insteip\backend\service\interfaces\ModuloService.java
 C:\Users\Alessander\Desktop\TRABAJOS\ACTUALES\Insteip\backend\src\main\java\com\insteip\backend\service\interfaces\AlumnoDashboardService.java
@@ -60,6 +61,7 @@ C:\Users\Alessander\Desktop\TRABAJOS\ACTUALES\Insteip\backend\src\main\java\com\
 C:\Users\Alessander\Desktop\TRABAJOS\ACTUALES\Insteip\backend\src\main\java\com\insteip\backend\entity\Curso.java
 C:\Users\Alessander\Desktop\TRABAJOS\ACTUALES\Insteip\backend\src\main\java\com\insteip\backend\controller\PagoController.java
 C:\Users\Alessander\Desktop\TRABAJOS\ACTUALES\Insteip\backend\src\main\java\com\insteip\backend\repository\MaterialRepository.java
+C:\Users\Alessander\Desktop\TRABAJOS\ACTUALES\Insteip\backend\src\main\java\com\insteip\backend\config\ServiceConfig.java
 C:\Users\Alessander\Desktop\TRABAJOS\ACTUALES\Insteip\backend\src\main\java\com\insteip\backend\dto\AlumnoCertificadoResponse.java
 C:\Users\Alessander\Desktop\TRABAJOS\ACTUALES\Insteip\backend\src\main\java\com\insteip\backend\dto\AlumnoPlayModulo.java
 C:\Users\Alessander\Desktop\TRABAJOS\ACTUALES\Insteip\backend\src\main\java\com\insteip\backend\dto\ConfiguracionResponse.java

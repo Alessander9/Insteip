@@ -56,8 +56,11 @@ public class MaterialServiceImpl implements MaterialService {
 
     private final AuditoriaService auditoriaService;
 
-    @org.springframework.beans.factory.annotation.Value("${application.storage.path}")
+    @org.springframework.beans.factory.annotation.Value("${application.storage.path:uploads}")
     private String storagePathSetting;
+
+    @org.springframework.beans.factory.annotation.Value("${application.api.base-url:http://localhost:8081}")
+    private String apiBaseUrl;
 
     private String UPLOADS_DIR;
 
@@ -114,7 +117,7 @@ public class MaterialServiceImpl implements MaterialService {
         }
 
         // Update URL
-        material.setArchivoUrl("http://localhost:8081/api/materiales/" + material.getId() + "/download");
+        material.setArchivoUrl(apiBaseUrl + "/api/materiales/" + material.getId() + "/download");
         Material saved = materialRepository.save(material);
 
         // System Audit
@@ -148,7 +151,7 @@ public class MaterialServiceImpl implements MaterialService {
                 material.setArchivoInterno(internalFilename);
                 material.setTipoArchivo(getCleanContentType(archivo));
                 material.setPesoBytes(archivo.getSize());
-                material.setArchivoUrl("http://localhost:8081/api/materiales/" + material.getId() + "/download");
+                material.setArchivoUrl(apiBaseUrl + "/api/materiales/" + material.getId() + "/download");
             } catch (IOException e) {
                 throw new RuntimeException("Error al actualizar el archivo en el servidor: " + e.getMessage());
             }

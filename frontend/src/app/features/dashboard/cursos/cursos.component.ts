@@ -56,6 +56,8 @@ export class CursosComponent implements OnInit {
   cursos: CursoResponse[] = [];
   filteredCursos: CursoResponse[] = [];
   searchQuery = '';
+  currentPage = 1;
+  readonly pageSize = 10;
 
   get totalCursos(): number {
     return this.cursos.length;
@@ -112,6 +114,7 @@ export class CursosComponent implements OnInit {
   applyFilter(): void {
     if (!this.searchQuery.trim()) {
       this.filteredCursos = [...this.cursos];
+      this.currentPage = 1;
       return;
     }
 
@@ -120,6 +123,33 @@ export class CursosComponent implements OnInit {
       c.nombre.toLowerCase().includes(query) ||
       c.descripcion.toLowerCase().includes(query)
     );
+    this.currentPage = 1;
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredCursos.length / this.pageSize));
+  }
+
+  get paginatedCursos(): CursoResponse[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredCursos.slice(start, start + this.pageSize);
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+  }
+
+  nextPage(): void {
+    this.goToPage(this.currentPage + 1);
+  }
+
+  previousPage(): void {
+    this.goToPage(this.currentPage - 1);
+  }
+
+  trackByCursoId(_: number, curso: CursoResponse): number {
+    return curso.id;
   }
 
   openCreateModal(): void {

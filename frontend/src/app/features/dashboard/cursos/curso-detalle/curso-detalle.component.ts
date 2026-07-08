@@ -89,10 +89,12 @@ export class CursoDetalleComponent implements OnInit {
   matriculas: MatriculaResponse[] = [];
   alumnos: AlumnoResponse[] = [];
   alumnosDisponibles: AlumnoResponse[] = [];
+  alumnoSearchTerm = '';
   showMatriculaModal = false;
   isMatriculaSubmitting = false;
   matriculaErrorMsg = '';
   selectedAlumnoId: number | null = null;
+  showAlumnoDropdown = false;
 
   // Confirm modal controls
   showConfirmModal = false;
@@ -224,6 +226,8 @@ export class CursoDetalleComponent implements OnInit {
   openMatriculaModal(): void {
     this.matriculaErrorMsg = '';
     this.selectedAlumnoId = null;
+    this.alumnoSearchTerm = '';
+    this.showAlumnoDropdown = false;
     this.isMatriculaSubmitting = false;
 
     // Load all alumnos and filter out already enrolled
@@ -243,6 +247,40 @@ export class CursoDetalleComponent implements OnInit {
   closeMatriculaModal(): void {
     this.showMatriculaModal = false;
     this.isMatriculaSubmitting = false;
+    this.showAlumnoDropdown = false;
+  }
+
+  get alumnosFiltrados(): AlumnoResponse[] {
+    const query = this.alumnoSearchTerm.trim().toLowerCase();
+    if (!query) return this.alumnosDisponibles;
+
+    return this.alumnosDisponibles.filter(alumno => {
+      const nombres = `${alumno.nombres} ${alumno.apellidos}`.toLowerCase();
+      const correo = alumno.correo.toLowerCase();
+      const id = String(alumno.id);
+      return nombres.includes(query) || correo.includes(query) || id.includes(query);
+    });
+  }
+
+  get selectedAlumnoLabel(): string {
+    const alumno = this.alumnosDisponibles.find(item => item.id === this.selectedAlumnoId);
+    return alumno ? `${alumno.nombres} ${alumno.apellidos} — ${alumno.correo}` : '';
+  }
+
+  openAlumnoDropdown(): void {
+    if (this.alumnosFiltrados.length > 0) {
+      this.showAlumnoDropdown = true;
+    }
+  }
+
+  closeAlumnoDropdown(): void {
+    this.showAlumnoDropdown = false;
+  }
+
+  selectAlumno(alumno: AlumnoResponse): void {
+    this.selectedAlumnoId = alumno.id;
+    this.alumnoSearchTerm = `${alumno.nombres} ${alumno.apellidos}`;
+    this.showAlumnoDropdown = false;
   }
 
   onMatriculaSubmit(): void {

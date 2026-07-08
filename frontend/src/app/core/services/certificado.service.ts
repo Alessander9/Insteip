@@ -7,6 +7,9 @@ export interface CertificadoResponse {
   id: number;
   usuarioId: number;
   cursoId: number;
+  alumnoNombre?: string;
+  alumnoCorreo?: string;
+  cursoNombre?: string;
   codigo: string;
   archivoPdf: string;
   urlValidacion: string;

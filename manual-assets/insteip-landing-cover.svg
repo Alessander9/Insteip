@@ -1,0 +1,82 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#06131F"/>
+      <stop offset="0.45" stop-color="#0B2A3D"/>
+      <stop offset="1" stop-color="#0F5D6F"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#173B56" stop-opacity="0.92"/>
+      <stop offset="1" stop-color="#0B1E2E" stop-opacity="0.82"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#48D3C6"/>
+      <stop offset="1" stop-color="#8AE6FF"/>
+    </linearGradient>
+    <filter id="blur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="35"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="240" cy="180" r="170" fill="#40E0D0" opacity="0.18" filter="url(#blur)"/>
+  <circle cx="1370" cy="140" r="220" fill="#59A8FF" opacity="0.16" filter="url(#blur)"/>
+  <circle cx="1240" cy="760" r="260" fill="#48D3C6" opacity="0.12" filter="url(#blur)"/>
+  <path d="M0 680C220 590 360 560 520 605C720 662 850 750 1110 720C1340 692 1460 610 1600 565V900H0V680Z" fill="#041019" opacity="0.55"/>
+  <g transform="translate(105,110)">
+    <rect x="0" y="0" width="1385" height="680" rx="42" fill="url(#card)" stroke="url(#accent)" stroke-opacity="0.28"/>
+    <rect x="42" y="42" width="540" height="596" rx="30" fill="#071521" stroke="#3ED4C8" stroke-opacity="0.18"/>
+    <rect x="648" y="42" width="695" height="132" rx="24" fill="#0B2233" stroke="#FFFFFF" stroke-opacity="0.08"/>
+    <rect x="648" y="195" width="330" height="443" rx="26" fill="#091926" stroke="#FFFFFF" stroke-opacity="0.08"/>
+    <rect x="1008" y="195" width="335" height="443" rx="26" fill="#0A1B28" stroke="#FFFFFF" stroke-opacity="0.08"/>
+
+    <text x="80" y="145" fill="#FFFFFF" font-family="Segoe UI, Arial, sans-serif" font-size="72" font-weight="700">INSTEIP</text>
+    <text x="80" y="205" fill="#CDEBFF" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="500">Campus virtual y plataforma E-learning</text>
+    <rect x="80" y="245" width="250" height="10" rx="5" fill="url(#accent)"/>
+    <text x="80" y="318" fill="#E7F7FF" font-family="Segoe UI, Arial, sans-serif" font-size="25" font-weight="400">
+      <tspan x="80" dy="0">Gestiona cursos, módulos, videos,</tspan>
+      <tspan x="80" dy="38">materiales, certificados y auditoría</tspan>
+      <tspan x="80" dy="38">desde una arquitectura moderna.</tspan>
+    </text>
+
+    <g transform="translate(80,430)">
+      <rect width="158" height="52" rx="16" fill="#48D3C6"/>
+      <text x="79" y="33" text-anchor="middle" fill="#07202B" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">Spring Boot</text>
+      <rect x="180" width="134" height="52" rx="16" fill="#1C3F5A"/>
+      <text x="247" y="33" text-anchor="middle" fill="#EAF7FF" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">Angular</text>
+      <rect x="334" width="128" height="52" rx="16" fill="#1C3F5A"/>
+      <text x="398" y="33" text-anchor="middle" fill="#EAF7FF" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">PostgreSQL</text>
+    </g>
+
+    <g transform="translate(700,86)">
+      <text fill="#EAF7FF" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700">Arquitectura</text>
+      <text y="40" fill="#9BC4D9" font-family="Segoe UI, Arial, sans-serif" font-size="18">Frontend Angular + Backend Spring Boot + PostgreSQL</text>
+    </g>
+
+    <g transform="translate(702,220)">
+      <rect width="250" height="110" rx="22" fill="#102F44"/>
+      <text x="24" y="40" fill="#8AE6FF" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="700">Autenticación</text>
+      <text x="24" y="72" fill="#EAF7FF" font-family="Segoe UI, Arial, sans-serif" font-size="16">JWT + roles + refresh</text>
+      <rect x="270" width="250" height="110" rx="22" fill="#102F44"/>
+      <text x="294" y="40" fill="#8AE6FF" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="700">Certificados</text>
+      <text x="294" y="72" fill="#EAF7FF" font-family="Segoe UI, Arial, sans-serif" font-size="16">PDF + validación pública</text>
+      <rect x="540" width="250" height="110" rx="22" fill="#102F44"/>
+      <text x="564" y="40" fill="#8AE6FF" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="700">QA</text>
+      <text x="564" y="72" fill="#EAF7FF" font-family="Segoe UI, Arial, sans-serif" font-size="16">Playwright + Selenium</text>
+    </g>
+
+    <g transform="translate(702,365)">
+      <rect width="798" height="130" rx="26" fill="#081824"/>
+      <text x="28" y="46" fill="#FFFFFF" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700">Módulos principales</text>
+      <text x="28" y="84" fill="#C6E7F5" font-family="Segoe UI, Arial, sans-serif" font-size="18">Cursos, módulos, videos, materiales, matrículas, progreso y auditoría.</text>
+    </g>
+
+    <g transform="translate(702,524)">
+      <rect width="360" height="116" rx="24" fill="#0E2A3B"/>
+      <text x="28" y="42" fill="#8AE6FF" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="700">Paneles diferenciados</text>
+      <text x="28" y="76" fill="#EAF7FF" font-family="Segoe UI, Arial, sans-serif" font-size="16">Administrador, docente y alumno.</text>
+      <rect x="388" width="410" height="116" rx="24" fill="#0E2A3B"/>
+      <text x="416" y="42" fill="#8AE6FF" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="700">Documentación completa</text>
+      <text x="416" y="76" fill="#EAF7FF" font-family="Segoe UI, Arial, sans-serif" font-size="16">README + diagramas + capturas + API.</text>
+    </g>
+  </g>
+</svg>

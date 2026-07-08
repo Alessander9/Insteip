@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AlumnoDashboardService, AlumnoCertificado } from '../../../core/services/alumno-dashboard.service';
+import { CertificadoResponse, CertificadoService } from '../../../core/services/certificado.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ReportesService } from '../../../core/services/reportes.service';
 import { ArchivoProtegidoService } from '../../../core/services/archivo-protegido.service';
@@ -16,23 +17,37 @@ import { ArchivoProtegidoService } from '../../../core/services/archivo-protegid
 })
 export class CertificadosComponent implements OnInit {
   private studentService = inject(AlumnoDashboardService);
+  private certificadoService = inject(CertificadoService);
   private authService = inject(AuthService);
   private reportesService = inject(ReportesService);
   private archivoProtegidoService = inject(ArchivoProtegidoService);
   private sanitizer = inject(DomSanitizer);
 
-  certificados: AlumnoCertificado[] = [];
+  certificados: Array<AlumnoCertificado | CertificadoResponse> = [];
   isLoading = true;
   isAdmin = false;
-  selectedCertificado: AlumnoCertificado | null = null;
+  selectedCertificado: AlumnoCertificado | CertificadoResponse | null = null;
   showModal = false;
   previewPdfUrl: string | null = null;
   isPreviewLoading = false;
 
   ngOnInit(): void {
     this.isAdmin = this.authService.getUserRole() === 'ADMINISTRADOR';
+    this.loadCertificados();
+  }
+
+  private loadCertificados(): void {
     if (this.isAdmin) {
-      this.isLoading = false;
+      this.certificadoService.listarCertificados().subscribe({
+        next: (data) => {
+          this.certificados = data;
+          this.isLoading = false;
+        },
+        error: (err: unknown) => {
+          console.error('Error fetching certificates:', err);
+          this.isLoading = false;
+        }
+      });
       return;
     }
 
@@ -41,11 +56,23 @@ export class CertificadosComponent implements OnInit {
         this.certificados = data;
         this.isLoading = false;
       },
-      error: (err) => {
+      error: (err: unknown) => {
         console.error('Error fetching certificates:', err);
         this.isLoading = false;
       }
     });
+  }
+
+  getAlumnoNombre(cert: AlumnoCertificado | CertificadoResponse): string {
+    return (cert as CertificadoResponse).alumnoNombre || 'N/D';
+  }
+
+  getAlumnoCorreo(cert: AlumnoCertificado | CertificadoResponse): string {
+    return (cert as CertificadoResponse).alumnoCorreo || 'N/D';
+  }
+
+  getCursoNombre(cert: AlumnoCertificado | CertificadoResponse): string {
+    return (cert as CertificadoResponse).cursoNombre || (cert as AlumnoCertificado).cursoNombre || 'N/D';
   }
 
   exportarCSV(): void {
@@ -56,7 +83,7 @@ export class CertificadosComponent implements OnInit {
     });
   }
 
-  openVerModal(cert: AlumnoCertificado): void {
+  openVerModal(cert: AlumnoCertificado | CertificadoResponse): void {
     this.selectedCertificado = cert;
     this.showModal = true;
     this.previewPdfUrl = null;
@@ -88,7 +115,7 @@ export class CertificadosComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
-  descargarCertificado(cert: AlumnoCertificado): void {
+  descargarCertificado(cert: AlumnoCertificado | CertificadoResponse): void {
     this.archivoProtegidoService.descargar(cert.archivoPdf, `certificado-${cert.codigo}.pdf`).subscribe({
       error: (err) => console.error('Error al descargar certificado:', err)
     });

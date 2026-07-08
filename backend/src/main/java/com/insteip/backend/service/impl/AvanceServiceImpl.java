@@ -12,6 +12,7 @@ import com.insteip.backend.repository.AvanceVideoRepository;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.repository.VideoRepository;
 import com.insteip.backend.service.interfaces.AvanceService;
+import com.insteip.backend.util.ProgresoAcademicoUtils;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -45,23 +46,28 @@ public class AvanceServiceImpl implements AvanceService {
                         .video(video)
                         .build());
 
-        // Si el request contiene la duración y en BD es null o 0, la actualizamos dinámicamente
-        if (request.getDuracionSegundos() != null && request.getDuracionSegundos() > 0 
-                && (video.getDuracionSegundos() == null || video.getDuracionSegundos() == 0)) {
-            video.setDuracionSegundos(request.getDuracionSegundos());
+        // Preferir la duración real enviada por el reproductor para evitar
+        // que una duración semilla desactualizada impida marcar el video como completo.
+        Integer requestDuration = request.getDuracionSegundos();
+        Integer storedDuration = video.getDuracionSegundos();
+        int duracion = (requestDuration != null && requestDuration > 0)
+                ? requestDuration
+                : ((storedDuration != null && storedDuration > 0) ? storedDuration : ProgresoAcademicoUtils.resolveDuracionVideo(video));
+
+        if (requestDuration != null && requestDuration > 0
+                && (storedDuration == null || !storedDuration.equals(requestDuration))) {
+            video.setDuracionSegundos(requestDuration);
             videoRepository.save(video);
         }
 
         // Lógica de cálculo del porcentaje visto
-        Integer seconds = video.getDuracionSegundos();
-        int duracion = (seconds != null && seconds > 0) ? seconds : 600; // default 10min
         int boundedSeconds = Math.max(0, Math.min(request.getUltimoSegundo(), duracion));
         double percent = (double) boundedSeconds / duracion * 100;
         if (percent > 100) percent = 100;
 
         avance.setUltimoSegundo(boundedSeconds);
         avance.setPorcentajeVisto(BigDecimal.valueOf(percent).setScale(2, RoundingMode.HALF_UP));
-        avance.setCompletado(boundedSeconds >= duracion); // Solo se completa al terminar el video
+        avance.setCompletado(ProgresoAcademicoUtils.isVideoCompletado(video, avance));
         avance.setFechaActualizacion(LocalDateTime.now());
 
         avance = avanceVideoRepository.save(avance);
@@ -92,7 +98,7 @@ public class AvanceServiceImpl implements AvanceService {
                 totalVideos++;
                 AvanceVideo avVideo = avanceVideoRepository.findByUsuarioIdAndVideoId(usuario.getId(), v.getId())
                         .orElse(null);
-                if (avVideo != null && avVideo.getCompletado()) {
+                if (ProgresoAcademicoUtils.isVideoCompletado(v, avVideo)) {
                     completedVideos++;
                 }
             }

@@ -1,7 +1,7 @@
 # INSTEIP
 
 <p align="center">
-  <img src="manual-assets/insteip-landing-cover.svg" alt="INSTEIP portada" width="100%" />
+  <img src="docs/assets/insteip-landing-cover.svg" alt="INSTEIP portada" width="100%" />
 </p>
 
 <p align="center">
@@ -52,7 +52,7 @@ flowchart LR
 
 ## Captura de portada
 
-La portada personalizada del proyecto está en `manual-assets/insteip-landing-cover.svg`.
+La portada personalizada del proyecto está en `docs/assets/insteip-landing-cover.svg`.
 
 ## Stack Tecnológico
 
@@ -87,11 +87,9 @@ La portada personalizada del proyecto está en `manual-assets/insteip-landing-co
 ├── backend/
 ├── database/
 ├── frontend/
-├── manual-assets/
+├── docs/
+├── scripts/
 ├── contexto.md
-├── super-test.js
-├── backend-api-super-test.js
-├── generate-manual.js
 └── README.md
 ```
 

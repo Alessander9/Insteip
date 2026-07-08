@@ -1,358 +1,563 @@
-# INSTEIP - Campus Virtual y Plataforma E-Learning
+# INSTEIP
 
-¡Bienvenido al repositorio oficial de **INSTEIP**! Este proyecto es un campus virtual completo y una plataforma de e-learning moderna, diseñada bajo un enfoque modular, seguro y escalable.
+<p align="center">
+  <img src="manual-assets/insteip-landing-cover.svg" alt="INSTEIP landing cover" width="100%" />
+</p>
 
-El sistema se compone de un backend robusto basado en **Spring Boot 3** y **Java 21**, un frontend reactivo desarrollado en **Angular 18**, y una base de datos relacional robusta en **PostgreSQL 15**.
+<p align="center">
+  <a href="#inicio-rapido"><img src="https://img.shields.io/badge/Estado-Activo-success?style=for-the-badge" alt="Estado" /></a>
+  <img src="https://img.shields.io/badge/Backend-Spring%20Boot%203.4-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" alt="Backend" />
+  <img src="https://img.shields.io/badge/Frontend-Angular%2018-DD0031?style=for-the-badge&logo=angular&logoColor=white" alt="Frontend" />
+  <img src="https://img.shields.io/badge/DB-PostgreSQL%2015-336791?style=for-the-badge&logo=postgresql&logoColor=white" alt="Database" />
+  <img src="https://img.shields.io/badge/Java-21-FB6D3A?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java" />
+</p>
 
----
+<p align="center">
+  <img src="https://img.shields.io/badge/JWT-Security-black?style=flat-square&logo=jsonwebtokens&logoColor=white" alt="JWT" />
+  <img src="https://img.shields.io/badge/OpenPDF-PDF%20Generation-blue?style=flat-square" alt="OpenPDF" />
+  <img src="https://img.shields.io/badge/Playwright-E2E-2EAD33?style=flat-square&logo=playwright&logoColor=white" alt="Playwright" />
+  <img src="https://img.shields.io/badge/Selenium-UI%20Smoke-43B02A?style=flat-square&logo=selenium&logoColor=white" alt="Selenium" />
+  <img src="https://img.shields.io/badge/Node.js-18%2B-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js" />
+</p>
 
-## 📊 1. Arquitectura del Sistema y Diagrama ERD
+## Tabla de Contenidos
 
-La plataforma INSTEIP organiza su información a través de 18 tablas relacionales que estructuran los perfiles de usuario, suscripciones, cursos, temarios, seguimiento de progreso y auditorías del sistema.
+- [Resumen](#resumen)
+- [Captura de portada](#captura-de-portada)
+- [Características](#caracter%C3%ADsticas)
+- [Arquitectura](#arquitectura)
+- [Stack tecnológico](#stack-tecnológico)
+- [Estructura del repositorio](#estructura-del-repositorio)
+- [Modelo de datos](#modelo-de-datos)
+- [Funcionalidades principales](#funcionalidades-principales)
+- [Rutas de la aplicación](#rutas-de-la-aplicación)
+- [Flujo de uso](#flujo-de-uso)
+- [Requisitos](#requisitos)
+- [Inicio rápido](#inicio-rápido)
+- [QA y pruebas](#qa-y-pruebas)
+- [Credenciales de prueba](#credenciales-de-prueba)
+- [Base de datos](#base-de-datos)
+- [Galería](#galería)
+- [Notas de mantenimiento](#notas-de-mantenimiento)
 
-### Diagrama Entidad-Relación (Mermaid ERD)
+## Resumen
+
+INSTEIP es una plataforma de aprendizaje en línea para gestionar cursos, módulos, videos, materiales, matrículas, avance académico, certificados y auditoría del sistema.
+
+La solución está separada en tres capas:
+
+- `backend/`: API REST con Spring Boot 3 y Java 21.
+- `frontend/`: aplicación web con Angular 18.
+- `database/`: esquema, datos semilla y soporte para PostgreSQL.
+
+## Captura de portada
+
+La portada del proyecto está pensada como una mini landing page para GitHub y documentación interna. La imagen se encuentra en `manual-assets/insteip-landing-cover.svg`.
+
+## Características
+
+- Autenticación con JWT y Spring Security.
+- Control de acceso por roles.
+- Gestión de usuarios, cursos, módulos, videos, materiales y matrículas.
+- Seguimiento del progreso del alumno por video y por curso.
+- Generación de certificados PDF con validación pública.
+- Auditoría de accesos y eventos del sistema.
+- Paneles separados para administrador, docente y alumno.
+- Validaciones de descarga de materiales y contenido protegido.
+- Base preparada para ejecución local con Docker Compose.
+
+## Arquitectura
+
+```mermaid
+flowchart LR
+    U[Usuario] --> F[Frontend Angular 18]
+    F -->|HTTP + JWT| API[Backend Spring Boot 3]
+    API --> DB[(PostgreSQL 15)]
+    API --> FS[(Sistema de archivos)]
+    API --> PDF[OpenPDF]
+    API --> SEC[Spring Security]
+    QA[Playwright / Selenium / Scripts Node] --> F
+    QA --> API
+```
+
+```mermaid
+sequenceDiagram
+    participant U as Usuario
+    participant F as Frontend
+    participant A as API
+    participant D as DB
+    participant P as PDF
+
+    U->>F: Inicia sesión
+    F->>A: POST /auth/login
+    A->>D: valida credenciales
+    D-->>A: usuario autenticado
+    A-->>F: JWT + perfil
+    U->>F: Solicita curso o dashboard
+    F->>A: GET con Bearer token
+    A->>D: consulta datos
+    D-->>A: resultado
+    A-->>F: respuesta JSON
+    U->>F: Solicita certificado
+    F->>A: POST /certificados
+    A->>D: guarda registro
+    A->>P: genera PDF
+    P-->>A: archivo PDF
+    A-->>F: enlace / archivo
+```
+
+## Stack tecnológico
+
+### Backend
+
+- Spring Boot 3.4
+- Java 21
+- Spring Data JPA
+- Spring Security
+- Lombok
+- JJWT
+- OpenPDF
+- PostgreSQL Driver
+
+### Frontend
+
+- Angular 18
+- TypeScript
+- RxJS
+- CSS global y utilidades Tailwind
+- Guards, interceptores y servicios centralizados
+
+### Calidad y automatización
+
+- JUnit
+- Mockito
+- Playwright
+- Selenium WebDriver
+- Scripts Node.js para integración
+
+## Estructura del repositorio
+
+```text
+.
+├── backend/            # API REST Spring Boot
+├── database/           # SQL de esquema y datos semilla
+├── frontend/           # SPA Angular
+├── manual-assets/      # Capturas y banner
+├── super-test.js       # E2E visual con Playwright
+├── backend-api-super-test.js
+├── selenium-test.js
+├── generate-manual.js
+└── README.md
+```
+
+## Modelo de datos
+
+Las entidades principales del sistema incluyen:
+
+- `roles`
+- `niveles_suscripcion`
+- `usuarios`
+- `pagos`
+- `login_auditoria`
+- `eventos_sistema`
+- `refresh_tokens`
+- `cursos`
+- `curso_niveles_suscripcion`
+- `modulos`
+- `videos`
+- `materiales`
+- `matriculas`
+- `avance_videos`
+- `avance_cursos`
+- `certificados`
+- `plantilla_certificado`
+- `configuracion_institucion`
 
 ```mermaid
 erDiagram
-    roles {
-        bigint id PK
-        varchar nombre "UNIQUE"
-        boolean estado
-        timestamp fecha_creacion
-    }
-    
-    niveles_suscripcion {
-        bigint id PK
-        varchar nombre "UNIQUE"
-        varchar descripcion
-        boolean estado
-        timestamp fecha_creacion
-    }
-
-    usuarios {
-        bigint id PK
-        bigint rol_id FK
-        bigint nivel_suscripcion_id FK
-        varchar nombres
-        varchar apellidos
-        varchar correo "UNIQUE"
-        text password_hash
-        varchar telefono
-        boolean estado
-        timestamp fecha_registro
-        integer intentos_fallidos
-        timestamp bloqueado_hasta
-    }
-
-    pagos {
-        bigint id PK
-        bigint usuario_id FK
-        bigint nivel_suscripcion_id FK
-        numeric monto
-        varchar metodo_pago
-        varchar numero_operacion
-        text observaciones
-        boolean aprobado
-        timestamp fecha_pago
-        timestamp fecha_aprobacion
-        bigint aprobado_por FK
-    }
-
-    login_auditoria {
-        bigint id PK
-        bigint usuario_id FK
-        varchar correo
-        varchar ip
-        text user_agent
-        boolean exitoso
-        varchar motivo
-        timestamp fecha
-    }
-
-    eventos_sistema {
-        bigint id PK
-        bigint usuario_id FK
-        varchar modulo
-        varchar accion
-        text descripcion
-        timestamp fecha
-    }
-
-    refresh_tokens {
-        bigint id PK
-        bigint usuario_id FK
-        text token "UNIQUE"
-        timestamp expiracion
-        boolean activo
-        timestamp fecha_creacion
-    }
-
-    cursos {
-        bigint id PK
-        varchar nombre
-        text descripcion
-        text imagen_portada
-        boolean estado
-        timestamp fecha_creacion
-    }
-
-    curso_niveles_suscripcion {
-        bigint id PK
-        bigint curso_id FK
-        bigint nivel_suscripcion_id FK
-        timestamp fecha_creacion
-    }
-
-    modulos {
-        bigint id PK
-        bigint curso_id FK
-        varchar nombre
-        text descripcion
-        integer orden
-        boolean estado
-    }
-
-    videos {
-        bigint id PK
-        bigint modulo_id FK
-        varchar titulo
-        text descripcion
-        text youtube_url
-        varchar youtube_id
-        integer duracion_segundos
-        integer orden
-        boolean estado
-        timestamp fecha_creacion
-    }
-
-    materiales {
-        bigint id PK
-        bigint modulo_id FK
-        varchar nombre
-        text archivo_url
-        varchar archivo_interno "UNIQUE"
-        varchar tipo_archivo
-        bigint peso_bytes
-        boolean estado
-        timestamp fecha_subida
-    }
-
-    matriculas {
-        bigint id PK
-        bigint usuario_id FK
-        bigint curso_id FK
-        timestamp fecha_matricula
-        boolean estado
-    }
-
-    avance_videos {
-        bigint id PK
-        bigint usuario_id FK
-        bigint video_id FK
-        integer ultimo_segundo
-        numeric porcentaje_visto
-        boolean completado
-        timestamp fecha_actualizacion
-    }
-
-    avance_cursos {
-        bigint id PK
-        bigint usuario_id FK
-        bigint curso_id FK
-        numeric porcentaje_avance
-        boolean completado
-        timestamp fecha_actualizacion
-    }
-
-    certificados {
-        bigint id PK
-        bigint usuario_id FK
-        bigint curso_id FK
-        varchar codigo "UNIQUE"
-        text archivo_pdf
-        timestamp fecha_emision
-        text url_validacion
-        varchar numero_registro
-    }
-
-    plantilla_certificado {
-        bigint id PK
-        varchar nombre
-        text imagen_fondo
-        text firma_director
-        varchar cargo_director
-        boolean activo
-    }
-
-    configuracion_institucion {
-        bigint id PK
-        varchar nombre_institucion
-        text logo_url
-        varchar correo_contacto
-        varchar telefono
-        text qr_yape
-        text qr_plin
-        text paypal_url
-    }
-
-    roles ||--o{ usuarios : "asigna_a"
-    niveles_suscripcion ||--o{ usuarios : "clasifica_a"
-    usuarios ||--o{ pagos : "realiza"
-    niveles_suscripcion ||--o{ pagos : "aplica_a"
-    usuarios ||--o{ pagos : "es_aprobado_por"
-    usuarios ||--o{ login_auditoria : "audita_login_de"
-    usuarios ||--o{ eventos_sistema : "registra_evento_de"
-    usuarios ||--o{ refresh_tokens : "asocia_token_de"
-    cursos ||--o{ curso_niveles_suscripcion : "tiene"
-    niveles_suscripcion ||--o{ curso_niveles_suscripcion : "pertenece"
-    cursos ||--o{ modulos : "se_divide_en"
-    modulos ||--o{ videos : "contiene"
-    modulos ||--o{ materiales : "ofrece"
-    usuarios ||--o{ matriculas : "se_inscribe"
-    cursos ||--o{ matriculas : "recibe_inscripcion"
-    usuarios ||--o{ avance_videos : "mide_avance_de"
-    videos ||--o{ avance_videos : "asociado_a"
-    usuarios ||--o{ avance_cursos : "acumula_progreso_de"
-    cursos ||--o{ avance_cursos : "mide_avance_de"
-    usuarios ||--o{ certificados : "obtiene"
-    cursos ||--o{ certificados : "genera_al_completar"
+    roles ||--o{ usuarios : asigna
+    niveles_suscripcion ||--o{ usuarios : clasifica
+    usuarios ||--o{ pagos : realiza
+    usuarios ||--o{ login_auditoria : genera
+    usuarios ||--o{ eventos_sistema : registra
+    usuarios ||--o{ refresh_tokens : posee
+    usuarios ||--o{ cursos : dicta
+    cursos ||--o{ modulos : contiene
+    modulos ||--o{ videos : incluye
+    modulos ||--o{ materiales : ofrece
+    usuarios ||--o{ matriculas : se_inscribe
+    cursos ||--o{ matriculas : recibe
+    usuarios ||--o{ avance_videos : avanza
+    videos ||--o{ avance_videos : mide
+    usuarios ||--o{ avance_cursos : avanza
+    cursos ||--o{ avance_cursos : mide
+    usuarios ||--o{ certificados : obtiene
+    cursos ||--o{ certificados : genera
 ```
 
----
+## Funcionalidades principales
 
-## 🛠️ 2. Stack Tecnológico Completo
+### Acceso y seguridad
 
-La plataforma INSTEIP utiliza un stack moderno, seguro y optimizado para el aprendizaje en línea:
+- Login con JWT.
+- Refresh tokens para sesión persistente.
+- Control de intentos fallidos.
+- Protecciones para rutas administrativas y recursos descargables.
 
-* **Frontend:**
-  * **Framework:** **Angular 18** (TypeScript, Componentes Reactivos, Lazy Loading, Ruteo Protegido y Gestión de Estados).
-  * **Estilos y Maquetación:** CSS Vainilla combinado con **Tailwind CSS** (integrado mediante CDN para carga rápida) para un diseño académico y moderno de alta fidelidad.
-  * **Multimedia:** Sincronización dinámica de avance con la API de iFrames de YouTube.
-* **Backend:**
-  * **Framework:** **Spring Boot 3** (Java 21) estructurado en capas limpias de Controladores, Servicios y Repositorios.
-  * **Seguridad:** **Spring Security** y Tokens Bearer JWT para autenticación, autorización basada en roles y prevención de fuerza bruta.
-  * **Generación de Archivos:** **OpenPDF** para la compilación y exportación de diplomas académicos a formato PDF.
-* **Base de Datos y Almacenamiento:**
-  * **Base de Datos:** **PostgreSQL 15** para almacenamiento relacional seguro de la información.
-  * **Almacenamiento:** Sistema de archivos del servidor para copias de seguridad de datos y materiales didácticos cargados.
-* **Automatización y Pruebas (QA):**
-  * **Pruebas E2E (UI):** Playwright (Node.js) para la validación visual y flujos interactivos completos.
-  * **Pruebas de Integración (API):** Suite personalizada en Node.js para validación masiva de endpoints REST.
-  * **Pruebas de Humo:** Selenium WebDriver para comprobaciones rápidas de portales públicos y validaciones.
-  * **Pruebas Unitarias:** JUnit y Mockito en el backend.
+### Campus virtual
 
----
+- Catálogo de cursos.
+- Detalle público de cursos.
+- Matrícula y seguimiento del progreso.
+- Reproductor de videos con avance persistente.
+- Materiales por módulo.
 
-## 📁 3. Estructura del Repositorio
+### Certificados
 
-El repositorio se divide en tres directorios principales y herramientas de prueba globales en la raíz:
+- Emisión de certificados en PDF.
+- Validación pública por código.
+- Integración con firma e identidad institucional.
 
-* **`database/`**: 
-  * [database/schema.sql](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/database/schema.sql) - Esquema DDL en PostgreSQL con relaciones e índices optimizados.
-  * [database/seed.sql](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/database/seed.sql) - Carga de roles, niveles de suscripción, cuentas semilla y transacciones de prueba.
-  * [docker-compose.yml](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/docker-compose.yml) - Orquestador para iniciar la base de datos PostgreSQL localmente en contenedores.
-* **`backend/`**:
-  * [backend/pom.xml](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/backend/pom.xml) - Configuración de Maven con librerías de seguridad, base de datos y utilitarios.
-  * [backend/src/main/resources/application.properties](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/backend/src/main/resources/application.properties) - Propiedades de configuración del servidor, subida de archivos (límite 10MB) y credenciales por defecto.
-  * [backend/src/main/java/com/insteip/backend/](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/backend/src/main/java/com/insteip/backend/) - Código fuente estructurado en capas (controllers, services, entities, repositories, security, etc.).
-* **`frontend/`**:
-  * [frontend/package.json](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/frontend/package.json) - Dependencias del cliente en **Angular 18**.
-  * [frontend/src/app/app.routes.ts](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/frontend/src/app/app.routes.ts) - Rutas públicas, rutas de estudiante y rutas de administración protegidas con guardianes de roles.
-  * [frontend/src/app/core/interceptors/security.interceptor.ts](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/frontend/src/app/core/interceptors/security.interceptor.ts) - Interceptor HTTP funcional para cabeceras Bearer, guardianes y servicios de conexión.
-  * [frontend/src/app/features/](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/frontend/src/app/features/) - Vistas e interfaces (login, catálogos públicos y panel de control dashboard).
-* **QA & Scripts en Raíz**:
-  * [super-test.js](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/super-test.js) - Suite de pruebas visuales automatizadas de extremo a extremo (E2E) con Playwright.
-  * [backend-api-super-test.js](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/backend-api-super-test.js) - Script de prueba de integración de endpoints de API REST.
-  * [generate-manual.js](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/generate-manual.js) - Generador automatizado del Manual de Usuario Visual en PDF/HTML.
-  * [selenium-test.js](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/selenium-test.js) - Script de pruebas de humo y validación pública de firmas con Selenium WebDriver.
+### Administración
 
----
+- Gestión de alumnos.
+- Gestión de cursos, módulos, videos y materiales.
+- Auditoría de eventos y accesos.
+- Parámetros globales de la institución.
+- Estado del sistema y copias de seguridad.
 
-## 🚀 4. Instrucciones de Despliegue Local
+## Rutas de la aplicación
 
-Sigue estos cuatro sencillos pasos para tener todo el sistema corriendo de forma local:
+### Públicas
 
-### Paso 1: Levantar la Base de Datos con Docker
-Desde la raíz del proyecto, ejecuta:
+- `/inicio`
+- `/programas`
+- `/recursos`
+- `/certificacion`
+- `/por-que-elegirnos`
+- `/cursos`
+- `/cursos/:id`
+- `/login`
+- `/certificados/validar/:codigo`
+
+### Estudiante
+
+- `/dashboard/mis-cursos`
+- `/dashboard/cursos-play/:id`
+- `/dashboard/certificados`
+- `/dashboard/perfil`
+
+### Docente
+
+- `/dashboard/docente/mis-cursos`
+- `/dashboard/docente/mis-alumnos`
+
+### Administrador
+
+- `/dashboard/alumnos`
+- `/dashboard/cursos`
+- `/dashboard/cursos/:id`
+- `/dashboard/certificados`
+- `/dashboard/auditoria`
+- `/dashboard/sistema`
+- `/dashboard/configuracion`
+
+## Flujo de uso
+
+```mermaid
+flowchart TD
+    A[Usuario entra al sitio] --> B{Tiene cuenta?}
+    B -- No --> C[Ver contenido público]
+    B -- Sí --> D[Iniciar sesión]
+    D --> E[Recibir JWT]
+    E --> F{Rol del usuario}
+    F -- Alumno --> G[Ver mis cursos, reproducir contenido y descargar certificados]
+    F -- Docente --> H[Gestionar cursos y revisar alumnos]
+    F -- Admin --> I[Administrar sistema, auditoría, cursos y configuración]
+```
+
+## Requisitos
+
+- Java 21
+- Maven 3.9+ o wrapper incluido en `backend/`
+- Node.js 18+ y npm
+- PostgreSQL 15
+- Docker y Docker Compose para levantar la base local
+
+## Inicio rápido
+
+### 1. Base de datos
+
 ```bash
 docker compose up -d
 ```
-Esto creará e inicializará un contenedor PostgreSQL en el puerto local `5432` con la base de datos `insteip_db`, cargando de forma automática los scripts de esquema y datos semilla.
 
-### Paso 2: Ejecutar el Servidor Backend
-Navega a la carpeta backend y ejecuta el servidor de Spring Boot:
+Esto levanta PostgreSQL y carga el esquema y los datos semilla definidos en `database/`.
+
+### 2. Backend
+
 ```bash
 cd backend
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
-El servidor backend iniciará de forma segura en el puerto **`8081`**. Puedes configurar una ruta absoluta personalizada para la persistencia física de archivos subidos y copias de seguridad definiendo la variable de entorno `STORAGE_PATH` (su valor por defecto es `uploads` relativo al directorio de ejecución).
 
-### Paso 3: Ejecutar el Cliente Frontend
-Abre otra terminal, navega a la carpeta frontend, instala las dependencias e inicia el servidor de desarrollo de Angular:
+En Windows:
+
+```powershell
+cd backend
+.\mvnw.cmd spring-boot:run
+```
+
+El backend suele exponerse en `http://localhost:8081`.
+
+### 3. Frontend
+
 ```bash
 cd frontend
 npm install
-npm run start
-```
-La aplicación cliente se compilará y estará disponible en el navegador en la dirección `http://localhost:4200`.
-
----
-
-## 🧪 5. Guía de QA y Suites de Prueba
-
-El sistema cuenta con una cobertura integral de QA en backend y frontend para garantizar su correcto funcionamiento.
-
-### A. Pruebas Unitarias del Backend (JUnit + Mockito)
-Para correr las pruebas de lógica de autenticación y validación de archivos, ejecuta desde el directorio `backend`:
-```bash
-mvn test
+npm start
 ```
 
-### B. Pruebas de Integración de Endpoints REST
-El script `backend-api-super-test.js` ejecuta de manera secuencial 60 pruebas masivas de integración interactuando directamente con el servidor API REST levantado.
+La aplicación normalmente queda disponible en `http://localhost:4200`.
+
+## QA y pruebas
+
+### Backend
+
 ```bash
-# Ejecutar en la raíz del proyecto
+cd backend
+./mvnw test
+```
+
+### Integración de API
+
+```bash
 node backend-api-super-test.js
 ```
 
-### C. Pruebas Visuales Automatizadas E2E (Playwright)
-Para validar los flujos visuales completos sobre la interfaz real (login, CRUD de cursos, reproducción interactiva de alumnos y emisión de certificados):
-```bash
-# Instalar Playwright en el directorio raíz (por primera vez)
-npm install
+### E2E visual
 
-# Correr las pruebas visuales E2E
+```bash
+npm install
 node super-test.js
 ```
 
-### D. Pruebas de Humo en Páginas Públicas (Selenium)
-Para validar accesos públicos y pasarelas de validación externa de firmas con Selenium WebDriver:
+### Selenium
+
 ```bash
-# Correr pruebas con Selenium WebDriver
 node selenium-test.js
 ```
 
----
+### Compilación del frontend
 
-## 🔑 6. Cuentas Semilla y Credenciales de Prueba
+```bash
+cd frontend
+npm run build
+```
 
-Para interactuar con la plataforma una vez desplegada localmente, puedes usar las siguientes credenciales pre-cargadas desde [seed.sql](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/database/seed.sql):
+## API documentada
 
-* **Administrador (Acceso Total al Panel de Control):**
-  * **Correo:** `admin@insteip.com`
-  * **Contraseña:** `Admin123!`
-* **Alumno (Plan Básico por Defecto):**
-  * **Correo:** `juan.perez@insteip.com`
-  * **Contraseña:** `Alumno123!`
-* **Alumno (Plan Premium):**
-  * **Correo:** `maria.rodriguez@insteip.com`
-  * **Contraseña:** `Alumno123!`
+La API está organizada bajo el prefijo `/api`. A continuación, la documentación principal por recurso.
 
----
+### Autenticación
 
-## ⚙️ 7. Credenciales de Conexión de Base de Datos
-* **Host:** `localhost`
-* **Puerto:** `5432`
-* **Base de Datos:** `insteip_db`
-* **Usuario:** `insteip_user`
-* **Contraseña:** `insteip_password`
+Base: `/api/auth`
+
+| Método | Endpoint | Descripción | Acceso |
+|---|---|---|---|
+| `POST` | `/login` | Inicia sesión y devuelve el JWT junto con datos del usuario. | Público |
+| `POST` | `/refresh` | Renueva el token de acceso usando un refresh token. | Público |
+| `POST` | `/logout` | Revoca la sesión actual. | Autenticado |
+| `GET` | `/me` | Retorna el perfil del usuario autenticado. | Autenticado |
+| `POST` | `/forgot-password` | Solicita el flujo de recuperación de contraseña. | Público |
+| `POST` | `/reset-password` | Restablece la contraseña con el token enviado. | Público |
+
+### Usuarios
+
+Base: `/api/usuarios`
+
+| Método | Endpoint | Descripción | Acceso |
+|---|---|---|---|
+| `GET` | `/` | Lista alumnos con paginación y búsqueda opcional. | ADMINISTRADOR |
+| `GET` | `/{id}` | Obtiene el detalle de un alumno. | ADMINISTRADOR |
+| `POST` | `/` | Crea un alumno. | ADMINISTRADOR |
+| `PUT` | `/{id}` | Actualiza un alumno. | ADMINISTRADOR |
+| `PATCH` | `/{id}/estado` | Activa o desactiva el estado del alumno. | ADMINISTRADOR |
+
+### Cursos
+
+Base: `/api/cursos`
+
+| Método | Endpoint | Descripción | Acceso |
+|---|---|---|---|
+| `GET` | `/` | Lista cursos con paginación y búsqueda. | ADMINISTRADOR |
+| `GET` | `/{id}` | Obtiene el detalle de un curso. | ADMINISTRADOR o acceso autorizado al curso |
+| `GET` | `/{id}/modulos` | Lista módulos de un curso. | ADMINISTRADOR o acceso autorizado al curso |
+| `POST` | `/` | Crea un curso. | ADMINISTRADOR |
+| `PUT` | `/{id}` | Actualiza un curso. | ADMINISTRADOR |
+| `PATCH` | `/{id}/estado` | Activa o desactiva un curso. | ADMINISTRADOR |
+
+### Matrículas
+
+Base: `/api/matriculas`
+
+| Método | Endpoint | Descripción | Acceso |
+|---|---|---|---|
+| `POST` | `/` | Matricula un alumno en un curso. | ADMINISTRADOR |
+| `GET` | `/curso/{cursoId}` | Lista los alumnos matriculados en un curso. | ADMINISTRADOR |
+| `PATCH` | `/{id}/estado` | Activa o desactiva una matrícula. | ADMINISTRADOR |
+
+### Módulos
+
+Base: `/api/modulos`
+
+| Método | Endpoint | Descripción | Acceso |
+|---|---|---|---|
+| `GET` | `/{id}` | Obtiene el detalle de un módulo. | ADMINISTRADOR o acceso autorizado al módulo |
+| `GET` | `/{id}/videos` | Lista videos del módulo. | ADMINISTRADOR o acceso autorizado al módulo |
+| `GET` | `/{id}/materiales` | Lista materiales del módulo. | ADMINISTRADOR o acceso autorizado al módulo |
+| `POST` | `/` | Crea un módulo dentro de un curso. | ADMINISTRADOR o acceso autorizado al curso |
+| `PUT` | `/{id}` | Actualiza un módulo. | ADMINISTRADOR o acceso autorizado al módulo |
+| `PATCH` | `/{id}/estado` | Activa o desactiva un módulo. | ADMINISTRADOR o acceso autorizado al módulo |
+
+### Videos
+
+Base: `/api/videos`
+
+| Método | Endpoint | Descripción | Acceso |
+|---|---|---|---|
+| `GET` | `/` | Lista videos con paginación. | ADMINISTRADOR |
+| `POST` | `/` | Crea un video. | ADMINISTRADOR o acceso autorizado al módulo |
+| `PUT` | `/{id}` | Actualiza un video. | ADMINISTRADOR o acceso autorizado al video |
+| `PATCH` | `/{id}/estado` | Activa o desactiva un video. | ADMINISTRADOR o acceso autorizado al video |
+
+### Materiales
+
+Base: `/api/materiales`
+
+| Método | Endpoint | Descripción | Acceso |
+|---|---|---|---|
+| `POST` | `/` | Sube un material al módulo indicado. | ADMINISTRADOR o acceso autorizado al módulo |
+| `PUT` | `/{id}` | Edita el material y, si aplica, reemplaza el archivo. | ADMINISTRADOR o acceso autorizado al material |
+| `PATCH` | `/{id}/estado` | Activa o desactiva un material. | ADMINISTRADOR o acceso autorizado al material |
+| `GET` | `/{id}/download` | Descarga un material protegido. | ADMINISTRADOR, DOCENTE o ALUMNO |
+
+### Avance
+
+Base: `/api/avance`
+
+| Método | Endpoint | Descripción | Acceso |
+|---|---|---|---|
+| `POST` | `/` | Guarda el progreso de un video para el usuario autenticado. | ALUMNO o ADMINISTRADOR |
+| `GET` | `/video/{id}` | Obtiene el progreso registrado para un video. | ALUMNO o ADMINISTRADOR |
+
+### Certificados
+
+Base: `/api/certificados`
+
+| Método | Endpoint | Descripción | Acceso |
+|---|---|---|---|
+| `GET` | `/` | Lista certificados con búsqueda opcional. | ADMINISTRADOR o ALUMNO |
+| `POST` | `/generar/{cursoId}` | Genera un certificado para un curso. | ADMINISTRADOR o ALUMNO |
+| `GET` | `/{id}/download` | Descarga el PDF del certificado. | ADMINISTRADOR o ALUMNO |
+| `GET` | `/validar/{codigo}` | Valida un certificado públicamente. | Público |
+
+### Auditoría
+
+Base: `/api/auditoria`
+
+| Método | Endpoint | Descripción | Acceso |
+|---|---|---|---|
+| `GET` | `/login` | Lista auditorías de inicio de sesión con filtros por fecha, correo y resultado. | ADMINISTRADOR |
+| `GET` | `/login/usuario/{id}` | Lista auditoría de login por usuario. | ADMINISTRADOR |
+| `GET` | `/eventos` | Lista eventos del sistema. | ADMINISTRADOR |
+| `GET` | `/eventos/modulo/{modulo}` | Lista eventos filtrados por módulo. | ADMINISTRADOR |
+| `GET` | `/eventos/usuario/{id}` | Lista eventos de un usuario. | ADMINISTRADOR |
+
+### Reportes
+
+Base: `/api/reportes`
+
+| Método | Endpoint | Descripción | Acceso |
+|---|---|---|---|
+| `GET` | `/alumnos` | Exporta el listado de alumnos a CSV. | ADMINISTRADOR |
+| `GET` | `/matriculas` | Exporta las matrículas a CSV. | ADMINISTRADOR |
+| `GET` | `/cursos` | Exporta los cursos a CSV. | ADMINISTRADOR |
+| `GET` | `/certificados` | Exporta los certificados a CSV. | ADMINISTRADOR |
+
+### Sistema
+
+Base: `/api/sistema`
+
+| Método | Endpoint | Descripción | Acceso |
+|---|---|---|---|
+| `POST` | `/backup` | Ejecuta un backup manual del sistema. | ADMINISTRADOR |
+| `GET` | `/status` | Retorna estado del backend, base de datos, disco, memoria, CPU y último backup. | ADMINISTRADOR |
+
+### Configuración
+
+Base: `/api/configuracion`
+
+| Método | Endpoint | Descripción | Acceso |
+|---|---|---|---|
+| `GET` | `/` | Obtiene la configuración institucional activa. | ADMINISTRADOR |
+| `PUT` | `/` | Actualiza la configuración institucional. | ADMINISTRADOR |
+
+### Paneles y soporte
+
+Otros controladores importantes del backend siguen el mismo patrón REST y exponen servicios para:
+
+- `GET /api/alumno-dashboard/...`
+- `GET /api/docente-dashboard/...`
+- `GET /api/pagos/...`
+- `GET /api/video...` según el alcance administrativo
+
+> Nota: las rutas de paneles y soporte pueden variar según la vista o el DTO consumido por el frontend. El backend protege el acceso por rol y por permisos asociados al curso, módulo, video o material.
+
+## Credenciales de prueba
+
+### Administrador
+
+- Correo: `admin@insteip.com`
+- Contraseña: `Admin123!`
+
+### Alumno
+
+- Correo: `juan.perez@insteip.com`
+- Contraseña: `Alumno123!`
+
+### Alumna
+
+- Correo: `maria.rodriguez@insteip.com`
+- Contraseña: `Alumno123!`
+
+## Base de datos
+
+- Host: `localhost`
+- Puerto: `5432`
+- Base de datos: `insteip_db`
+- Usuario: `insteip_user`
+- Contraseña: `insteip_password`
+
+## Galería
+
+Capturas incluidas en `manual-assets/`:
+
+<p align="center">
+  <img src="manual-assets/insteip-landing-cover.svg" alt="Portada INSTEIP" width="32%" />
+  <img src="manual-assets/01_login.png" alt="Login" width="32%" />
+  <img src="manual-assets/02_admin_dashboard.png" alt="Dashboard admin" width="32%" />
+  <img src="manual-assets/10_student_dashboard.png" alt="Dashboard alumno" width="32%" />
+</p>
+
+<p align="center">
+  <img src="manual-assets/11_student_mis_cursos.png" alt="Mis cursos" width="32%" />
+  <img src="manual-assets/12_student_reproductor.png" alt="Reproductor" width="32%" />
+  <img src="manual-assets/15_validacion_publica.png" alt="Validación pública" width="32%" />
+</p>
+
+## Notas de mantenimiento
+
+- Si cambias rutas, credenciales o puertos, actualiza también los scripts de QA y el manual.
+- Si agregas pantallas nuevas, procura reflejarlas en la galería y en las rutas principales.
+- El banner SVG se muestra directamente desde este `README.md` en GitHub.

@@ -12,6 +12,7 @@ export interface DocenteCurso {
   estado: boolean;
   docenteId: number | null;
   docenteNombre: string | null;
+  fechaCreacion: string;
 }
 
 export interface DocenteEstudianteProgress {

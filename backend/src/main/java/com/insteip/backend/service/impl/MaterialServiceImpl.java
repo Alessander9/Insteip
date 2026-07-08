@@ -334,7 +334,8 @@ public class MaterialServiceImpl implements MaterialService {
                 m.getArchivoUrl(),
                 m.getTipoArchivo(),
                 m.getPesoBytes(),
-                m.getEstado()
+                m.getEstado(),
+                m.getFechaSubida()
         );
     }
 }

@@ -56,6 +56,12 @@ export const routes: Routes = [
         data: { roles: ['ADMINISTRADOR'] } 
       },
       { 
+        path: 'docentes', 
+        loadComponent: () => import('./features/dashboard/docentes/docentes.component').then(m => m.DocentesComponent), 
+        canActivate: [roleGuard], 
+        data: { roles: ['ADMINISTRADOR'] } 
+      },
+      { 
         path: 'cursos', 
         loadComponent: () => import('./features/dashboard/cursos/cursos.component').then(m => m.CursosComponent), 
         canActivate: [roleGuard], 

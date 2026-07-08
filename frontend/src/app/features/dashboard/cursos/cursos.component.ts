@@ -6,6 +6,7 @@ import { CursoService } from '../../../core/services/curso.service';
 import { CursoRequest, CursoResponse } from '../../../core/models/curso.model';
 import { ReportesService } from '../../../core/services/reportes.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { UsuarioService, DocenteOption } from '../../../core/services/usuario.service';
 import { ConfirmModalComponent } from '../../../core/components/confirm-modal/confirm-modal.component';
 import { getSubscriptionClass, formatNiveles } from '../../../core/utils/subscription.utils';
 
@@ -28,6 +29,7 @@ export class CursosComponent implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private toastService = inject(ToastService);
+  private usuarioService = inject(UsuarioService);
 
   irADetalle(id: number): void {
     console.log('Intentando navegar a curso:', id);
@@ -56,6 +58,7 @@ export class CursosComponent implements OnInit {
   cursos: CursoResponse[] = [];
   filteredCursos: CursoResponse[] = [];
   searchQuery = '';
+  dateSortOrder: 'desc' | 'asc' = 'desc';
   currentPage = 1;
   readonly pageSize = 10;
 
@@ -87,16 +90,54 @@ export class CursosComponent implements OnInit {
 
   selectedCurso: CursoResponse | null = null;
   selectedSuscripcionIds: number[] = [];
+  docentes: DocenteOption[] = [];
+  docentesFiltrados: DocenteOption[] = [];
+  docenteSearch = '';
+  selectedDocenteId: number | null = null;
+  showDocenteDropdown = false;
 
   cursoForm: FormGroup = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
     descripcion: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(2000)]],
     imagenPortada: ['', [Validators.pattern('^https?:\\/\\/.+$')]],
+    docenteId: [null],
     estado: [true]
   });
 
   ngOnInit(): void {
     this.loadCursos();
+    this.loadDocentes();
+  }
+
+  loadDocentes(): void {
+    this.usuarioService.listarDocentes().subscribe({
+      next: (data) => {
+        this.docentes = data || [];
+        this.docentesFiltrados = this.docentes;
+      },
+      error: (err) => console.error('Error loading docentes', err)
+    });
+  }
+
+  filterDocentes(): void {
+    const q = this.docenteSearch.trim().toLowerCase();
+    this.docentesFiltrados = !q ? this.docentes : this.docentes.filter(d =>
+      `${d.nombres} ${d.apellidos}`.toLowerCase().includes(q) ||
+      d.correo.toLowerCase().includes(q)
+    );
+    this.showDocenteDropdown = true;
+  }
+
+  openDocenteDropdown(): void {
+    this.showDocenteDropdown = true;
+    this.filterDocentes();
+  }
+
+  selectDocente(docente: DocenteOption): void {
+    this.selectedDocenteId = docente.id;
+    this.docenteSearch = `${docente.nombres} ${docente.apellidos} — ${docente.correo}`;
+    this.cursoForm.patchValue({ docenteId: docente.id });
+    this.showDocenteDropdown = false;
   }
 
   loadCursos(): void {
@@ -112,18 +153,23 @@ export class CursosComponent implements OnInit {
   }
 
   applyFilter(): void {
-    if (!this.searchQuery.trim()) {
-      this.filteredCursos = [...this.cursos];
-      this.currentPage = 1;
-      return;
-    }
-
-    const query = this.searchQuery.toLowerCase();
-    this.filteredCursos = this.cursos.filter(c => 
+    const query = this.searchQuery.trim().toLowerCase();
+    this.filteredCursos = this.cursos.filter(c =>
+      !query ||
       c.nombre.toLowerCase().includes(query) ||
-      c.descripcion.toLowerCase().includes(query)
-    );
+      c.descripcion.toLowerCase().includes(query) ||
+      c.fechaCreacion.toLowerCase().includes(query)
+    ).sort((a, b) => {
+      const d1 = new Date(a.fechaCreacion).getTime() || 0;
+      const d2 = new Date(b.fechaCreacion).getTime() || 0;
+      return this.dateSortOrder === 'asc' ? d1 - d2 : d2 - d1;
+    });
     this.currentPage = 1;
+  }
+
+  onDateSortChange(order: string): void {
+    this.dateSortOrder = order === 'asc' ? 'asc' : 'desc';
+    this.applyFilter();
   }
 
   get totalPages(): number {
@@ -157,10 +203,14 @@ export class CursosComponent implements OnInit {
     this.modalErrorMsg = '';
     this.selectedCurso = null;
     this.selectedSuscripcionIds = [1]; // Default to Básico
+    this.selectedDocenteId = null;
+    this.docenteSearch = '';
+    this.showDocenteDropdown = false;
     this.cursoForm.reset({
       nombre: '',
       descripcion: '',
       imagenPortada: '',
+      docenteId: null,
       estado: true
     });
     this.showCreateEditModal = true;
@@ -178,10 +228,14 @@ export class CursosComponent implements OnInit {
       if (curso.nivelesSuscripcion.includes('PREMIUM')) this.selectedSuscripcionIds.push(3);
     }
 
+    this.selectedDocenteId = curso.docenteId || null;
+    const docente = this.docentes.find(d => d.id === curso.docenteId);
+    this.docenteSearch = docente ? `${docente.nombres} ${docente.apellidos} — ${docente.correo}` : '';
     this.cursoForm.patchValue({
       nombre: curso.nombre,
       descripcion: curso.descripcion,
       imagenPortada: curso.imagenPortada,
+      docenteId: curso.docenteId || null,
       estado: curso.estado
     });
     this.showCreateEditModal = true;
@@ -262,7 +316,8 @@ export class CursosComponent implements OnInit {
       nombre: this.cursoForm.value.nombre,
       descripcion: this.cursoForm.value.descripcion,
       imagenPortada: this.cursoForm.value.imagenPortada || '',
-      nivelesSuscripcionIds: this.selectedSuscripcionIds
+      nivelesSuscripcionIds: this.selectedSuscripcionIds,
+      docenteId: this.cursoForm.value.docenteId || null
     };
 
     if (this.isEditMode && this.selectedCurso) {

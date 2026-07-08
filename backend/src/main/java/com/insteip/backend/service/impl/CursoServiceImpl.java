@@ -57,6 +57,9 @@ public class CursoServiceImpl implements CursoService {
         if (dto.docenteId() != null) {
             docente = usuarioRepository.findById(dto.docenteId())
                     .orElseThrow(() -> new ResourceNotFoundException("Docente no encontrado con id: " + dto.docenteId()));
+            if (docente.getRol() == null || !"DOCENTE".equalsIgnoreCase(docente.getRol().getNombre())) {
+                throw new ResourceNotFoundException("El usuario seleccionado no tiene rol DOCENTE");
+            }
         }
 
         Curso curso = Curso.builder()
@@ -87,6 +90,9 @@ public class CursoServiceImpl implements CursoService {
         if (dto.docenteId() != null) {
             docente = usuarioRepository.findById(dto.docenteId())
                     .orElseThrow(() -> new ResourceNotFoundException("Docente no encontrado con id: " + dto.docenteId()));
+            if (docente.getRol() == null || !"DOCENTE".equalsIgnoreCase(docente.getRol().getNombre())) {
+                throw new ResourceNotFoundException("El usuario seleccionado no tiene rol DOCENTE");
+            }
         }
 
         curso.setNombre(dto.nombre());
@@ -121,7 +127,8 @@ public class CursoServiceImpl implements CursoService {
                 c.getNivelesSuscripcion().stream().map(nivel -> nivel.getNombre()).collect(Collectors.toList()),
                 c.getEstado(),
                 docenteId,
-                docenteNombre
+                docenteNombre,
+                c.getFechaCreacion()
         );
     }
 }

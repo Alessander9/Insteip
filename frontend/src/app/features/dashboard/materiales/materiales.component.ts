@@ -38,6 +38,9 @@ export class MaterialesComponent implements OnInit {
   materiales: MaterialResponse[] = [];
   filteredMateriales: MaterialResponse[] = [];
   searchQuery = '';
+  dateSortOrder: 'desc' | 'asc' = 'desc';
+  currentPage = 1;
+  readonly pageSize = 10;
 
   // Modal controls
   showMaterialModal = false;
@@ -99,15 +102,36 @@ export class MaterialesComponent implements OnInit {
   }
 
   applyFilter(): void {
-    if (!this.searchQuery.trim()) {
-      this.filteredMateriales = [...this.materiales];
-      return;
-    }
+    const query = this.searchQuery.trim().toLowerCase();
+    this.filteredMateriales = this.materiales.filter(m =>
+      !query ||
+      m.nombre.toLowerCase().includes(query) ||
+      m.fechaSubida.toLowerCase().includes(query)
+    ).sort((a, b) => {
+      const d1 = new Date(a.fechaSubida).getTime() || 0;
+      const d2 = new Date(b.fechaSubida).getTime() || 0;
+      return this.dateSortOrder === 'asc' ? d1 - d2 : d2 - d1;
+    });
+    this.currentPage = 1;
+  }
 
-    const query = this.searchQuery.toLowerCase();
-    this.filteredMateriales = this.materiales.filter(m => 
-      m.nombre.toLowerCase().includes(query)
-    );
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredMateriales.length / this.pageSize));
+  }
+
+  get paginatedMateriales(): MaterialResponse[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredMateriales.slice(start, start + this.pageSize);
+  }
+
+  onDateSortChange(order: string): void {
+    this.dateSortOrder = order === 'asc' ? 'asc' : 'desc';
+    this.applyFilter();
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
   }
 
   openCreateModal(): void {

@@ -101,7 +101,8 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
                     curso.getImagenPortada(),
                     formatNivelesSuscripcion(curso.getNivelesSuscripcion()),
                     avance,
-                    completado
+                    completado,
+                    matricula.getFechaMatricula()
             );
         }).collect(Collectors.toList());
     }

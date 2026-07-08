@@ -18,6 +18,7 @@ export interface AlumnoCurso {
   nivelSuscripcion: string;
   avancePorcentaje: number;
   completado: boolean;
+  fechaMatricula: string;
 }
 
 export interface AlumnoCertificado {

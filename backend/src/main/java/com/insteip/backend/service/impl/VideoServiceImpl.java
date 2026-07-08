@@ -114,7 +114,8 @@ public class VideoServiceImpl implements VideoService {
                 v.getDescripcion(),
                 v.getYoutubeUrl(),
                 v.getOrden(),
-                v.getEstado()
+                v.getEstado(),
+                v.getFechaCreacion()
         );
     }
 }

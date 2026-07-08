@@ -13,4 +13,5 @@ export interface VideoResponse {
   youtubeUrl: string;
   orden: number;
   estado: boolean;
+  fechaCreacion: string;
 }

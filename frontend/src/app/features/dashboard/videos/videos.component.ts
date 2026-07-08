@@ -38,6 +38,9 @@ export class VideosComponent implements OnInit {
   videos: VideoResponse[] = [];
   filteredVideos: VideoResponse[] = [];
   searchQuery = '';
+  dateSortOrder: 'desc' | 'asc' = 'desc';
+  currentPage = 1;
+  readonly pageSize = 10;
 
   // Modal controls
   showVideoModal = false;
@@ -104,15 +107,37 @@ export class VideosComponent implements OnInit {
   }
 
   applyFilter(): void {
-    if (!this.searchQuery.trim()) {
-      this.filteredVideos = [...this.videos];
-      return;
-    }
+    const query = this.searchQuery.trim().toLowerCase();
+    this.filteredVideos = this.videos.filter(v =>
+      !query ||
+      v.titulo.toLowerCase().includes(query) ||
+      v.descripcion.toLowerCase().includes(query) ||
+      v.fechaCreacion.toLowerCase().includes(query)
+    ).sort((a, b) => {
+      const d1 = new Date(a.fechaCreacion).getTime() || 0;
+      const d2 = new Date(b.fechaCreacion).getTime() || 0;
+      return this.dateSortOrder === 'asc' ? d1 - d2 : d2 - d1;
+    });
+    this.currentPage = 1;
+  }
 
-    const query = this.searchQuery.toLowerCase();
-    this.filteredVideos = this.videos.filter(v => 
-      v.titulo.toLowerCase().includes(query)
-    );
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredVideos.length / this.pageSize));
+  }
+
+  get paginatedVideos(): VideoResponse[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredVideos.slice(start, start + this.pageSize);
+  }
+
+  onDateSortChange(order: string): void {
+    this.dateSortOrder = order === 'asc' ? 'asc' : 'desc';
+    this.applyFilter();
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
   }
 
   openCreateModal(): void {

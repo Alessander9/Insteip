@@ -63,7 +63,7 @@ class ContenidosControllerTest {
 
     @Test
     void listarCursos_shouldReturnCursos() throws Exception {
-        CursoResponseDTO response = new CursoResponseDTO(1L, "Curso 1", "Desc", "img", List.of("BASICO"), true, 10L, "Docente");
+        CursoResponseDTO response = new CursoResponseDTO(1L, "Curso 1", "Desc", "img", List.of("BASICO"), true, 10L, "Docente", java.time.LocalDateTime.now());
         when(cursoService.listarCursos(any(Pageable.class), any())).thenReturn(new PageImpl<>(List.of(response)));
 
         mockMvc.perform(get("/api/cursos"))
@@ -73,7 +73,7 @@ class ContenidosControllerTest {
 
     @Test
     void obtenerCurso_shouldReturnCurso() throws Exception {
-        CursoResponseDTO response = new CursoResponseDTO(1L, "Curso 1", "Desc", "img", List.of("BASICO"), true, 10L, "Docente");
+        CursoResponseDTO response = new CursoResponseDTO(1L, "Curso 1", "Desc", "img", List.of("BASICO"), true, 10L, "Docente", java.time.LocalDateTime.now());
         when(cursoService.obtenerDetalle(1L)).thenReturn(response);
 
         mockMvc.perform(get("/api/cursos/1"))
@@ -84,7 +84,7 @@ class ContenidosControllerTest {
     @Test
     void crearCurso_shouldReturnCreatedCurso() throws Exception {
         CursoRequestDTO request = new CursoRequestDTO("Curso 1", "Desc 10 char min", "img", List.of(1L), 10L);
-        CursoResponseDTO response = new CursoResponseDTO(1L, "Curso 1", "Desc 10 char min", "img", List.of("BASICO"), true, 10L, "Docente");
+        CursoResponseDTO response = new CursoResponseDTO(1L, "Curso 1", "Desc 10 char min", "img", List.of("BASICO"), true, 10L, "Docente", java.time.LocalDateTime.now());
         when(cursoService.crearCurso(any(CursoRequestDTO.class))).thenReturn(response);
 
         mockMvc.perform(post("/api/cursos")
@@ -124,7 +124,7 @@ class ContenidosControllerTest {
 
     @Test
     void listarVideosPorModulo_shouldReturnVideos() throws Exception {
-        VideoResponseDTO response = new VideoResponseDTO(3L, "Video 1", "Desc", "https://youtube.com/watch?v=123", 1, true);
+        VideoResponseDTO response = new VideoResponseDTO(3L, "Video 1", "Desc", "https://youtube.com/watch?v=123", 1, true, java.time.LocalDateTime.now());
         // Mapped at ModuloController GET /api/modulos/{id}/videos
         when(videoService.listarVideosPorModulo(2L)).thenReturn(List.of(response));
 
@@ -136,7 +136,7 @@ class ContenidosControllerTest {
     @Test
     void crearVideo_shouldReturnCreatedVideo() throws Exception {
         VideoRequestDTO request = new VideoRequestDTO(2L, "Video 1", "Desc Video", "https://youtube.com/watch?v=123", 1);
-        VideoResponseDTO response = new VideoResponseDTO(3L, "Video 1", "Desc Video", "https://youtube.com/watch?v=123", 1, true);
+        VideoResponseDTO response = new VideoResponseDTO(3L, "Video 1", "Desc Video", "https://youtube.com/watch?v=123", 1, true, java.time.LocalDateTime.now());
         when(videoService.crearVideo(any(VideoRequestDTO.class))).thenReturn(response);
 
         mockMvc.perform(post("/api/videos")
@@ -150,7 +150,7 @@ class ContenidosControllerTest {
 
     @Test
     void listarMaterialesPorModulo_shouldReturnMateriales() throws Exception {
-        MaterialResponseDTO response = new MaterialResponseDTO(4L, "Material 1", "http://material", "application/pdf", 1024L, true);
+        MaterialResponseDTO response = new MaterialResponseDTO(4L, "Material 1", "http://material", "application/pdf", 1024L, true, java.time.LocalDateTime.now());
         // Mapped at ModuloController GET /api/modulos/{id}/materiales
         when(materialService.listarMaterialesPorModulo(2L)).thenReturn(List.of(response));
 
@@ -161,7 +161,7 @@ class ContenidosControllerTest {
 
     @Test
     void crearMaterial_shouldReturnCreatedMaterial() throws Exception {
-        MaterialResponseDTO response = new MaterialResponseDTO(4L, "Material 1", "http://material", "application/pdf", 1024L, true);
+        MaterialResponseDTO response = new MaterialResponseDTO(4L, "Material 1", "http://material", "application/pdf", 1024L, true, java.time.LocalDateTime.now());
         MockMultipartFile file = new MockMultipartFile("archivo", "test.pdf", "application/pdf", "bytes".getBytes());
         when(materialService.crearMaterial(eq(2L), eq("Material 1"), any())).thenReturn(response);
 

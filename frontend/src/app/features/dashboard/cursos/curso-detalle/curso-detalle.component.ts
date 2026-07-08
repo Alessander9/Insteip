@@ -21,6 +21,7 @@ import { ToastService } from '../../../../core/services/toast.service';
 import { ConfirmModalComponent } from '../../../../core/components/confirm-modal/confirm-modal.component';
 import { formatBytes, getFileIcon, getCleanFileType, getFileExtension } from '../../../../core/utils/file.utils';
 import { getSubscriptionClass, formatNiveles } from '../../../../core/utils/subscription.utils';
+import { UsuarioService, DocenteOption } from '../../../../core/services/usuario.service';
 
 @Component({
   selector: 'app-curso-detalle',
@@ -49,6 +50,7 @@ export class CursoDetalleComponent implements OnInit {
   private archivoProtegidoService = inject(ArchivoProtegidoService);
   private toastService = inject(ToastService);
   private authService = inject(AuthService);
+  private usuarioService = inject(UsuarioService);
 
   isDocente = false;
 
@@ -126,11 +128,17 @@ export class CursoDetalleComponent implements OnInit {
   });
 
   selectedSuscripcionIds: number[] = [];
+  docentes: DocenteOption[] = [];
+  docentesFiltrados: DocenteOption[] = [];
+  docenteSearch = '';
+  selectedDocenteId: number | null = null;
+  showDocenteDropdown = false;
 
   courseForm: FormGroup = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
     descripcion: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(2000)]],
     imagenPortada: ['', [Validators.pattern('^https?:\\/\\/.+$')]],
+    docenteId: [null],
     estado: [true]
   });
 
@@ -260,6 +268,38 @@ export class CursoDetalleComponent implements OnInit {
       const id = String(alumno.id);
       return nombres.includes(query) || correo.includes(query) || id.includes(query);
     });
+    this.loadDocentes();
+  }
+
+  loadDocentes(): void {
+    this.usuarioService.listarDocentes().subscribe({
+      next: (data) => {
+        this.docentes = data || [];
+        this.docentesFiltrados = this.docentes;
+      },
+      error: (err) => console.error('Error al cargar docentes', err)
+    });
+  }
+
+  filterDocentes(): void {
+    const q = this.docenteSearch.trim().toLowerCase();
+    this.docentesFiltrados = !q ? this.docentes : this.docentes.filter(d =>
+      `${d.nombres} ${d.apellidos}`.toLowerCase().includes(q) ||
+      d.correo.toLowerCase().includes(q)
+    );
+    this.showDocenteDropdown = true;
+  }
+
+  openDocenteDropdown(): void {
+    this.showDocenteDropdown = true;
+    this.filterDocentes();
+  }
+
+  selectDocente(docente: DocenteOption): void {
+    this.selectedDocenteId = docente.id;
+    this.docenteSearch = `${docente.nombres} ${docente.apellidos} — ${docente.correo}`;
+    this.courseForm.patchValue({ docenteId: docente.id });
+    this.showDocenteDropdown = false;
   }
 
   get selectedAlumnoLabel(): string {
@@ -461,10 +501,14 @@ export class CursoDetalleComponent implements OnInit {
       if (this.curso.nivelesSuscripcion.includes('PREMIUM')) this.selectedSuscripcionIds.push(3);
     }
 
+    this.selectedDocenteId = this.curso.docenteId || null;
+    const docente = this.docentes.find(d => d.id === this.curso?.docenteId);
+    this.docenteSearch = docente ? `${docente.nombres} ${docente.apellidos} — ${docente.correo}` : '';
     this.courseForm.patchValue({
       nombre: this.curso.nombre,
       descripcion: this.curso.descripcion,
       imagenPortada: this.curso.imagenPortada,
+      docenteId: this.curso.docenteId || null,
       estado: this.curso.estado
     });
     this.showEditCourseModal = true;
@@ -505,7 +549,8 @@ export class CursoDetalleComponent implements OnInit {
       nombre: this.courseForm.value.nombre,
       descripcion: this.courseForm.value.descripcion,
       imagenPortada: this.courseForm.value.imagenPortada || '',
-      nivelesSuscripcionIds: this.selectedSuscripcionIds
+      nivelesSuscripcionIds: this.selectedSuscripcionIds,
+      docenteId: this.courseForm.value.docenteId || null
     };
 
     this.cursoService.editarCurso(this.cursoId, req).subscribe({

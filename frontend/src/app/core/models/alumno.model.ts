@@ -15,4 +15,5 @@ export interface AlumnoResponse {
   telefono: string;
   nivelSuscripcion: string;
   estado: boolean;
+  fechaRegistro: string;
 }

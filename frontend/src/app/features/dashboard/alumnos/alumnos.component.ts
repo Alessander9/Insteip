@@ -37,6 +37,7 @@ export class AlumnosComponent implements OnInit {
   alumnos: AlumnoResponse[] = [];
   filteredAlumnos: AlumnoResponse[] = [];
   searchQuery = '';
+  dateSortOrder: 'desc' | 'asc' = 'desc';
   currentPage = 1;
   readonly pageSize = 10;
 
@@ -83,19 +84,24 @@ export class AlumnosComponent implements OnInit {
   }
 
   applyFilter(): void {
-    if (!this.searchQuery.trim()) {
-      this.filteredAlumnos = [...this.alumnos];
-      this.currentPage = 1;
-      return;
-    }
-
-    const query = this.searchQuery.toLowerCase();
-    this.filteredAlumnos = this.alumnos.filter(a => 
+    const query = this.searchQuery.trim().toLowerCase();
+    this.filteredAlumnos = this.alumnos.filter(a =>
+      !query ||
       a.nombres.toLowerCase().includes(query) ||
       a.apellidos.toLowerCase().includes(query) ||
-      a.correo.toLowerCase().includes(query)
-    );
+      a.correo.toLowerCase().includes(query) ||
+      a.fechaRegistro.toLowerCase().includes(query)
+    ).sort((a, b) => {
+      const d1 = new Date(a.fechaRegistro).getTime() || 0;
+      const d2 = new Date(b.fechaRegistro).getTime() || 0;
+      return this.dateSortOrder === 'asc' ? d1 - d2 : d2 - d1;
+    });
     this.currentPage = 1;
+  }
+
+  onDateSortChange(order: string): void {
+    this.dateSortOrder = order === 'asc' ? 'asc' : 'desc';
+    this.applyFilter();
   }
 
   get totalPages(): number {

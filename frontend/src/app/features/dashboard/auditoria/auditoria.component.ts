@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { AuditoriaService } from '../../../core/services/auditoria.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { EventoSistemaResponse, LoginAuditoriaResponse } from '../../../core/models/auditoria.model';
@@ -8,7 +9,7 @@ import { EventoSistemaResponse, LoginAuditoriaResponse } from '../../../core/mod
 @Component({
   selector: 'app-auditoria',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './auditoria.component.html',
   styleUrls: ['./auditoria.component.css']
 })
@@ -20,6 +21,13 @@ export class AuditoriaComponent implements OnInit {
   activeTab: 'login' | 'eventos' = 'login';
   isLoading = true;
   errorMsg = '';
+  loginSearch = '';
+  eventosSearch = '';
+  loginSortOrder: 'desc' | 'asc' = 'desc';
+  eventosSortOrder: 'desc' | 'asc' = 'desc';
+  loginPage = 1;
+  eventosPage = 1;
+  readonly pageSize = 10;
 
   loginAuditoria: LoginAuditoriaResponse[] = [];
   eventosSistema: EventoSistemaResponse[] = [];
@@ -85,5 +93,69 @@ export class AuditoriaComponent implements OnInit {
   private handleError(err: any): void {
     this.isLoading = false;
     this.errorMsg = err.error?.message || 'No se pudo cargar la auditoría.';
+  }
+
+  get filteredLoginAuditoria(): LoginAuditoriaResponse[] {
+    const q = this.loginSearch.trim().toLowerCase();
+    return this.loginAuditoria.filter(i =>
+      !q || `${i.correo ?? ''} ${i.ip ?? ''} ${i.motivo ?? ''}`.toLowerCase().includes(q)
+    ).sort((a, b) => {
+      const d1 = new Date(a.fecha).getTime() || 0;
+      const d2 = new Date(b.fecha).getTime() || 0;
+      return this.loginSortOrder === 'asc' ? d1 - d2 : d2 - d1;
+    });
+  }
+
+  get filteredEventosSistema(): EventoSistemaResponse[] {
+    const q = this.eventosSearch.trim().toLowerCase();
+    return this.eventosSistema.filter(i =>
+      !q || `${i.modulo} ${i.accion} ${i.descripcion ?? ''} ${i.usuarioId ?? ''}`.toLowerCase().includes(q)
+    ).sort((a, b) => {
+      const d1 = new Date(a.fecha).getTime() || 0;
+      const d2 = new Date(b.fecha).getTime() || 0;
+      return this.eventosSortOrder === 'asc' ? d1 - d2 : d2 - d1;
+    });
+  }
+
+  get pagedLoginAuditoria(): LoginAuditoriaResponse[] {
+    const start = (this.loginPage - 1) * this.pageSize;
+    return this.filteredLoginAuditoria.slice(start, start + this.pageSize);
+  }
+
+  get pagedEventosSistema(): EventoSistemaResponse[] {
+    const start = (this.eventosPage - 1) * this.pageSize;
+    return this.filteredEventosSistema.slice(start, start + this.pageSize);
+  }
+
+  get loginTotalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredLoginAuditoria.length / this.pageSize));
+  }
+
+  get eventosTotalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredEventosSistema.length / this.pageSize));
+  }
+
+  onLoginFilterChange(): void {
+    this.loginPage = 1;
+  }
+
+  onEventosFilterChange(): void {
+    this.eventosPage = 1;
+  }
+
+  previousLoginPage(): void {
+    this.loginPage = Math.max(1, this.loginPage - 1);
+  }
+
+  nextLoginPage(): void {
+    this.loginPage = Math.min(this.loginTotalPages, this.loginPage + 1);
+  }
+
+  previousEventosPage(): void {
+    this.eventosPage = Math.max(1, this.eventosPage - 1);
+  }
+
+  nextEventosPage(): void {
+    this.eventosPage = Math.min(this.eventosTotalPages, this.eventosPage + 1);
   }
 }

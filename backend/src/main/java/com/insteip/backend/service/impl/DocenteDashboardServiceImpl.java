@@ -149,7 +149,8 @@ public class DocenteDashboardServiceImpl implements DocenteDashboardService {
                 c.getNivelesSuscripcion().stream().map(nivel -> nivel.getNombre()).collect(Collectors.toList()),
                 c.getEstado(),
                 docenteId,
-                docenteNombre
+                docenteNombre,
+                c.getFechaCreacion()
         );
     }
 }

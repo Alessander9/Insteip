@@ -124,6 +124,15 @@
 
     <!-- Tab: Login full table -->
     <div *ngIf="activeTab === 'login'" class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] transition-colors duration-300">
+      <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div class="relative w-full md:max-w-sm">
+          <input [(ngModel)]="loginSearch" (input)="onLoginFilterChange()" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs" placeholder="Buscar login...">
+        </div>
+        <select [(ngModel)]="loginSortOrder" (change)="onLoginFilterChange()" class="px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold uppercase">
+          <option value="desc">Fecha desc</option>
+          <option value="asc">Fecha asc</option>
+        </select>
+      </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left text-xs min-w-max">
           <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 uppercase tracking-widest font-black">
@@ -136,7 +145,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of loginAuditoria" class="border-t border-slate-100 dark:border-slate-800">
+            <tr *ngFor="let item of pagedLoginAuditoria" class="border-t border-slate-100 dark:border-slate-800">
               <td class="p-3 whitespace-nowrap">{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
               <td class="p-3">{{ item.correo || ('Usuario #' + item.usuarioId) }}</td>
               <td class="p-3">{{ item.ip || '-' }}</td>
@@ -148,16 +157,28 @@
               </td>
               <td class="p-3">{{ item.motivo || '-' }}</td>
             </tr>
-            <tr *ngIf="loginAuditoria.length === 0">
+            <tr *ngIf="filteredLoginAuditoria.length === 0">
               <td colspan="5" class="p-6 text-center text-slate-500 dark:text-slate-400">No hay registros de login.</td>
             </tr>
           </tbody>
         </table>
       </div>
+      <div *ngIf="filteredLoginAuditoria.length > pageSize" class="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <button (click)="previousLoginPage()" [disabled]="loginPage===1" class="px-3 py-2 border text-[10px] font-bold uppercase">Anterior</button>
+        <div class="text-[10px] font-bold uppercase">Página {{ loginPage }} de {{ loginTotalPages }}</div>
+        <button (click)="nextLoginPage()" [disabled]="loginPage===loginTotalPages" class="px-3 py-2 border text-[10px] font-bold uppercase">Siguiente</button>
+      </div>
     </div>
 
     <!-- Tab: Eventos full table -->
     <div *ngIf="activeTab === 'eventos'" class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] transition-colors duration-300">
+      <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <input [(ngModel)]="eventosSearch" (input)="onEventosFilterChange()" class="w-full md:max-w-sm px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs" placeholder="Buscar evento...">
+        <select [(ngModel)]="eventosSortOrder" (change)="onEventosFilterChange()" class="px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold uppercase">
+          <option value="desc">Fecha desc</option>
+          <option value="asc">Fecha asc</option>
+        </select>
+      </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left text-xs min-w-max">
           <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 uppercase tracking-widest font-black">
@@ -170,18 +191,23 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of eventosSistema" class="border-t border-slate-100 dark:border-slate-800">
+            <tr *ngFor="let item of pagedEventosSistema" class="border-t border-slate-100 dark:border-slate-800">
               <td class="p-3 whitespace-nowrap">{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
               <td class="p-3 font-bold uppercase">{{ item.modulo }}</td>
               <td class="p-3">{{ item.accion }}</td>
               <td class="p-3">{{ item.usuarioId || '-' }}</td>
               <td class="p-3">{{ item.descripcion || '-' }}</td>
             </tr>
-            <tr *ngIf="eventosSistema.length === 0">
+            <tr *ngIf="filteredEventosSistema.length === 0">
               <td colspan="5" class="p-6 text-center text-slate-500 dark:text-slate-400">No hay eventos registrados.</td>
             </tr>
           </tbody>
         </table>
+      </div>
+      <div *ngIf="filteredEventosSistema.length > pageSize" class="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <button (click)="previousEventosPage()" [disabled]="eventosPage===1" class="px-3 py-2 border text-[10px] font-bold uppercase">Anterior</button>
+        <div class="text-[10px] font-bold uppercase">Página {{ eventosPage }} de {{ eventosTotalPages }}</div>
+        <button (click)="nextEventosPage()" [disabled]="eventosPage===eventosTotalPages" class="px-3 py-2 border text-[10px] font-bold uppercase">Siguiente</button>
       </div>
     </div>
   </div>

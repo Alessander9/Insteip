@@ -30,13 +30,13 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // 1. Seedar Roles si está vacío
-        if (rolRepository.count() == 0) {
-            Rol adminRol = Rol.builder().nombre("ADMINISTRADOR").estado(true).build();
-            Rol alumnoRol = Rol.builder().nombre("ALUMNO").estado(true).build();
-            rolRepository.save(adminRol);
-            rolRepository.save(alumnoRol);
-        }
+        // 1. Asegurar roles base
+        rolRepository.findByNombre("ADMINISTRADOR")
+                .orElseGet(() -> rolRepository.save(Rol.builder().nombre("ADMINISTRADOR").estado(true).build()));
+        rolRepository.findByNombre("DOCENTE")
+                .orElseGet(() -> rolRepository.save(Rol.builder().nombre("DOCENTE").estado(true).build()));
+        rolRepository.findByNombre("ALUMNO")
+                .orElseGet(() -> rolRepository.save(Rol.builder().nombre("ALUMNO").estado(true).build()));
 
         // 2. Seedar Niveles de Suscripción si está vacío
         if (nivelSuscripcionRepository.count() == 0) {
@@ -51,6 +51,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         // 3. Seedar Usuarios de prueba con contraseñas encriptadas
         if (usuarioRepository.count() == 0) {
             Rol adminRol = rolRepository.findByNombre("ADMINISTRADOR").orElse(null);
+            Rol docenteRol = rolRepository.findByNombre("DOCENTE").orElse(null);
             Rol alumnoRol = rolRepository.findByNombre("ALUMNO").orElse(null);
             NivelSuscripcion premium = nivelSuscripcionRepository.findAll().stream()
                     .filter(n -> n.getNombre().equals("PREMIUM"))
@@ -81,6 +82,18 @@ public class DatabaseSeeder implements CommandLineRunner {
                         .build();
                 usuarioRepository.save(alumno);
             }
+
+            if (docenteRol != null) {
+                Usuario docente = Usuario.builder()
+                        .nombres("Carla")
+                        .apellidos("Gutiérrez")
+                        .correo("docente@insteip.com")
+                        .passwordHash(passwordEncoder.encode("Docente123!"))
+                        .rol(docenteRol)
+                        .estado(true)
+                        .build();
+                usuarioRepository.save(docente);
+            }
         } else {
             // Asegurar que nombres, apellidos, suscripción premium y contraseñas coincidan exactamente con el super-test
             usuarioRepository.findByCorreo("admin@insteip.com").ifPresent(admin -> {
@@ -101,6 +114,18 @@ public class DatabaseSeeder implements CommandLineRunner {
                 }
                 juan.setPasswordHash(passwordEncoder.encode("Alumno123!"));
                 usuarioRepository.save(juan);
+            });
+            usuarioRepository.findByCorreo("docente@insteip.com").ifPresent(docente -> {
+                if (!"Carla".equals(docente.getNombres()) || !"Gutiérrez".equals(docente.getApellidos())) {
+                    docente.setNombres("Carla");
+                    docente.setApellidos("Gutiérrez");
+                }
+                Rol docenteRol = rolRepository.findByNombre("DOCENTE").orElse(null);
+                if (docenteRol != null) {
+                    docente.setRol(docenteRol);
+                }
+                docente.setPasswordHash(passwordEncoder.encode("Docente123!"));
+                usuarioRepository.save(docente);
             });
         }
 

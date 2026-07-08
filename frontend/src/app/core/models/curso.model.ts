@@ -15,4 +15,5 @@ export interface CursoResponse {
   estado: boolean;
   docenteId?: number;
   docenteNombre?: string;
+  fechaCreacion: string;
 }

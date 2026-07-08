@@ -6,5 +6,6 @@ public record MaterialResponseDTO(
     String archivoUrl,
     String tipoArchivo,
     Long pesoBytes,
-    Boolean estado
+    Boolean estado,
+    java.time.LocalDateTime fechaSubida
 ){}

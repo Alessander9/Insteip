@@ -1,6 +1,7 @@
 package com.insteip.backend.dto;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public record AlumnoCursoResponse(
     Long id,
@@ -9,5 +10,6 @@ public record AlumnoCursoResponse(
     String imagenPortada,
     String nivelSuscripcion,
     BigDecimal avancePorcentaje,
-    Boolean completado
+    Boolean completado,
+    LocalDateTime fechaMatricula
 ) {}

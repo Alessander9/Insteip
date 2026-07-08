@@ -45,9 +45,15 @@
           class="block w-full pl-9 pr-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-600 text-xs rounded-none transition-colors duration-300" 
           placeholder="Buscar material por nombre...">
       </div>
-      <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-        {{ filteredMateriales.length }} materiales en el módulo
-      </span>
+      <div class="flex items-center gap-2 flex-wrap">
+        <select [(ngModel)]="dateSortOrder" (change)="onDateSortChange($any($event.target).value)" class="px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold uppercase tracking-wider">
+          <option value="desc">Fecha desc</option>
+          <option value="asc">Fecha asc</option>
+        </select>
+        <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+          {{ filteredMateriales.length }} materiales en el módulo
+        </span>
+      </div>
     </div>
 
     <!-- Materials Table -->
@@ -71,7 +77,7 @@
             </td>
           </tr>
           <!-- Rows -->
-          <tr *ngFor="let mat of filteredMateriales" class="hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors duration-200">
+          <tr *ngFor="let mat of paginatedMateriales" class="hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors duration-200">
             <!-- Archivo (Name & Link) -->
             <td class="p-4">
               <div class="flex items-center gap-2.5">
@@ -134,6 +140,11 @@
           </tr>
         </tbody>
       </table>
+    </div>
+    <div *ngIf="filteredMateriales.length > pageSize" class="p-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+      <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage===1" class="px-3 py-2 border text-[10px] font-bold uppercase">Anterior</button>
+      <div class="text-[10px] font-bold uppercase">Página {{ currentPage }} de {{ totalPages }}</div>
+      <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage===totalPages" class="px-3 py-2 border text-[10px] font-bold uppercase">Siguiente</button>
     </div>
   </div>
 

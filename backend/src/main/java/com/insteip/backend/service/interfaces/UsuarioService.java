@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface UsuarioService {
-    Page<UsuarioResponseDTO> listarAlumnos(Pageable pageable, String search);
+    Page<UsuarioResponseDTO> listarAlumnos(Pageable pageable, String search, boolean includeInactive);
     Page<UsuarioResponseDTO> listarDocentes(Pageable pageable, String search);
     UsuarioResponseDTO obtenerDocente(Long id);
     UsuarioResponseDTO crearDocente(DocenteRequestDTO dto);

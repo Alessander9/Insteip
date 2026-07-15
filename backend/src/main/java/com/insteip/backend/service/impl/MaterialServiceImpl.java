@@ -29,6 +29,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class MaterialServiceImpl implements MaterialService {
@@ -84,6 +86,22 @@ public class MaterialServiceImpl implements MaterialService {
         return materialRepository.findByModuloId(moduloId).stream()
                 .map(this::convertToResponseDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<MaterialResponseDTO> listarMaterialesPorModulo(Long moduloId, Pageable pageable) {
+        if (!moduloRepository.existsById(moduloId)) {
+            throw new ResourceNotFoundException("Módulo no encontrado con id: " + moduloId);
+        }
+        return materialRepository.findByModuloId(moduloId, pageable).map(this::convertToResponseDto);
+    }
+
+    public Page<MaterialResponseDTO> listarMaterialesPorModulo(Long moduloId, String search, Pageable pageable, boolean useSearch) {
+        if (!moduloRepository.existsById(moduloId)) {
+            throw new ResourceNotFoundException("Módulo no encontrado con id: " + moduloId);
+        }
+        String term = search == null ? "" : search.trim();
+        return materialRepository.searchByModuloId(moduloId, term, pageable).map(this::convertToResponseDto);
     }
 
     @Override

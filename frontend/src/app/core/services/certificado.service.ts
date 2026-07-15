@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface CertificadoResponse {
   id: number;
@@ -18,7 +19,7 @@ export interface CertificadoResponse {
 })
 export class CertificadoService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8081/api/certificados';
+  private apiUrl = environment.apiUrl + '/certificados';
 
   generarCertificado(cursoId: number): Observable<CertificadoResponse> {
     return this.http.post<CertificadoResponse>(`${this.apiUrl}/generar/${cursoId}`, null);
@@ -28,11 +29,14 @@ export class CertificadoService {
     return this.http.get<CertificadoResponse>(`${this.apiUrl}/validar/${codigo}`);
   }
 
-  listarCertificados(search?: string): Observable<CertificadoResponse[]> {
-    let url = this.apiUrl;
-    if (search) {
-      url += `?search=${encodeURIComponent(search)}`;
-    }
-    return this.http.get<CertificadoResponse[]>(url);
+  listarCertificados(page = 0, size = 5, search = '', sort = 'fechaEmision,desc'): Observable<any> {
+    return this.http.get<any>(this.apiUrl, {
+      params: {
+        page: String(page),
+        size: String(size),
+        ...(search.trim() ? { search: search.trim() } : {}),
+        sort
+      }
+    });
   }
 }

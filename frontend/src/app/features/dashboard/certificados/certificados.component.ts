@@ -37,6 +37,7 @@ export class CertificadosComponent implements OnInit {
   pageSize = 5;
   totalPages = 1;
   readonly pageSizeOptions = [5, 10, 20];
+  totalElements = 0;
 
   ngOnInit(): void {
     this.isAdmin = this.authService.getUserRole() === 'ADMINISTRADOR';
@@ -45,10 +46,15 @@ export class CertificadosComponent implements OnInit {
 
   private loadCertificados(): void {
     if (this.isAdmin) {
-      this.certificadoService.listarCertificados().subscribe({
+      this.certificadoService.listarCertificados(this.currentPage - 1, this.pageSize, this.searchTerm, `fechaEmision,${this.dateSortOrder}`).subscribe({
         next: (data) => {
-          this.certificados = data;
-          this.applyFilters();
+          this.certificados = data.content ?? [];
+          this.filteredCertificados = this.certificados;
+          this.totalElements = data.totalElements ?? this.certificados.length;
+          this.totalPages = Math.max(1, Math.ceil(this.totalElements / this.pageSize));
+          if (this.currentPage > this.totalPages) {
+            this.currentPage = this.totalPages;
+          }
           this.isLoading = false;
         },
         error: (err: unknown) => {
@@ -75,19 +81,19 @@ export class CertificadosComponent implements OnInit {
   onSearchChange(value: string): void {
     this.searchTerm = value;
     this.currentPage = 1;
-    this.applyFilters();
+    this.loadCertificados();
   }
 
   onPageSizeChange(value: string): void {
     this.pageSize = Number(value);
     this.currentPage = 1;
-    this.applyFilters();
+    this.loadCertificados();
   }
 
   onDateSortChange(value: string): void {
     this.dateSortOrder = value === 'asc' ? 'asc' : 'desc';
     this.currentPage = 1;
-    this.applyFilters();
+    this.loadCertificados();
   }
 
   get pagedCertificados(): Array<AlumnoCertificado | CertificadoResponse> {
@@ -119,25 +125,34 @@ export class CertificadosComponent implements OnInit {
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
+      if (this.isAdmin) {
+        this.loadCertificados();
+      }
     }
   }
 
   previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
+      if (this.isAdmin) {
+        this.loadCertificados();
+      }
     }
   }
 
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
+      if (this.isAdmin) {
+        this.loadCertificados();
+      }
     }
   }
 
   clearSearch(): void {
     this.searchTerm = '';
     this.currentPage = 1;
-    this.applyFilters();
+    this.loadCertificados();
   }
 
   private applyFilters(): void {

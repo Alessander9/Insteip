@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -26,9 +28,11 @@ public class UsuarioController {
     public ResponseEntity<org.springframework.data.domain.Page<UsuarioResponseDTO>> listarAlumnos(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false) String search) {
-        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
-        return ResponseEntity.ok(usuarioService.listarAlumnos(pageable, search));
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "true") boolean includeInactive,
+            @RequestParam(required = false, defaultValue = "fechaRegistro,desc") String sort) {
+        org.springframework.data.domain.Pageable pageable = buildPageable(page, size, sort);
+        return ResponseEntity.ok(usuarioService.listarAlumnos(pageable, search, includeInactive));
     }
 
     @GetMapping("/docentes")
@@ -36,8 +40,9 @@ public class UsuarioController {
     public ResponseEntity<org.springframework.data.domain.Page<UsuarioResponseDTO>> listarDocentes(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false) String search) {
-        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false, defaultValue = "fechaRegistro,desc") String sort) {
+        org.springframework.data.domain.Pageable pageable = buildPageable(page, size, sort);
         return ResponseEntity.ok(usuarioService.listarDocentes(pageable, search));
     }
 
@@ -107,5 +112,17 @@ public class UsuarioController {
         }
         usuarioService.cambiarEstado(id, nuevoEstado);
         return ResponseEntity.noContent().build();
+    }
+
+    private org.springframework.data.domain.Pageable buildPageable(int page, int size, String sort) {
+        if (sort == null || sort.isBlank()) {
+            return PageRequest.of(page, size);
+        }
+        String[] parts = sort.split(",", 2);
+        String property = parts[0].trim();
+        Sort.Direction direction = parts.length > 1 && "asc".equalsIgnoreCase(parts[1].trim())
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+        return PageRequest.of(page, size, Sort.by(direction, property));
     }
 }

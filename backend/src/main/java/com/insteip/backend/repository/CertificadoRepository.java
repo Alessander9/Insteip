@@ -3,6 +3,8 @@ package com.insteip.backend.repository;
 import com.insteip.backend.entity.Certificado;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Repository
 public interface CertificadoRepository extends JpaRepository<Certificado, Long> {
@@ -18,4 +20,12 @@ public interface CertificadoRepository extends JpaRepository<Certificado, Long> 
             "LOWER(c.usuario.apellidos) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
             "LOWER(c.curso.nombre) LIKE LOWER(CONCAT('%', :search, '%'))")
     java.util.List<Certificado> searchCertificados(@org.springframework.data.repository.query.Param("search") String search);
+
+    @org.springframework.data.jpa.repository.Query("SELECT c FROM Certificado c WHERE " +
+            "(:search IS NULL OR :search = '' OR " +
+            "LOWER(c.codigo) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(c.usuario.nombres) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(c.usuario.apellidos) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(c.curso.nombre) LIKE LOWER(CONCAT('%', :search, '%')))")
+    Page<Certificado> searchCertificadosPaged(@org.springframework.data.repository.query.Param("search") String search, Pageable pageable);
 }

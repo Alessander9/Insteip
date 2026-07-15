@@ -2,16 +2,24 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MaterialResponse } from '../models/material.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MaterialService {
   private http = inject(HttpClient);
-  private baseApiUrl = 'http://localhost:8081/api';
+  private baseApiUrl = environment.apiUrl;
 
-  listarMaterialesPorModulo(moduloId: number): Observable<MaterialResponse[]> {
-    return this.http.get<MaterialResponse[]>(`${this.baseApiUrl}/modulos/${moduloId}/materiales`);
+  listarMaterialesPorModulo(moduloId: number, page = 0, size = 10, search = '', sort = 'fechaSubida,desc'): Observable<any> {
+    return this.http.get<any>(`${this.baseApiUrl}/materiales/modulo/${moduloId}`, {
+      params: {
+        page: String(page),
+        size: String(size),
+        ...(search.trim() ? { search: search.trim() } : {}),
+        sort
+      }
+    });
   }
 
   subirMaterial(moduloId: number, nombre: string, archivo: File): Observable<MaterialResponse> {

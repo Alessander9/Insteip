@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 @RestController
 @RequestMapping("/api/certificados")
@@ -35,8 +37,13 @@ public class CertificadoController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ALUMNO')")
-    public ResponseEntity<java.util.List<com.insteip.backend.dto.CertificadoResponseDTO>> listarCertificados(@RequestParam(required = false) String search) {
-        return ResponseEntity.ok(certificadoService.listarCertificados(search));
+    public ResponseEntity<org.springframework.data.domain.Page<com.insteip.backend.dto.CertificadoResponseDTO>> listarCertificados(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false, defaultValue = "fechaEmision,desc") String sort) {
+        org.springframework.data.domain.Pageable pageable = buildPageable(page, size, sort);
+        return ResponseEntity.ok(certificadoService.listarCertificados(pageable, search));
     }
 
     private final String UPLOADS_DIR = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "certificados";
@@ -103,5 +110,17 @@ public class CertificadoController {
                 cert.getCodigo()
         );
         return ResponseEntity.ok(response);
+    }
+
+    private org.springframework.data.domain.Pageable buildPageable(int page, int size, String sort) {
+        if (sort == null || sort.isBlank()) {
+            return PageRequest.of(page, size);
+        }
+        String[] parts = sort.split(",", 2);
+        String property = parts[0].trim();
+        Sort.Direction direction = parts.length > 1 && "asc".equalsIgnoreCase(parts[1].trim())
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+        return PageRequest.of(page, size, Sort.by(direction, property));
     }
 }

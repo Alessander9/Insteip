@@ -14,6 +14,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 @RestController
 @RequestMapping("/api/materiales")
@@ -59,6 +61,18 @@ public class MaterialController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/modulo/{moduloId}")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DOCENTE')")
+    public ResponseEntity<org.springframework.data.domain.Page<MaterialResponseDTO>> listarMaterialesPorModulo(
+            @PathVariable Long moduloId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false, defaultValue = "fechaSubida,desc") String sort) {
+        org.springframework.data.domain.Pageable pageable = buildPageable(page, size, sort);
+        return ResponseEntity.ok(materialService.listarMaterialesPorModulo(moduloId, search, pageable, true));
+    }
+
     @GetMapping("/{id}/download")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ALUMNO')")
     public ResponseEntity<byte[]> descargarMaterial(@PathVariable Long id) {
@@ -91,5 +105,17 @@ public class MaterialController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+
+    private org.springframework.data.domain.Pageable buildPageable(int page, int size, String sort) {
+        if (sort == null || sort.isBlank()) {
+            return PageRequest.of(page, size);
+        }
+        String[] parts = sort.split(",", 2);
+        String property = parts[0].trim();
+        Sort.Direction direction = parts.length > 1 && "asc".equalsIgnoreCase(parts[1].trim())
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+        return PageRequest.of(page, size, Sort.by(direction, property));
     }
 }

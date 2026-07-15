@@ -58,7 +58,6 @@
   }
 }
 
-/* ── Brand panel ── */
 .brand-panel {
   position: relative;
   display: none;
@@ -196,7 +195,6 @@
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
 }
 
-/* ── Form panel ── */
 .form-panel {
   position: relative;
   display: flex;
@@ -465,7 +463,6 @@
   animation: spin 0.7s linear infinite;
 }
 
-/* Demo access */
 .demo-section {
   margin-top: 1.75rem;
   padding-top: 1.5rem;
@@ -544,7 +541,6 @@
   color: var(--insteip-primary);
 }
 
-/* Modal */
 .modal-backdrop {
   position: fixed;
   inset: 0;

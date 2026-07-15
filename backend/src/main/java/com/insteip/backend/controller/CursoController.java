@@ -11,6 +11,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 @RestController
 @RequestMapping("/api/cursos")
@@ -28,8 +30,9 @@ public class CursoController {
     public ResponseEntity<org.springframework.data.domain.Page<CursoResponseDTO>> listarCursos(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false) String search) {
-        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false, defaultValue = "fechaCreacion,desc") String sort) {
+        org.springframework.data.domain.Pageable pageable = buildPageable(page, size, sort);
         return ResponseEntity.ok(cursoService.listarCursos(pageable, search));
     }
 
@@ -68,5 +71,17 @@ public class CursoController {
         }
         cursoService.cambiarEstado(id, nuevoEstado);
         return ResponseEntity.noContent().build();
+    }
+
+    private org.springframework.data.domain.Pageable buildPageable(int page, int size, String sort) {
+        if (sort == null || sort.isBlank()) {
+            return PageRequest.of(page, size);
+        }
+        String[] parts = sort.split(",", 2);
+        String property = parts[0].trim();
+        Sort.Direction direction = parts.length > 1 && "asc".equalsIgnoreCase(parts[1].trim())
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+        return PageRequest.of(page, size, Sort.by(direction, property));
     }
 }

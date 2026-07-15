@@ -116,16 +116,18 @@ export class DashboardHomeComponent implements OnInit {
 
     // Load Cursos
     this.cursoService.listarCursos().subscribe({
-      next: (cursos) => {
-        this.totalCursos = cursos.length;
-        this.coursesList = (cursos || []).slice(0, 5); // top 5 courses to display
+      next: (res) => {
+        const cursos = Array.isArray(res) ? res : (res?.content ?? []);
+        this.totalCursos = Array.isArray(res) ? cursos.length : (res?.totalElements ?? cursos.length);
+        this.coursesList = cursos.slice(0, 5);
       }
     });
 
     // Load Certificados
     this.certificadoService.listarCertificados().subscribe({
-      next: (certs) => {
-        this.totalCertificados = certs.length;
+      next: (res) => {
+        const certs = Array.isArray(res) ? res : (res?.content ?? []);
+        this.totalCertificados = Array.isArray(res) ? certs.length : (res?.totalElements ?? certs.length);
       }
     });
 

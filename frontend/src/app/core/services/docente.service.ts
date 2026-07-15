@@ -11,9 +11,10 @@ export class DocenteService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl + '/usuarios/docentes';
 
-  listarDocentes(page = 0, size = 20, search = ''): Observable<any> {
+  listarDocentes(page = 0, size = 20, search = '', sort = 'fechaRegistro,desc'): Observable<any> {
     let params = new HttpParams().set('page', page).set('size', size);
     if (search.trim()) params = params.set('search', search.trim());
+    params = params.set('sort', sort);
     return this.http.get<any>(this.apiUrl, { params });
   }
 

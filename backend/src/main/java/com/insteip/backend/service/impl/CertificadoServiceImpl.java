@@ -21,6 +21,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class CertificadoServiceImpl implements CertificadoService {
@@ -346,6 +348,21 @@ public class CertificadoServiceImpl implements CertificadoService {
                         cert.getFechaEmision()
                 ))
                 .collect(java.util.stream.Collectors.toList());
+    }
+
+    @Override
+    public Page<com.insteip.backend.dto.CertificadoResponseDTO> listarCertificados(Pageable pageable, String search) {
+        String term = search == null ? "" : search.trim();
+        return certificadoRepository.searchCertificadosPaged(term, pageable).map(cert -> new com.insteip.backend.dto.CertificadoResponseDTO(
+                cert.getId(),
+                cert.getUsuario().getId(),
+                cert.getCurso().getId(),
+                cert.getCodigo(),
+                cert.getArchivoPdf(),
+                cert.getUrlValidacion(),
+                cert.getNumeroRegistro(),
+                cert.getFechaEmision()
+        ));
     }
 }
 

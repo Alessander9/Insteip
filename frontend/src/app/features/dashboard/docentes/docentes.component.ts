@@ -6,6 +6,7 @@ import { ToastService } from '../../../core/services/toast.service';
 import { getSubscriptionClass } from '../../../core/utils/subscription.utils';
 import { DocenteRequest, DocenteResponse } from '../../../core/models/docente.model';
 import { DocenteService } from '../../../core/services/docente.service';
+import { totalPages } from '../../../core/utils/listing.utils';
 
 @Component({
   selector: 'app-docentes',
@@ -50,27 +51,20 @@ export class DocentesComponent implements OnInit {
   ngOnInit(): void { this.loadDocentes(); }
 
   loadDocentes(): void {
-    this.docenteService.listarDocentes(this.currentPage - 1, this.pageSize, this.searchQuery).subscribe({
+    this.docenteService.listarDocentes(this.currentPage - 1, this.pageSize, this.searchQuery, `fechaRegistro,${this.dateSortOrder}`).subscribe({
       next: (res) => {
         this.docentes = Array.isArray(res) ? res : (res?.content ?? []);
         this.totalElements = Array.isArray(res) ? this.docentes.length : (res?.totalElements ?? this.docentes.length);
-        this.applyFilter();
+        this.filteredDocentes = this.docentes;
+        if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
       },
       error: (err) => console.error('Error al listar docentes', err)
     });
   }
 
-  applyFilter(): void {
-    this.filteredDocentes = [...this.docentes].sort((a, b) => {
-      const d1 = new Date(a.fechaRegistro).getTime() || 0;
-      const d2 = new Date(b.fechaRegistro).getTime() || 0;
-      return this.dateSortOrder === 'asc' ? d1 - d2 : d2 - d1;
-    });
-  }
-
   onSearchChange(): void { this.currentPage = 1; this.loadDocentes(); }
-  onDateSortChange(order: string): void { this.dateSortOrder = order === 'asc' ? 'asc' : 'desc'; this.applyFilter(); }
-  get totalPages(): number { return Math.max(1, Math.ceil(this.totalElements / this.pageSize)); }
+  onDateSortChange(order: string): void { this.dateSortOrder = order === 'asc' ? 'asc' : 'desc'; this.currentPage = 1; this.loadDocentes(); }
+  get totalPages(): number { return totalPages(this.totalElements, this.pageSize); }
   get paginatedDocentes(): DocenteResponse[] { return this.filteredDocentes; }
   goToPage(page: number): void { if (page < 1 || page > this.totalPages) return; this.currentPage = page; this.loadDocentes(); }
   previousPage(): void { this.goToPage(this.currentPage - 1); }

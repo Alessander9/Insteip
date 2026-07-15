@@ -23,6 +23,7 @@ import { formatBytes, getFileIcon, getCleanFileType, getFileExtension } from '..
 import { getSubscriptionClass, formatNiveles } from '../../../../core/utils/subscription.utils';
 import { UsuarioService, DocenteOption } from '../../../../core/services/usuario.service';
 
+// Reset IDE language service cache
 @Component({
   selector: 'app-curso-detalle',
   standalone: true,
@@ -147,6 +148,8 @@ export class CursoDetalleComponent implements OnInit {
       if (user && user.rol === 'DOCENTE') {
         this.isDocente = true;
         this.activeTab = 'modulos';
+      } else {
+        this.loadDocentes();
       }
     });
 
@@ -239,9 +242,9 @@ export class CursoDetalleComponent implements OnInit {
     this.isMatriculaSubmitting = false;
 
     // Load all alumnos and filter out already enrolled
-    this.alumnoService.listarAlumnos().subscribe({
+    this.alumnoService.listarAlumnos(0, 1000, '', 'fechaRegistro,desc', true).subscribe({
       next: (data) => {
-        this.alumnos = data;
+        this.alumnos = data.content || [];
         const enrolledIds = new Set(this.matriculas.map(m => m.usuarioId));
         this.alumnosDisponibles = this.alumnos.filter(a => !enrolledIds.has(a.id) && a.estado);
         this.showMatriculaModal = true;
@@ -268,13 +271,12 @@ export class CursoDetalleComponent implements OnInit {
       const id = String(alumno.id);
       return nombres.includes(query) || correo.includes(query) || id.includes(query);
     });
-    this.loadDocentes();
   }
 
   loadDocentes(): void {
-    this.usuarioService.listarDocentes().subscribe({
+    this.usuarioService.listarDocentes(0, 1000).subscribe({
       next: (data) => {
-        this.docentes = data || [];
+        this.docentes = data.content || [];
         this.docentesFiltrados = this.docentes;
       },
       error: (err) => console.error('Error al cargar docentes', err)
@@ -536,7 +538,16 @@ export class CursoDetalleComponent implements OnInit {
 
   onCourseSubmit(): void {
     if (!this.curso) return;
+    console.log('onCourseSubmit - form validity:', this.courseForm.valid);
+    console.log('onCourseSubmit - form value:', this.courseForm.value);
     if (this.courseForm.invalid) {
+      console.warn('onCourseSubmit - form errors:', this.courseForm.errors);
+      Object.keys(this.courseForm.controls).forEach(key => {
+        const controlErrors = this.courseForm.get(key)?.errors;
+        if (controlErrors != null) {
+          console.warn('onCourseSubmit - control error:', key, controlErrors);
+        }
+      });
       this.courseForm.markAllAsTouched();
       this.toastService.warning('Por favor complete todos los campos requeridos del curso correctamente.');
       return;
@@ -596,13 +607,13 @@ export class CursoDetalleComponent implements OnInit {
   }
 
   cargarContenidoModulo(moduloId: number): void {
-    this.videoService.listarVideosPorModulo(moduloId).subscribe({
-      next: (data) => this.videosMap[moduloId] = data.sort((a, b) => a.orden - b.orden),
+    this.videoService.listarVideosPorModulo(moduloId, 0, 100, '', 'orden,asc').subscribe({
+      next: (data) => this.videosMap[moduloId] = (data.content || []).sort((a, b) => a.orden - b.orden),
       error: (err) => console.error('Error al cargar videos del módulo', err)
     });
     
-    this.materialService.listarMaterialesPorModulo(moduloId).subscribe({
-      next: (data) => this.materialesMap[moduloId] = data,
+    this.materialService.listarMaterialesPorModulo(moduloId, 0, 100, '', 'fechaSubida,desc').subscribe({
+      next: (data) => this.materialesMap[moduloId] = data.content || [],
       error: (err) => console.error('Error al cargar materiales del módulo', err)
     });
   }

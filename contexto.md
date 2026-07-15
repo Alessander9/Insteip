@@ -176,33 +176,20 @@ El administrador sigue siendo quien asigna docentes a cursos desde el frontend.
 
 ## 9. QA
 
-Estado verificado recientemente:
+Estado de verificación y calidad del sistema:
 
-- `backend`: `./mvnw test -q`
-- `frontend`: `npm run build`
-- Selenium smoke: `scripts/selenium-test.js`
-- E2E visual: `scripts/super-test.js`
+- **Pruebas de Backend**: `./mvnw test` ejecutándose sobre base de datos Postgres (con 53 tests integrados y unitarios pasando en su totalidad).
+- **Pruebas del Frontend**: compilación exitosa sin advertencias (`npm run build`).
+- **Súper Test E2E de Selenium**: `scripts/selenium-super-test.js` que unifica los flujos completos de pruebas para todos los roles (Público, Administrador, Docente, Alumno) y comprobaciones de salud del sistema, ejecutado exitosamente con 14/14 pasos OK.
 
-La suite de backend valida autenticación, usuarios, docentes, cursos, módulos, videos, materiales, matrículas, avance, certificados, reportes, sistema y configuración.
+Documento maestro de QA y pruebas completas unificadas:
 
-Hallazgos recientes ya corregidos:
+- [docs/QA_UNIFICADO.md](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/docs/QA_UNIFICADO.md)
 
-- descargas protegidas de materiales devuelven `403` cuando corresponde,
-- la validación pública del certificado expone correctamente alumno y curso,
-- el flujo de certificados se ha regenerado con el nuevo estilo visual.
-
-Documento maestro de QA y pruebas completas:
-
-- [docs/QA_TOTAL_SISTEMA.md](/C:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/docs/QA_TOTAL_SISTEMA.md)
-
-Ese documento concentra:
-
-- cobertura por rol,
-- cobertura por pantalla,
-- cobertura por endpoint,
-- casos negativos,
-- validaciones de negocio,
-- y secuencia recomendada de ejecución.
+Este documento concentra:
+- La unificación de planes de pruebas unitarias y E2E.
+- Cobertura integral de endpoints, validaciones negativas y flujos por rol.
+- Reporte detallado de los tests automatizados.
 
 ## 10. Despliegue Local
 

@@ -40,6 +40,8 @@ export class AlumnosComponent implements OnInit {
   dateSortOrder: 'desc' | 'asc' = 'desc';
   currentPage = 1;
   readonly pageSize = 10;
+  totalElements = 0;
+  totalPagesCount = 1;
 
   // Modal controls
   showCreateEditModal = false;
@@ -72,10 +74,21 @@ export class AlumnosComponent implements OnInit {
   }
 
   loadAlumnos(): void {
-    this.alumnoService.listarAlumnos().subscribe({
+    this.alumnoService.listarAlumnos(
+      this.currentPage - 1,
+      this.pageSize,
+      this.searchQuery,
+      `fechaRegistro,${this.dateSortOrder}`,
+      true
+    ).subscribe({
       next: (data) => {
-        this.alumnos = data;
-        this.applyFilter();
+        this.alumnos = data.content ?? [];
+        this.filteredAlumnos = this.alumnos;
+        this.totalElements = data.totalElements ?? this.alumnos.length;
+        this.totalPagesCount = data.totalPages ?? Math.max(1, Math.ceil(this.totalElements / this.pageSize));
+        if (this.currentPage > this.totalPagesCount) {
+          this.currentPage = this.totalPagesCount;
+        }
       },
       error: (err) => {
         console.error('Error al listar alumnos', err);
@@ -84,38 +97,28 @@ export class AlumnosComponent implements OnInit {
   }
 
   applyFilter(): void {
-    const query = this.searchQuery.trim().toLowerCase();
-    this.filteredAlumnos = this.alumnos.filter(a =>
-      !query ||
-      a.nombres.toLowerCase().includes(query) ||
-      a.apellidos.toLowerCase().includes(query) ||
-      a.correo.toLowerCase().includes(query) ||
-      a.fechaRegistro.toLowerCase().includes(query)
-    ).sort((a, b) => {
-      const d1 = new Date(a.fechaRegistro).getTime() || 0;
-      const d2 = new Date(b.fechaRegistro).getTime() || 0;
-      return this.dateSortOrder === 'asc' ? d1 - d2 : d2 - d1;
-    });
     this.currentPage = 1;
+    this.loadAlumnos();
   }
 
   onDateSortChange(order: string): void {
     this.dateSortOrder = order === 'asc' ? 'asc' : 'desc';
-    this.applyFilter();
+    this.currentPage = 1;
+    this.loadAlumnos();
   }
 
   get totalPages(): number {
-    return Math.max(1, Math.ceil(this.filteredAlumnos.length / this.pageSize));
+    return this.totalPagesCount;
   }
 
   get paginatedAlumnos(): AlumnoResponse[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredAlumnos.slice(start, start + this.pageSize);
+    return this.filteredAlumnos;
   }
 
   goToPage(page: number): void {
     if (page < 1 || page > this.totalPages) return;
     this.currentPage = page;
+    this.loadAlumnos();
   }
 
   nextPage(): void {

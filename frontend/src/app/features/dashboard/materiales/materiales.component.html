@@ -51,7 +51,7 @@
           <option value="asc">Fecha asc</option>
         </select>
         <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-          {{ filteredMateriales.length }} materiales en el módulo
+          {{ totalElements }} materiales en el módulo
         </span>
       </div>
     </div>
@@ -141,7 +141,7 @@
         </tbody>
       </table>
     </div>
-    <div *ngIf="filteredMateriales.length > pageSize" class="p-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+    <div *ngIf="totalPages > 1" class="p-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
       <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage===1" class="px-3 py-2 border text-[10px] font-bold uppercase">Anterior</button>
       <div class="text-[10px] font-bold uppercase">Página {{ currentPage }} de {{ totalPages }}</div>
       <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage===totalPages" class="px-3 py-2 border text-[10px] font-bold uppercase">Siguiente</button>

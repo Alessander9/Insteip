@@ -11,6 +11,7 @@ import { CertificadoService } from '../../../core/services/certificado.service';
 import { AuditoriaService } from '../../../core/services/auditoria.service';
 import { PagoService } from '../../../core/services/pago.service';
 import { UserProfile } from '../../../core/models/user-profile.model';
+import { AlumnoResponse } from '../../../core/models/alumno.model';
 
 @Component({
   selector: 'app-dashboard-home',
@@ -70,63 +71,72 @@ export class DashboardHomeComponent implements OnInit {
     this.isLoading = true;
 
     // Load Alumnos
-    this.alumnoService.listarAlumnos().subscribe({
+    this.alumnoService.listarAlumnos(0, 1, '', 'fechaRegistro,desc', true).subscribe({
       next: (alumnos) => {
-        const total = alumnos.length;
+        const total = alumnos.totalElements ?? alumnos.content?.length ?? 0;
         this.totalAlumnos = total;
+        this.alumnoService.listarAlumnos(0, Math.max(total, 1), '', 'fechaRegistro,desc', true).subscribe({
+          next: (fullAlumnos) => {
+            const alumnosList = fullAlumnos.content ?? [];
+            const counts = { BASICO: 0, INTERMEDIO: 0, PREMIUM: 0 };
+            alumnosList.forEach((alumno: AlumnoResponse) => {
+              const sub = alumno.nivelSuscripcion || 'BASICO';
+              if (sub in counts) {
+                counts[sub as keyof typeof counts]++;
+              } else {
+                (counts as any)[sub] = ((counts as any)[sub] || 0) + 1;
+              }
+            });
 
-        // Count subscriptions
-        const counts = { BASICO: 0, INTERMEDIO: 0, PREMIUM: 0 };
-        alumnos.forEach(alumno => {
-          const sub = alumno.nivelSuscripcion || 'BASICO';
-          if (sub in counts) {
-            counts[sub as keyof typeof counts]++;
-          } else {
-            (counts as any)[sub] = ((counts as any)[sub] || 0) + 1;
+            this.planStats = [
+              { 
+                name: 'BASICO', 
+                count: counts.BASICO, 
+                percentage: total > 0 ? Math.round((counts.BASICO / total) * 100) : 0,
+                cssClass: 'bg-slate-50 text-slate-700 border border-slate-200', 
+                barClass: 'bg-slate-400',
+                icon: 'person' 
+              },
+              { 
+                name: 'INTERMEDIO', 
+                count: counts.INTERMEDIO, 
+                percentage: total > 0 ? Math.round((counts.INTERMEDIO / total) * 100) : 0,
+                cssClass: 'bg-blue-50 text-blue-700 border border-blue-200', 
+                barClass: 'bg-blue-500',
+                icon: 'school' 
+              },
+              { 
+                name: 'PREMIUM', 
+                count: counts.PREMIUM, 
+                percentage: total > 0 ? Math.round((counts.PREMIUM / total) * 100) : 0,
+                cssClass: 'bg-amber-50 text-amber-800 border border-amber-200', 
+                barClass: 'bg-amber-500',
+                icon: 'workspace_premium' 
+              }
+            ];
           }
         });
-
-        this.planStats = [
-          { 
-            name: 'BASICO', 
-            count: counts.BASICO, 
-            percentage: total > 0 ? Math.round((counts.BASICO / total) * 100) : 0,
-            cssClass: 'bg-slate-50 text-slate-700 border border-slate-200', 
-            barClass: 'bg-slate-400',
-            icon: 'person' 
-          },
-          { 
-            name: 'INTERMEDIO', 
-            count: counts.INTERMEDIO, 
-            percentage: total > 0 ? Math.round((counts.INTERMEDIO / total) * 100) : 0,
-            cssClass: 'bg-blue-50 text-blue-700 border border-blue-200', 
-            barClass: 'bg-blue-500',
-            icon: 'school' 
-          },
-          { 
-            name: 'PREMIUM', 
-            count: counts.PREMIUM, 
-            percentage: total > 0 ? Math.round((counts.PREMIUM / total) * 100) : 0,
-            cssClass: 'bg-amber-50 text-amber-800 border border-amber-200', 
-            barClass: 'bg-amber-500',
-            icon: 'workspace_premium' 
-          }
-        ];
       }
     });
 
     // Load Cursos
-    this.cursoService.listarCursos().subscribe({
+    this.cursoService.listarCursos(0, 1, '', 'fechaCreacion,desc').subscribe({
       next: (cursos) => {
-        this.totalCursos = cursos.length;
-        this.coursesList = (cursos || []).slice(0, 5); // top 5 courses to display
+        const total = cursos.totalElements ?? cursos.content?.length ?? 0;
+        this.totalCursos = total;
+        this.cursoService.listarCursos(0, Math.max(total, 1), '', 'fechaCreacion,desc').subscribe({
+          next: (fullCursos) => {
+            const cursosList = fullCursos.content ?? [];
+            this.coursesList = cursosList.slice(0, 5); // top 5 courses to display
+          }
+        });
       }
     });
 
     // Load Certificados
-    this.certificadoService.listarCertificados().subscribe({
+    this.certificadoService.listarCertificados(0, 1).subscribe({
       next: (certs) => {
-        this.totalCertificados = certs.length;
+        this.totalCertificados = certs.totalElements ?? certs.content?.length ?? 0;
       }
     });
 

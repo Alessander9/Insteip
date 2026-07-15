@@ -16,3 +16,4 @@ backend-api-super-test.js
 generate-manual.js
 selenium-test.js
 super-test.js
+test_results.md

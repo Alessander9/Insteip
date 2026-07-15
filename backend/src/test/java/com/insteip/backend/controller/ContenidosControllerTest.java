@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -27,6 +28,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -126,11 +128,12 @@ class ContenidosControllerTest {
     void listarVideosPorModulo_shouldReturnVideos() throws Exception {
         VideoResponseDTO response = new VideoResponseDTO(3L, "Video 1", "Desc", "https://youtube.com/watch?v=123", 1, true, java.time.LocalDateTime.now());
         // Mapped at ModuloController GET /api/modulos/{id}/videos
-        when(videoService.listarVideosPorModulo(2L)).thenReturn(List.of(response));
+        when(videoService.listarVideosPorModulo(eq(2L), isNull(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(response), PageRequest.of(0, 10), 1));
 
         mockMvc.perform(get("/api/modulos/2/videos"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].titulo").value("Video 1"));
+                .andExpect(jsonPath("$.content[0].titulo").value("Video 1"));
     }
 
     @Test
@@ -152,11 +155,12 @@ class ContenidosControllerTest {
     void listarMaterialesPorModulo_shouldReturnMateriales() throws Exception {
         MaterialResponseDTO response = new MaterialResponseDTO(4L, "Material 1", "http://material", "application/pdf", 1024L, true, java.time.LocalDateTime.now());
         // Mapped at ModuloController GET /api/modulos/{id}/materiales
-        when(materialService.listarMaterialesPorModulo(2L)).thenReturn(List.of(response));
+        when(materialService.listarMaterialesPorModulo(eq(2L), isNull(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(response), PageRequest.of(0, 10), 1));
 
         mockMvc.perform(get("/api/modulos/2/materiales"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].nombre").value("Material 1"));
+                .andExpect(jsonPath("$.content[0].nombre").value("Material 1"));
     }
 
     @Test

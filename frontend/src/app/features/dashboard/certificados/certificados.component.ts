@@ -25,6 +25,7 @@ export class CertificadosComponent implements OnInit {
 
   certificados: Array<AlumnoCertificado | CertificadoResponse> = [];
   filteredCertificados: Array<AlumnoCertificado | CertificadoResponse> = [];
+  adminTotalElements = 0;
   isLoading = true;
   isAdmin = false;
   selectedCertificado: AlumnoCertificado | CertificadoResponse | null = null;
@@ -45,10 +46,13 @@ export class CertificadosComponent implements OnInit {
 
   private loadCertificados(): void {
     if (this.isAdmin) {
-      this.certificadoService.listarCertificados().subscribe({
+      this.certificadoService.listarCertificados(this.currentPage - 1, this.pageSize, this.searchTerm, `fechaEmision,${this.dateSortOrder}`).subscribe({
         next: (data) => {
-          this.certificados = data;
-          this.applyFilters();
+          this.certificados = data.content ?? [];
+          this.filteredCertificados = this.certificados;
+          this.adminTotalElements = data.totalElements ?? this.certificados.length;
+          this.totalPages = Math.max(1, Math.ceil(this.adminTotalElements / this.pageSize));
+          if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
           this.isLoading = false;
         },
         error: (err: unknown) => {
@@ -75,28 +79,43 @@ export class CertificadosComponent implements OnInit {
   onSearchChange(value: string): void {
     this.searchTerm = value;
     this.currentPage = 1;
-    this.applyFilters();
+    if (this.isAdmin) {
+      this.loadCertificados();
+    } else {
+      this.applyFilters();
+    }
   }
 
   onPageSizeChange(value: string): void {
     this.pageSize = Number(value);
     this.currentPage = 1;
-    this.applyFilters();
+    if (this.isAdmin) {
+      this.loadCertificados();
+    } else {
+      this.applyFilters();
+    }
   }
 
   onDateSortChange(value: string): void {
     this.dateSortOrder = value === 'asc' ? 'asc' : 'desc';
     this.currentPage = 1;
-    this.applyFilters();
+    if (this.isAdmin) {
+      this.loadCertificados();
+    } else {
+      this.applyFilters();
+    }
   }
 
   get pagedCertificados(): Array<AlumnoCertificado | CertificadoResponse> {
+    if (this.isAdmin) {
+      return this.filteredCertificados;
+    }
     const start = (this.currentPage - 1) * this.pageSize;
     return this.filteredCertificados.slice(start, start + this.pageSize);
   }
 
   get totalItems(): number {
-    return this.filteredCertificados.length;
+    return this.isAdmin ? this.adminTotalElements : this.filteredCertificados.length;
   }
 
   get hasResults(): boolean {
@@ -119,28 +138,42 @@ export class CertificadosComponent implements OnInit {
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
+      if (this.isAdmin) this.loadCertificados();
+      else this.applyFilters();
     }
   }
 
   previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
+      if (this.isAdmin) this.loadCertificados();
+      else this.applyFilters();
     }
   }
 
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
+      if (this.isAdmin) this.loadCertificados();
+      else this.applyFilters();
     }
   }
 
   clearSearch(): void {
     this.searchTerm = '';
     this.currentPage = 1;
-    this.applyFilters();
+    if (this.isAdmin) {
+      this.loadCertificados();
+    } else {
+      this.applyFilters();
+    }
   }
 
   private applyFilters(): void {
+    if (this.isAdmin) {
+      return;
+    }
+
     const term = this.searchTerm.trim().toLowerCase();
     this.filteredCertificados = this.certificados.filter((cert) => {
       if (!term) return true;

@@ -27,8 +27,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @RequiredArgsConstructor
@@ -76,13 +77,13 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
-    public List<MaterialResponseDTO> listarMaterialesPorModulo(Long moduloId) {
+    public Page<MaterialResponseDTO> listarMaterialesPorModulo(Long moduloId, String search, Pageable pageable) {
         if (!moduloRepository.existsById(moduloId)) {
             throw new ResourceNotFoundException("Módulo no encontrado con id: " + moduloId);
         }
-        return materialRepository.findByModuloId(moduloId).stream()
-                .map(this::convertToResponseDto)
-                .collect(Collectors.toList());
+        String normalizedSearch = search == null ? "" : search.trim();
+        return materialRepository.searchByModuloId(moduloId, normalizedSearch, pageable)
+                .map(this::convertToResponseDto);
     }
 
     @Override

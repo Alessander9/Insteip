@@ -26,9 +26,10 @@ public class UsuarioController {
     public ResponseEntity<org.springframework.data.domain.Page<UsuarioResponseDTO>> listarAlumnos(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false) String search) {
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "true") boolean includeInactive) {
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
-        return ResponseEntity.ok(usuarioService.listarAlumnos(pageable, search));
+        return ResponseEntity.ok(usuarioService.listarAlumnos(pageable, search, includeInactive));
     }
 
     @GetMapping("/docentes")
@@ -36,8 +37,9 @@ public class UsuarioController {
     public ResponseEntity<org.springframework.data.domain.Page<UsuarioResponseDTO>> listarDocentes(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false) String search) {
-        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "fechaRegistro,desc") String sort) {
+        org.springframework.data.domain.Pageable pageable = buildPageable(page, size, sort);
         return ResponseEntity.ok(usuarioService.listarDocentes(pageable, search));
     }
 
@@ -107,5 +109,16 @@ public class UsuarioController {
         }
         usuarioService.cambiarEstado(id, nuevoEstado);
         return ResponseEntity.noContent().build();
+    }
+
+    private org.springframework.data.domain.Pageable buildPageable(int page, int size, String sortParam) {
+        String[] parts = sortParam != null ? sortParam.split(",") : new String[0];
+        String property = parts.length > 0 && !parts[0].isBlank() ? parts[0] : "fechaRegistro";
+        String direction = parts.length > 1 ? parts[1] : "desc";
+        org.springframework.data.domain.Sort.Direction sortDirection = "asc".equalsIgnoreCase(direction)
+                ? org.springframework.data.domain.Sort.Direction.ASC
+                : org.springframework.data.domain.Sort.Direction.DESC;
+        return org.springframework.data.domain.PageRequest.of(Math.max(page, 0), Math.max(size, 1),
+                org.springframework.data.domain.Sort.by(sortDirection, property));
     }
 }

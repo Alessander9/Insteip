@@ -76,7 +76,7 @@ class AdministracionControllerTest {
 
     @Test
     void listarAlumnos_shouldReturnEmptyPage() throws Exception {
-        when(usuarioService.listarAlumnos(any(), any())).thenReturn(org.springframework.data.domain.Page.empty());
+        when(usuarioService.listarAlumnos(any(), any(), anyBoolean())).thenReturn(org.springframework.data.domain.Page.empty());
 
         mockMvc.perform(get("/api/usuarios"))
                 .andExpect(status().isOk());

@@ -41,6 +41,8 @@ export class VideosComponent implements OnInit {
   dateSortOrder: 'desc' | 'asc' = 'desc';
   currentPage = 1;
   readonly pageSize = 10;
+  totalElements = 0;
+  totalPagesCount = 1;
 
   // Modal controls
   showVideoModal = false;
@@ -95,10 +97,21 @@ export class VideosComponent implements OnInit {
   }
 
   loadVideos(): void {
-    this.videoService.listarVideosPorModulo(this.moduloId).subscribe({
+    this.videoService.listarVideosPorModulo(
+      this.moduloId,
+      this.currentPage - 1,
+      this.pageSize,
+      this.searchQuery,
+      `fechaCreacion,${this.dateSortOrder}`
+    ).subscribe({
       next: (data) => {
-        this.videos = data;
-        this.applyFilter();
+        this.videos = data.content ?? [];
+        this.filteredVideos = this.videos;
+        this.totalElements = data.totalElements ?? this.videos.length;
+        this.totalPagesCount = data.totalPages ?? Math.max(1, Math.ceil(this.totalElements / this.pageSize));
+        if (this.currentPage > this.totalPagesCount) {
+          this.currentPage = this.totalPagesCount;
+        }
       },
       error: (err) => {
         console.error('Error al listar videos', err);
@@ -107,37 +120,28 @@ export class VideosComponent implements OnInit {
   }
 
   applyFilter(): void {
-    const query = this.searchQuery.trim().toLowerCase();
-    this.filteredVideos = this.videos.filter(v =>
-      !query ||
-      v.titulo.toLowerCase().includes(query) ||
-      v.descripcion.toLowerCase().includes(query) ||
-      v.fechaCreacion.toLowerCase().includes(query)
-    ).sort((a, b) => {
-      const d1 = new Date(a.fechaCreacion).getTime() || 0;
-      const d2 = new Date(b.fechaCreacion).getTime() || 0;
-      return this.dateSortOrder === 'asc' ? d1 - d2 : d2 - d1;
-    });
     this.currentPage = 1;
+    this.loadVideos();
   }
 
   get totalPages(): number {
-    return Math.max(1, Math.ceil(this.filteredVideos.length / this.pageSize));
+    return this.totalPagesCount;
   }
 
   get paginatedVideos(): VideoResponse[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredVideos.slice(start, start + this.pageSize);
+    return this.filteredVideos;
   }
 
   onDateSortChange(order: string): void {
     this.dateSortOrder = order === 'asc' ? 'asc' : 'desc';
-    this.applyFilter();
+    this.currentPage = 1;
+    this.loadVideos();
   }
 
   goToPage(page: number): void {
     if (page < 1 || page > this.totalPages) return;
     this.currentPage = page;
+    this.loadVideos();
   }
 
   openCreateModal(): void {

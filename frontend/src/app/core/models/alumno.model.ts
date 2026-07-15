@@ -17,3 +17,11 @@ export interface AlumnoResponse {
   estado: boolean;
   fechaRegistro: string;
 }
+
+export interface PageResponse<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+}

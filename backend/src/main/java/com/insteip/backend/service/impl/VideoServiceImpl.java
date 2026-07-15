@@ -11,10 +11,10 @@ import com.insteip.backend.repository.VideoRepository;
 import com.insteip.backend.repository.ModuloRepository;
 import com.insteip.backend.service.interfaces.VideoService;
 import org.springframework.stereotype.Service;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,13 +27,13 @@ public class VideoServiceImpl implements VideoService {
     private final com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
 
     @Override
-    public List<VideoResponseDTO> listarVideosPorModulo(Long moduloId) {
+    public Page<VideoResponseDTO> listarVideosPorModulo(Long moduloId, String search, Pageable pageable) {
         if (!moduloRepository.existsById(moduloId)) {
             throw new ResourceNotFoundException("Módulo no encontrado con id: " + moduloId);
         }
-        return videoRepository.findByModuloIdOrderByOrdenAsc(moduloId).stream()
-                .map(this::convertToResponseDto)
-                .collect(Collectors.toList());
+        String normalizedSearch = search == null ? "" : search.trim();
+        return videoRepository.searchByModuloId(moduloId, normalizedSearch, pageable)
+                .map(this::convertToResponseDto);
     }
 
     @Override

@@ -41,6 +41,8 @@ export class MaterialesComponent implements OnInit {
   dateSortOrder: 'desc' | 'asc' = 'desc';
   currentPage = 1;
   readonly pageSize = 10;
+  totalElements = 0;
+  totalPagesCount = 1;
 
   // Modal controls
   showMaterialModal = false;
@@ -90,10 +92,21 @@ export class MaterialesComponent implements OnInit {
   }
 
   loadMateriales(): void {
-    this.materialService.listarMaterialesPorModulo(this.moduloId).subscribe({
+    this.materialService.listarMaterialesPorModulo(
+      this.moduloId,
+      this.currentPage - 1,
+      this.pageSize,
+      this.searchQuery,
+      `fechaSubida,${this.dateSortOrder}`
+    ).subscribe({
       next: (data) => {
-        this.materiales = data;
-        this.applyFilter();
+        this.materiales = data.content ?? [];
+        this.filteredMateriales = this.materiales;
+        this.totalElements = data.totalElements ?? this.materiales.length;
+        this.totalPagesCount = data.totalPages ?? Math.max(1, Math.ceil(this.totalElements / this.pageSize));
+        if (this.currentPage > this.totalPagesCount) {
+          this.currentPage = this.totalPagesCount;
+        }
       },
       error: (err) => {
         console.error('Error al listar materiales', err);
@@ -102,36 +115,28 @@ export class MaterialesComponent implements OnInit {
   }
 
   applyFilter(): void {
-    const query = this.searchQuery.trim().toLowerCase();
-    this.filteredMateriales = this.materiales.filter(m =>
-      !query ||
-      m.nombre.toLowerCase().includes(query) ||
-      m.fechaSubida.toLowerCase().includes(query)
-    ).sort((a, b) => {
-      const d1 = new Date(a.fechaSubida).getTime() || 0;
-      const d2 = new Date(b.fechaSubida).getTime() || 0;
-      return this.dateSortOrder === 'asc' ? d1 - d2 : d2 - d1;
-    });
     this.currentPage = 1;
+    this.loadMateriales();
   }
 
   get totalPages(): number {
-    return Math.max(1, Math.ceil(this.filteredMateriales.length / this.pageSize));
+    return this.totalPagesCount;
   }
 
   get paginatedMateriales(): MaterialResponse[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredMateriales.slice(start, start + this.pageSize);
+    return this.filteredMateriales;
   }
 
   onDateSortChange(order: string): void {
     this.dateSortOrder = order === 'asc' ? 'asc' : 'desc';
-    this.applyFilter();
+    this.currentPage = 1;
+    this.loadMateriales();
   }
 
   goToPage(page: number): void {
     if (page < 1 || page > this.totalPages) return;
     this.currentPage = page;
+    this.loadMateriales();
   }
 
   openCreateModal(): void {

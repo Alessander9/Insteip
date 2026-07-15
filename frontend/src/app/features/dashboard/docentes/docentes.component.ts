@@ -26,6 +26,7 @@ export class DocentesComponent implements OnInit {
   currentPage = 1;
   readonly pageSize = 10;
   totalElements = 0;
+  totalPagesCount = 1;
 
   showCreateEditModal = false;
   isEditMode = false;
@@ -43,34 +44,34 @@ export class DocentesComponent implements OnInit {
     apellidos: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
     correo: ['', [Validators.required, Validators.email, Validators.maxLength(150)]],
     telefono: [''],
-    password: ['', [Validators.minLength(6)]],
-    estado: [true]
+    password: ['', [Validators.minLength(6)]]
   });
 
   ngOnInit(): void { this.loadDocentes(); }
 
   loadDocentes(): void {
-    this.docenteService.listarDocentes(this.currentPage - 1, this.pageSize, this.searchQuery).subscribe({
+    this.docenteService.listarDocentes(
+      this.currentPage - 1,
+      this.pageSize,
+      this.searchQuery,
+      `fechaRegistro,${this.dateSortOrder}`
+    ).subscribe({
       next: (res) => {
-        this.docentes = Array.isArray(res) ? res : (res?.content ?? []);
-        this.totalElements = Array.isArray(res) ? this.docentes.length : (res?.totalElements ?? this.docentes.length);
-        this.applyFilter();
+        this.docentes = res.content ?? [];
+        this.filteredDocentes = this.docentes;
+        this.totalElements = res.totalElements ?? this.docentes.length;
+        this.totalPagesCount = res.totalPages ?? Math.max(1, Math.ceil(this.totalElements / this.pageSize));
+        if (this.currentPage > this.totalPagesCount) {
+          this.currentPage = this.totalPagesCount;
+        }
       },
       error: (err) => console.error('Error al listar docentes', err)
     });
   }
 
-  applyFilter(): void {
-    this.filteredDocentes = [...this.docentes].sort((a, b) => {
-      const d1 = new Date(a.fechaRegistro).getTime() || 0;
-      const d2 = new Date(b.fechaRegistro).getTime() || 0;
-      return this.dateSortOrder === 'asc' ? d1 - d2 : d2 - d1;
-    });
-  }
-
   onSearchChange(): void { this.currentPage = 1; this.loadDocentes(); }
-  onDateSortChange(order: string): void { this.dateSortOrder = order === 'asc' ? 'asc' : 'desc'; this.applyFilter(); }
-  get totalPages(): number { return Math.max(1, Math.ceil(this.totalElements / this.pageSize)); }
+  onDateSortChange(order: string): void { this.dateSortOrder = order === 'asc' ? 'asc' : 'desc'; this.currentPage = 1; this.loadDocentes(); }
+  get totalPages(): number { return this.totalPagesCount; }
   get paginatedDocentes(): DocenteResponse[] { return this.filteredDocentes; }
   goToPage(page: number): void { if (page < 1 || page > this.totalPages) return; this.currentPage = page; this.loadDocentes(); }
   previousPage(): void { this.goToPage(this.currentPage - 1); }
@@ -79,12 +80,12 @@ export class DocentesComponent implements OnInit {
 
   openCreateModal(): void {
     this.isEditMode = false; this.modalErrorMsg = ''; this.selectedDocente = null;
-    this.docenteForm.reset({ nombres: '', apellidos: '', correo: '', telefono: '', password: '', estado: true });
+    this.docenteForm.reset({ nombres: '', apellidos: '', correo: '', telefono: '', password: '' });
     this.showCreateEditModal = true;
   }
   openEditModal(docente: DocenteResponse): void {
     this.isEditMode = true; this.modalErrorMsg = ''; this.selectedDocente = docente;
-    this.docenteForm.patchValue({ nombres: docente.nombres, apellidos: docente.apellidos, correo: docente.correo, telefono: docente.telefono, password: '', estado: docente.estado });
+    this.docenteForm.patchValue({ nombres: docente.nombres, apellidos: docente.apellidos, correo: docente.correo, telefono: docente.telefono, password: '' });
     this.showCreateEditModal = true;
   }
   closeCreateEditModal(): void { this.showCreateEditModal = false; this.isFormSubmitting = false; }
@@ -111,22 +112,6 @@ export class DocentesComponent implements OnInit {
     const call$ = this.isEditMode && this.selectedDocente ? this.docenteService.editarDocente(this.selectedDocente.id, req) : this.docenteService.crearDocente(req);
     call$.subscribe({
       next: () => {
-        const stateChanged = this.isEditMode && this.selectedDocente && this.docenteForm.value.estado !== this.selectedDocente.estado;
-        if (stateChanged && this.selectedDocente) {
-          this.docenteService.cambiarEstado(this.selectedDocente.id, this.docenteForm.value.estado).subscribe({
-            next: () => {
-              this.loadDocentes();
-              this.toastService.success('Docente y estado actualizados exitosamente.');
-              this.closeCreateEditModal();
-            },
-            error: (err) => {
-              this.isFormSubmitting = false;
-              this.modalErrorMsg = err.error?.message || 'Error al actualizar el estado del docente.';
-              this.toastService.error(this.modalErrorMsg, 'Error en el Servidor');
-            }
-          });
-          return;
-        }
         this.loadDocentes();
         this.toastService.success(this.isEditMode ? 'Docente actualizado exitosamente.' : 'Docente registrado exitosamente.');
         this.closeCreateEditModal();

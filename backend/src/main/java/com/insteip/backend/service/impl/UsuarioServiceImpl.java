@@ -34,12 +34,14 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional(readOnly = true)
-    public org.springframework.data.domain.Page<UsuarioResponseDTO> listarAlumnos(org.springframework.data.domain.Pageable pageable, String search) {
+    public org.springframework.data.domain.Page<UsuarioResponseDTO> listarAlumnos(org.springframework.data.domain.Pageable pageable, String search, boolean includeInactive) {
         org.springframework.data.domain.Page<Usuario> usuariosPage;
         if (search != null && !search.trim().isEmpty()) {
-            usuariosPage = usuarioRepository.findAlumnosPagedAndSearched(search, pageable);
+            usuariosPage = usuarioRepository.findAlumnosPagedAndSearched(search.trim(), includeInactive, pageable);
         } else {
-            usuariosPage = usuarioRepository.findByRolNombre("ALUMNO", pageable);
+            usuariosPage = includeInactive
+                    ? usuarioRepository.findByRolNombre("ALUMNO", pageable)
+                    : usuarioRepository.findAlumnosPagedAndSearched("", false, pageable);
         }
         return usuariosPage.map(this::convertToResponseDto);
     }

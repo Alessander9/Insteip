@@ -12,6 +12,8 @@ import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.pdf.*;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -193,12 +195,12 @@ public class CertificadoServiceImpl implements CertificadoService {
         Color grayColor = new Color(75, 85, 99);        // Tailwind Gray 600
         Color lightGrayColor = new Color(156, 163, 175); // Tailwind Gray 400
 
-        Font titleFont = new Font(Font.HELVETICA, 22, Font.BOLD, primaryColor);
-        Font nameFont = new Font(Font.HELVETICA, 24, Font.BOLD, primaryColor);
-        Font bodyFont = new Font(Font.HELVETICA, 11, Font.NORMAL, grayColor);
-        Font italicBodyFont = new Font(Font.HELVETICA, 12, Font.ITALIC, grayColor);
-        Font courseFont = new Font(Font.HELVETICA, 18, Font.BOLD | Font.ITALIC, secondaryColor);
-        Font dateFont = new Font(Font.HELVETICA, 10, Font.ITALIC, grayColor);
+        Font titleFont = new Font(Font.HELVETICA, 26, Font.BOLD, primaryColor);
+        Font nameFont = new Font(Font.HELVETICA, 30, Font.BOLD, primaryColor);
+        Font bodyFont = new Font(Font.HELVETICA, 10, Font.NORMAL, grayColor);
+        Font italicBodyFont = new Font(Font.HELVETICA, 11, Font.ITALIC, grayColor);
+        Font courseFont = new Font(Font.HELVETICA, 20, Font.BOLD | Font.ITALIC, secondaryColor);
+        Font dateFont = new Font(Font.HELVETICA, 9, Font.ITALIC, grayColor);
         Font metaFont = new Font(Font.COURIER, 8, Font.BOLD, lightGrayColor);
 
         Paragraph spacer = new Paragraph("\n");
@@ -215,7 +217,7 @@ public class CertificadoServiceImpl implements CertificadoService {
             if (Files.exists(logoPath)) {
                 Image logoImg = Image.getInstance(logoPath.toString());
                 logoImg.setAlignment(Element.ALIGN_CENTER);
-                logoImg.scaleToFit(140, 42); // Elegant sizing
+                logoImg.scaleToFit(180, 60); // Make the brand mark more prominent
                 document.add(logoImg);
                 hasLogo = true;
             }
@@ -248,6 +250,7 @@ public class CertificadoServiceImpl implements CertificadoService {
         // 2. Certificate Body Content
         Paragraph mainTitle = new Paragraph("CERTIFICADO DE CULMINACIÓN Y EXCELENCIA ACADÉMICA", titleFont);
         mainTitle.setAlignment(Element.ALIGN_CENTER);
+        mainTitle.setSpacingAfter(4f);
         document.add(mainTitle);
         document.add(spacer);
 
@@ -258,6 +261,7 @@ public class CertificadoServiceImpl implements CertificadoService {
 
         Paragraph studentName = new Paragraph(usuario.getNombres().toUpperCase() + " " + usuario.getApellidos().toUpperCase(), nameFont);
         studentName.setAlignment(Element.ALIGN_CENTER);
+        studentName.setSpacingAfter(2f);
         document.add(studentName);
         document.add(spacer);
 
@@ -268,6 +272,7 @@ public class CertificadoServiceImpl implements CertificadoService {
 
         Paragraph courseName = new Paragraph("\"" + curso.getNombre().toUpperCase() + "\"", courseFont);
         courseName.setAlignment(Element.ALIGN_CENTER);
+        courseName.setSpacingAfter(2f);
         document.add(courseName);
         document.add(spacer);
 
@@ -365,28 +370,65 @@ public class CertificadoServiceImpl implements CertificadoService {
     }
 
     @Override
-    public java.util.List<com.insteip.backend.dto.CertificadoResponseDTO> listarCertificados(String search) {
-        return certificadoRepository.searchCertificados(search).stream()
-                .map(cert -> new com.insteip.backend.dto.CertificadoResponseDTO(
-                        cert.getId(),
-                        cert.getUsuario().getId(),
-                        cert.getCurso().getId(),
-                        cert.getUsuario().getNombres() + " " + cert.getUsuario().getApellidos(),
-                        cert.getUsuario().getCorreo(),
-                        cert.getCurso().getNombre(),
-                        cert.getCodigo(),
-                        cert.getArchivoPdf() == null || cert.getArchivoPdf().isBlank() ? resolvePdfUrl(cert) : cert.getArchivoPdf(),
-                        cert.getUrlValidacion() == null || cert.getUrlValidacion().isBlank()
-                                ? frontendBaseUrl + "/certificados/validar/" + cert.getCodigo()
-                                : cert.getUrlValidacion(),
-                        cert.getNumeroRegistro(),
-                        cert.getFechaEmision()
-                ))
-                .collect(java.util.stream.Collectors.toList());
+    public Page<com.insteip.backend.dto.CertificadoResponseDTO> listarCertificados(Pageable pageable, String search) {
+        return certificadoRepository.searchCertificadosPaged(search, pageable).map(cert -> new com.insteip.backend.dto.CertificadoResponseDTO(
+                cert.getId(),
+                cert.getUsuario().getId(),
+                cert.getCurso().getId(),
+                cert.getUsuario().getNombres() + " " + cert.getUsuario().getApellidos(),
+                cert.getUsuario().getCorreo(),
+                cert.getCurso().getNombre(),
+                cert.getCodigo(),
+                cert.getArchivoPdf() == null || cert.getArchivoPdf().isBlank() ? resolvePdfUrl(cert) : cert.getArchivoPdf(),
+                cert.getUrlValidacion() == null || cert.getUrlValidacion().isBlank()
+                        ? frontendBaseUrl + "/certificados/validar/" + cert.getCodigo()
+                        : cert.getUrlValidacion(),
+                cert.getNumeroRegistro(),
+                cert.getFechaEmision()
+        ));
     }
 }
 
 class CertificatePageBorder extends com.lowagie.text.pdf.PdfPageEventHelper {
+    private final com.lowagie.text.pdf.BaseFont watermarkFont;
+
+    public CertificatePageBorder() {
+        com.lowagie.text.pdf.BaseFont font = null;
+        try {
+            font = com.lowagie.text.pdf.BaseFont.createFont(
+                    com.lowagie.text.pdf.BaseFont.HELVETICA_BOLD,
+                    com.lowagie.text.pdf.BaseFont.WINANSI,
+                    com.lowagie.text.pdf.BaseFont.NOT_EMBEDDED);
+        } catch (Exception e) {
+            System.err.println("Could not load watermark font: " + e.getMessage());
+        }
+        this.watermarkFont = font;
+    }
+
+    @Override
+    public void onStartPage(com.lowagie.text.pdf.PdfWriter writer, com.lowagie.text.Document document) {
+        if (watermarkFont == null) {
+            return;
+        }
+
+        com.lowagie.text.pdf.PdfContentByte canvas = writer.getDirectContentUnder();
+        com.lowagie.text.pdf.PdfGState gState = new com.lowagie.text.pdf.PdfGState();
+        gState.setFillOpacity(0.12f);
+        gState.setStrokeOpacity(0.12f);
+        canvas.saveState();
+        canvas.setGState(gState);
+        canvas.beginText();
+        canvas.setFontAndSize(watermarkFont, 78);
+        canvas.setColorFill(new java.awt.Color(214, 221, 231));
+        float centerX = document.getPageSize().getWidth() / 2f;
+        float centerY = document.getPageSize().getHeight() / 2f;
+        canvas.showTextAligned(com.lowagie.text.Element.ALIGN_CENTER, "INSTEIP", centerX, centerY + 22, 45);
+        canvas.setFontAndSize(watermarkFont, 18);
+        canvas.showTextAligned(com.lowagie.text.Element.ALIGN_CENTER, "INSTITUTO DE TECNOLOGÍA E INNOVACIÓN PROFESIONAL", centerX, centerY - 22, 45);
+        canvas.endText();
+        canvas.restoreState();
+    }
+
     @Override
     public void onEndPage(com.lowagie.text.pdf.PdfWriter writer, com.lowagie.text.Document document) {
         com.lowagie.text.pdf.PdfContentByte cb = writer.getDirectContent();

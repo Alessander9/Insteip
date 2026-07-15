@@ -9,6 +9,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -36,8 +40,20 @@ public class CertificadoController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ALUMNO')")
-    public ResponseEntity<java.util.List<com.insteip.backend.dto.CertificadoResponseDTO>> listarCertificados(@RequestParam(required = false) String search) {
-        return ResponseEntity.ok(certificadoService.listarCertificados(search));
+    public ResponseEntity<Page<com.insteip.backend.dto.CertificadoResponseDTO>> listarCertificados(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "fechaEmision,desc") String sort) {
+        return ResponseEntity.ok(certificadoService.listarCertificados(buildPageable(page, size, sort), search));
+    }
+
+    private Pageable buildPageable(int page, int size, String sortParam) {
+        String[] parts = sortParam.split(",");
+        String property = parts.length > 0 && !parts[0].isBlank() ? parts[0] : "fechaEmision";
+        String direction = parts.length > 1 ? parts[1] : "desc";
+        Sort.Direction sortDirection = "asc".equalsIgnoreCase(direction) ? Sort.Direction.ASC : Sort.Direction.DESC;
+        return PageRequest.of(Math.max(page, 0), Math.max(size, 1), Sort.by(sortDirection, property));
     }
 
     private Long getUsuarioId(Authentication authentication) {

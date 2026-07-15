@@ -61,17 +61,20 @@ export class CursosComponent implements OnInit {
   dateSortOrder: 'desc' | 'asc' = 'desc';
   currentPage = 1;
   readonly pageSize = 10;
+  totalElements = 0;
+  totalPagesCount = 1;
+  summaryCursos: CursoResponse[] = [];
 
   get totalCursos(): number {
-    return this.cursos.length;
+    return this.totalElements;
   }
 
   get activeCursos(): number {
-    return this.cursos.filter(c => c.estado).length;
+    return this.summaryCursos.filter(c => c.estado).length;
   }
 
   get premiumCursos(): number {
-    return this.cursos.filter(c => c.nivelesSuscripcion?.includes('PREMIUM')).length;
+    return this.summaryCursos.filter(c => c.nivelesSuscripcion?.includes('PREMIUM')).length;
   }
 
   // Modal controls
@@ -107,15 +110,37 @@ export class CursosComponent implements OnInit {
   ngOnInit(): void {
     this.loadCursos();
     this.loadDocentes();
+    this.loadCourseSummary();
   }
 
   loadDocentes(): void {
-    this.usuarioService.listarDocentes().subscribe({
+    this.usuarioService.listarDocentes(0, 1).subscribe({
       next: (data) => {
-        this.docentes = data || [];
-        this.docentesFiltrados = this.docentes;
+        const total = data.totalElements ?? data.content?.length ?? 0;
+        this.usuarioService.listarDocentes(0, Math.max(total, 1)).subscribe({
+          next: (fullData) => {
+            this.docentes = fullData.content || [];
+            this.docentesFiltrados = this.docentes;
+          },
+          error: (err) => console.error('Error loading docentes', err)
+        });
       },
       error: (err) => console.error('Error loading docentes', err)
+    });
+  }
+
+  loadCourseSummary(): void {
+    this.cursoService.listarCursos(0, 1, '', 'fechaCreacion,desc').subscribe({
+      next: (data) => {
+        const total = data.totalElements ?? data.content?.length ?? 0;
+        this.cursoService.listarCursos(0, Math.max(total, 1), '', 'fechaCreacion,desc').subscribe({
+          next: (fullData) => {
+            this.summaryCursos = fullData.content ?? [];
+          },
+          error: (err) => console.error('Error al cargar resumen de cursos', err)
+        });
+      },
+      error: (err) => console.error('Error al cargar resumen de cursos', err)
     });
   }
 
@@ -141,10 +166,20 @@ export class CursosComponent implements OnInit {
   }
 
   loadCursos(): void {
-    this.cursoService.listarCursos().subscribe({
+    this.cursoService.listarCursos(
+      this.currentPage - 1,
+      this.pageSize,
+      this.searchQuery,
+      `fechaCreacion,${this.dateSortOrder}`
+    ).subscribe({
       next: (data) => {
-        this.cursos = data;
-        this.applyFilter();
+        this.cursos = data.content ?? [];
+        this.filteredCursos = this.cursos;
+        this.totalElements = data.totalElements ?? this.cursos.length;
+        this.totalPagesCount = data.totalPages ?? Math.max(1, Math.ceil(this.totalElements / this.pageSize));
+        if (this.currentPage > this.totalPagesCount) {
+          this.currentPage = this.totalPagesCount;
+        }
       },
       error: (err) => {
         console.error('Error al listar cursos', err);
@@ -153,37 +188,28 @@ export class CursosComponent implements OnInit {
   }
 
   applyFilter(): void {
-    const query = this.searchQuery.trim().toLowerCase();
-    this.filteredCursos = this.cursos.filter(c =>
-      !query ||
-      c.nombre.toLowerCase().includes(query) ||
-      c.descripcion.toLowerCase().includes(query) ||
-      c.fechaCreacion.toLowerCase().includes(query)
-    ).sort((a, b) => {
-      const d1 = new Date(a.fechaCreacion).getTime() || 0;
-      const d2 = new Date(b.fechaCreacion).getTime() || 0;
-      return this.dateSortOrder === 'asc' ? d1 - d2 : d2 - d1;
-    });
     this.currentPage = 1;
+    this.loadCursos();
   }
 
   onDateSortChange(order: string): void {
     this.dateSortOrder = order === 'asc' ? 'asc' : 'desc';
-    this.applyFilter();
+    this.currentPage = 1;
+    this.loadCursos();
   }
 
   get totalPages(): number {
-    return Math.max(1, Math.ceil(this.filteredCursos.length / this.pageSize));
+    return this.totalPagesCount;
   }
 
   get paginatedCursos(): CursoResponse[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredCursos.slice(start, start + this.pageSize);
+    return this.filteredCursos;
   }
 
   goToPage(page: number): void {
     if (page < 1 || page > this.totalPages) return;
     this.currentPage = page;
+    this.loadCursos();
   }
 
   nextPage(): void {
@@ -268,6 +294,7 @@ export class CursosComponent implements OnInit {
       this.cursoService.cambiarEstado(curso.id, nuevoEstado).subscribe({
         next: () => {
           curso.estado = nuevoEstado;
+          this.loadCourseSummary();
           this.toastService.success(`Curso ${nuevoEstado ? 'activado' : 'desactivado'} exitosamente.`);
           this.showConfirmModal = false;
         },
@@ -328,6 +355,7 @@ export class CursosComponent implements OnInit {
             this.cursoService.cambiarEstado(this.selectedCurso!.id, this.cursoForm.value.estado).subscribe({
               next: () => {
                 this.loadCursos();
+                this.loadCourseSummary();
                 this.toastService.success('Curso y estado actualizados exitosamente.');
                 this.closeCreateEditModal();
               },
@@ -335,6 +363,7 @@ export class CursosComponent implements OnInit {
             });
           } else {
             this.loadCursos();
+            this.loadCourseSummary();
             this.toastService.success('Curso actualizado exitosamente.');
             this.closeCreateEditModal();
           }
@@ -345,6 +374,7 @@ export class CursosComponent implements OnInit {
       this.cursoService.crearCurso(req).subscribe({
         next: () => {
           this.loadCursos();
+          this.loadCourseSummary();
           this.toastService.success('Curso creado exitosamente.');
           this.closeCreateEditModal();
         },

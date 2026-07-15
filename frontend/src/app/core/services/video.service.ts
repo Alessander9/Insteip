@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { VideoRequest, VideoResponse } from '../models/video.model';
+import { PageResponse } from '../models/alumno.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +12,21 @@ export class VideoService {
   private http = inject(HttpClient);
   private baseApiUrl = environment.apiUrl + '';
 
-  listarVideosPorModulo(moduloId: number): Observable<VideoResponse[]> {
-    return this.http.get<VideoResponse[]>(`${this.baseApiUrl}/modulos/${moduloId}/videos`);
+  listarVideosPorModulo(
+    moduloId: number,
+    page = 0,
+    size = 10,
+    search = '',
+    sort = 'fechaCreacion,desc'
+  ): Observable<PageResponse<VideoResponse>> {
+    return this.http.get<PageResponse<VideoResponse>>(`${this.baseApiUrl}/modulos/${moduloId}/videos`, {
+      params: {
+        page: String(page),
+        size: String(size),
+        ...(search.trim() ? { search: search.trim() } : {}),
+        sort
+      }
+    });
   }
 
   crearVideo(video: VideoRequest): Observable<VideoResponse> {

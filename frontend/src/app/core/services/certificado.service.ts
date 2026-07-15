@@ -2,6 +2,8 @@ import { environment } from '../../../environments/environment';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { PageResponse } from '../models/alumno.model';
 
 export interface CertificadoResponse {
   id: number;
@@ -32,11 +34,23 @@ export class CertificadoService {
     return this.http.get<CertificadoResponse>(`${this.apiUrl}/validar/${codigo}`);
   }
 
-  listarCertificados(search?: string): Observable<CertificadoResponse[]> {
-    let url = this.apiUrl;
-    if (search) {
-      url += `?search=${encodeURIComponent(search)}`;
-    }
-    return this.http.get<CertificadoResponse[]>(url);
+  listarCertificados(
+    page = 0,
+    size = 5,
+    search = '',
+    sort = 'fechaEmision,desc'
+  ): Observable<PageResponse<CertificadoResponse>> {
+    return this.http.get<PageResponse<CertificadoResponse> | CertificadoResponse[]>(this.apiUrl, {
+      params: {
+        page: String(page),
+        size: String(size),
+        ...(search.trim() ? { search: search.trim() } : {}),
+        sort
+      }
+    }).pipe(
+      map((res: any) => Array.isArray(res)
+        ? { content: res, totalElements: res.length, totalPages: 1, number: page, size }
+        : res)
+    );
   }
 }

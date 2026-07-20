@@ -2,15 +2,18 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmModalComponent } from '../../../core/components/confirm-modal/confirm-modal.component';
-import { ToastService } from '../../../core/services/toast.service';
-import { getSubscriptionClass } from '../../../core/utils/subscription.utils';
-import { DocenteRequest, DocenteResponse } from '../../../core/models/docente.model';
-import { DocenteService } from '../../../core/services/docente.service';
+import { SkeletonLoaderComponent } from '../../../core/components/skeleton-loader/skeleton-loader.component';
+import { ToastService } from '../../../core/services/';
+import { getSubscriptionClass } from '../../../core/utils/';
+import { DocenteRequest, DocenteResponse } from '../../../core/models/';
+import { DocenteService } from '../../../core/services/';
 
 @Component({
   selector: 'app-docentes',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, ConfirmModalComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule,    ConfirmModalComponent,
+    SkeletonLoaderComponent
+  ],
   templateUrl: './docentes.component.html',
   styleUrls: ['./docentes.component.css']
 })
@@ -89,6 +92,17 @@ export class DocentesComponent implements OnInit {
     this.showCreateEditModal = true;
   }
   closeCreateEditModal(): void { this.showCreateEditModal = false; this.isFormSubmitting = false; }
+  eliminarDocente(docente: DocenteResponse): void {
+    this.confirmModalType = 'danger';
+    this.confirmModalTitle = '¿Eliminar Docente?';
+    this.confirmModalMessage = `¿Estas seguro de que deseas ELIMINAR permanentemente al docente ${docente.nombres} ${docente.apellidos}? Esta accion no se puede deshacer.`;
+    this.pendingAction = () => this.docenteService.eliminarDocente(docente.id).subscribe({
+      next: () => { this.toastService.success('Docente eliminado permanentemente.'); this.loadDocentes(); this.showConfirmModal = false; },
+      error: (err) => { this.toastService.error(err.error?.message || 'Error al eliminar el docente.'); this.showConfirmModal = false; }
+    });
+    this.showConfirmModal = true;
+  }
+
   toggleEstado(docente: DocenteResponse): void {
     const nuevoEstado = !docente.estado;
     this.confirmModalType = nuevoEstado ? 'success' : 'danger';

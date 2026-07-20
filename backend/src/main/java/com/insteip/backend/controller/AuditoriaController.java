@@ -1,7 +1,7 @@
 package com.insteip.backend.controller;
 
-import com.insteip.backend.dto.EventoSistemaResponseDTO;
-import com.insteip.backend.dto.LoginAuditoriaResponseDTO;
+import com.insteip.backend.domain.dto.evento.EventoSistemaResponseDTO;
+import com.insteip.backend.domain.dto.evento.LoginAuditoriaResponseDTO;
 import com.insteip.backend.service.interfaces.AuditoriaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

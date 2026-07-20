@@ -1,0 +1,293 @@
+<app-navbar></app-navbar>
+
+<main class="pt-20 bg-surface dark:bg-slate-950 transition-colors duration-300">
+  <!-- Hero Section (Marquee Hero + HP1 Vertical Rail + E8 Photography) -->
+  <div class="relative bg-gradient-to-br from-primary via-[#00284f] to-[#001c37] dark:via-[#031425] dark:to-[#020617] text-white overflow-hidden border-b border-primary-variant/30 dark:border-slate-800">
+    <!-- Subtle linear background mesh pattern -->
+    <div class="absolute inset-0 bg-[radial-gradient(#ffffff05_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+
+    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-16 md:py-24 relative z-10">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        
+        <!-- Left Column: Copy + Rail -->
+        <div class="lg:col-span-7 flex gap-8 items-center">
+          <!-- Vertical Rail (HP1) -->
+          <p class="hidden md:block [writing-mode:vertical-rl] [text-orientation:mixed] font-bold text-[10px] tracking-[0.25em] text-white/40 uppercase whitespace-nowrap select-none h-fit border-r border-white/10 pr-6 mr-2">
+            ESTUDIO · PRÁCTICA · TUTORÍA · INSTEIP
+          </p>
+
+          <div class="space-y-6 max-w-2xl">
+            <nav class="flex items-center gap-2 text-xs text-white/50 font-medium">
+              <a routerLink="/inicio" class="hover:text-white transition-colors">Inicio</a>
+              <span class="material-symbols-outlined text-[10px]">chevron_right</span>
+              <span class="text-white/80">Cómo aprenderás</span>
+            </nav>
+
+            <div class="space-y-4">
+              <div class="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-secondary-fixed">
+                <span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed"></span>
+                Metodología INSTEIP
+              </div>
+              <h1 class="font-headline-xl text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.05] text-white">
+                Modelo Académico Centrado en Ti
+              </h1>
+              <p class="font-body-lg text-lg text-white/80 leading-relaxed">
+                Descubre un método de aprendizaje dinámico, práctico y flexible, diseñado para convertirte en un terapeuta profesional capacitado.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Cropped Image (E8) -->
+        <div class="lg:col-span-5 space-y-3">
+          <div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-lg aspect-[4/3] bg-slate-900">
+            <img src="assets/hero_learning.png" 
+                 alt="Persona estudiando manuales terapéuticos" 
+                 fetchpriority="high"
+                 class="w-full h-full object-cover filter brightness-95 contrast-95 desaturate-[8%]" />
+          </div>
+          <div class="text-[9px] font-bold tracking-widest text-white/40 uppercase text-right">
+            LÁMINA 01 / ECOESFERA ACADÉMICA
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Pillars & Campus: Bento Grid Layout (Macrostructure 01) -->
+  <section class="py-20 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+    <div class="max-w-3xl mb-16 space-y-4">
+      <div class="text-xs font-bold uppercase tracking-widest text-secondary">Ecosistema Académico</div>
+      <h2 class="font-headline-lg text-primary dark:text-white text-3xl md:text-4xl font-extrabold tracking-tight">Tu Aula Virtual & Pilares de Aprendizaje</h2>
+      <p class="text-on-surface-variant dark:text-slate-400 text-base max-w-2xl">Diseñamos una experiencia formativa integral. Mira cómo se combinan la teoría, la práctica guiada y el campus virtual.</p>
+    </div>
+
+    <!-- Bento Grid Container -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Block 1 (Large: 2/3 width on desktop) - Tu Aula Virtual Mockup -->
+      <div class="lg:col-span-2 bg-gradient-to-br from-primary to-[#1a4b84] text-white p-8 md:p-10 rounded-3xl shadow-xl flex flex-col justify-between min-h-[380px] relative overflow-hidden border border-primary-variant/30">
+        <!-- Subtle linear background mesh pattern, no blobs -->
+        <div class="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
+        
+        <div class="relative z-10 flex flex-col sm:flex-row sm:items-start justify-between gap-6">
+          <div class="space-y-4 max-w-md">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 rounded-full text-xs font-bold uppercase tracking-wider text-primary-fixed">Campus INSTEIP</span>
+            <h3 class="text-2xl md:text-3xl font-extrabold tracking-tight">Tu Aula Virtual Disponible 24/7</h3>
+            <p class="text-sm text-white/80 leading-relaxed">Accede desde celular, tablet o computadora. Avanza a tu propio ritmo con almacenamiento de progreso automático y evaluaciones integradas.</p>
+          </div>
+          
+          <!-- Mockup Active Course Card (Clean UI) -->
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl w-full sm:w-72 flex flex-col justify-between shrink-0">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                <span class="material-symbols-outlined text-white">school</span>
+              </div>
+              <div>
+                <div class="text-[10px] font-black uppercase text-white/70">Curso Activo</div>
+                <div class="text-xs font-extrabold truncate max-w-[150px]">Medicina Tradicional</div>
+              </div>
+            </div>
+            
+            <div class="space-y-3 mb-6">
+              <div class="flex justify-between text-xs font-bold">
+                <span>Progreso</span>
+                <span>85%</span>
+              </div>
+              <div class="w-full bg-white/20 h-1.5 rounded-full overflow-hidden">
+                <div class="bg-secondary-fixed h-full" style="width: 85%"></div>
+              </div>
+            </div>
+            
+            <div class="flex justify-between items-center text-[10px] text-white/80 border-t border-white/10 pt-3">
+              <span>Último acceso: hace 5m</span>
+              <span class="flex items-center gap-0.5 font-extrabold text-secondary-fixed hover:underline cursor-pointer">
+                Continuar
+                <span class="material-symbols-outlined text-xs">arrow_forward</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative z-10 grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-white/15 pt-6 mt-8">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-secondary-fixed">check_circle</span>
+            <span class="text-xs font-bold text-white/90">Progreso automático</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-secondary-fixed">check_circle</span>
+            <span class="text-xs font-bold text-white/90">Test de autoevaluación</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-secondary-fixed">check_circle</span>
+            <span class="text-xs font-bold text-white/90">Acceso de por vida</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Block 2 (Medium: 1/3 width on desktop) - Soporte Docente Activo -->
+      <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-surface-variant/40 dark:border-slate-800 flex flex-col justify-between hover:border-primary/30 dark:hover:border-slate-700 transition-all duration-300">
+        <div class="space-y-6">
+          <div class="w-12 h-12 bg-primary/5 dark:bg-slate-800 rounded-xl flex items-center justify-center text-primary dark:text-primary-fixed">
+            <span class="material-symbols-outlined text-2xl">support_agent</span>
+          </div>
+          <div class="space-y-2">
+            <h3 class="font-bold text-primary dark:text-white text-xl">Soporte Docente Activo</h3>
+            <p class="text-sm text-on-surface-variant dark:text-slate-400 leading-relaxed">Resuelve dudas directamente con profesores terapeutas a través de foros interactivos y chat en el campus.</p>
+          </div>
+        </div>
+        <div class="border-t border-surface-variant/20 dark:border-slate-800 pt-4 mt-6">
+          <span class="text-xs font-bold text-primary dark:text-primary-fixed flex items-center gap-1">
+            Tutoría individualizada <span class="material-symbols-outlined text-xs">chevron_right</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Block 3 (Medium: 1/3 width on desktop) - Clases en Video HD -->
+      <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-surface-variant/40 dark:border-slate-800 flex flex-col justify-between hover:border-primary/30 dark:hover:border-slate-700 transition-all duration-300">
+        <div class="space-y-6">
+          <div class="w-12 h-12 bg-primary/5 dark:bg-slate-800 rounded-xl flex items-center justify-center text-primary dark:text-primary-fixed">
+            <span class="material-symbols-outlined text-2xl">video_library</span>
+          </div>
+          <div class="space-y-2">
+            <h3 class="font-bold text-primary dark:text-white text-xl">Clases en Video HD</h3>
+            <p class="text-sm text-on-surface-variant dark:text-slate-400 leading-relaxed">Explicaciones detalladas de técnicas terapéuticas reales grabadas en alta definición para observar cada detalle anatómico.</p>
+          </div>
+        </div>
+        <div class="border-t border-surface-variant/20 dark:border-slate-800 pt-4 mt-6">
+          <span class="text-xs font-bold text-primary dark:text-primary-fixed flex items-center gap-1">
+            Demostraciones reales <span class="material-symbols-outlined text-xs">chevron_right</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Block 4 (Large: 2/3 width on desktop) - Manuales y Guías PDF -->
+      <div class="lg:col-span-2 bg-white dark:bg-slate-900 p-8 md:p-10 rounded-3xl border border-surface-variant/40 dark:border-slate-800 flex flex-col justify-between hover:border-primary/30 dark:hover:border-slate-700 transition-all duration-300">
+        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
+          <div class="space-y-4 max-w-md">
+            <div class="w-12 h-12 bg-secondary/5 rounded-xl flex items-center justify-center text-secondary">
+              <span class="material-symbols-outlined text-2xl">menu_book</span>
+            </div>
+            <h3 class="font-bold text-secondary text-xl">Material de Estudio Premium</h3>
+            <p class="text-sm text-on-surface-variant dark:text-slate-400 leading-relaxed">Manuales teóricos completos, guías de puntos anatómicos y mapas gráficos en formato PDF interactivo listos para descargar e imprimir.</p>
+          </div>
+          
+          <!-- Miniature Download List Graphic -->
+          <div class="bg-surface-container-lowest dark:bg-slate-950 border border-surface-variant/40 dark:border-slate-800 rounded-2xl p-4 w-full sm:w-64 space-y-3 shrink-0">
+            <div class="flex items-center justify-between text-xs border-b border-surface-variant/20 dark:border-slate-800 pb-2">
+              <span class="font-bold text-on-surface dark:text-slate-200">Guías Descargables</span>
+              <span class="text-secondary font-bold">PDF</span>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low dark:bg-slate-900">
+                <span class="text-[11px] font-semibold truncate max-w-[150px] text-on-surface dark:text-slate-300">Manual de Anatomía.pdf</span>
+                <span class="material-symbols-outlined text-xs text-secondary">download</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low dark:bg-slate-900">
+                <span class="text-[11px] font-semibold truncate max-w-[150px] text-on-surface dark:text-slate-300">Guía de Auriculoterapia.pdf</span>
+                <span class="material-symbols-outlined text-xs text-secondary">download</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Narrative Workflow Step Timeline -->
+  <section class="py-20 border-t border-surface-variant/40 dark:border-slate-800">
+    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+      <div class="max-w-3xl mb-16 space-y-4">
+        <div class="text-xs font-bold uppercase tracking-widest text-secondary">Proceso de Acreditación</div>
+        <h2 class="font-headline-lg text-primary dark:text-white text-3xl md:text-4xl font-extrabold tracking-tight">Tu Ruta Hacia la Certificación Oficial</h2>
+        <p class="text-on-surface-variant dark:text-slate-400 text-base max-w-xl">El recorrido académico está estructurado para guiarte de forma segura y clara en cada etapa del aprendizaje.</p>
+      </div>
+
+      <!-- Timeline Flow -->
+      <div class="relative max-w-4xl border-l border-surface-variant/60 dark:border-slate-800 ml-4 md:ml-6 pl-8 md:pl-12 space-y-12 py-4">
+        
+        <!-- Step 1 -->
+        <div class="relative group">
+          <!-- Bullet node -->
+          <div class="absolute -left-[41px] md:-left-[57px] top-1 w-6 h-6 rounded-full bg-[#f8faf8] dark:bg-slate-950 border-2 border-primary flex items-center justify-center z-10 transition-colors group-hover:bg-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary group-hover:bg-[#f8faf8]"></span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="text-xl font-bold tracking-tight text-primary dark:text-primary-fixed-dim">01 / ADMISIÓN</div>
+            <div class="md:col-span-3 space-y-2">
+              <h4 class="font-bold text-lg text-on-surface dark:text-white">Inscripción e Inicio</h4>
+              <p class="text-sm text-on-surface-variant dark:text-slate-400 leading-relaxed">Elige tu formación y accede inmediatamente al aula virtual. Todo el contenido está habilitado desde el primer momento para que organices tu plan de estudio.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="relative group">
+          <div class="absolute -left-[41px] md:-left-[57px] top-1 w-6 h-6 rounded-full bg-[#f8faf8] dark:bg-slate-950 border-2 border-primary flex items-center justify-center z-10 transition-colors group-hover:bg-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary group-hover:bg-[#f8faf8]"></span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="text-xl font-bold tracking-tight text-primary dark:text-primary-fixed-dim">02 / ESTUDIO</div>
+            <div class="md:col-span-3 space-y-2">
+              <h4 class="font-bold text-lg text-on-surface dark:text-white">Estudio Flexible</h4>
+              <p class="text-sm text-on-surface-variant dark:text-slate-400 leading-relaxed">Visualiza las clases teóricas y demostrativas en video HD, lee los manuales oficiales de cada módulo y rinde los cuestionarios en el horario de tu preferencia.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="relative group">
+          <div class="absolute -left-[41px] md:-left-[57px] top-1 w-6 h-6 rounded-full bg-[#f8faf8] dark:bg-slate-950 border-2 border-primary flex items-center justify-center z-10 transition-colors group-hover:bg-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary group-hover:bg-[#f8faf8]"></span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="text-xl font-bold tracking-tight text-primary dark:text-primary-fixed-dim">03 / PRÁCTICA</div>
+            <div class="md:col-span-3 space-y-2">
+              <h4 class="font-bold text-lg text-on-surface dark:text-white">Simulación y Tutoría</h4>
+              <p class="text-sm text-on-surface-variant dark:text-slate-400 leading-relaxed">Realiza simulaciones clínicas en base a casos de estudio reales, redacta tus informes de práctica guiada y obtén retroalimentación directa de tus profesores.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="relative group">
+          <div class="absolute -left-[41px] md:-left-[57px] top-1 w-6 h-6 rounded-full bg-[#f8faf8] dark:bg-slate-950 border-2 border-secondary flex items-center justify-center z-10 transition-colors group-hover:bg-secondary">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary group-hover:bg-[#f8faf8]"></span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="text-xl font-bold tracking-tight text-secondary">04 / LOGRO</div>
+            <div class="md:col-span-3 space-y-2">
+              <h4 class="font-bold text-lg text-secondary">Certificación Acreditada</h4>
+              <p class="text-sm text-on-surface-variant dark:text-slate-400 leading-relaxed">Completa tu evaluación final integradora y descarga tu diploma digital certificado con código QR único para validación institucional.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="pb-20 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+    <div class="bg-gradient-to-br from-primary to-[#002244] text-white p-10 md:p-16 rounded-3xl text-center space-y-6 shadow-2xl relative overflow-hidden border border-white/10">
+      <div class="absolute inset-0 bg-[radial-gradient(#ffffff05_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none"></div>
+      
+      <div class="max-w-2xl mx-auto space-y-4 relative z-10">
+        <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">¿Listo para comenzar tu formación?</h2>
+        <p class="text-white/85 text-base">Únete a una comunidad de terapeutas dedicados a la salud complementaria y certifícate con nuestros programas oficiales.</p>
+        <div class="pt-4 flex flex-col sm:flex-row gap-4 justify-center">
+          <a routerLink="/cursos" class="inline-flex items-center justify-center px-8 py-3.5 bg-secondary text-white font-extrabold rounded-xl hover:bg-secondary/90 transition-colors duration-200 shadow-lg hover:shadow-xl">
+            Ver Cursos Disponibles
+          </a>
+          <a routerLink="/por-que-elegirnos" class="inline-flex items-center justify-center px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl border border-white/20 transition-colors duration-200">
+            Conoce Más Sobre INSTEIP
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<app-footer></app-footer>

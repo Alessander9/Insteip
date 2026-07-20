@@ -2,16 +2,17 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { AlumnoDashboardService, AlumnoCertificado } from '../../../core/services/alumno-dashboard.service';
-import { CertificadoResponse, CertificadoService } from '../../../core/services/certificado.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { ReportesService } from '../../../core/services/reportes.service';
-import { ArchivoProtegidoService } from '../../../core/services/archivo-protegido.service';
+import { SkeletonLoaderComponent } from '../../../core/components/skeleton-loader/skeleton-loader.component';
+import { AlumnoDashboardService, AlumnoCertificado } from '../../../core/services/';
+import { CertificadoResponse, CertificadoService } from '../../../core/services/';
+import { AuthService } from '../../../core/services/';
+import { ReportesService } from '../../../core/services/';
+import { ArchivoProtegidoService } from '../../../core/services/';
 
 @Component({
   selector: 'app-certificados',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, SkeletonLoaderComponent],
   templateUrl: './certificados.component.html',
   styleUrls: ['./certificados.component.css']
 })

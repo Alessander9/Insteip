@@ -1,6 +1,6 @@
 package com.insteip.backend.repository;
 
-import com.insteip.backend.entity.Material;
+import com.insteip.backend.domain.entity.Material;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

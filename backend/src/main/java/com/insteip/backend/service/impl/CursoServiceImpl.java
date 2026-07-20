@@ -2,14 +2,14 @@ package com.insteip.backend.service.impl;
 
 
 import lombok.RequiredArgsConstructor;
-import com.insteip.backend.dto.CursoRequestDTO;
-import com.insteip.backend.dto.CursoResponseDTO;
-import com.insteip.backend.entity.Curso;
-import com.insteip.backend.entity.NivelSuscripcion;
-import com.insteip.backend.exception.ResourceNotFoundException;
+import com.insteip.backend.domain.dto.curso.CursoRequestDTO;
+import com.insteip.backend.domain.dto.curso.CursoResponseDTO;
+import com.insteip.backend.domain.entity.Curso;
+import com.insteip.backend.domain.entity.NivelSuscripcion;
+import com.insteip.backend.domain.exception.ResourceNotFoundException;
 import com.insteip.backend.repository.CursoRepository;
 import com.insteip.backend.repository.NivelSuscripcionRepository;
-import com.insteip.backend.entity.Usuario;
+import com.insteip.backend.domain.entity.Usuario;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.service.interfaces.CursoService;
 import org.springframework.stereotype.Service;
@@ -27,6 +27,8 @@ public class CursoServiceImpl implements CursoService {
     private final UsuarioRepository usuarioRepository;
 
     private final com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
+
+    private final com.insteip.backend.repository.CertificadoRepository certificadoRepository;
 
     @Override
     public org.springframework.data.domain.Page<CursoResponseDTO> listarCursos(org.springframework.data.domain.Pageable pageable, String search) {
@@ -114,6 +116,20 @@ public class CursoServiceImpl implements CursoService {
         Curso saved = cursoRepository.save(curso);
         auditoriaService.registrarEvento("CURSO", estado ? "ACTIVAR" : "DESACTIVAR", 
                 (estado ? "Activado" : "Desactivado") + " curso: " + saved.getNombre() + " (ID: " + saved.getId() + ")");
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public void eliminar(Long id) {
+        Curso curso = cursoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado con id: " + id));
+        String nombreCurso = curso.getNombre();
+        
+        // Eliminar certificados asociados primero (tienen ON DELETE RESTRICT en BD)
+        certificadoRepository.eliminarPorCursoId(id);
+        
+        cursoRepository.deleteById(id);
+        auditoriaService.registrarEvento("CURSO", "ELIMINAR", "Eliminado curso: " + nombreCurso + " (ID: " + id + ")");
     }
 
     private CursoResponseDTO convertToResponseDto(Curso c) {

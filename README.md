@@ -15,7 +15,6 @@
 ## Resumen
 
 INSTEIP es una plataforma académica para administrar cursos, módulos, videos, materiales, matrículas, avance del alumno, certificados, auditoría y configuración institucional.
-La documentación del proyecto y los flujos de QA ya están alineados con el estado actual del sistema, incluyendo paneles por rol, filtros unificados y validación pública de certificados.
 
 El sistema está organizado en tres capas:
 
@@ -52,9 +51,22 @@ flowchart LR
 - Reportes CSV.
 - Estado del sistema y backups.
 
-## Captura de portada
+## Estructura del repositorio
 
-La portada personalizada del proyecto está en `docs/assets/insteip-landing-cover.svg`.
+```text
+📁 raíz
+├── backend/           ← API Spring Boot 3.4
+├── frontend/          ← App Angular 18
+├── database/          ← Scripts SQL
+├── docs/              ← Documentación, QA y assets
+├── scripts/           ← Tests E2E y utilidades
+│   └── downloads/     ← CSVs y PDFs generados por tests
+├── run-logs/          ← Logs de ejecución (backend/frontend)
+├── .gitignore
+├── docker-compose.yml ← PostgreSQL 15
+├── package.json       ← Dependencias para scripts (Selenium, Playwright)
+└── README.md
+```
 
 ## Stack Tecnológico
 
@@ -65,6 +77,7 @@ La portada personalizada del proyecto está en `docs/assets/insteip-landing-cove
 - RxJS
 - Guards e interceptores HTTP
 - Componentes standalone
+- **Path aliases**: `@core/*`, `@features/*`, `@env/*`
 
 ### Backend
 
@@ -77,54 +90,47 @@ La portada personalizada del proyecto está en `docs/assets/insteip-landing-cove
 
 ### Calidad
 
-- JUnit
-- Mockito
+- JUnit + Mockito (53 tests)
 - Playwright
+- Selenium (14 pasos E2E)
 - Scripts Node.js para integración
-
-## Estructura del repositorio
-
-```text
-.
-├── backend/
-├── database/
-├── frontend/
-├── docs/
-├── scripts/
-├── contexto.md
-└── README.md
-```
 
 ## Rutas
 
 ### Públicas
 
-- `/inicio`
-- `/programas`
-- `/recursos`
-- `/certificacion`
-- `/por-que-elegirnos`
-- `/cursos`
-- `/cursos/:id`
-- `/login`
-- `/certificados/validar/:codigo`
+| Ruta | Componente |
+|---|---|
+| `/inicio` | InicioComponent |
+| `/programas` | ProgramasComponent |
+| `/recursos` | RecursosComponent |
+| `/certificacion` | CertificacionComponent |
+| `/por-que-elegirnos` | PorQueElegirnosComponent |
+| `/cursos` | PublicCursosComponent |
+| `/cursos/:id` | CursoDetallePublicoComponent |
+| `/login` | LoginComponent |
+| `/certificados/validar/:codigo` | ValidarCertificadoComponent |
 
-### Privadas
+### Dashboard (requiere autenticación)
 
-- `/dashboard`
-- `/dashboard/alumnos`
-- `/dashboard/docentes`
-- `/dashboard/cursos`
-- `/dashboard/cursos/:id`
-- `/dashboard/certificados`
-- `/dashboard/auditoria`
-- `/dashboard/sistema`
-- `/dashboard/configuracion`
-- `/dashboard/mis-cursos`
-- `/dashboard/cursos-play/:id`
-- `/dashboard/perfil`
-- `/dashboard/mis-cursos-docente`
-- `/dashboard/mis-alumnos-docente/:id`
+| Ruta | Roles | Componente |
+|---|---|---|
+| `/dashboard` | Todos | DashboardHomeComponent |
+| `/dashboard/perfil` | Todos | PerfilComponent |
+| `/dashboard/alumnos` | ADMIN | AlumnosComponent |
+| `/dashboard/docentes` | ADMIN | DocentesComponent |
+| `/dashboard/cursos` | ADMIN | CursosComponent |
+| `/dashboard/configuracion` | ADMIN | ConfiguracionComponent |
+| `/dashboard/auditoria` | ADMIN | AuditoriaComponent |
+| `/dashboard/sistema` | ADMIN | SistemaComponent |
+| `/dashboard/cursos/:id` | ADMIN+DOCENTE | CursoDetalleComponent |
+| `/dashboard/modulos/:id/videos` | ADMIN+DOCENTE | VideosComponent |
+| `/dashboard/modulos/:id/materiales` | ADMIN+DOCENTE | MaterialesComponent |
+| `/dashboard/mis-cursos-docente` | DOCENTE | MisCursosDocenteComponent |
+| `/dashboard/mis-alumnos-docente/:id` | DOCENTE | MisAlumnosDocenteComponent |
+| `/dashboard/mis-cursos` | ALUMNO | MisCursosComponent |
+| `/dashboard/cursos-play/:id` | ALUMNO | PlayCursoComponent |
+| `/dashboard/certificados` | ADMIN+ALUMNO | CertificadosComponent |
 
 ## API Documentada
 
@@ -292,33 +298,18 @@ npm install
 npm start
 ```
 
-## QA Reciente
-
-Estado comprobado recientemente:
-
-- `backend`: `./mvnw test -q`
-- `frontend`: `npm run build`
-- `scripts/backend-api-super-test.js`
-- `scripts/selenium-test.js`
-- `scripts/super-test.js`
-
-Los scripts de QA cubren autenticación, roles, paneles, CRUD principales, certificados, validación pública y monitoreo del sistema.
-
-## QA
-
-- `./mvnw test -q` en `backend/`
-- `npm run build` en `frontend/`
-- `node backend-api-super-test.js`
-- `node super-test.js`
-
 ## Credenciales de prueba
 
-- Admin: `admin@insteip.com` / `Admin123!`
-- Alumno: `juan.perez@insteip.com` / `Alumno123!`
-- Docente: `docente@insteip.com` / `Docente123!`
+| Rol | Correo | Contraseña |
+|---|---|---|
+| Admin | `admin@insteip.com` | `Admin123!` |
+| Alumno | `juan.perez@insteip.com` | `Alumno123!` |
+| Docente | `docente@insteip.com` | `Docente123!` |
 
 ## Notas
 
-- Si cambias rutas, roles o DTOs, actualiza también `contexto.md`.
+- Si cambias rutas, roles o DTOs, actualiza también `docs/contexto.md`.
 - La portada SVG se usa como banner de documentación y GitHub.
-- El panel administrativo ya incluye acceso a `Docentes`.
+- Los logs de ejecución se guardan en `run-logs/` (ignorados por git).
+- Los scripts de testing y sus descargas están en `scripts/`.
+- Documentación de QA completa en `docs/QA_UNIFICADO.md`.

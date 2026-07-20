@@ -1,12 +1,13 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AlumnoService } from '../../../core/services/alumno.service';
-import { AlumnoRequest, AlumnoResponse } from '../../../core/models/alumno.model';
-import { ReportesService } from '../../../core/services/reportes.service';
-import { ToastService } from '../../../core/services/toast.service';
+import { AlumnoService } from '../../../core/services/';
+import { AlumnoRequest, AlumnoResponse } from '../../../core/models/';
+import { ReportesService } from '../../../core/services/';
+import { ToastService } from '../../../core/services/';
 import { ConfirmModalComponent } from '../../../core/components/confirm-modal/confirm-modal.component';
-import { getSubscriptionClass } from '../../../core/utils/subscription.utils';
+import { SkeletonLoaderComponent } from '../../../core/components/skeleton-loader/skeleton-loader.component';
+import { getSubscriptionClass } from '../../../core/utils/';
 
 @Component({
   selector: 'app-alumnos',
@@ -15,7 +16,8 @@ import { getSubscriptionClass } from '../../../core/utils/subscription.utils';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    ConfirmModalComponent
+    ConfirmModalComponent,
+    SkeletonLoaderComponent
   ],
   templateUrl: './alumnos.component.html',
   styleUrls: ['./alumnos.component.css']
@@ -185,6 +187,26 @@ export class AlumnosComponent implements OnInit {
   closeDetailModal(): void {
     this.showDetailModal = false;
     this.selectedAlumno = null;
+  }
+
+  eliminarAlumno(alumno: AlumnoResponse): void {
+    this.confirmModalType = 'danger';
+    this.confirmModalTitle = '¿Eliminar Alumno?';
+    this.confirmModalMessage = `¿Estás seguro de que deseas ELIMINAR permanentemente al alumno ${alumno.nombres} ${alumno.apellidos}? Esta accion no se puede deshacer y eliminara todos sus datos asociados.`;
+    this.pendingAlumnoAction = () => {
+      this.alumnoService.eliminarAlumno(alumno.id).subscribe({
+        next: () => {
+          this.toastService.success('Alumno eliminado permanentemente.');
+          this.loadAlumnos();
+          this.showConfirmModal = false;
+        },
+        error: (err) => {
+          this.toastService.error(err.error?.message || 'Error al eliminar el alumno.');
+          this.showConfirmModal = false;
+        }
+      });
+    };
+    this.showConfirmModal = true;
   }
 
   toggleEstado(alumno: AlumnoResponse): void {

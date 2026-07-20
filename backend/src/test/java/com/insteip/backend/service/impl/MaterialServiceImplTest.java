@@ -1,12 +1,12 @@
 package com.insteip.backend.service.impl;
 
-import com.insteip.backend.entity.Curso;
-import com.insteip.backend.entity.Material;
-import com.insteip.backend.entity.Modulo;
-import com.insteip.backend.entity.Rol;
-import com.insteip.backend.entity.Usuario;
-import com.insteip.backend.exception.BadRequestException;
-import com.insteip.backend.exception.ForbiddenException;
+import com.insteip.backend.domain.entity.Curso;
+import com.insteip.backend.domain.entity.Material;
+import com.insteip.backend.domain.entity.Modulo;
+import com.insteip.backend.domain.entity.Rol;
+import com.insteip.backend.domain.entity.Usuario;
+import com.insteip.backend.domain.exception.BadRequestException;
+import com.insteip.backend.domain.exception.ForbiddenException;
 import com.insteip.backend.repository.MaterialRepository;
 import com.insteip.backend.repository.MatriculaRepository;
 import com.insteip.backend.repository.ModuloRepository;
@@ -87,11 +87,11 @@ class MaterialServiceImplTest {
     }
 
     @Test
-    void crearMaterial_should_reject_files_larger_than_10mb() {
+    void crearMaterial_should_reject_files_larger_than_100mb() {
         Modulo modulo = buildModulo();
         when(moduloRepository.findById(1L)).thenReturn(Optional.of(modulo));
 
-        byte[] oversized = new byte[10 * 1024 * 1024 + 1];
+        byte[] oversized = new byte[100 * 1024 * 1024 + 1];
         MockMultipartFile archivo = new MockMultipartFile(
                 "archivo",
                 "manual.pdf",
@@ -102,7 +102,7 @@ class MaterialServiceImplTest {
         BadRequestException exception = assertThrows(BadRequestException.class,
                 () -> materialService.crearMaterial(1L, "Manual", archivo));
 
-        assertEquals("El tamaño del archivo no puede superar los 10MB", exception.getMessage());
+        assertEquals("El tamaño del archivo no puede superar los 100MB", exception.getMessage());
         verify(materialRepository, never()).save(any());
     }
 

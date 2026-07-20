@@ -421,10 +421,9 @@
     <!-- Main workspace – pb-20 on mobile to clear bottom nav -->
     <main class="flex-grow p-4 md:p-8 overflow-y-auto pb-20 md:pb-8">
 
-      <div *ngIf="isLoading" class="flex flex-col items-center justify-center h-full">
-        <span class="animate-spin inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full mb-3"></span>
-        <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Inicializando interfaz...</span>
-      </div>
+      <ng-container *ngIf="isLoading">
+        <app-skeleton-loader type="custom"></app-skeleton-loader>
+      </ng-container>
 
       <div *ngIf="errorMsg" class="flex flex-col items-center justify-center h-full">
         <div class="border border-red-200 bg-red-50 p-6 max-w-sm w-full text-center">

@@ -29,7 +29,7 @@ INSERT INTO usuarios (rol_id, nivel_suscripcion_id, nombres, apellidos, correo, 
   'Admin',
   'Insteip',
   'admin@insteip.com',
-  '$2a$12$R9h/lIPzMRF.8npxi.fH2Oq7D6k5k1v.6XfT5Zp.0eD17t.i46mye', -- contraseña ej: Admin123!
+  '$2b$12$bri6YkCKP0IdTNWppx5RwO/5rqlH4gDftHHuLqSAxApcal9akw5yq', -- contraseña: Admin123!
   '+51 987654321'
 ),
 (
@@ -38,7 +38,7 @@ INSERT INTO usuarios (rol_id, nivel_suscripcion_id, nombres, apellidos, correo, 
   'Carlos Alberto',
   'Docente Prado',
   'docente@insteip.com',
-  '$2a$12$R9h/lIPzMRF.8npxi.fH2Oq7D6k5k1v.6XfT5Zp.0eD17t.i46mye', -- contraseña ej: Admin123! (usamos misma clave)
+  '$2b$12$itDYwja7vYFphrRYO37rpulZi2AlRyLH97eoofNNeQOOftzZznSEO', -- contraseña: Docente123!
   '+51 999111222'
 ),
 (
@@ -47,17 +47,8 @@ INSERT INTO usuarios (rol_id, nivel_suscripcion_id, nombres, apellidos, correo, 
   'Juan Carlos',
   'Pérez Gómez',
   'juan.perez@insteip.com',
-  '$2a$12$R9h/lIPzMRF.8npxi.fH2Oq7D6k5k1v.6XfT5Zp.0eD17t.i46mye', -- contraseña ej: Alumno123!
+  '$2b$12$tdNEq3dmIAzzoWaJNz3TG.9QcbxVJSPWAvQi8hjCgMM53rVdhAAQO', -- contraseña: Alumno123!
   '+51 912345678'
-),
-(
-  (SELECT id FROM roles WHERE nombre = 'ALUMNO'),
-  (SELECT id FROM niveles_suscripcion WHERE nombre = 'PREMIUM'),
-  'María Fernanda',
-  'Rodríguez Ruiz',
-  'maria.rodriguez@insteip.com',
-  '$2a$12$R9h/lIPzMRF.8npxi.fH2Oq7D6k5k1v.6XfT5Zp.0eD17t.i46mye', -- contraseña ej: Alumno123!
-  '+51 955555555'
 )
 ON CONFLICT (correo) DO NOTHING;
 
@@ -77,21 +68,6 @@ INSERT INTO pagos (usuario_id, nivel_suscripcion_id, monto, metodo_pago, numero_
   CURRENT_TIMESTAMP - INTERVAL '1 day'
 );
 
--- Pago 2: Aprobado por el Administrador (María Rodríguez compró Premium)
-INSERT INTO pagos (usuario_id, nivel_suscripcion_id, monto, metodo_pago, numero_operacion, observaciones, aprobado, fecha_pago, fecha_aprobacion, aprobado_por) VALUES
-(
-  (SELECT id FROM usuarios WHERE correo = 'maria.rodriguez@insteip.com'),
-  (SELECT id FROM niveles_suscripcion WHERE nombre = 'PREMIUM'),
-  149.00,
-  'PAYPAL',
-  'PAYID-MN67890X',
-  'Pago internacional verificado por PayPal.',
-  TRUE,
-  CURRENT_TIMESTAMP - INTERVAL '5 days',
-  CURRENT_TIMESTAMP - INTERVAL '4 days',
-  (SELECT id FROM usuarios WHERE correo = 'admin@insteip.com')
-);
-
 -- =========================================================================
 -- 5. SEED: login_auditoria (NUEVO)
 -- =========================================================================
@@ -101,14 +77,6 @@ INSERT INTO login_auditoria (usuario_id, correo, ip, user_agent, exitoso, motivo
   'juan.perez@insteip.com',
   '192.168.1.15',
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/125.0.0.0',
-  TRUE,
-  NULL
-),
-(
-  (SELECT id FROM usuarios WHERE correo = 'maria.rodriguez@insteip.com'),
-  'maria.rodriguez@insteip.com',
-  '200.48.56.9',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605.1.15',
   TRUE,
   NULL
 ),
@@ -142,6 +110,12 @@ INSERT INTO cursos (nombre, descripcion, imagen_portada, docente_id) VALUES
   'Aprende a diseñar, desplegar y escalar microservicios en la nube usando Spring Cloud, Docker, Kubernetes, AWS y pipelines CI/CD con GitHub Actions.',
   'https://images.unsplash.com/photo-1607799279861-4dd421887fb3',
   NULL
+),
+(
+  'Curso de Auriculoterapia',
+  'Aprende auriculoterapia paso a paso, desde los fundamentos y cartografía auricular hasta tratamientos prácticos y casos reales.',
+  'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b',
+  (SELECT id FROM usuarios WHERE correo = 'docente@insteip.com')
 );
 
 INSERT INTO curso_niveles_suscripcion (curso_id, nivel_suscripcion_id) VALUES
@@ -155,6 +129,18 @@ INSERT INTO curso_niveles_suscripcion (curso_id, nivel_suscripcion_id) VALUES
 ),
 (
   (SELECT id FROM cursos WHERE nombre = 'Arquitectura de Microservicios y DevOps Cloud'),
+  (SELECT id FROM niveles_suscripcion WHERE nombre = 'PREMIUM')
+),
+(
+  (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia'),
+  (SELECT id FROM niveles_suscripcion WHERE nombre = 'BASICO')
+),
+(
+  (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia'),
+  (SELECT id FROM niveles_suscripcion WHERE nombre = 'INTERMEDIO')
+),
+(
+  (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia'),
   (SELECT id FROM niveles_suscripcion WHERE nombre = 'PREMIUM')
 );
 
@@ -179,6 +165,36 @@ INSERT INTO modulos (curso_id, nombre, descripcion, orden) VALUES
   'Módulo 1: Iniciando con Spring Boot',
   'Configuración con Spring Initializr, estructura del proyecto y controladores REST básicos.',
   1
+),
+(
+  (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia'),
+  'Introducción',
+  'Conceptos básicos e introducción al curso.',
+  1
+),
+(
+  (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia'),
+  'Módulo 1',
+  'Primeros pasos y cartografía auricular.',
+  2
+),
+(
+  (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia'),
+  'Módulo 2',
+  'Técnicas avanzadas y puntos auriculares clave.',
+  3
+),
+(
+  (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia'),
+  'Módulo 3',
+  'Tratamientos y prácticas de auriculoterapia.',
+  4
+),
+(
+  (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia'),
+  'Módulo 4',
+  'Auriculoterapia en vivo, moxibustión y cierre del curso.',
+  5
 );
 
 -- =========================================================================
@@ -220,6 +236,164 @@ INSERT INTO videos (modulo_id, titulo, descripcion, youtube_url, youtube_id, dur
   '9SGDpanrc8U',
   800,
   1
+),
+-- Videos: Curso de Auriculoterapia - Introducción
+(
+  (SELECT id FROM modulos WHERE curso_id = (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia') AND nombre = 'Introducción'),
+  'Introducción a la Auriculoterapia',
+  'Bienvenida al curso y conceptos iniciales sobre la auriculoterapia.',
+  'https://youtu.be/9vSB2e9A5q0',
+  '9vSB2e9A5q0',
+  600,
+  1
+),
+-- Videos: Curso de Auriculoterapia - Módulo 1
+(
+  (SELECT id FROM modulos WHERE curso_id = (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia') AND nombre = 'Módulo 1'),
+  'Clase 1',
+  'Desarrollo de la clase 1 del módulo 1.',
+  'https://youtu.be/5fg18BLWt0U',
+  '5fg18BLWt0U',
+  900,
+  1
+),
+(
+  (SELECT id FROM modulos WHERE curso_id = (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia') AND nombre = 'Módulo 1'),
+  'Clase 2',
+  'Desarrollo de la clase 2 del módulo 1.',
+  'https://youtu.be/3m1IQaVbLRw',
+  '3m1IQaVbLRw',
+  900,
+  2
+),
+(
+  (SELECT id FROM modulos WHERE curso_id = (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia') AND nombre = 'Módulo 1'),
+  'Clase 3',
+  'Desarrollo de la clase 3 del módulo 1.',
+  'https://youtu.be/cYzeuBDbIFc',
+  'cYzeuBDbIFc',
+  900,
+  3
+),
+(
+  (SELECT id FROM modulos WHERE curso_id = (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia') AND nombre = 'Módulo 1'),
+  'Clase 4',
+  'Desarrollo de la clase 4 del módulo 1.',
+  'https://youtu.be/obaNtWmOy7g',
+  'obaNtWmOy7g',
+  900,
+  4
+),
+-- Videos: Curso de Auriculoterapia - Módulo 2
+(
+  (SELECT id FROM modulos WHERE curso_id = (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia') AND nombre = 'Módulo 2'),
+  'Clase 5',
+  'Desarrollo de la clase 5 del módulo 2.',
+  'https://youtu.be/W_hdH2EqtQI',
+  'W_hdH2EqtQI',
+  900,
+  1
+),
+(
+  (SELECT id FROM modulos WHERE curso_id = (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia') AND nombre = 'Módulo 2'),
+  'Clase 6',
+  'Desarrollo de la clase 6 del módulo 2.',
+  'https://youtu.be/8CiXAwcPLAY',
+  '8CiXAwcPLAY',
+  900,
+  2
+),
+(
+  (SELECT id FROM modulos WHERE curso_id = (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia') AND nombre = 'Módulo 2'),
+  'Clase 7',
+  'Desarrollo de la clase 7 del módulo 2.',
+  'https://youtu.be/FMmg_JfFGuY',
+  'FMmg_JfFGuY',
+  900,
+  3
+),
+(
+  (SELECT id FROM modulos WHERE curso_id = (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia') AND nombre = 'Módulo 2'),
+  'Clase 8',
+  'Desarrollo de la clase 8 del módulo 2.',
+  'https://youtu.be/6mbEUrLPTBg',
+  '6mbEUrLPTBg',
+  900,
+  4
+),
+(
+  (SELECT id FROM modulos WHERE curso_id = (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia') AND nombre = 'Módulo 2'),
+  'Clase 9',
+  'Desarrollo de la clase 9 del módulo 2.',
+  'https://youtu.be/vX9xJiHjzT8',
+  'vX9xJiHjzT8',
+  900,
+  5
+),
+(
+  (SELECT id FROM modulos WHERE curso_id = (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia') AND nombre = 'Módulo 2'),
+  'Clase 10',
+  'Desarrollo de la clase 10 del módulo 2.',
+  'https://youtu.be/wqRiNEMhbPg',
+  'wqRiNEMhbPg',
+  900,
+  6
+),
+-- Videos: Curso de Auriculoterapia - Módulo 3
+(
+  (SELECT id FROM modulos WHERE curso_id = (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia') AND nombre = 'Módulo 3'),
+  'Auriculoterapia 1',
+  'Práctica de auriculoterapia sesión 1.',
+  'https://youtu.be/aUPMVQmhxCM',
+  'aUPMVQmhxCM',
+  1000,
+  1
+),
+(
+  (SELECT id FROM modulos WHERE curso_id = (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia') AND nombre = 'Módulo 3'),
+  'Auriculoterapia 2',
+  'Práctica de auriculoterapia sesión 2.',
+  'https://youtu.be/KaYa1rlpCJ4',
+  'KaYa1rlpCJ4',
+  1000,
+  2
+),
+(
+  (SELECT id FROM modulos WHERE curso_id = (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia') AND nombre = 'Módulo 3'),
+  'Auriculoterapia 3',
+  'Práctica de auriculoterapia sesión 3.',
+  'https://youtu.be/2ZvOx8PXWSo',
+  '2ZvOx8PXWSo',
+  1000,
+  3
+),
+-- Videos: Curso de Auriculoterapia - Módulo 4
+(
+  (SELECT id FROM modulos WHERE curso_id = (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia') AND nombre = 'Módulo 4'),
+  'Auriculoterapia en vivo',
+  'Sesión práctica en vivo de auriculoterapia.',
+  'https://youtu.be/V0TLDL5ht4s',
+  'V0TLDL5ht4s',
+  1200,
+  1
+),
+(
+  (SELECT id FROM modulos WHERE curso_id = (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia') AND nombre = 'Módulo 4'),
+  'Auriculoterapia y moxbustion',
+  'Integración de la auriculoterapia con moxibustión.',
+  'https://youtu.be/QKJDQJmDbAc',
+  'QKJDQJmDbAc',
+  1200,
+  2
+),
+(
+  (SELECT id FROM modulos WHERE curso_id = (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia') AND nombre = 'Módulo 4'),
+  'Auriculoterapia Final',
+  'Conclusiones y cierre del curso de auriculoterapia.',
+  'https://youtu.be/iqkafhRFi_s',
+  'iqkafhRFi_s',
+  1200,
+  3
 );
 
 -- =========================================================================
@@ -229,7 +403,7 @@ INSERT INTO materiales (modulo_id, nombre, archivo_url, archivo_interno, tipo_ar
 (
   (SELECT id FROM modulos WHERE nombre = 'Módulo 1: Fundamentos de Angular'),
   'Guía de Instalación del Entorno (PDF)',
-  'https://assets.insteip.com/materiales/guia-instalacion.pdf',
+  'http://localhost:8081/api/materiales/1/download',
   'guia-instalacion.pdf',
   'application/pdf',
   2548000 -- ~2.4 MB
@@ -237,7 +411,7 @@ INSERT INTO materiales (modulo_id, nombre, archivo_url, archivo_interno, tipo_ar
 (
   (SELECT id FROM modulos WHERE nombre = 'Módulo 1: Fundamentos de Angular'),
   'Ejercicios Resueltos - Sesión 1',
-  'https://assets.insteip.com/materiales/ejercicios-s1.zip',
+  'http://localhost:8081/api/materiales/2/download',
   'ejercicios-s1.zip',
   'application/zip',
   1450000 -- ~1.38 MB
@@ -260,12 +434,8 @@ INSERT INTO matriculas (usuario_id, curso_id) VALUES
   (SELECT id FROM cursos WHERE nombre = 'Desarrollo Web Moderno con Angular')
 ),
 (
-  (SELECT id FROM usuarios WHERE correo = 'maria.rodriguez@insteip.com'),
-  (SELECT id FROM cursos WHERE nombre = 'Desarrollo Web Moderno con Angular')
-),
-(
-  (SELECT id FROM usuarios WHERE correo = 'maria.rodriguez@insteip.com'),
-  (SELECT id FROM cursos WHERE nombre = 'Backend Robusto con Spring Boot y JPA')
+  (SELECT id FROM usuarios WHERE correo = 'juan.perez@insteip.com'),
+  (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia')
 );
 
 -- =========================================================================
@@ -303,11 +473,11 @@ INSERT INTO avance_cursos (usuario_id, curso_id, porcentaje_avance, completado) 
 -- =========================================================================
 INSERT INTO certificados (usuario_id, curso_id, codigo, archivo_pdf, url_validacion, numero_registro) VALUES
 (
-  (SELECT id FROM usuarios WHERE correo = 'maria.rodriguez@insteip.com'),
+  (SELECT id FROM usuarios WHERE correo = 'juan.perez@insteip.com'),
   (SELECT id FROM cursos WHERE nombre = 'Desarrollo Web Moderno con Angular'),
   'CERT-ANG-2026-8891',
-  'https://assets.insteip.com/certificados/maria-rodriguez-angular.pdf',
-  'https://insteip.com/validar/CERT-ANG-2026-8891',
+  'http://localhost:8081/api/certificados/1/download',
+  'http://localhost:4200/certificados/validar/CERT-ANG-2026-8891',
   'REG-2026-90812'
 );
 
@@ -317,8 +487,8 @@ INSERT INTO certificados (usuario_id, curso_id, codigo, archivo_pdf, url_validac
 INSERT INTO plantilla_certificado (nombre, imagen_fondo, firma_director, cargo_director, activo) VALUES
 (
   'Plantilla Oficial INSTEIP v1',
-  'https://assets.insteip.com/plantillas/fondo-certificado.png',
-  'https://assets.insteip.com/plantillas/firma-director.png',
+  '',
+  'Director Académico',
   'Director de Asuntos Académicos',
   TRUE
 );
@@ -329,10 +499,10 @@ INSERT INTO plantilla_certificado (nombre, imagen_fondo, firma_director, cargo_d
 INSERT INTO configuracion_institucion (nombre_institucion, logo_url, correo_contacto, telefono, qr_yape, qr_plin, paypal_url) VALUES
 (
   'INSTEIP - Instituto de Tecnología e Innovación Profesional',
-  'https://insteip.com/assets/img/logo.png',
+  'http://localhost:4200/assets/insteip-logo.png',
   'contacto@insteip.com',
   '+51 999 888 777',
-  'https://insteip.com/assets/img/qr-yape.png',
-  'https://insteip.com/assets/img/qr-plin.png',
+  '',
+  '',
   'https://paypal.me/insteip'
 );

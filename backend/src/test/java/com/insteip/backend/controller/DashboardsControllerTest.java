@@ -1,11 +1,14 @@
 package com.insteip.backend.controller;
 
-import com.insteip.backend.dto.*;
-import com.insteip.backend.security.SecurityConfig;
-import com.insteip.backend.security.JwtAuthenticationFilter;
+import com.insteip.backend.domain.dto.alumno.AlumnoCursoResponse;
+import com.insteip.backend.domain.dto.alumno.AlumnoDashboardMetrics;
+import com.insteip.backend.domain.dto.curso.CursoResponseDTO;
+import com.insteip.backend.domain.dto.docente.DocenteEstudianteProgressResponse;
+import com.insteip.backend.infrastructure.scheduler.BackupScheduler;
+import com.insteip.backend.infrastructure.security.SecurityConfig;
+import com.insteip.backend.infrastructure.security.JwtAuthenticationFilter;
 import com.insteip.backend.service.interfaces.AlumnoDashboardService;
 import com.insteip.backend.service.interfaces.DocenteDashboardService;
-import com.insteip.backend.service.impl.BackupScheduler;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

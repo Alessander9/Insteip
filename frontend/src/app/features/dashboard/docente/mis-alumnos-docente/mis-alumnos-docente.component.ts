@@ -1,16 +1,17 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
-import { DocenteDashboardService, DocenteEstudianteProgress } from '../../../../core/services/docente-dashboard.service';
-import { CursoService } from '../../../../core/services/curso.service';
-import { CursoResponse } from '../../../../core/models/curso.model';
+import { SkeletonLoaderComponent } from '../../../../core/components/skeleton-loader/skeleton-loader.component';
+import { DocenteDashboardService, DocenteEstudianteProgress } from '../../../../core/services/';
+import { CursoService } from '../../../../core/services/';
+import { CursoResponse } from '../../../../core/models/';
 import { FormsModule } from '@angular/forms';
-import { matchesQuery, paginate, sortByDate, totalPages, SortOrder } from '../../../../core/utils/listing.utils';
+import { matchesQuery, paginate, sortByDate, totalPages, SortOrder } from '../../../../core/utils/';
 
 @Component({
   selector: 'app-mis-alumnos-docente',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, SkeletonLoaderComponent],
   templateUrl: './mis-alumnos-docente.component.html',
   styleUrls: ['./mis-alumnos-docente.component.css']
 })

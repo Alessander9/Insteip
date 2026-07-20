@@ -1,14 +1,15 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ConfiguracionService } from '../../../core/services/configuracion.service';
-import { ConfiguracionRequest, ConfiguracionResponse } from '../../../core/models/configuracion.model';
-import { ToastService } from '../../../core/services/toast.service';
+import { SkeletonLoaderComponent } from '../../../core/components/skeleton-loader/skeleton-loader.component';
+import { ConfiguracionService } from '../../../core/services/';
+import { ConfiguracionRequest, ConfiguracionResponse } from '../../../core/models/';
+import { ToastService } from '../../../core/services/';
 
 @Component({
   selector: 'app-configuracion',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SkeletonLoaderComponent],
   templateUrl: './configuracion.component.html',
   styleUrls: ['./configuracion.component.css']
 })

@@ -4,7 +4,71 @@
   <base href="/">
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>INSTEIP - Terapias Integrales Virtuales</title>
+  <title>INSTEIP — Instituto de Terapias Integrales | Cursos Online</title>
+  <meta name="description" content="INSTEIP es el instituto online líder en terapias complementarias en Perú. Más de 5,000 terapeutas certificados. Cursos de acupuntura, auriculoterapia, masaje terapéutico y más. 100% online, certificación internacional.">
+  <meta name="keywords" content="terapias integrales, cursos online, certificación, acupuntura, auriculoterapia, masaje terapéutico, INSTEIP, Perú, terapias complementarias, formación online">
+  <meta name="author" content="INSTEIP — Instituto de Terapias Integrales">
+  <meta name="robots" content="index, follow">
+  <meta name="revisit-after" content="7 days">
+  <meta name="language" content="Spanish">
+  <meta name="theme-color" content="#003466">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://insteip.com/">
+  <meta property="og:title" content="INSTEIP — Instituto de Terapias Integrales | Cursos Online">
+  <meta property="og:description" content="Aprende, certifícate y transforma tu carrera profesional. Más de 5,000 terapeutas ya confiaron en INSTEIP.">
+  <meta property="og:image" content="https://insteip.com/assets/insteip-logo.png">
+  <!-- Reemplazar con una imagen 1200×630 dedicada para redes sociales -->
+  <!-- <meta property="og:image:width" content="1200"> -->
+  <!-- <meta property="og:image:height" content="630"> -->
+  <meta property="og:locale" content="es_PE">
+  <meta property="og:site_name" content="INSTEIP">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://insteip.com/">
+  <meta name="twitter:title" content="INSTEIP — Instituto de Terapias Integrales | Cursos Online">
+  <meta name="twitter:description" content="Aprende, certifícate y transforma tu carrera profesional. Más de 5,000 terapeutas ya confiaron en INSTEIP.">
+  <meta name="twitter:image" content="https://insteip.com/assets/insteip-logo.png">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://insteip.com/">
+
+  <!-- Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/insteip-logo.png">
+  <link rel="apple-touch-icon" href="assets/insteip-logo.png">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    "name": "INSTEIP — Instituto de Terapias Integrales",
+    "description": "Instituto online líder en terapias complementarias en Perú. Cursos con certificación internacional.",
+    "url": "https://insteip.com/",
+    "logo": "https://insteip.com/assets/insteip-logo.png",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "PE"
+    },
+
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "5000",
+      "bestRating": "5.0"
+    },
+    "offers": {
+      "@type": "Offer",
+      "category": "Online course",
+      "availability": "https://schema.org/InStock",
+      "priceCurrency": "PEN",
+      "price": "0"
+    }
+  }
+  </script>
+
   <script>
     (function () {
       try {
@@ -21,9 +85,23 @@
       }
     })();
   </script>
+  <!-- ── Preconnect Google Fonts ── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- ── Google Fonts: Manrope + Hanken Grotesk ── -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:wght@600&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:wght@600&amp;display=swap" rel="stylesheet">
+  </noscript>
+
+  <!-- ── Google Fonts: Material Symbols ── -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+  </noscript>
+
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:wght@600&amp;display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
   <script id="tailwind-config">
     tailwind.config = {
       darkMode: "class",
@@ -119,11 +197,27 @@
 </head>
 <body class="bg-surface text-on-surface dark:bg-slate-950 dark:text-slate-100 font-body-md antialiased overflow-x-hidden transition-colors duration-300">
   <!-- Splash Screen -->
+  <style>
+    @keyframes splash-pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50%      { transform: scale(1.03); opacity: 0.85; }
+    }
+    @keyframes spin-slow {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes splash-fade-in {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .splash-logo     { animation: splash-pulse 2s ease-in-out infinite; }
+    .splash-spinner  { animation: spin-slow 0.8s linear infinite; }
+    .splash-text     { animation: splash-fade-in 0.6s ease-out both; animation-delay: 0.2s; }
+  </style>
   <div id="splash-screen" class="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#020b1a] transition-opacity duration-500" style="opacity: 1;">
-    <div class="flex flex-col items-center gap-6" style="animation: splash-pulse 2s ease-in-out infinite;">
-      <img src="assets/insteip-logo.png" alt="INSTEIP Logo" class="h-16 md:h-20 object-contain max-w-[280px] select-none pointer-events-none">
-      <div class="flex flex-col items-center gap-3">
-        <div class="w-8 h-8 rounded-full border-4 border-slate-700 border-t-[#4db8ff] animate-spin"></div>
+    <div class="flex flex-col items-center gap-6 splash-logo">
+      <img src="assets/insteip-logo.png" alt="INSTEIP Logo" fetchpriority="high" class="h-16 md:h-20 object-contain max-w-[280px] select-none pointer-events-none">
+      <div class="flex flex-col items-center gap-3 splash-text">
+        <div class="w-8 h-8 rounded-full border-4 border-slate-700 border-t-[#4db8ff] splash-spinner"></div>
         <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Cargando campus virtual...</p>
       </div>
     </div>

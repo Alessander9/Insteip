@@ -2,13 +2,14 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { CursoService } from '../../../core/services/curso.service';
-import { CursoRequest, CursoResponse } from '../../../core/models/curso.model';
-import { ReportesService } from '../../../core/services/reportes.service';
-import { ToastService } from '../../../core/services/toast.service';
-import { UsuarioService, DocenteOption } from '../../../core/services/usuario.service';
+import { CursoService } from '../../../core/services/';
+import { CursoRequest, CursoResponse } from '../../../core/models/';
+import { ReportesService } from '../../../core/services/';
+import { ToastService } from '../../../core/services/';
+import { UsuarioService, DocenteOption } from '../../../core/services/';
 import { ConfirmModalComponent } from '../../../core/components/confirm-modal/confirm-modal.component';
-import { getSubscriptionClass, formatNiveles } from '../../../core/utils/subscription.utils';
+import { SkeletonLoaderComponent } from '../../../core/components/skeleton-loader/skeleton-loader.component';
+import { getSubscriptionClass, formatNiveles } from '../../../core/utils/';
 
 @Component({
   selector: 'app-cursos',
@@ -18,7 +19,8 @@ import { getSubscriptionClass, formatNiveles } from '../../../core/utils/subscri
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    ConfirmModalComponent
+    ConfirmModalComponent,
+    SkeletonLoaderComponent
   ],
   templateUrl: './cursos.component.html',
   styleUrls: ['./cursos.component.css']
@@ -280,6 +282,29 @@ export class CursosComponent implements OnInit {
   closeDetailModal(): void {
     this.showDetailModal = false;
     this.selectedCurso = null;
+  }
+
+  eliminarCurso(curso: CursoResponse): void {
+    this.confirmModalType = 'danger';
+    this.confirmModalTitle = '¿Eliminar Curso?';
+    this.confirmModalMessage = `¿Estás seguro de que deseas ELIMINAR permanentemente el curso "${curso.nombre}"? Esta acción no se puede deshacer. Se eliminarán todos los módulos, videos, materiales, matrículas y certificados asociados.`;
+    
+    this.pendingCursoAction = () => {
+      this.cursoService.eliminarCurso(curso.id).subscribe({
+        next: () => {
+          this.toastService.success('Curso eliminado permanentemente.');
+          this.loadCursos();
+          this.loadCourseSummary();
+          this.showConfirmModal = false;
+        },
+        error: (err) => {
+          this.toastService.error(err.error?.message || 'Error al eliminar el curso.');
+          this.showConfirmModal = false;
+        }
+      });
+    };
+    
+    this.showConfirmModal = true;
   }
 
   toggleEstado(curso: CursoResponse): void {

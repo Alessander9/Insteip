@@ -2,8 +2,8 @@ package com.insteip.backend.controller;
 
 
 import lombok.RequiredArgsConstructor;
-import com.insteip.backend.dto.MatriculaRequestDTO;
-import com.insteip.backend.dto.MatriculaResponseDTO;
+import com.insteip.backend.domain.dto.matricula.MatriculaRequestDTO;
+import com.insteip.backend.domain.dto.matricula.MatriculaResponseDTO;
 import com.insteip.backend.service.interfaces.MatriculaService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -31,6 +31,12 @@ public class MatriculaController {
     @GetMapping("/curso/{cursoId}")
     public ResponseEntity<List<MatriculaResponseDTO>> listarMatriculados(@PathVariable Long cursoId) {
         return ResponseEntity.ok(matriculaService.listarMatriculadosPorCurso(cursoId));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        matriculaService.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/estado")

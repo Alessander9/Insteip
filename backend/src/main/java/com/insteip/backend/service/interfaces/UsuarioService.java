@@ -1,8 +1,8 @@
 package com.insteip.backend.service.interfaces;
 
-import com.insteip.backend.dto.UsuarioRequestDTO;
-import com.insteip.backend.dto.UsuarioResponseDTO;
-import com.insteip.backend.dto.DocenteRequestDTO;
+import com.insteip.backend.domain.dto.usuario.UsuarioRequestDTO;
+import com.insteip.backend.domain.dto.usuario.UsuarioResponseDTO;
+import com.insteip.backend.domain.dto.docente.DocenteRequestDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,4 +17,6 @@ public interface UsuarioService {
     UsuarioResponseDTO crearAlumno(UsuarioRequestDTO dto);
     UsuarioResponseDTO editarAlumno(Long id, UsuarioRequestDTO dto);
     void cambiarEstado(Long id, Boolean estado);
+    void eliminarAlumno(Long id);
+    void eliminarDocente(Long id);
 }

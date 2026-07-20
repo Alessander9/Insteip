@@ -1,7 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { CertificadoService, CertificadoResponse } from '../../core/services/certificado.service';
+import { SkeletonLoaderComponent } from '../../core/components/skeleton-loader/skeleton-loader.component';
+import { CertificadoService, CertificadoResponse } from '../../core/services/';
 
 interface ValidationPayload {
   valido: boolean;
@@ -14,7 +15,7 @@ interface ValidationPayload {
 @Component({
   selector: 'app-validar-certificado',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, SkeletonLoaderComponent],
   templateUrl: './validar-certificado.component.html',
   styleUrls: ['./validar-certificado.component.css']
 })

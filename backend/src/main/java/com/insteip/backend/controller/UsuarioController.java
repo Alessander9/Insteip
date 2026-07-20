@@ -2,9 +2,9 @@ package com.insteip.backend.controller;
 
 
 import lombok.RequiredArgsConstructor;
-import com.insteip.backend.dto.DocenteRequestDTO;
-import com.insteip.backend.dto.UsuarioRequestDTO;
-import com.insteip.backend.dto.UsuarioResponseDTO;
+import com.insteip.backend.domain.dto.docente.DocenteRequestDTO;
+import com.insteip.backend.domain.dto.usuario.UsuarioRequestDTO;
+import com.insteip.backend.domain.dto.usuario.UsuarioResponseDTO;
 import com.insteip.backend.service.interfaces.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -61,6 +61,12 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.editarDocente(id, dto));
     }
 
+    @DeleteMapping("/docentes/{id}")
+    public ResponseEntity<Void> eliminarDocente(@PathVariable Long id) {
+        usuarioService.eliminarDocente(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PatchMapping("/docentes/{id}/estado")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<Void> cambiarEstadoDocente(
@@ -91,6 +97,12 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> editarAlumno(@PathVariable Long id, @Valid @RequestBody UsuarioRequestDTO dto) {
         return ResponseEntity.ok(usuarioService.editarAlumno(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarAlumno(@PathVariable Long id) {
+        usuarioService.eliminarAlumno(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/estado")

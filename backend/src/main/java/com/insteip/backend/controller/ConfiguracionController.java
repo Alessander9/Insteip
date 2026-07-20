@@ -2,8 +2,8 @@ package com.insteip.backend.controller;
 
 
 import lombok.RequiredArgsConstructor;
-import com.insteip.backend.dto.ConfiguracionRequest;
-import com.insteip.backend.dto.ConfiguracionResponse;
+import com.insteip.backend.domain.dto.configuracion.ConfiguracionRequest;
+import com.insteip.backend.domain.dto.configuracion.ConfiguracionResponse;
 import com.insteip.backend.service.interfaces.ConfiguracionService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

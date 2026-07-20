@@ -1,10 +1,11 @@
 package com.insteip.backend.controller;
 
-
-import lombok.RequiredArgsConstructor;
-import com.insteip.backend.entity.Certificado;
+import com.insteip.backend.domain.dto.certificado.CertificadoResponseDTO;
+import com.insteip.backend.domain.dto.certificado.CertificadoValidacionResponse;
+import com.insteip.backend.domain.entity.Certificado;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.service.interfaces.CertificadoService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,7 +41,7 @@ public class CertificadoController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ALUMNO')")
-    public ResponseEntity<Page<com.insteip.backend.dto.CertificadoResponseDTO>> listarCertificados(
+    public ResponseEntity<Page<CertificadoResponseDTO>> listarCertificados(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(required = false) String search,
@@ -67,12 +68,12 @@ public class CertificadoController {
 
     @PostMapping("/generar/{cursoId}")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ALUMNO')")
-    public ResponseEntity<com.insteip.backend.dto.CertificadoResponseDTO> generarCertificado(
+    public ResponseEntity<CertificadoResponseDTO> generarCertificado(
             Authentication authentication,
             @PathVariable Long cursoId) {
         Long usuarioId = getUsuarioId(authentication);
         Certificado cert = certificadoService.generarCertificado(usuarioId, cursoId);
-        com.insteip.backend.dto.CertificadoResponseDTO response = new com.insteip.backend.dto.CertificadoResponseDTO(
+        CertificadoResponseDTO response = new CertificadoResponseDTO(
                 cert.getId(),
                 cert.getUsuario().getId(),
                 cert.getCurso().getId(),
@@ -116,9 +117,9 @@ public class CertificadoController {
     }
 
     @GetMapping("/validar/{codigo}")
-    public ResponseEntity<com.insteip.backend.dto.CertificadoValidacionResponse> validarCertificado(@PathVariable String codigo) {
+    public ResponseEntity<CertificadoValidacionResponse> validarCertificado(@PathVariable String codigo) {
         Certificado cert = certificadoService.validarCertificado(codigo);
-        com.insteip.backend.dto.CertificadoValidacionResponse response = new com.insteip.backend.dto.CertificadoValidacionResponse(
+        CertificadoValidacionResponse response = new CertificadoValidacionResponse(
                 true,
                 cert.getUsuario().getNombres() + " " + cert.getUsuario().getApellidos(),
                 cert.getCurso().getNombre(),

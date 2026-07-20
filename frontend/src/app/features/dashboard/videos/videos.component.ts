@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { ModuloService } from '../../../core/services/modulo.service';
-import { VideoService } from '../../../core/services/video.service';
-import { ModuloResponse } from '../../../core/models/modulo.model';
-import { VideoRequest, VideoResponse } from '../../../core/models/video.model';
-import { ToastService } from '../../../core/services/toast.service';
+import { ModuloService, AuthService } from '../../../core/services/';
+import { VideoService } from '../../../core/services/';
+import { ModuloResponse } from '../../../core/models/';
+import { VideoRequest, VideoResponse } from '../../../core/models/';
+import { ToastService } from '../../../core/services/';
 import { ConfirmModalComponent } from '../../../core/components/confirm-modal/confirm-modal.component';
-import { extraerIdYoutube } from '../../../core/utils/youtube.utils';
+import { extraerIdYoutube } from '../../../core/utils/';
 
 @Component({
   selector: 'app-videos',
@@ -32,6 +32,9 @@ export class VideosComponent implements OnInit {
   private fb = inject(FormBuilder);
   private sanitizer = inject(DomSanitizer);
   private toastService = inject(ToastService);
+  private authService = inject(AuthService);
+
+  isDocente = false;
 
   moduloId!: number;
   modulo: ModuloResponse | null = null;
@@ -72,13 +75,19 @@ export class VideosComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.authService.getProfile().subscribe(user => {
+      if (user && user.rol === 'DOCENTE') {
+        this.isDocente = true;
+      }
+    });
+
     this.route.paramMap.subscribe(params => {
       const idParam = params.get('id');
       if (idParam) {
         this.moduloId = Number(idParam);
         this.loadModuloData();
       } else {
-        this.router.navigate(['/dashboard/cursos']);
+        this.router.navigate([this.isDocente ? '/dashboard/mis-cursos-docente' : '/dashboard/cursos']);
       }
     });
   }
@@ -91,7 +100,7 @@ export class VideosComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al obtener modulo', err);
-        this.router.navigate(['/dashboard/cursos']);
+        this.router.navigate([this.isDocente ? '/dashboard/mis-cursos-docente' : '/dashboard/cursos']);
       }
     });
   }
@@ -192,6 +201,28 @@ export class VideosComponent implements OnInit {
       this.youtubeId = '';
       this.safeEmbedUrl = null;
     }
+  }
+
+  eliminarVideo(video: VideoResponse): void {
+    this.confirmModalType = 'danger';
+    this.confirmModalTitle = '¿Eliminar Video?';
+    this.confirmModalMessage = `¿Estás seguro de que deseas ELIMINAR permanentemente el video "${video.titulo}"? Esta acción no se puede deshacer y eliminará todo el progreso asociado.`;
+    
+    this.pendingVideoAction = () => {
+      this.videoService.eliminarVideo(video.id).subscribe({
+        next: () => {
+          this.toastService.success('Video eliminado permanentemente.');
+          this.loadVideos();
+          this.showConfirmModal = false;
+        },
+        error: (err) => {
+          this.toastService.error(err.error?.message || 'Error al eliminar el video.');
+          this.showConfirmModal = false;
+        }
+      });
+    };
+    
+    this.showConfirmModal = true;
   }
 
   toggleEstado(video: VideoResponse): void {

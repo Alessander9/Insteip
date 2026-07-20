@@ -24,19 +24,31 @@
   <!-- Stats Cards: 2-col on mobile, 4-col on md -->
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
     <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] transition-colors duration-300">
-      <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Logins exitosos</p>
+      <p class="text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-sm">check_circle</span>
+        <span>Logins exitosos</span>
+      </p>
       <h3 class="text-3xl font-black text-slate-900 dark:text-slate-100 mt-2">{{ totalExitosos }}</h3>
     </div>
     <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] transition-colors duration-300">
-      <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Logins fallidos</p>
+      <p class="text-[10px] font-black uppercase tracking-widest text-red-600 dark:text-red-400 flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-sm">cancel</span>
+        <span>Logins fallidos</span>
+      </p>
       <h3 class="text-3xl font-black text-slate-900 dark:text-slate-100 mt-2">{{ totalFallidos }}</h3>
     </div>
     <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] transition-colors duration-300">
-      <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Usuarios bloqueados</p>
+      <p class="text-[10px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-sm">block</span>
+        <span>Usuarios bloqueados</span>
+      </p>
       <h3 class="text-3xl font-black text-slate-900 dark:text-slate-100 mt-2">{{ usuariosBloqueados }}</h3>
     </div>
     <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] transition-colors duration-300">
-      <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Eventos del sistema</p>
+      <p class="text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-sm">event_note</span>
+        <span>Eventos del sistema</span>
+      </p>
       <h3 class="text-3xl font-black text-slate-900 dark:text-slate-100 mt-2">{{ eventosSistema.length }}</h3>
     </div>
   </div>
@@ -71,10 +83,30 @@
             </thead>
             <tbody>
             <tr *ngFor="let item of ultimosAccesos" class="border-t border-slate-100 dark:border-slate-800">
-                <td class="p-3">{{ item.correo || ('Usuario #' + item.usuarioId) }}</td>
-                <td class="p-3">{{ item.ip || '-' }}</td>
-                <td class="p-3">{{ item.userAgent || '-' }}</td>
-                <td class="p-3 whitespace-nowrap">{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="p-3">
+                  <div class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-xs shrink-0">person</span>
+                    <span>{{ item.correo || ('Usuario #' + item.usuarioId) }}</span>
+                  </div>
+                </td>
+                <td class="p-3">
+                  <div class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-xs shrink-0">lan</span>
+                    <span>{{ item.ip || '-' }}</span>
+                  </div>
+                </td>
+                <td class="p-3">
+                  <div class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-xs shrink-0">devices</span>
+                    <span class="truncate max-w-[120px] block">{{ item.userAgent || '-' }}</span>
+                  </div>
+                </td>
+                <td class="p-3 whitespace-nowrap">
+                  <div class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-xs shrink-0">schedule</span>
+                    <span>{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+                  </div>
+                </td>
                 <td class="p-3">
                   <span [ngClass]="item.exitoso ? 'text-emerald-700 dark:text-emerald-200 bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/40' : 'text-red-700 dark:text-red-200 bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/40'"
                     class="px-2 py-1 border text-[10px] font-black uppercase tracking-widest">
@@ -108,10 +140,30 @@
             </thead>
             <tbody>
             <tr *ngFor="let item of ultimosEventos" class="border-t border-slate-100 dark:border-slate-800">
-                <td class="p-3">{{ item.usuarioId || '-' }}</td>
-                <td class="p-3 font-bold uppercase">{{ item.modulo }}</td>
-                <td class="p-3">{{ item.accion }}</td>
-                <td class="p-3 whitespace-nowrap">{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="p-3">
+                  <div class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-xs shrink-0">person</span>
+                    <span>{{ item.usuarioId || '-' }}</span>
+                  </div>
+                </td>
+                <td class="p-3 font-bold uppercase">
+                  <div class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-indigo-400/60 dark:text-indigo-400/40 text-xs shrink-0">view_module</span>
+                    <span>{{ item.modulo }}</span>
+                  </div>
+                </td>
+                <td class="p-3">
+                  <div class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-xs shrink-0">touch_app</span>
+                    <span>{{ item.accion }}</span>
+                  </div>
+                </td>
+                <td class="p-3 whitespace-nowrap">
+                  <div class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-xs shrink-0">schedule</span>
+                    <span>{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+                  </div>
+                </td>
               </tr>
               <tr *ngIf="ultimosEventos.length === 0">
                 <td colspan="4" class="p-6 text-center text-slate-500 dark:text-slate-400">No hay eventos registrados.</td>
@@ -146,9 +198,24 @@
           </thead>
           <tbody>
             <tr *ngFor="let item of pagedLoginAuditoria" class="border-t border-slate-100 dark:border-slate-800">
-              <td class="p-3 whitespace-nowrap">{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
-              <td class="p-3">{{ item.correo || ('Usuario #' + item.usuarioId) }}</td>
-              <td class="p-3">{{ item.ip || '-' }}</td>
+              <td class="p-3 whitespace-nowrap">
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-xs shrink-0">schedule</span>
+                  <span>{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+              </td>
+              <td class="p-3">
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-xs shrink-0">person</span>
+                  <span>{{ item.correo || ('Usuario #' + item.usuarioId) }}</span>
+                </div>
+              </td>
+              <td class="p-3">
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-xs shrink-0">lan</span>
+                  <span>{{ item.ip || '-' }}</span>
+                </div>
+              </td>
               <td class="p-3">
                 <span [ngClass]="item.exitoso ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : 'text-red-700 bg-red-50 border-red-200'"
                   class="px-2 py-1 border text-[10px] font-black uppercase tracking-widest">
@@ -192,10 +259,30 @@
           </thead>
           <tbody>
             <tr *ngFor="let item of pagedEventosSistema" class="border-t border-slate-100 dark:border-slate-800">
-              <td class="p-3 whitespace-nowrap">{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
-              <td class="p-3 font-bold uppercase">{{ item.modulo }}</td>
-              <td class="p-3">{{ item.accion }}</td>
-              <td class="p-3">{{ item.usuarioId || '-' }}</td>
+              <td class="p-3 whitespace-nowrap">
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-xs shrink-0">schedule</span>
+                  <span>{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+              </td>
+              <td class="p-3 font-bold uppercase">
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-indigo-400/60 dark:text-indigo-400/40 text-xs shrink-0">view_module</span>
+                  <span>{{ item.modulo }}</span>
+                </div>
+              </td>
+              <td class="p-3">
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-xs shrink-0">touch_app</span>
+                  <span>{{ item.accion }}</span>
+                </div>
+              </td>
+              <td class="p-3">
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-xs shrink-0">person</span>
+                  <span>{{ item.usuarioId || '-' }}</span>
+                </div>
+              </td>
               <td class="p-3">{{ item.descripcion || '-' }}</td>
             </tr>
             <tr *ngIf="filteredEventosSistema.length === 0">

@@ -1,9 +1,9 @@
 package com.insteip.backend.controller;
 
-import com.insteip.backend.entity.Certificado;
-import com.insteip.backend.entity.Curso;
-import com.insteip.backend.entity.Matricula;
-import com.insteip.backend.entity.Usuario;
+import com.insteip.backend.domain.entity.Certificado;
+import com.insteip.backend.domain.entity.Curso;
+import com.insteip.backend.domain.entity.Matricula;
+import com.insteip.backend.domain.entity.Usuario;
 import com.insteip.backend.repository.CertificadoRepository;
 import com.insteip.backend.repository.CursoRepository;
 import com.insteip.backend.repository.MatriculaRepository;

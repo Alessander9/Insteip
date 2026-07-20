@@ -4,6 +4,7 @@ export interface VideoRequest {
   descripcion: string;
   youtubeUrl: string;
   orden: number;
+  duracionSegundos?: number;
 }
 
 export interface VideoResponse {
@@ -14,4 +15,5 @@ export interface VideoResponse {
   orden: number;
   estado: boolean;
   fechaCreacion: string;
+  duracionSegundos?: number;
 }

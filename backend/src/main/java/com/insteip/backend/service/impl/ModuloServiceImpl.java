@@ -2,11 +2,11 @@ package com.insteip.backend.service.impl;
 
 
 import lombok.RequiredArgsConstructor;
-import com.insteip.backend.dto.ModuloRequestDTO;
-import com.insteip.backend.dto.ModuloResponseDTO;
-import com.insteip.backend.entity.Curso;
-import com.insteip.backend.entity.Modulo;
-import com.insteip.backend.exception.ResourceNotFoundException;
+import com.insteip.backend.domain.dto.modulo.ModuloRequestDTO;
+import com.insteip.backend.domain.dto.modulo.ModuloResponseDTO;
+import com.insteip.backend.domain.entity.Curso;
+import com.insteip.backend.domain.entity.Modulo;
+import com.insteip.backend.domain.exception.ResourceNotFoundException;
 import com.insteip.backend.repository.CursoRepository;
 import com.insteip.backend.repository.ModuloRepository;
 import com.insteip.backend.service.interfaces.ModuloService;
@@ -85,6 +85,16 @@ public class ModuloServiceImpl implements ModuloService {
         Modulo saved = moduloRepository.save(modulo);
         auditoriaService.registrarEvento("MODULO", estado ? "ACTIVAR" : "DESACTIVAR", 
                 (estado ? "Activado" : "Desactivado") + " módulo: " + saved.getNombre() + " (ID: " + saved.getId() + ")");
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public void eliminar(Long id) {
+        Modulo modulo = moduloRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Módulo no encontrado con id: " + id));
+        String nombreModulo = modulo.getNombre();
+        moduloRepository.deleteById(id);
+        auditoriaService.registrarEvento("MODULO", "ELIMINAR", "Eliminado módulo: " + nombreModulo + " (ID: " + id + ")");
     }
 
     private ModuloResponseDTO convertToResponseDto(Modulo m) {

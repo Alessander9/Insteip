@@ -3,20 +3,21 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { AlumnoService } from '../../../core/services/alumno.service';
-import { CursoService } from '../../../core/services/curso.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { AlumnoDashboardService } from '../../../core/services/alumno-dashboard.service';
-import { CertificadoService } from '../../../core/services/certificado.service';
-import { AuditoriaService } from '../../../core/services/auditoria.service';
-import { PagoService } from '../../../core/services/pago.service';
-import { UserProfile } from '../../../core/models/user-profile.model';
-import { AlumnoResponse } from '../../../core/models/alumno.model';
+import { AlumnoService, DocenteDashboardService, DocenteCurso } from '../../../core/services/';
+import { CursoService } from '../../../core/services/';
+import { AuthService } from '../../../core/services/';
+import { AlumnoDashboardService } from '../../../core/services/';
+import { CertificadoService } from '../../../core/services/';
+import { AuditoriaService } from '../../../core/services/';
+import { PagoService } from '../../../core/services/';
+import { UserProfile } from '../../../core/models/';
+import { AlumnoResponse } from '../../../core/models/';
+import { SkeletonLoaderComponent } from '../../../core/components/skeleton-loader/skeleton-loader.component';
 
 @Component({
   selector: 'app-dashboard-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, SkeletonLoaderComponent],
   templateUrl: './dashboard-home.component.html',
   styleUrls: ['./dashboard-home.component.css']
 })
@@ -28,6 +29,7 @@ export class DashboardHomeComponent implements OnInit {
   private certificadoService = inject(CertificadoService);
   private auditoriaService = inject(AuditoriaService);
   private pagoService = inject(PagoService);
+  private docenteDashboardService = inject(DocenteDashboardService);
   private http = inject(HttpClient);
 
   profile: UserProfile | null = null;
@@ -50,12 +52,20 @@ export class DashboardHomeComponent implements OnInit {
   studentCertificados = 0;
   studentCursos: any[] = [];
 
+  // Docente stats
+  docenteCursos: DocenteCurso[] = [];
+  docenteTotalAlumnos = 0;
+  docenteTotalCursos = 0;
+  docenteCursosActivos = 0;
+
   ngOnInit(): void {
     this.authService.getProfile().subscribe({
       next: (user) => {
         this.profile = user;
         if (user.rol === 'ADMINISTRADOR') {
           this.loadAdminStats();
+        } else if (user.rol === 'DOCENTE') {
+          this.loadDocenteStats();
         } else {
           this.loadStudentStats();
         }
@@ -187,6 +197,49 @@ export class DashboardHomeComponent implements OnInit {
         }
       });
     }
+  }
+
+  loadDocenteStats(): void {
+    this.isLoading = true;
+
+    this.docenteDashboardService.getCursosAsignados().subscribe({
+      next: (cursos) => {
+        this.docenteCursos = cursos || [];
+        this.docenteTotalCursos = this.docenteCursos.length;
+        this.docenteCursosActivos = this.docenteCursos.filter(c => c.estado).length;
+
+        // Sumar total de alumnos de todos los cursos
+        let totalAlumnos = 0;
+        let cursosProcesados = 0;
+        if (this.docenteCursos.length === 0) {
+          this.isLoading = false;
+          return;
+        }
+        this.docenteCursos.forEach(curso => {
+          this.docenteDashboardService.getAlumnosCurso(curso.id).subscribe({
+            next: (alumnos) => {
+              totalAlumnos += (alumnos || []).length;
+              cursosProcesados++;
+              if (cursosProcesados >= this.docenteCursos.length) {
+                this.docenteTotalAlumnos = totalAlumnos;
+                this.isLoading = false;
+              }
+            },
+            error: () => {
+              cursosProcesados++;
+              if (cursosProcesados >= this.docenteCursos.length) {
+                this.docenteTotalAlumnos = totalAlumnos;
+                this.isLoading = false;
+              }
+            }
+          });
+        });
+      },
+      error: (err) => {
+        console.error('Error loading docente stats:', err);
+        this.isLoading = false;
+      }
+    });
   }
 
   loadStudentStats(): void {

@@ -2,17 +2,18 @@ package com.insteip.backend.service.impl;
 
 
 import lombok.RequiredArgsConstructor;
-import com.insteip.backend.dto.MatriculaRequestDTO;
-import com.insteip.backend.dto.MatriculaResponseDTO;
-import com.insteip.backend.entity.Curso;
-import com.insteip.backend.entity.Matricula;
-import com.insteip.backend.entity.Usuario;
-import com.insteip.backend.exception.ResourceNotFoundException;
+import com.insteip.backend.domain.dto.matricula.MatriculaRequestDTO;
+import com.insteip.backend.domain.dto.matricula.MatriculaResponseDTO;
+import com.insteip.backend.domain.entity.Curso;
+import com.insteip.backend.domain.entity.Matricula;
+import com.insteip.backend.domain.entity.Usuario;
+import com.insteip.backend.domain.exception.ResourceNotFoundException;
 import com.insteip.backend.repository.CursoRepository;
 import com.insteip.backend.repository.MatriculaRepository;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.service.interfaces.MatriculaService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -76,6 +77,19 @@ public class MatriculaServiceImpl implements MatriculaService {
                 (estado ? "Reactivada" : "Dada de baja") + " matrícula ID: " + saved.getId() + " para alumno ID: " + saved.getUsuario().getId() + " en curso ID: " + saved.getCurso().getId());
     }
 
+    @Override
+    @Transactional
+    public void eliminar(Long id) {
+        Matricula matricula = matriculaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Matrícula no encontrada con id: " + id));
+
+        String info = "Matrícula ID: " + id + " | Alumno: " + matricula.getUsuario().getNombres() + " " + matricula.getUsuario().getApellidos()
+                + " | Curso: " + matricula.getCurso().getNombre();
+
+        matriculaRepository.deleteById(id);
+        auditoriaService.registrarEvento("MATRICULAS", "ELIMINAR", "Eliminada físicamente " + info);
+    }
+
     private MatriculaResponseDTO toResponse(Matricula m) {
         return new MatriculaResponseDTO(
                 m.getId(),
@@ -89,4 +103,6 @@ public class MatriculaServiceImpl implements MatriculaService {
                 m.getEstado()
         );
     }
+
+
 }

@@ -1,16 +1,18 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service';
-import { UserProfile } from '../../core/models/user-profile.model';
-import { ThemeService } from '../../core/services/theme.service';
+import { AuthService } from '../../core/services/';
+import { UserProfile } from '../../core/models/';
+import { SkeletonLoaderComponent } from '../../core/components/skeleton-loader/skeleton-loader.component';
+import { ThemeService } from '../../core/services/';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    SkeletonLoaderComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']

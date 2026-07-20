@@ -1,6 +1,6 @@
 package com.insteip.backend.repository;
 
-import com.insteip.backend.entity.Usuario;
+import com.insteip.backend.domain.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 

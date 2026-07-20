@@ -2,10 +2,10 @@ package com.insteip.backend.controller;
 
 
 import lombok.RequiredArgsConstructor;
-import com.insteip.backend.dto.MaterialResponseDTO;
-import com.insteip.backend.entity.Material;
-import com.insteip.backend.exception.ForbiddenException;
-import com.insteip.backend.exception.ResourceNotFoundException;
+import com.insteip.backend.domain.dto.material.MaterialResponseDTO;
+import com.insteip.backend.domain.entity.Material;
+import com.insteip.backend.domain.exception.ForbiddenException;
+import com.insteip.backend.domain.exception.ResourceNotFoundException;
 import com.insteip.backend.service.interfaces.MaterialService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,6 +40,13 @@ public class MaterialController {
             @RequestParam String nombre,
             @RequestPart(required = false) MultipartFile archivo) {
         return ResponseEntity.ok(materialService.editarMaterial(id, nombre, archivo));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessMaterial(#id)")
+    public ResponseEntity<Void> eliminarMaterial(@PathVariable Long id) {
+        materialService.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/estado")

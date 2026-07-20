@@ -2,17 +2,19 @@ package com.insteip.backend.service.impl;
 
 
 import lombok.RequiredArgsConstructor;
-import com.insteip.backend.dto.AvanceProgressRequest;
-import com.insteip.backend.dto.AvanceProgressResponse;
-import com.insteip.backend.entity.AvanceVideo;
-import com.insteip.backend.entity.Usuario;
-import com.insteip.backend.entity.Video;
-import com.insteip.backend.exception.ResourceNotFoundException;
+import com.insteip.backend.domain.dto.avance.AvanceProgressRequest;
+import com.insteip.backend.domain.dto.avance.AvanceProgressResponse;
+import com.insteip.backend.domain.entity.AvanceVideo;
+import com.insteip.backend.domain.entity.Usuario;
+import com.insteip.backend.domain.entity.Video;
+import com.insteip.backend.domain.exception.ResourceNotFoundException;
 import com.insteip.backend.repository.AvanceVideoRepository;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.repository.VideoRepository;
 import com.insteip.backend.service.interfaces.AvanceService;
-import com.insteip.backend.util.ProgresoAcademicoUtils;
+import com.insteip.backend.service.interfaces.CertificadoService;
+import com.insteip.backend.infrastructure.util.ProgresoAcademicoUtils;
+import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -31,6 +33,10 @@ public class AvanceServiceImpl implements AvanceService {
     private final com.insteip.backend.repository.AvanceCursoRepository avanceCursoRepository;
 
     private final com.insteip.backend.repository.ModuloRepository moduloRepository;
+
+    private final EntityManager entityManager;
+
+    private final CertificadoService certificadoService;
 
     @Override
     @org.springframework.transaction.annotation.Transactional
@@ -83,14 +89,14 @@ public class AvanceServiceImpl implements AvanceService {
                 .build();
     }
 
-    private void updateCursoAvance(Usuario usuario, com.insteip.backend.entity.Curso curso) {
+    private void updateCursoAvance(Usuario usuario, com.insteip.backend.domain.entity.Curso curso) {
         if (curso == null) return;
 
-        java.util.List<com.insteip.backend.entity.Modulo> modulos = moduloRepository.findByCursoIdOrderByOrdenAsc(curso.getId());
+        java.util.List<com.insteip.backend.domain.entity.Modulo> modulos = moduloRepository.findByCursoIdOrderByOrdenAsc(curso.getId());
         int totalVideos = 0;
         int completedVideos = 0;
 
-        for (com.insteip.backend.entity.Modulo modulo : modulos) {
+        for (com.insteip.backend.domain.entity.Modulo modulo : modulos) {
             if (!modulo.getEstado()) continue;
             java.util.List<Video> videos = videoRepository.findByModuloIdOrderByOrdenAsc(modulo.getId());
             for (Video v : videos) {
@@ -114,8 +120,8 @@ public class AvanceServiceImpl implements AvanceService {
             completado = true;
         }
 
-        com.insteip.backend.entity.AvanceCurso avanceCurso = avanceCursoRepository.findByUsuarioIdAndCursoId(usuario.getId(), curso.getId())
-                .orElseGet(() -> com.insteip.backend.entity.AvanceCurso.builder()
+        com.insteip.backend.domain.entity.AvanceCurso avanceCurso = avanceCursoRepository.findByUsuarioIdAndCursoId(usuario.getId(), curso.getId())
+                .orElseGet(() -> com.insteip.backend.domain.entity.AvanceCurso.builder()
                         .usuario(usuario)
                         .curso(curso)
                         .build());
@@ -125,6 +131,18 @@ public class AvanceServiceImpl implements AvanceService {
         avanceCurso.setFechaActualizacion(LocalDateTime.now());
 
         avanceCursoRepository.save(avanceCurso);
+
+        // 🏆 Generar certificado automáticamente si el curso se completó
+        if (completado) {
+            // Forzar flush para que las consultas en generarCertificado vean los datos actualizados
+            entityManager.flush();
+            try {
+                certificadoService.generarCertificado(usuario.getId(), curso.getId());
+            } catch (Exception e) {
+                // Si ya existe un certificado o hay error, lo ignoramos silenciosamente
+                System.err.println("Auto-certificado: " + e.getMessage());
+            }
+        }
     }
 
     @Override

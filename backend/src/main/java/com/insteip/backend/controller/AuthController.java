@@ -1,11 +1,13 @@
 package com.insteip.backend.controller;
 
-import com.insteip.backend.dto.LoginRequest;
-import com.insteip.backend.dto.LoginResponse;
-import com.insteip.backend.dto.LogoutRequest;
-import com.insteip.backend.dto.ForgotPasswordRequest;
-import com.insteip.backend.dto.ResetPasswordRequest;
-import com.insteip.backend.dto.UserProfileResponse;
+import com.insteip.backend.domain.dto.auth.LoginRequest;
+import com.insteip.backend.domain.dto.auth.LoginResponse;
+import com.insteip.backend.domain.dto.auth.LogoutRequest;
+import com.insteip.backend.domain.dto.auth.ForgotPasswordRequest;
+import com.insteip.backend.domain.dto.auth.ResetPasswordRequest;
+import com.insteip.backend.domain.dto.auth.TokenRefreshRequest;
+import com.insteip.backend.domain.dto.auth.TokenRefreshResponse;
+import com.insteip.backend.domain.dto.auth.UserProfileResponse;
 import com.insteip.backend.service.interfaces.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<com.insteip.backend.dto.TokenRefreshResponse> refreshToken(@Valid @RequestBody com.insteip.backend.dto.TokenRefreshRequest request) {
+    public ResponseEntity<TokenRefreshResponse> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
         return ResponseEntity.ok(authService.refreshToken(request));
     }
 

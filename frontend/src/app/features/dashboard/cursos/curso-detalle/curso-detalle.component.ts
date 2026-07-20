@@ -2,26 +2,27 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CursoService } from '../../../../core/services/curso.service';
-import { AuthService } from '../../../../core/services/auth.service';
-import { ModuloService } from '../../../../core/services/modulo.service';
-import { MatriculaService } from '../../../../core/services/matricula.service';
-import { AlumnoService } from '../../../../core/services/alumno.service';
-import { CursoRequest, CursoResponse } from '../../../../core/models/curso.model';
-import { ModuloRequest, ModuloResponse } from '../../../../core/models/modulo.model';
-import { MatriculaRequest, MatriculaResponse } from '../../../../core/models/matricula.model';
-import { AlumnoResponse } from '../../../../core/models/alumno.model';
-import { VideoService } from '../../../../core/services/video.service';
-import { MaterialService } from '../../../../core/services/material.service';
-import { VideoResponse, VideoRequest } from '../../../../core/models/video.model';
-import { MaterialResponse } from '../../../../core/models/material.model';
-import { ReportesService } from '../../../../core/services/reportes.service';
-import { ArchivoProtegidoService } from '../../../../core/services/archivo-protegido.service';
-import { ToastService } from '../../../../core/services/toast.service';
+import { HttpEventType } from '@angular/common/http';
+import { CursoService } from '../../../../core/services/';
+import { AuthService } from '../../../../core/services/';
+import { ModuloService } from '../../../../core/services/';
+import { MatriculaService } from '../../../../core/services/';
+import { AlumnoService } from '../../../../core/services/';
+import { CursoRequest, CursoResponse } from '../../../../core/models/';
+import { ModuloRequest, ModuloResponse } from '../../../../core/models/';
+import { MatriculaRequest, MatriculaResponse } from '../../../../core/models/';
+import { AlumnoResponse } from '../../../../core/models/';
+import { VideoService } from '../../../../core/services/';
+import { MaterialService } from '../../../../core/services/';
+import { VideoResponse, VideoRequest } from '../../../../core/models/';
+import { MaterialResponse } from '../../../../core/models/';
+import { ReportesService } from '../../../../core/services/';
+import { ArchivoProtegidoService } from '../../../../core/services/';
+import { ToastService } from '../../../../core/services/';
 import { ConfirmModalComponent } from '../../../../core/components/confirm-modal/confirm-modal.component';
-import { formatBytes, getFileIcon, getCleanFileType, getFileExtension } from '../../../../core/utils/file.utils';
-import { getSubscriptionClass, formatNiveles } from '../../../../core/utils/subscription.utils';
-import { UsuarioService, DocenteOption } from '../../../../core/services/usuario.service';
+import { formatBytes, getFileIcon, getCleanFileType, getFileExtension } from '../../../../core/utils/';
+import { getSubscriptionClass, formatNiveles } from '../../../../core/utils/';
+import { UsuarioService, DocenteOption } from '../../../../core/services/';
 
 // Reset IDE language service cache
 @Component({
@@ -82,11 +83,13 @@ export class CursoDetalleComponent implements OnInit {
   nuevoVideoTitulo = '';
   nuevoVideoUrl = '';
   nuevoVideoDesc = '';
+  nuevoVideoDuracion: number | null = null;
   isAddingVideo = false;
 
   nuevoMaterialNombre = '';
   nuevoMaterialFile: File | null = null;
   isUploadingMaterial = false;
+  uploadProgress = 0;
 
   // Matriculas
   matriculas: MatriculaResponse[] = [];
@@ -176,7 +179,10 @@ export class CursoDetalleComponent implements OnInit {
         try {
           this.curso = data;
           this.loadModulos();
-          this.loadMatriculas();
+          // Solo cargar matrículas si NO es docente (el docente no tiene acceso al endpoint de matrículas)
+          if (!this.isDocente) {
+            this.loadMatriculas();
+          }
         } catch (e: any) {
           console.error('Error al asignar datos de curso:', e);
           this.toastService.error('Excepción al cargar detalles: ' + e.message);
@@ -353,6 +359,28 @@ export class CursoDetalleComponent implements OnInit {
     });
   }
 
+  eliminarMatricula(matricula: MatriculaResponse): void {
+    this.confirmModalType = 'danger';
+    this.confirmModalTitle = '¿Eliminar Matrícula?';
+    this.confirmModalMessage = `¿Estás seguro de que deseas ELIMINAR permanentemente la matrícula de ${matricula.alumnoNombres} ${matricula.alumnoApellidos}? Esta acción no se puede deshacer.`;
+    
+    this.pendingAction = () => {
+      this.matriculaService.eliminarMatricula(matricula.id).subscribe({
+        next: () => {
+          this.toastService.success('Matrícula eliminada permanentemente.');
+          this.loadMatriculas();
+          this.showConfirmModal = false;
+        },
+        error: (err) => {
+          this.toastService.error(err.error?.message || 'Error al eliminar la matrícula.');
+          this.showConfirmModal = false;
+        }
+      });
+    };
+    
+    this.showConfirmModal = true;
+  }
+
   toggleMatriculaEstado(matricula: MatriculaResponse): void {
     const nuevoEstado = !matricula.estado;
     const accion = nuevoEstado ? 'Reactivar' : 'Dar de Baja';
@@ -408,6 +436,28 @@ export class CursoDetalleComponent implements OnInit {
   closeModuloModal(): void {
     this.showModuloModal = false;
     this.isModuloSubmitting = false;
+  }
+
+  eliminarModulo(modulo: ModuloResponse): void {
+    this.confirmModalType = 'danger';
+    this.confirmModalTitle = '¿Eliminar Módulo?';
+    this.confirmModalMessage = `¿Estás seguro de que deseas ELIMINAR permanentemente el módulo "${modulo.nombre}"? Esta acción no se puede deshacer. Se eliminarán todos los videos y materiales asociados.`;
+    
+    this.pendingAction = () => {
+      this.moduloService.eliminarModulo(modulo.id).subscribe({
+        next: () => {
+          this.toastService.success('Módulo eliminado permanentemente.');
+          this.loadModulos();
+          this.showConfirmModal = false;
+        },
+        error: (err) => {
+          this.toastService.error(err.error?.message || 'Error al eliminar el módulo.');
+          this.showConfirmModal = false;
+        }
+      });
+    };
+    
+    this.showConfirmModal = true;
   }
 
   toggleModuloEstado(modulo: ModuloResponse): void {
@@ -630,7 +680,8 @@ export class CursoDetalleComponent implements OnInit {
       titulo: this.nuevoVideoTitulo,
       descripcion: this.nuevoVideoDesc,
       youtubeUrl: this.nuevoVideoUrl,
-      orden: (this.videosMap[moduloId]?.length || 0) + 1
+      orden: (this.videosMap[moduloId]?.length || 0) + 1,
+      duracionSegundos: this.nuevoVideoDuracion || undefined
     };
     
     this.videoService.crearVideo(req).subscribe({
@@ -639,6 +690,7 @@ export class CursoDetalleComponent implements OnInit {
         this.nuevoVideoTitulo = '';
         this.nuevoVideoUrl = '';
         this.nuevoVideoDesc = '';
+        this.nuevoVideoDuracion = null;
         this.videoFormOpenMap[moduloId] = false;
         this.cargarContenidoModulo(moduloId);
         this.toastService.success('Video agregado exitosamente al módulo.');
@@ -648,6 +700,28 @@ export class CursoDetalleComponent implements OnInit {
         this.toastService.error('Error al agregar video: ' + (err.error?.message || err.message));
       }
     });
+  }
+
+  eliminarVideoInline(moduloId: number, video: VideoResponse): void {
+    this.confirmModalType = 'danger';
+    this.confirmModalTitle = '¿Eliminar Video?';
+    this.confirmModalMessage = `¿Estás seguro de que deseas ELIMINAR permanentemente el video "${video.titulo}"? Esta acción no se puede deshacer.`;
+    
+    this.pendingAction = () => {
+      this.videoService.eliminarVideo(video.id).subscribe({
+        next: () => {
+          this.toastService.success('Video eliminado permanentemente.');
+          this.cargarContenidoModulo(moduloId);
+          this.showConfirmModal = false;
+        },
+        error: (err) => {
+          this.toastService.error(err.error?.message || 'Error al eliminar el video.');
+          this.showConfirmModal = false;
+        }
+      });
+    };
+    
+    this.showConfirmModal = true;
   }
 
   toggleVideoEstadoInline(moduloId: number, video: VideoResponse): void {
@@ -665,8 +739,17 @@ export class CursoDetalleComponent implements OnInit {
   onInlineFileSelected(event: any): void {
     const file = event.target.files?.[0];
     if (file) {
-      if (file.size > 10 * 1024 * 1024) {
-        this.toastService.warning('El archivo supera los 10MB permitidos.');
+      // Validate dangerous extensions
+      const fileExt = file.name.split('.').pop()?.toLowerCase();
+      const dangerousExts = ['exe', 'bat', 'sh', 'cmd', 'js', 'com', 'scr', 'msi', 'vbs'];
+      if (fileExt && dangerousExts.includes(fileExt)) {
+        this.toastService.warning('No se permiten archivos ejecutables o potencialmente peligrosos (.exe, .bat, .js, etc.).');
+        return;
+      }
+
+      // Validate file size (100MB limit)
+      if (file.size > 100 * 1024 * 1024) {
+        this.toastService.warning('El archivo supera los 100MB permitidos.');
         return;
       }
       this.nuevoMaterialFile = file;
@@ -683,20 +766,49 @@ export class CursoDetalleComponent implements OnInit {
       return;
     }
     this.isUploadingMaterial = true;
-    this.materialService.subirMaterial(moduloId, this.nuevoMaterialNombre, this.nuevoMaterialFile).subscribe({
-      next: () => {
-        this.isUploadingMaterial = false;
-        this.nuevoMaterialNombre = '';
-        this.nuevoMaterialFile = null;
-        this.materialFormOpenMap[moduloId] = false;
-        this.cargarContenidoModulo(moduloId);
-        this.toastService.success('Material de apoyo subido exitosamente.');
+    this.uploadProgress = 0;
+    this.materialService.subirMaterialConProgreso(moduloId, this.nuevoMaterialNombre, this.nuevoMaterialFile).subscribe({
+      next: (event) => {
+        if (event.type === HttpEventType.UploadProgress && event.total) {
+          this.uploadProgress = Math.round((100 * event.loaded) / event.total);
+        } else if (event.type === HttpEventType.Response) {
+          this.isUploadingMaterial = false;
+          this.uploadProgress = 0;
+          this.nuevoMaterialNombre = '';
+          this.nuevoMaterialFile = null;
+          this.materialFormOpenMap[moduloId] = false;
+          this.cargarContenidoModulo(moduloId);
+          this.toastService.success('Material de apoyo subido exitosamente.');
+        }
       },
       error: (err) => {
         this.isUploadingMaterial = false;
+        this.uploadProgress = 0;
         this.toastService.error('Error al subir material: ' + (err.error?.message || err.message));
       }
     });
+  }
+
+  eliminarMaterialInline(moduloId: number, mat: MaterialResponse): void {
+    this.confirmModalType = 'danger';
+    this.confirmModalTitle = '¿Eliminar Material?';
+    this.confirmModalMessage = `¿Estás seguro de que deseas ELIMINAR permanentemente el material "${mat.nombre}"? Esta acción no se puede deshacer.`;
+    
+    this.pendingAction = () => {
+      this.materialService.eliminarMaterial(mat.id).subscribe({
+        next: () => {
+          this.toastService.success('Material eliminado permanentemente.');
+          this.cargarContenidoModulo(moduloId);
+          this.showConfirmModal = false;
+        },
+        error: (err) => {
+          this.toastService.error(err.error?.message || 'Error al eliminar el material.');
+          this.showConfirmModal = false;
+        }
+      });
+    };
+    
+    this.showConfirmModal = true;
   }
 
   toggleMaterialEstadoInline(moduloId: number, mat: MaterialResponse): void {
@@ -714,6 +826,17 @@ export class CursoDetalleComponent implements OnInit {
   getFileIcon = getFileIcon;
   getCleanFileType = getCleanFileType;
   formatBytes = formatBytes;
+
+  formatearDuracion(segundos: number | undefined | null): string {
+    if (!segundos || segundos <= 0) return '—';
+    const h = Math.floor(segundos / 3600);
+    const m = Math.floor((segundos % 3600) / 60);
+    const s = segundos % 60;
+    if (h > 0) {
+      return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  }
 
   descargarMaterial(mat: MaterialResponse): void {
     const extension = getFileExtension(mat.tipoArchivo);

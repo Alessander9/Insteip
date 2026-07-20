@@ -1,5 +1,6 @@
 package com.insteip.backend.controller;
 
+import com.insteip.backend.infrastructure.scheduler.BackupScheduler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +23,7 @@ import java.util.Map;
 public class SistemaController {
 
     private final DataSource dataSource;
-    private final com.insteip.backend.service.impl.BackupScheduler backupScheduler;
+    private final BackupScheduler backupScheduler;
 
     @PostMapping("/backup")
     public ResponseEntity<Map<String, String>> triggerBackup() {

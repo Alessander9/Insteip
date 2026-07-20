@@ -1,7 +1,7 @@
 package com.insteip.backend.service.interfaces;
 
-import com.insteip.backend.dto.CursoResponseDTO;
-import com.insteip.backend.dto.DocenteEstudianteProgressResponse;
+import com.insteip.backend.domain.dto.curso.CursoResponseDTO;
+import com.insteip.backend.domain.dto.docente.DocenteEstudianteProgressResponse;
 import java.util.List;
 
 public interface DocenteDashboardService {

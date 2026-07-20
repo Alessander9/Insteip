@@ -241,7 +241,7 @@ CREATE TABLE materiales (
     nombre VARCHAR(250) NOT NULL,
     archivo_url TEXT NOT NULL,
     archivo_interno VARCHAR(120) NOT NULL UNIQUE,
-    tipo_archivo VARCHAR(50),
+    tipo_archivo VARCHAR(100),
     peso_bytes BIGINT,
     estado BOOLEAN DEFAULT TRUE,
     fecha_subida TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

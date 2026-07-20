@@ -1,6 +1,6 @@
 package com.insteip.backend.repository;
 
-import com.insteip.backend.entity.Pago;
+import com.insteip.backend.domain.entity.Pago;
 import org.springframework.data.jpa.repository.JpaRepository;
 public interface PagoRepository extends JpaRepository<Pago, Long> {
 

@@ -1,11 +1,19 @@
 package com.insteip.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.insteip.backend.dto.*;
-import com.insteip.backend.security.SecurityConfig;
-import com.insteip.backend.security.JwtAuthenticationFilter;
+import com.insteip.backend.domain.dto.avance.AvanceProgressRequest;
+import com.insteip.backend.domain.dto.avance.AvanceProgressResponse;
+import com.insteip.backend.domain.dto.curso.CursoRequestDTO;
+import com.insteip.backend.domain.dto.curso.CursoResponseDTO;
+import com.insteip.backend.domain.dto.material.MaterialResponseDTO;
+import com.insteip.backend.domain.dto.modulo.ModuloRequestDTO;
+import com.insteip.backend.domain.dto.modulo.ModuloResponseDTO;
+import com.insteip.backend.domain.dto.video.VideoRequestDTO;
+import com.insteip.backend.domain.dto.video.VideoResponseDTO;
+import com.insteip.backend.infrastructure.security.SecurityConfig;
+import com.insteip.backend.infrastructure.security.JwtAuthenticationFilter;
 import com.insteip.backend.service.interfaces.*;
-import com.insteip.backend.entity.Material;
+import com.insteip.backend.domain.entity.Material;
 import com.insteip.backend.repository.UsuarioRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,7 +134,7 @@ class ContenidosControllerTest {
 
     @Test
     void listarVideosPorModulo_shouldReturnVideos() throws Exception {
-        VideoResponseDTO response = new VideoResponseDTO(3L, "Video 1", "Desc", "https://youtube.com/watch?v=123", 1, true, java.time.LocalDateTime.now());
+        VideoResponseDTO response = new VideoResponseDTO(3L, "Video 1", "Desc", "https://youtube.com/watch?v=123", 1, true, java.time.LocalDateTime.now(), 300);
         // Mapped at ModuloController GET /api/modulos/{id}/videos
         when(videoService.listarVideosPorModulo(eq(2L), isNull(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(response), PageRequest.of(0, 10), 1));
@@ -138,8 +146,8 @@ class ContenidosControllerTest {
 
     @Test
     void crearVideo_shouldReturnCreatedVideo() throws Exception {
-        VideoRequestDTO request = new VideoRequestDTO(2L, "Video 1", "Desc Video", "https://youtube.com/watch?v=123", 1);
-        VideoResponseDTO response = new VideoResponseDTO(3L, "Video 1", "Desc Video", "https://youtube.com/watch?v=123", 1, true, java.time.LocalDateTime.now());
+        VideoRequestDTO request = new VideoRequestDTO(2L, "Video 1", "Desc Video", "https://youtube.com/watch?v=123", 1, 300);
+        VideoResponseDTO response = new VideoResponseDTO(3L, "Video 1", "Desc Video", "https://youtube.com/watch?v=123", 1, true, java.time.LocalDateTime.now(), 300);
         when(videoService.crearVideo(any(VideoRequestDTO.class))).thenReturn(response);
 
         mockMvc.perform(post("/api/videos")
@@ -215,7 +223,7 @@ class ContenidosControllerTest {
                         "test@insteip.com", "token", Collections.emptyList()
                 );
         when(usuarioRepository.findByCorreo("test@insteip.com")).thenReturn(Optional.of(
-                com.insteip.backend.entity.Usuario.builder().id(2L).correo("test@insteip.com").build()
+                com.insteip.backend.domain.entity.Usuario.builder().id(2L).correo("test@insteip.com").build()
         ));
         when(avanceService.guardarProgreso(eq(2L), any(AvanceProgressRequest.class))).thenReturn(response);
 

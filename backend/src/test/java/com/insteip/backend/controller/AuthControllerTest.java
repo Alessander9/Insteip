@@ -1,9 +1,16 @@
 package com.insteip.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.insteip.backend.dto.*;
-import com.insteip.backend.security.SecurityConfig;
-import com.insteip.backend.security.JwtAuthenticationFilter;
+import com.insteip.backend.domain.dto.auth.ForgotPasswordRequest;
+import com.insteip.backend.domain.dto.auth.LoginRequest;
+import com.insteip.backend.domain.dto.auth.LoginResponse;
+import com.insteip.backend.domain.dto.auth.LogoutRequest;
+import com.insteip.backend.domain.dto.auth.ResetPasswordRequest;
+import com.insteip.backend.domain.dto.auth.TokenRefreshRequest;
+import com.insteip.backend.domain.dto.auth.TokenRefreshResponse;
+import com.insteip.backend.domain.dto.auth.UserProfileResponse;
+import com.insteip.backend.infrastructure.security.SecurityConfig;
+import com.insteip.backend.infrastructure.security.JwtAuthenticationFilter;
 import com.insteip.backend.service.interfaces.AuthService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

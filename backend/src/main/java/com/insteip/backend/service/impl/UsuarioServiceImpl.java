@@ -2,14 +2,14 @@ package com.insteip.backend.service.impl;
 
 
 import lombok.RequiredArgsConstructor;
-import com.insteip.backend.dto.UsuarioRequestDTO;
-import com.insteip.backend.dto.DocenteRequestDTO;
-import com.insteip.backend.dto.UsuarioResponseDTO;
-import com.insteip.backend.entity.Usuario;
-import com.insteip.backend.entity.Rol;
-import com.insteip.backend.entity.NivelSuscripcion;
-import com.insteip.backend.exception.ResourceNotFoundException;
-import com.insteip.backend.exception.BadRequestException;
+import com.insteip.backend.domain.dto.usuario.UsuarioRequestDTO;
+import com.insteip.backend.domain.dto.docente.DocenteRequestDTO;
+import com.insteip.backend.domain.dto.usuario.UsuarioResponseDTO;
+import com.insteip.backend.domain.entity.Usuario;
+import com.insteip.backend.domain.entity.Rol;
+import com.insteip.backend.domain.entity.NivelSuscripcion;
+import com.insteip.backend.domain.exception.ResourceNotFoundException;
+import com.insteip.backend.domain.exception.BadRequestException;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.repository.RolRepository;
 import com.insteip.backend.repository.NivelSuscripcionRepository;
@@ -29,6 +29,8 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final NivelSuscripcionRepository suscripcionRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final com.insteip.backend.repository.CertificadoRepository certificadoRepository;
 
     private final com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
 
@@ -216,6 +218,36 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario saved = usuarioRepository.save(usuario);
         auditoriaService.registrarEvento("DOCENTES", estado ? "ACTIVAR" : "DESACTIVAR",
                 (estado ? "Activado" : "Desactivado") + " docente: " + saved.getNombres() + " " + saved.getApellidos() + " (ID: " + saved.getId() + ")");
+    }
+
+    @Override
+    @Transactional
+    public void eliminarAlumno(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Alumno no encontrado con id: " + id));
+        if (!"ALUMNO".equals(usuario.getRol().getNombre())) {
+            throw new BadRequestException("El usuario con id " + id + " no es un Alumno");
+        }
+        String nombreAlumno = usuario.getNombres() + " " + usuario.getApellidos();
+        // Eliminar certificados primero (tienen ON DELETE RESTRICT)
+        certificadoRepository.eliminarPorUsuarioId(id);
+        usuarioRepository.deleteById(id);
+        auditoriaService.registrarEvento("ALUMNOS", "ELIMINAR", "Eliminado alumno: " + nombreAlumno + " (ID: " + id + ")");
+    }
+
+    @Override
+    @Transactional
+    public void eliminarDocente(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Docente no encontrado con id: " + id));
+        if (!"DOCENTE".equals(usuario.getRol().getNombre())) {
+            throw new BadRequestException("El usuario con id " + id + " no es un Docente");
+        }
+        String nombreDocente = usuario.getNombres() + " " + usuario.getApellidos();
+        // Eliminar certificados primero (tienen ON DELETE RESTRICT)
+        certificadoRepository.eliminarPorUsuarioId(id);
+        usuarioRepository.deleteById(id);
+        auditoriaService.registrarEvento("DOCENTES", "ELIMINAR", "Eliminado docente: " + nombreDocente + " (ID: " + id + ")");
     }
 
     private UsuarioResponseDTO convertToResponseDto(Usuario u) {

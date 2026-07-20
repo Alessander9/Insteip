@@ -1,20 +1,11 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { ThemeService } from '../../services/theme.service';
+import { Component } from '@angular/core';
+import { CardNavComponent } from '../card-nav/card-nav.component';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
-  templateUrl: './navbar.component.html',
+  imports: [CardNavComponent],
+  template: `<app-card-nav></app-card-nav>`,
   styleUrls: []
 })
-export class NavbarComponent {
-  isMobileMenuOpen = false;
-  themeService = inject(ThemeService);
-
-  toggleMobileMenu(): void {
-    this.isMobileMenuOpen = !this.isMobileMenuOpen;
-  }
-}
+export class NavbarComponent {}

@@ -2,13 +2,13 @@ package com.insteip.backend.service.impl;
 
 
 import lombok.RequiredArgsConstructor;
-import com.insteip.backend.dto.MaterialResponseDTO;
-import com.insteip.backend.entity.Material;
-import com.insteip.backend.entity.Modulo;
-import com.insteip.backend.entity.Matricula;
-import com.insteip.backend.entity.Usuario;
-import com.insteip.backend.exception.ResourceNotFoundException;
-import com.insteip.backend.exception.BadRequestException;
+import com.insteip.backend.domain.dto.material.MaterialResponseDTO;
+import com.insteip.backend.domain.entity.Material;
+import com.insteip.backend.domain.entity.Modulo;
+import com.insteip.backend.domain.entity.Matricula;
+import com.insteip.backend.domain.entity.Usuario;
+import com.insteip.backend.domain.exception.ResourceNotFoundException;
+import com.insteip.backend.domain.exception.BadRequestException;
 import com.insteip.backend.repository.MaterialRepository;
 import com.insteip.backend.repository.ModuloRepository;
 import com.insteip.backend.repository.UsuarioRepository;
@@ -35,16 +35,29 @@ import org.springframework.data.domain.Pageable;
 @RequiredArgsConstructor
 public class MaterialServiceImpl implements MaterialService {
 
-    private static final long MAX_FILE_SIZE_BYTES = 10L * 1024L * 1024L;
+    private static final long MAX_FILE_SIZE_BYTES = 100L * 1024L * 1024L;
     private static final Set<String> ALLOWED_EXTENSIONS = new HashSet<>(Arrays.asList(
-            ".pdf", ".doc", ".docx", ".png", ".jpg", ".jpeg"
+            ".pdf", ".doc", ".docx", ".png", ".jpg", ".jpeg",
+            ".mp4", ".zip", ".xlsx", ".pptx", ".txt",
+            ".csv", ".json", ".psd", ".ai", ".svg", ".rar"
     ));
     private static final Set<String> ALLOWED_CONTENT_TYPES = new HashSet<>(Arrays.asList(
             "application/pdf",
             "application/msword",
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             "image/png",
-            "image/jpeg"
+            "image/jpeg",
+            "video/mp4",
+            "application/zip",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "text/plain",
+            "text/csv",
+            "application/json",
+            "image/vnd.adobe.photoshop",
+            "application/postscript",
+            "image/svg+xml",
+            "application/vnd.rar"
     ));
 
     private final MaterialRepository materialRepository;
@@ -177,6 +190,30 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
+    @Transactional
+    public void eliminar(Long id) {
+        Material material = materialRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Material no encontrado con id: " + id));
+        String nombreMaterial = material.getNombre();
+        String archivoInterno = material.getArchivoInterno();
+        
+        // Eliminar de BD primero
+        materialRepository.deleteById(id);
+        
+        // Luego eliminar archivo físico si existe (si BD falla, el archivo se conserva)
+        if (archivoInterno != null && !archivoInterno.isBlank()) {
+            try {
+                Path filePath = Paths.get(UPLOADS_DIR).resolve(archivoInterno);
+                Files.deleteIfExists(filePath);
+            } catch (IOException e) {
+                System.err.println("No se pudo eliminar el archivo físico: " + e.getMessage());
+            }
+        }
+        
+        auditoriaService.registrarEvento("MATERIAL", "ELIMINAR", "Eliminado material: " + nombreMaterial + " (ID: " + id + ")");
+    }
+
+    @Override
     public Material obtenerMaterialEntity(Long id) {
         return materialRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Material no encontrado con id: " + id));
@@ -193,7 +230,7 @@ public class MaterialServiceImpl implements MaterialService {
                 org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
             registrarDescargaDenegada(material, "Usuario no autenticado");
-            throw new com.insteip.backend.exception.ForbiddenException("No tiene permisos para acceder a este recurso.");
+            throw new com.insteip.backend.domain.exception.ForbiddenException("No tiene permisos para acceder a este recurso.");
         }
 
         String correo = authentication.getName();
@@ -202,7 +239,7 @@ public class MaterialServiceImpl implements MaterialService {
 
         if (usuario.getEstado() == null || !usuario.getEstado()) {
             registrarDescargaDenegada(material, "Usuario inactivo");
-            throw new com.insteip.backend.exception.ForbiddenException("No tiene permisos para acceder a este recurso.");
+            throw new com.insteip.backend.domain.exception.ForbiddenException("No tiene permisos para acceder a este recurso.");
         }
 
         boolean isAdminOrDocente = usuario.getRol() != null
@@ -214,7 +251,7 @@ public class MaterialServiceImpl implements MaterialService {
                 || modulo == null || modulo.getEstado() == null || !modulo.getEstado()
                 || modulo.getCurso() == null || modulo.getCurso().getEstado() == null || !modulo.getCurso().getEstado()) {
             registrarDescargaDenegada(material, "Recurso inactivo");
-            throw new com.insteip.backend.exception.ForbiddenException("No tiene permisos para acceder a este recurso.");
+            throw new com.insteip.backend.domain.exception.ForbiddenException("No tiene permisos para acceder a este recurso.");
         }
 
         if (!isAdminOrDocente) {
@@ -222,7 +259,7 @@ public class MaterialServiceImpl implements MaterialService {
                     .orElse(null);
             if (matricula == null || matricula.getEstado() == null || !matricula.getEstado()) {
                 registrarDescargaDenegada(material, "Matrícula inactiva o inexistente");
-                throw new com.insteip.backend.exception.ForbiddenException("No tiene permisos para acceder a este recurso.");
+                throw new com.insteip.backend.domain.exception.ForbiddenException("No tiene permisos para acceder a este recurso.");
             }
         }
 
@@ -253,7 +290,7 @@ public class MaterialServiceImpl implements MaterialService {
 
         // 1. Max 10MB Check
         if (archivo.getSize() > MAX_FILE_SIZE_BYTES) {
-            throw new BadRequestException("El tamaño del archivo no puede superar los 10MB");
+            throw new BadRequestException("El tamaño del archivo no puede superar los 100MB");
         }
 
         // 2. Block executables by extension and mime type
@@ -268,13 +305,13 @@ public class MaterialServiceImpl implements MaterialService {
 
             boolean hasAllowedExtension = ALLOWED_EXTENSIONS.stream().anyMatch(lowerName::endsWith);
             if (!hasAllowedExtension) {
-                throw new BadRequestException("Tipo de archivo no permitido. Solo se admiten PDF, DOC, DOCX, PNG y JPG");
+                throw new BadRequestException("Tipo de archivo no permitido. Solo se admiten PDF, DOC, DOCX, PNG, JPG, MP4, ZIP, XLSX, PPTX, TXT, CSV, JSON, PSD, AI, SVG y RAR");
             }
         }
 
         String contentType = archivo.getContentType();
         if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType.toLowerCase())) {
-            throw new BadRequestException("Tipo MIME no permitido. Solo se admiten PDF, DOC, DOCX, PNG y JPG");
+            throw new BadRequestException("Tipo MIME no permitido. Solo se admiten PDF, DOC, DOCX, PNG, JPG, MP4, ZIP, XLSX, PPTX, TXT, CSV, JSON, PSD, AI, SVG y RAR");
         }
 
         if (originalFilename != null) {
@@ -302,6 +339,17 @@ public class MaterialServiceImpl implements MaterialService {
             if (lowerName.endsWith(".docx")) return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
             if (lowerName.endsWith(".jpg") || lowerName.endsWith(".jpeg")) return "image/jpeg";
             if (lowerName.endsWith(".png")) return "image/png";
+            if (lowerName.endsWith(".mp4")) return "video/mp4";
+            if (lowerName.endsWith(".zip")) return "application/zip";
+            if (lowerName.endsWith(".xlsx")) return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            if (lowerName.endsWith(".pptx")) return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+            if (lowerName.endsWith(".txt")) return "text/plain";
+            if (lowerName.endsWith(".csv")) return "text/csv";
+            if (lowerName.endsWith(".json")) return "application/json";
+            if (lowerName.endsWith(".psd")) return "image/vnd.adobe.photoshop";
+            if (lowerName.endsWith(".ai")) return "application/postscript";
+            if (lowerName.endsWith(".svg")) return "image/svg+xml";
+            if (lowerName.endsWith(".rar")) return "application/vnd.rar";
         }
         return "application/octet-stream";
     }
@@ -317,7 +365,19 @@ public class MaterialServiceImpl implements MaterialService {
         if (lowerName.endsWith(".png")) return ".png";
         if (lowerName.endsWith(".jpg")) return ".jpg";
         if (lowerName.endsWith(".jpeg")) return ".jpg";
-        throw new BadRequestException("Tipo de archivo no permitido. Solo se admiten PDF, DOC, DOCX, PNG y JPG");
+        if (lowerName.endsWith(".png")) return ".png";
+        if (lowerName.endsWith(".mp4")) return ".mp4";
+        if (lowerName.endsWith(".zip")) return ".zip";
+        if (lowerName.endsWith(".xlsx")) return ".xlsx";
+        if (lowerName.endsWith(".pptx")) return ".pptx";
+        if (lowerName.endsWith(".txt")) return ".txt";
+        if (lowerName.endsWith(".csv")) return ".csv";
+        if (lowerName.endsWith(".json")) return ".json";
+        if (lowerName.endsWith(".psd")) return ".psd";
+        if (lowerName.endsWith(".ai")) return ".ai";
+        if (lowerName.endsWith(".svg")) return ".svg";
+        if (lowerName.endsWith(".rar")) return ".rar";
+        throw new BadRequestException("Tipo de archivo no permitido. Solo se admiten PDF, DOC, DOCX, PNG, JPG, MP4, ZIP, XLSX, PPTX, TXT, CSV, JSON, PSD, AI, SVG y RAR");
     }
 
     private void registrarDescargaDenegada(Material material, String motivo) {

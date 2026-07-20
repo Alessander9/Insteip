@@ -2,8 +2,8 @@ package com.insteip.backend.controller;
 
 
 import lombok.RequiredArgsConstructor;
-import com.insteip.backend.dto.CursoResponseDTO;
-import com.insteip.backend.dto.DocenteEstudianteProgressResponse;
+import com.insteip.backend.domain.dto.curso.CursoResponseDTO;
+import com.insteip.backend.domain.dto.docente.DocenteEstudianteProgressResponse;
 import com.insteip.backend.service.interfaces.DocenteDashboardService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

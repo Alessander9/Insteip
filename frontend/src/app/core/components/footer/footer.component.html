@@ -1,159 +1,68 @@
-<!-- Footer (Shared Component) -->
-<footer class="bg-gradient-to-b from-[#002244] to-[#00152b] text-white border-t border-white/10 pt-16 pb-8">
-  <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop space-y-12">
-    
-    <!-- Top Footer Columns Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 text-left">
-      
-      <!-- Column 1: Brand Info & Contact Details -->
-      <div class="space-y-6">
-        <div class="space-y-3">
-          <h3 class="font-extrabold text-2xl tracking-wider text-white flex items-center gap-2">
-            <span class="material-symbols-outlined text-secondary text-2xl font-bold">spa</span>
-            INSTEIP
-          </h3>
-          <p class="text-xs text-white/70 leading-relaxed">
-            Instituto de Terapias Integrales y Formación Profesional de Excelencia. Especialistas en salud holística y bienestar alternativo con certificación internacional.
-          </p>
+<footer class="site-footer">
+  <div class="site-footer__grid" aria-hidden="true"></div>
+
+  <div class="site-footer__shell">
+    <div class="footer-main">
+      <section class="footer-brand" aria-labelledby="footer-brand-title">
+        <a routerLink="/inicio" class="footer-logo" aria-label="Ir al inicio de INSTEIP">
+          <span class="footer-logo__canvas"><img src="assets/insteip-logo.png" alt="Logo de INSTEIP" /></span>
+          <span><strong id="footer-brand-title">INSTEIP</strong><small>Instituto de Salud y Terapias Complementarias</small></span>
+        </a>
+
+        <p>Formación profesional con práctica clínica, acompañamiento docente y certificaciones verificables.</p>
+
+        <address class="footer-contact">
+          <a href="tel:+51984256712"><span class="material-symbols-outlined" aria-hidden="true">call</span>+51 984 256 712</a>
+          <a href="mailto:Terapiasintegralesinsteip@gmail.com"><span class="material-symbols-outlined" aria-hidden="true">mail</span>Terapiasintegralesinsteip&#64;gmail.com</a>
+          <span><span class="material-symbols-outlined" aria-hidden="true">location_on</span>Julio C. Tello 438, Lince, Lima</span>
+        </address>
+      </section>
+
+      <nav class="footer-nav" aria-label="Navegación del pie de página">
+        <div>
+          <h2>Instituto</h2>
+          <ul>
+            <li><a routerLink="/inicio">Inicio</a></li>
+            <li><a routerLink="/programas">Programas</a></li>
+            <li><a routerLink="/como-aprenderas">Cómo aprenderás</a></li>
+            <li><a routerLink="/recursos">Recursos gratuitos</a></li>
+            <li><a routerLink="/certificacion">Verificar certificado</a></li>
+          </ul>
         </div>
-        
-        <!-- Contact list -->
-        <ul class="space-y-3.5 text-xs text-white/80">
-          <li class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-secondary text-base">call</span>
-            <a href="tel:+51984256712" class="hover:text-white transition-colors">+51 984 256 712</a>
-          </li>
-          <li class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-secondary text-base">mail</span>
-            <a href="mailto:Terapiasintegralesinsteip@gmail.com" class="hover:text-white transition-colors">Terapiasintegralesinsteip&#64;gmail.com</a>
-          </li>
-          <li class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-secondary text-base">distance</span>
-            <span>Lima, Perú (Servicio Global)</span>
-          </li>
-        </ul>
-      </div>
 
-      <!-- Column 2: Quick Links Navigation -->
-      <div class="space-y-6">
-        <h4 class="font-bold text-sm text-white uppercase tracking-wider border-b border-white/10 pb-3">Nuestra Academia</h4>
-        <ul class="space-y-3 text-xs text-white/70">
-          <li>
-            <a routerLink="/inicio" class="hover:text-white hover:translate-x-1 transition-all inline-block flex items-center gap-1">
-              <span class="material-symbols-outlined text-[10px] text-secondary">chevron_right</span>
-              Inicio
-            </a>
-          </li>
-          <li>
-            <a routerLink="/programas" class="hover:text-white hover:translate-x-1 transition-all inline-block flex items-center gap-1">
-              <span class="material-symbols-outlined text-[10px] text-secondary">chevron_right</span>
-              Programas
-            </a>
-          </li>
-          <li>
-            <a routerLink="/cursos" class="hover:text-white hover:translate-x-1 transition-all inline-block flex items-center gap-1">
-              <span class="material-symbols-outlined text-[10px] text-secondary">chevron_right</span>
-              Cursos y Talleres
-            </a>
-          </li>
-          <li>
-            <a routerLink="/recursos" class="hover:text-white hover:translate-x-1 transition-all inline-block flex items-center gap-1">
-              <span class="material-symbols-outlined text-[10px] text-secondary">chevron_right</span>
-              Recursos Gratis
-            </a>
-          </li>
-          <li>
-            <a routerLink="/certificacion" class="hover:text-white hover:translate-x-1 transition-all inline-block flex items-center gap-1">
-              <span class="material-symbols-outlined text-[10px] text-secondary">chevron_right</span>
-              Verificar Certificado
-            </a>
-          </li>
-          <li>
-            <a routerLink="/por-que-elegirnos" class="hover:text-white hover:translate-x-1 transition-all inline-block flex items-center gap-1">
-              <span class="material-symbols-outlined text-[10px] text-secondary">chevron_right</span>
-              Por qué elegirnos
-            </a>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Column 3: Popular programs -->
-      <div class="space-y-6">
-        <h4 class="font-bold text-sm text-white uppercase tracking-wider border-b border-white/10 pb-3">Programas Populares</h4>
-        <ul class="space-y-3 text-xs text-white/70">
-          <li>
-            <a [routerLink]="['/cursos', 'terapia-integral']" class="hover:text-white transition-colors block">Diplomado en Terapia Integral</a>
-          </li>
-          <li>
-            <a [routerLink]="['/cursos', 'herbolaria']" class="hover:text-white transition-colors block">Especialización en Herbolaria</a>
-          </li>
-          <li>
-            <a [routerLink]="['/cursos', 'biomagnetismo']" class="hover:text-white transition-colors block">Diplomado en Biomagnetismo</a>
-          </li>
-          <li>
-            <a [routerLink]="['/cursos', 'fundamentos-reiki']" class="hover:text-white transition-colors block">Fundamentos de Reiki</a>
-          </li>
-          <li>
-            <a [routerLink]="['/cursos', 'aromaterapia-esencial']" class="hover:text-white transition-colors block">Aromaterapia Esencial</a>
-          </li>
-          <li>
-            <a [routerLink]="['/cursos', 'medicina-china']" class="hover:text-white transition-colors block">Medicina Tradicional China</a>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Column 4: Newsletter subscription -->
-      <div class="space-y-6">
-        <h4 class="font-bold text-sm text-white uppercase tracking-wider border-b border-white/10 pb-3">Recibe Novedades</h4>
-        <div class="space-y-4">
-          <p class="text-xs text-white/70 leading-relaxed">
-            Suscríbete para recibir invitaciones a Masterclasses gratis y lecturas semanales sobre terapias naturales.
-          </p>
-          <form class="flex flex-col gap-2">
-            <div class="relative w-full">
-              <input type="email" placeholder="Tu correo electrónico" class="w-full px-3.5 py-3 rounded-lg border border-white/10 bg-white/5 text-xs text-white placeholder-white/40 focus:ring-secondary focus:border-secondary transition-all outline-none" />
-              <button type="button" class="absolute right-1.5 top-1.5 bg-secondary hover:bg-secondary/95 text-on-secondary w-9 h-9 rounded-md flex items-center justify-center shadow-md transition-all">
-                <span class="material-symbols-outlined text-sm">send</span>
-              </button>
-            </div>
-            <p class="text-[9px] text-white/50">Respetamos tu privacidad. Puedes darte de baja cuando quieras.</p>
-          </form>
+        <div>
+          <h2>Formaciones</h2>
+          <ul>
+            <li><a routerLink="/cursos/acupuntura-china">Acupuntura China</a></li>
+            <li><a routerLink="/cursos/auriculoterapia">Auriculoterapia</a></li>
+            <li><a routerLink="/cursos/masaje-terapeutico">Masaje Terapéutico</a></li>
+            <li><a routerLink="/cursos">Todos los cursos</a></li>
+          </ul>
         </div>
-      </div>
+      </nav>
 
+      <aside class="footer-connect" aria-labelledby="footer-connect-title">
+        <h2 id="footer-connect-title">Conecta con INSTEIP</h2>
+        <p>Recursos, clases abiertas y novedades de nuestra comunidad.</p>
+
+        <div class="footer-social" aria-label="Redes sociales">
+          <a href="https://instagram.com/insteip" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><span>Ig</span>Instagram</a>
+          <a href="https://facebook.com/insteip" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><span>Fb</span>Facebook</a>
+          <a href="https://youtube.com/insteip" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><span>Yt</span>YouTube</a>
+          <a href="https://linkedin.com/company/insteip" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><span>Li</span>LinkedIn</a>
+        </div>
+
+        <a href="https://wa.me/51939371250" target="_blank" rel="noopener noreferrer" class="footer-whatsapp">
+          <span><small>Admisiones 2026</small>Hablar por WhatsApp</span>
+          <span class="material-symbols-outlined" aria-hidden="true">north_east</span>
+        </a>
+      </aside>
     </div>
 
-    <!-- Bottom Footer Bar -->
-    <div class="border-t border-white/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-6 text-xs text-white/60">
-      <div class="space-y-1 text-center sm:text-left">
-        <p>© 2026 INSTEIP. Todos los derechos reservados.</p>
-        <p class="text-[10px] text-white/45">Formación Integral en Terapias Complementarias.</p>
-      </div>
-
-      <!-- Social Icons & Legal links -->
-      <div class="flex flex-col sm:flex-row items-center gap-6">
-        <div class="flex gap-4">
-          <a href="#" class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:text-white transition-all text-white/70" title="Facebook">
-            <span class="material-symbols-outlined text-base">share</span>
-          </a>
-          <a href="#" class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:text-white transition-all text-white/70" title="Instagram">
-            <span class="material-symbols-outlined text-base">photo_camera</span>
-          </a>
-          <a href="#" class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:text-white transition-all text-white/70" title="LinkedIn">
-            <span class="material-symbols-outlined text-base">badge</span>
-          </a>
-          <a href="#" class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:text-white transition-all text-white/70" title="YouTube">
-            <span class="material-symbols-outlined text-base">play_circle</span>
-          </a>
-        </div>
-
-        <div class="flex gap-4 text-[11px]">
-          <a href="#" class="hover:text-white transition-colors">Términos</a>
-          <span class="text-white/20">|</span>
-          <a href="#" class="hover:text-white transition-colors">Privacidad</a>
-        </div>
-      </div>
+    <div class="footer-bottom">
+      <p>© 2026 INSTEIP. Todos los derechos reservados.</p>
+      <p class="footer-motto">Sanar con las manos, aprender con rigor.</p>
+      <a routerLink="/certificacion">Certificados verificables <span class="material-symbols-outlined" aria-hidden="true">verified</span></a>
     </div>
-
   </div>
 </footer>

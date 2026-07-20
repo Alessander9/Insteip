@@ -1,6 +1,6 @@
 package com.insteip.backend.repository;
 
-import com.insteip.backend.entity.Curso;
+import com.insteip.backend.domain.entity.Curso;
 import org.springframework.data.jpa.repository.JpaRepository;
 public interface CursoRepository extends JpaRepository<Curso, Long> {
 

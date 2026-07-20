@@ -1,0 +1,91 @@
+<app-navbar></app-navbar>
+
+<main class="pc-page" [style.--course-accent]="course.color" [style.--course-soft]="course.softColor">
+  <div class="pc-page__grid" aria-hidden="true"></div>
+
+  <header class="pc-hero">
+    <div class="pc-shell">
+      <div class="pc-topline"><span>INSTEIP / {{ course.type | uppercase }}</span><span>{{ course.edition | uppercase }}</span></div>
+
+      <div class="pc-hero__layout">
+        <div class="pc-copy">
+          <span class="pc-kicker"><i></i> Convocatoria abierta · Presencial en Lima</span>
+          <h1 class="pc-title">{{ course.titleLead }}<br><em>{{ course.titleAccent }}</em></h1>
+          <p class="pc-description">{{ course.description }}</p>
+
+          <div class="pc-actions">
+            <a href="#contenido" class="pc-button pc-button--primary">Ver contenido <span class="material-symbols-outlined">arrow_downward</span></a>
+            <a href="https://wa.me/51939371250" target="_blank" rel="noopener noreferrer" class="pc-button pc-button--quiet">Consultar vacante <span class="material-symbols-outlined">north_east</span></a>
+          </div>
+
+          <div class="pc-proof"><span class="material-symbols-outlined">verified</span><span>Formación presencial con práctica supervisada y certificación INSTEIP.</span></div>
+        </div>
+
+        <div class="pc-visual">
+          <div class="pc-visual__index">{{ course.icon }}</div>
+          <figure>
+            <img [src]="course.image" [alt]="course.titleAccent" fetchpriority="high" />
+            <figcaption><span>{{ course.type }}</span><small>{{ course.schedule }}</small></figcaption>
+          </figure>
+          <span class="pc-visual__edition">{{ course.edition }}</span>
+        </div>
+      </div>
+
+      <div class="pc-stats">
+        <article class="pc-stat"><span class="material-symbols-outlined">schedule</span><small>Duración</small><strong>{{ course.duration }}</strong></article>
+        <article class="pc-stat"><span class="material-symbols-outlined">payments</span><small>{{ course.priceLabel }}</small><strong>{{ course.price }}</strong></article>
+        <article class="pc-stat"><span class="material-symbols-outlined">location_on</span><small>Sede</small><strong>Lince, Lima</strong></article>
+        <article class="pc-stat"><span class="material-symbols-outlined">event_available</span><small>Modalidad</small><strong>{{ course.schedule }}</strong></article>
+      </div>
+    </div>
+  </header>
+
+  <section class="pc-outcomes">
+    <div class="pc-shell pc-outcomes__layout">
+      <header data-reveal><span>[ EXPERIENCIA FORMATIVA ]</span><h2>Aprende haciendo, con guía profesional.</h2><p>Una experiencia diseñada para llevar el conocimiento a la práctica de forma clara, segura y aplicable.</p></header>
+      <div class="pc-outcomes__cards" data-reveal>
+        <article *ngFor="let outcome of course.outcomes; let i = index"><span>0{{ i + 1 }}</span><div class="material-symbols-outlined">{{ i === 0 ? 'menu_book' : i === 1 ? 'clinical_notes' : 'workspace_premium' }}</div><h3>{{ outcome }}</h3></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="pc-program" id="contenido">
+    <div class="pc-shell">
+      <header class="pc-section-heading" data-reveal><div><span>[ CONTENIDO ACADÉMICO ]</span><h2>Lo que aprenderás</h2></div><p>Bloques progresivos que integran fundamentos, técnica y práctica.</p></header>
+
+      <div class="pc-modules">
+        <article *ngFor="let module of course.modules" data-reveal>
+          <div class="pc-module__top"><span>{{ module.number }}</span><span class="material-symbols-outlined">{{ module.icon }}</span></div>
+          <h3>{{ module.title }}</h3>
+          <p>{{ module.description }}</p>
+          <div class="pc-module__line"></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="pc-audience">
+    <div class="pc-shell">
+      <header class="pc-section-heading" data-reveal><div><span>[ PÚBLICO DIRIGIDO ]</span><h2>¿Para quién es?</h2></div><p>No necesitas experiencia previa salvo que el contenido requiera práctica clínica específica.</p></header>
+
+      <div class="pc-audience__grid">
+        <article *ngFor="let profile of course.audience; let i = index" data-reveal>
+          <span class="pc-audience__number">0{{ i + 1 }}</span>
+          <span class="material-symbols-outlined">{{ profile.icon }}</span>
+          <h3>{{ profile.title }}</h3>
+          <p>{{ profile.description }}</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="pc-enroll">
+    <div class="pc-shell pc-enroll__layout" data-reveal>
+      <div><span>CUPOS LIMITADOS · {{ course.edition | uppercase }}</span><h2>Da el siguiente paso en tu formación.</h2><p>Reserva tu lugar y recibe información sobre fecha, horario, materiales y proceso de inscripción.</p></div>
+      <div class="pc-enroll__price"><small>{{ course.priceLabel }}</small><strong>{{ course.price }}</strong><span>{{ course.duration }}</span></div>
+      <a href="https://wa.me/51939371250" target="_blank" rel="noopener noreferrer">Hablar con admisión <span class="material-symbols-outlined">arrow_forward</span></a>
+    </div>
+  </section>
+</main>
+
+<app-footer></app-footer>

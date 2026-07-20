@@ -1,11 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../../core/services/auth.service';
-import { AlumnoDashboardService } from '../../../core/services/alumno-dashboard.service';
-import { UserProfile } from '../../../core/models/user-profile.model';
-import { AlumnoCurso } from '../../../core/services/alumno-dashboard.service';
+import { AuthService } from '../../../core/services/';
+import { AlumnoDashboardService } from '../../../core/services/';
+import { UserProfile } from '../../../core/models/';
+import { AlumnoCurso } from '../../../core/services/';
 import { FormsModule } from '@angular/forms';
-import { matchesQuery, paginate, sortByDate, totalPages, SortOrder } from '../../../core/utils/listing.utils';
+import { matchesQuery, paginate, sortByDate, totalPages, SortOrder } from '../../../core/utils/';
 
 @Component({
   selector: 'app-perfil',

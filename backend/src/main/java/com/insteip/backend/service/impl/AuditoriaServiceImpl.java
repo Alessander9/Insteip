@@ -1,10 +1,10 @@
 package com.insteip.backend.service.impl;
 
-import com.insteip.backend.dto.EventoSistemaResponseDTO;
-import com.insteip.backend.dto.LoginAuditoriaResponseDTO;
-import com.insteip.backend.entity.EventoSistema;
-import com.insteip.backend.entity.LoginAuditoria;
-import com.insteip.backend.entity.Usuario;
+import com.insteip.backend.domain.dto.evento.EventoSistemaResponseDTO;
+import com.insteip.backend.domain.dto.evento.LoginAuditoriaResponseDTO;
+import com.insteip.backend.domain.entity.EventoSistema;
+import com.insteip.backend.domain.entity.LoginAuditoria;
+import com.insteip.backend.domain.entity.Usuario;
 import com.insteip.backend.repository.EventoSistemaRepository;
 import com.insteip.backend.repository.LoginAuditoriaRepository;
 import com.insteip.backend.repository.UsuarioRepository;

@@ -1,9 +1,9 @@
 <div class="space-y-8 font-body text-slate-800 dark:text-slate-200 transition-colors duration-300">
   
   <!-- Banner Header for Admin -->
-  <div *ngIf="isAdmin" class="border border-slate-200 dark:border-slate-800 p-8 bg-white dark:bg-slate-900 rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] flex items-center justify-between transition-colors duration-300">
+  <div *ngIf="isAdmin" class="border border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-slate-900 rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] flex items-center justify-between transition-colors duration-300">
     <div>
-      <h1 class="text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight uppercase leading-none">Reporte de Certificados</h1>
+      <h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight uppercase leading-none">Reporte de Certificados</h1>
       <p class="text-slate-500 dark:text-slate-400 text-xs mt-2">Exporta la lista de certificados oficiales emitidos a los alumnos registrados.</p>
     </div>
     <button 
@@ -75,16 +75,14 @@
   </div>
 
   <!-- Banner Header for Student -->
-  <div *ngIf="!isAdmin" class="border border-slate-200 dark:border-slate-800 p-8 bg-white dark:bg-slate-900 rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] transition-colors duration-300">
-    <h1 class="text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight uppercase leading-none">Mis Certificados</h1>
+  <div *ngIf="!isAdmin" class="border border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-slate-900 rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] transition-colors duration-300">
+    <h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight uppercase leading-none">Mis Certificados</h1>
     <p class="text-slate-500 dark:text-slate-400 text-xs mt-2">Visualiza y descarga los certificados oficiales obtenidos tras culminar exitosamente tus cursos.</p>
   </div>
 
-  <!-- Loading State -->
-  <div *ngIf="isLoading && !isAdmin" class="flex flex-col items-center justify-center p-20 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors duration-300">
-    <span class="animate-spin inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full mb-3"></span>
-    <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Cargando tus certificados...</span>
-  </div>
+  <ng-container *ngIf="isLoading && !isAdmin">
+    <app-skeleton-loader type="custom"></app-skeleton-loader>
+  </ng-container>
 
   <!-- No certificates state -->
   <div *ngIf="!isLoading && !isAdmin && certificados.length === 0" class="border border-slate-200 dark:border-slate-800 p-12 text-center bg-white dark:bg-slate-900 transition-colors duration-300">
@@ -117,15 +115,24 @@
             </td>
             <!-- Curso -->
             <td class="p-4 font-bold text-slate-900 dark:text-slate-100 uppercase tracking-tight">
-              {{ getCursoNombre(cert) }}
+              <div class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-amber-500/60 dark:text-amber-400/50 text-sm shrink-0">school</span>
+                <span>{{ getCursoNombre(cert) }}</span>
+              </div>
             </td>
             <!-- Código -->
             <td class="p-4 font-mono font-bold text-[10px] text-slate-600 dark:text-slate-300">
-              {{ cert.codigo }}
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-sm shrink-0">qr_code_scanner</span>
+                <span>{{ cert.codigo }}</span>
+              </div>
             </td>
             <!-- Fecha -->
             <td class="p-4 text-slate-500 dark:text-slate-400 font-mono text-[10px]">
-              {{ cert.fechaEmision | date:'dd/MM/yyyy HH:mm' }}
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-sm shrink-0">event</span>
+                <span>{{ cert.fechaEmision | date:'dd/MM/yyyy HH:mm' }}</span>
+              </div>
             </td>
             <!-- Acciones -->
             <td class="p-4 text-right">

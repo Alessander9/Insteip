@@ -2,14 +2,14 @@ package com.insteip.backend.service.impl;
 
 
 import lombok.RequiredArgsConstructor;
-import com.insteip.backend.dto.CursoResponseDTO;
-import com.insteip.backend.dto.DocenteEstudianteProgressResponse;
-import com.insteip.backend.entity.*;
-import com.insteip.backend.exception.ForbiddenException;
-import com.insteip.backend.exception.ResourceNotFoundException;
+import com.insteip.backend.domain.dto.curso.CursoResponseDTO;
+import com.insteip.backend.domain.dto.docente.DocenteEstudianteProgressResponse;
+import com.insteip.backend.domain.entity.*;
+import com.insteip.backend.domain.exception.ForbiddenException;
+import com.insteip.backend.domain.exception.ResourceNotFoundException;
 import com.insteip.backend.repository.*;
 import com.insteip.backend.service.interfaces.DocenteDashboardService;
-import com.insteip.backend.util.ProgresoAcademicoUtils;
+import com.insteip.backend.infrastructure.util.ProgresoAcademicoUtils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;

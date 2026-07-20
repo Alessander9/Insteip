@@ -2,8 +2,8 @@ package com.insteip.backend.controller;
 
 
 import lombok.RequiredArgsConstructor;
-import com.insteip.backend.dto.AvanceProgressRequest;
-import com.insteip.backend.dto.AvanceProgressResponse;
+import com.insteip.backend.domain.dto.avance.AvanceProgressRequest;
+import com.insteip.backend.domain.dto.avance.AvanceProgressResponse;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.service.interfaces.AvanceService;
 import jakarta.validation.Valid;

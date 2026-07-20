@@ -27,8 +27,9 @@ Este plan cubre:
 
 ## Fuentes de automatización existentes
 
-- [scripts/super-test.js](/C:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/scripts/super-test.js)
-- [scripts/selenium-test.js](/C:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/scripts/selenium-test.js)
+- [super-test.js](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/scripts/tests/e2e/super-test.js)
+- [selenium-test.js](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/scripts/tests/e2e/selenium-test.js)
+- [selenium-super-test.js](file:///c:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/scripts/tests/e2e/selenium-super-test.js)
 - [backend/src/test/java/com/insteip/backend/SystemIntegrationTest.java](/C:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/backend/src/test/java/com/insteip/backend/SystemIntegrationTest.java)
 - [backend/src/test/java/com/insteip/backend/controller/ContenidosControllerTest.java](/C:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/backend/src/test/java/com/insteip/backend/controller/ContenidosControllerTest.java)
 - [backend/src/test/java/com/insteip/backend/controller/AdministracionControllerTest.java](/C:/Users/Alessander/Desktop/TRABAJOS/ACTUALES/Insteip/backend/src/test/java/com/insteip/backend/controller/AdministracionControllerTest.java)
@@ -49,8 +50,9 @@ Este plan cubre:
 |---|---|
 | Compilar frontend | `npm run build` |
 | Ejecutar tests backend | `./mvnw test -q` |
-| Ejecutar smoke UI con Selenium | `node scripts/selenium-test.js` |
-| Ejecutar super test visual | `node scripts/super-test.js` |
+| Ejecutar smoke UI con Selenium | `node scripts/tests/e2e/selenium-test.js` |
+| Ejecutar super test visual (Playwright) | `node scripts/tests/e2e/super-test.js` |
+| Ejecutar súper test completo Selenium | `node scripts/tests/e2e/selenium-super-test.js` |
 
 ## Roles y expectativas
 
@@ -382,8 +384,9 @@ Este plan cubre:
 | Paso | Comando |
 |---|---|
 | Compilar frontend | `npm run build` |
-| Smoke público | `node scripts/selenium-test.js` |
-| E2E completo | `node scripts/super-test.js` |
+| Smoke público | `node scripts/tests/e2e/selenium-test.js` |
+| E2E completo (Playwright) | `node scripts/tests/e2e/super-test.js` |
+| Súper Test E2E completo (Selenium) | `node scripts/tests/e2e/selenium-super-test.js` |
 
 ### 3. Validación manual final
 

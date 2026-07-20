@@ -1,9 +1,9 @@
 <div class="space-y-8 font-body text-slate-800 dark:text-slate-200 transition-colors duration-300">
   
   <!-- Banner Header -->
-  <div class="border border-slate-200 dark:border-slate-800 p-4 sm:p-8 bg-white dark:bg-slate-900 rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.25)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors duration-300">
+  <div class="border border-slate-200 dark:border-slate-800 p-4 sm:p-6 bg-white dark:bg-slate-900 rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.25)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors duration-300">
     <div>
-      <h1 class="text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight uppercase leading-none">Monitoreo del Sistema</h1>
+      <h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight uppercase leading-none">Monitoreo del Sistema</h1>
       <p class="text-slate-500 dark:text-slate-400 text-xs mt-2">Estado general de la base de datos, memoria del servidor, procesador y copias de seguridad.</p>
     </div>
     <button 
@@ -14,11 +14,9 @@
     </button>
   </div>
 
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="flex flex-col items-center justify-center p-20 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors duration-300">
-    <span class="animate-spin inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full mb-3"></span>
-    <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Consultando métricas de salud...</span>
-  </div>
+  <ng-container *ngIf="isLoading">
+    <app-skeleton-loader type="custom"></app-skeleton-loader>
+  </ng-container>
 
   <!-- Error message -->
   <div *ngIf="errorMsg" class="flex items-start gap-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/40 text-red-800 dark:text-red-200 p-4 rounded-none text-xs font-semibold">
@@ -42,12 +40,15 @@
   <div *ngIf="!isLoading && statusData" class="space-y-6">
     
     <!-- Row 1: Vital Stats Grid — 1 col mobile, 2 col sm, 4 col md -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
       
       <!-- Backend health -->
-      <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.02)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] flex flex-col justify-between transition-colors duration-300">
+      <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.02)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] flex flex-col justify-between transition-colors duration-300">
         <div>
-          <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Servidor Backend</span>
+          <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-emerald-500/70 dark:text-emerald-400/50 text-sm">dns</span>
+            <span>Servidor Backend</span>
+          </span>
           <h3 class="text-lg font-black text-slate-900 dark:text-slate-100 uppercase mt-1">Servicio Web</h3>
         </div>
         <div class="mt-6 flex items-center gap-2">
@@ -62,9 +63,12 @@
       </div>
 
       <!-- Database health -->
-      <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.02)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] flex flex-col justify-between transition-colors duration-300">
+      <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.02)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] flex flex-col justify-between transition-colors duration-300">
         <div>
-          <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Base de Datos</span>
+          <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sky-500/70 dark:text-sky-400/50 text-sm">storage</span>
+            <span>Base de Datos</span>
+          </span>
           <h3 class="text-lg font-black text-slate-900 dark:text-slate-100 uppercase mt-1">PostgreSQL</h3>
         </div>
         <div class="mt-6">
@@ -75,9 +79,12 @@
       </div>
 
       <!-- CPU load -->
-      <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.02)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] flex flex-col justify-between transition-colors duration-300">
+      <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.02)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] flex flex-col justify-between transition-colors duration-300">
         <div>
-          <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Carga de Procesador</span>
+          <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-violet-500/70 dark:text-violet-400/50 text-sm">memory</span>
+            <span>Carga de Procesador</span>
+          </span>
           <h3 class="text-lg font-black text-slate-900 dark:text-slate-100 uppercase mt-1">Uso de CPU</h3>
         </div>
         <div class="mt-6">
@@ -88,9 +95,12 @@
       </div>
 
       <!-- Backups control -->
-      <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.02)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] flex flex-col justify-between transition-colors duration-300">
+      <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.02)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] flex flex-col justify-between transition-colors duration-300">
         <div>
-          <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Copia de Seguridad</span>
+          <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-amber-500/70 dark:text-amber-400/50 text-sm">backup</span>
+            <span>Copia de Seguridad</span>
+          </span>
           <h3 class="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase mt-1 leading-tight">Último: <span class="font-mono block text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{{ statusData.ultimoBackup }}</span></h3>
         </div>
         <div class="mt-4">
@@ -107,10 +117,10 @@
     </div>
 
     <!-- Row 2: Resources Gauges — 1 col mobile, 2 col md -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       
       <!-- Disk Usage details -->
-      <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] rounded-none transition-colors duration-300">
+      <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] rounded-none transition-colors duration-300">
         <h3 class="text-xs font-black text-slate-900 dark:text-slate-100 uppercase tracking-widest mb-6">Uso de Disco (Servidor)</h3>
         
         <div class="space-y-4">
@@ -139,7 +149,7 @@
       </div>
 
       <!-- JVM Memory Usage details -->
-      <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] rounded-none transition-colors duration-300">
+      <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.05)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] rounded-none transition-colors duration-300">
         <h3 class="text-xs font-black text-slate-900 dark:text-slate-100 uppercase tracking-widest mb-6">Memoria de la JVM (Java)</h3>
         
         <div class="space-y-4">

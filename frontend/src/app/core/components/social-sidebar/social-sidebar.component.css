@@ -1,21 +1,27 @@
-/* Custom sidebar animations and glassmorphism styling */
+/* ── Social Sidebar Styles ── */
+/* La visibilidad se controla mediante style bindings inline en el HTML */
 
-:host {
-  display: block;
-}
-
-/* Slide in animation on load */
-@keyframes slideIn {
-  from {
-    transform: translate(-100%, -50%);
-    opacity: 0;
+/* Inner card hover effect solo en desktop */
+@media (hover: hover) {
+  [style*="pointer-events: auto"] > div:hover {
+    transform: translateX(4px);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
   }
-  to {
-    transform: translate(0, -50%);
-    opacity: 1;
+
+  [style*="pointer-events: auto"] > div {
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
   }
 }
 
-.fixed {
-  animation: slideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* Ajustes responsive para mobile */
+@media (max-width: 767px) {
+  [style*="pointer-events: auto"] > div a {
+    width: 32px;
+    height: 32px;
+  }
+
+  [style*="pointer-events: auto"] > div a svg {
+    width: 16px;
+    height: 16px;
+  }
 }

@@ -75,7 +75,91 @@
       </div>
     </div>
   </div>
-  
+
+  <!-- ── Modal: Siguiente capítulo (cuenta regresiva 5→1) ── -->
+  <div
+    *ngIf="showNextChapterCountdown"
+    role="dialog"
+    aria-modal="true"
+    class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
+    (click)="closeNextChapterCountdown()">
+    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm"></div>
+
+    <div
+      class="next-chapter-modal relative w-full max-w-sm overflow-hidden border border-white/10 bg-[#060c16]/95 backdrop-blur-md text-white shadow-[0_25px_60px_rgba(0,0,0,0.6)]"
+      (click)="$event.stopPropagation()">
+
+      <!-- Glowing background orbs -->
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.20),transparent_45%),radial-gradient(circle_at_bottom_left,rgba(6,182,212,0.12),transparent_40%)]"></div>
+      <div class="absolute -left-20 -top-20 h-44 w-44 rounded-full bg-indigo-500/10 blur-3xl"></div>
+      <div class="absolute -right-16 -bottom-16 h-36 w-36 rounded-full bg-cyan-400/10 blur-3xl"></div>
+
+      <div class="relative p-6 sm:p-8 flex flex-col gap-6">
+        <!-- Header -->
+        <div class="flex items-start gap-4">
+          <div class="flex h-14 w-14 shrink-0 items-center justify-center border border-indigo-400/25 bg-indigo-500/10 shadow-md">
+            <span class="material-symbols-outlined text-indigo-300 text-2xl">skip_next</span>
+          </div>
+          <div class="min-w-0 flex-1">
+            <span class="inline-flex items-center rounded-full bg-indigo-500/10 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-indigo-300 border border-indigo-500/20">
+              Siguiente capítulo
+            </span>
+            <h2 class="mt-2 text-base font-black leading-tight text-white tracking-tight truncate">
+              {{ nextChapterLabel }}
+            </h2>
+            <p class="mt-1 text-[10px] leading-relaxed text-slate-400">
+              La reproducción automática comenzará en breve.
+            </p>
+          </div>
+        </div>
+
+        <!-- Countdown timer grande -->
+        <div class="flex flex-col items-center gap-3 py-4">
+          <div class="relative w-24 h-24 flex items-center justify-center">
+            <!-- SVG circular countdown -->
+            <svg class="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 96 96">
+              <circle cx="48" cy="48" r="42" fill="none" stroke="currentColor" stroke-width="4"
+                class="text-white/10"></circle>
+              <circle cx="48" cy="48" r="42" fill="none" stroke="currentColor" stroke-width="4"
+                stroke-dasharray="263.9"
+                [attr.stroke-dashoffset]="263.9 - (263.9 * nextChapterSecondsLeft / 5)"
+                class="text-indigo-400 transition-all duration-1000 ease-linear"
+                stroke-linecap="round"></circle>
+            </svg>
+            <span class="text-4xl font-black text-white font-mono tabular-nums">{{ nextChapterSecondsLeft }}</span>
+          </div>
+          <p class="text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">Segundos</p>
+        </div>
+
+        <!-- Acciones -->
+        <div class="flex items-center justify-between gap-3">
+          <button
+            type="button"
+            (click)="closeNextChapterCountdown()"
+            class="inline-flex items-center justify-center gap-1.5 border border-white/10 bg-white/5 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white transition-all hover:bg-white/10 active:scale-95">
+            <span class="material-symbols-outlined text-sm">close</span>
+            Cancelar
+          </button>
+          <button
+            type="button"
+            (click)="goToNextChapterNow()"
+            class="inline-flex items-center justify-center gap-2 border border-emerald-400/20 bg-emerald-400/10 px-5 py-2.5 text-[10px] font-black uppercase tracking-[0.28em] text-emerald-200 transition-all hover:bg-emerald-400/20 active:scale-95">
+            <span class="material-symbols-outlined text-sm">play_arrow</span>
+            Ir ahora
+          </button>
+        </div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="w-full bg-white/5 h-1.5 overflow-hidden">
+        <div
+          class="h-full bg-gradient-to-r from-indigo-400 via-cyan-300 to-emerald-300 transition-all duration-1000 ease-linear"
+          [style.width.%]="(nextChapterSecondsLeft / 5) * 100">
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Breadcrumb / Back Navigation -->
   <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm transition-colors duration-300">
     <div class="flex items-center gap-3">
@@ -90,14 +174,26 @@
         <h1 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ curso.nombre }}</h1>
       </div>
     </div>
-    <div class="flex items-center gap-3">
-      <!-- Overall progress badge -->
+    <div class="flex items-center gap-4">
+      <!-- Circular progress indicator -->
+      <div class="relative w-10 h-10 shrink-0 hidden sm:flex items-center justify-center">
+        <svg class="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 40 40">
+          <!-- Background circle -->
+          <circle cx="20" cy="20" r="17" fill="none" stroke="currentColor" stroke-width="3"
+            class="text-slate-200 dark:text-slate-700"></circle>
+          <!-- Progress circle -->
+          <circle cx="20" cy="20" r="17" fill="none" stroke="currentColor" stroke-width="3"
+            stroke-dasharray="106.8"
+            [attr.stroke-dashoffset]="106.8 - (106.8 * completionPercentage / 100)"
+            class="text-indigo-600 dark:text-indigo-400 transition-all duration-700 ease-out"
+            stroke-linecap="round"></circle>
+        </svg>
+        <span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 font-mono relative">{{ completionPercentage }}%</span>
+      </div>
+      <!-- Overall progress text -->
       <div class="flex flex-col items-end text-right">
         <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Tu Progreso</span>
-        <span class="text-xs font-black text-indigo-600 dark:text-indigo-400 font-mono">{{ completedVideos }} / {{ totalVideos }} Clases ({{ completionPercentage }}%)</span>
-      </div>
-      <div class="w-20 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 h-2.5 rounded-none overflow-hidden hidden sm:block">
-        <div class="bg-indigo-600 dark:bg-indigo-500 h-full transition-all duration-500" [style.width.%]="completionPercentage"></div>
+        <span class="text-xs font-black text-indigo-600 dark:text-indigo-400 font-mono">{{ completedVideos }} / {{ totalVideos }} Clases</span>
       </div>
     </div>
   </div>
@@ -161,63 +257,7 @@
       </div>
     </div>
 
-    <div
-      *ngIf="showNextChapterCountdown"
-      class="absolute inset-0 z-40 flex items-end justify-center bg-gradient-to-t from-slate-950/90 via-slate-950/45 to-transparent p-4 sm:p-6">
-      <div class="w-full max-w-md border border-white/10 bg-slate-950/90 backdrop-blur-md shadow-[0_18px_45px_rgba(0,0,0,0.35)] p-4 sm:p-5 text-white">
-        <div class="flex items-start justify-between gap-4">
-          <div class="flex items-start gap-3 min-w-0">
-            <div class="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center border border-indigo-400/30 bg-indigo-500/10">
-              <span class="material-symbols-outlined text-indigo-300 text-lg">skip_next</span>
-            </div>
-            <div class="min-w-0">
-              <p class="text-[10px] font-black uppercase tracking-[0.35em] text-indigo-200">Siguiente capítulo</p>
-              <h3 class="mt-1 truncate text-sm font-black uppercase tracking-tight text-white">
-                {{ nextChapterLabel }}
-              </h3>
-            </div>
-          </div>
 
-          <button
-            type="button"
-            (click)="closeNextChapterCountdown()"
-            class="shrink-0 border border-white/10 bg-white/5 p-2 text-white transition-colors hover:bg-white/10"
-            title="Cancelar salto automático">
-            <span class="material-symbols-outlined text-sm">close</span>
-          </button>
-        </div>
-
-        <div class="mt-4 flex items-end justify-between gap-4">
-          <div>
-            <p class="text-xs text-slate-300">
-              El siguiente capítulo empieza en
-              <span class="font-black text-amber-300">{{ nextChapterSecondsLeft }}</span>
-            </p>
-            <p class="mt-1 text-[10px] text-slate-500">Puedes cancelar el salto si quieres quedarte en esta pantalla.</p>
-          </div>
-          <div class="flex flex-col items-end gap-2">
-            <button
-              type="button"
-              (click)="goToNextChapterNow()"
-              class="inline-flex items-center justify-center gap-2 border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.28em] text-emerald-200 transition-colors hover:bg-emerald-400/20">
-              <span class="material-symbols-outlined text-sm">play_arrow</span>
-              Ir ahora
-            </button>
-            <div class="text-right">
-              <p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Autoplay</p>
-              <p class="mt-1 text-2xl font-black text-white">{{ nextChapterSecondsLeft }}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-4 h-1.5 overflow-hidden bg-white/10">
-          <div
-            class="h-full bg-gradient-to-r from-indigo-400 via-cyan-300 to-emerald-300 transition-all duration-1000 ease-linear"
-            [style.width.%]="((5 - nextChapterSecondsLeft) / 5) * 100">
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
    <!-- Lower Content Stack (Single Column full width) -->
   <div class="space-y-6 w-full mt-6">

@@ -2,9 +2,9 @@ package com.insteip.backend.service.impl;
 
 
 import lombok.RequiredArgsConstructor;
-import com.insteip.backend.dto.ConfiguracionRequest;
-import com.insteip.backend.dto.ConfiguracionResponse;
-import com.insteip.backend.entity.ConfiguracionInstitucion;
+import com.insteip.backend.domain.dto.configuracion.ConfiguracionRequest;
+import com.insteip.backend.domain.dto.configuracion.ConfiguracionResponse;
+import com.insteip.backend.domain.entity.ConfiguracionInstitucion;
 import com.insteip.backend.repository.ConfiguracionInstitucionRepository;
 import com.insteip.backend.service.interfaces.ConfiguracionService;
 import org.springframework.stereotype.Service;

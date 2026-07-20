@@ -1,0 +1,53 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "shell": "C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe",
+  "compaction": { "auto": false },
+  "plugin": ["oc-codex-multi-auth"],
+  "provider": {
+    "omnirouter": {
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "https://omnirouter.ourocodex.com/v1",
+        "apiKey": "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      },
+      "models": {
+        "cx/gpt-5.4": { "name": "GPT 5.4" },
+        "cx/gpt-5.4-high": { "name": "GPT 5.4 (High)" },
+        "cx/gpt-5.5": { "name": "GPT 5.5" },
+        "cx/gpt-5.5-medium": { "name": "GPT 5.5 (Medium)" },
+        "cx/gpt-5.5-high": { "name": "GPT 5.5 (High)" },
+        "cx/gpt-5.5-xhigh": { "name": "GPT 5.5 (XHigh)" },
+
+        "cx/gpt-5.6-luna-low": { "name": "GPT 5.6 Luna (Low)" },
+        "cx/gpt-5.6-luna-medium": { "name": "GPT 5.6 Luna (Medium)" },
+        "cx/gpt-5.6-luna-high": { "name": "GPT 5.6 Luna (High)" },
+        "cx/gpt-5.6-luna-xhigh": { "name": "GPT 5.6 Luna (XHigh)" },
+        "cx/gpt-5.6-luna-max": { "name": "GPT 5.6 Luna (Max)" },
+
+        "cx/gpt-5.6-terra-low": { "name": "GPT 5.6 Terra (Low)" },
+        "cx/gpt-5.6-terra-medium": { "name": "GPT 5.6 Terra (Medium)" },
+        "cx/gpt-5.6-terra-high": { "name": "GPT 5.6 Terra (High)" },
+        "cx/gpt-5.6-terra-xhigh": { "name": "GPT 5.6 Terra (XHigh)" },
+        "cx/gpt-5.6-terra-max": { "name": "GPT 5.6 Terra (Max)" },
+
+        "cx/gpt-5.6-sol-low": { "name": "GPT 5.6 Sol (Low)" },
+        "cx/gpt-5.6-sol-medium": { "name": "GPT 5.6 Sol (Medium)" },
+        "cx/gpt-5.6-sol-high": { "name": "GPT 5.6 Sol (High)" },
+        "cx/gpt-5.6-sol-xhigh": { "name": "GPT 5.6 Sol (XHigh)" },
+        "cx/gpt-5.6-sol-max": { "name": "GPT 5.6 Sol (Max)" },
+        "cx/gpt-5.6-sol-ultra": { "name": "GPT 5.6 Sol (Ultra)" },
+
+        "agy/claude-opus-4-6-thinking": { "name": "Claude Opus 4.6 (Thinking)" },
+        "agy/claude-sonnet-4-6": { "name": "Claude Sonnet 4.6" },
+
+        "agy/gemini-3.5-flash-low": { "name": "Gemini 3.5 Flash (Low)" },
+        "agy/gemini-3.5-flash-medium": { "name": "Gemini 3.5 Flash (Medium)" },
+        "agy/gemini-3.5-flash-high": { "name": "Gemini 3.5 Flash (High)" },
+
+        "mimo/mimo-v2.5": { "name": "MiMo 2.5" },
+        "mimo/mimo-v2.5-pro": { "name": "MiMo 2.5 Pro" },
+        "mcode/mimo-auto": { "name": "MiMo Auto" }
+      }
+    }
+  }
+}

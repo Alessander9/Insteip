@@ -12,7 +12,7 @@
           <span class="material-symbols-outlined text-2xl text-secondary-fixed">workspace_premium</span>
           <span class="font-label-md text-secondary-fixed text-xs tracking-wider uppercase font-semibold">Sello de Excelencia</span>
         </div>
-        <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-6 leading-tight">Certificación Oficial con Validez Internacional</h2>
+        <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-6 leading-tight">Certificación Oficial con Respaldo Internacional</h2>
         <p class="font-body-lg text-lg text-on-primary/80 mb-8 max-w-lg">
           Nuestros programas culminan con un certificado digital verificable que respalda tus competencias a nivel global. Destaca en tu perfil profesional y accede a nuevas oportunidades.
         </p>
@@ -66,7 +66,7 @@
           <span class="inline-block bg-secondary/10 text-secondary px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">Verificación en Vivo</span>
           <h2 class="font-headline-lg text-[#003466] font-extrabold tracking-tight text-3xl md:text-4xl">Validador de Credenciales Académicas</h2>
           <p class="font-body-lg text-on-surface-variant text-base leading-relaxed">
-            Nuestra institución cuenta con un registro público de egresados. Si eres un empleador, paciente o institución, puedes verificar en tiempo real la validez y vigencia de cualquier certificado emitido por INSTEIP.
+            Nuestra institución cuenta con un registro público de egresados. Si eres un empleador, paciente o institución, puedes verificar en tiempo real el respaldo y vigencia de cualquier certificado emitido por INSTEIP.
           </p>
           <div class="bg-surface p-4 rounded-xl border border-surface-variant/40 text-xs text-on-surface-variant flex items-start gap-3">
             <span class="material-symbols-outlined text-secondary text-lg">info</span>
@@ -87,10 +87,9 @@
             </div>
 
             <!-- Loading Spinner -->
-            <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-8 space-y-3">
-              <div class="w-8 h-8 border-4 border-secondary border-t-transparent rounded-full animate-spin"></div>
-              <p class="text-xs text-on-surface-variant">Consultando registro seguro de firmas...</p>
-            </div>
+            <ng-container *ngIf="isLoading">
+              <app-skeleton-loader type="custom"></app-skeleton-loader>
+            </ng-container>
 
             <!-- Error message -->
             <div *ngIf="showError" class="p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/40 rounded-xl text-xs text-red-700 dark:text-red-200 flex items-start gap-3 animate-scale-up">
@@ -265,7 +264,7 @@
 
         <details class="group bg-white dark:bg-slate-900 rounded-2xl border border-surface-variant/30 dark:border-slate-800 p-6 [&_summary::-webkit-details-marker]:hidden">
           <summary class="flex items-center justify-between cursor-pointer focus:outline-none">
-            <h4 class="font-bold text-primary dark:text-primary-fixed text-base">¿Tienen validez nacional para ejercer mi profesión?</h4>
+            <h4 class="font-bold text-primary dark:text-primary-fixed text-base">¿Tienen respaldo nacional para ejercer mi profesión?</h4>
             <span class="material-symbols-outlined text-primary/60 transition group-open:-rotate-180">expand_more</span>
           </summary>
           <p class="mt-4 text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed border-t border-surface-variant/10 dark:border-slate-800 pt-4">

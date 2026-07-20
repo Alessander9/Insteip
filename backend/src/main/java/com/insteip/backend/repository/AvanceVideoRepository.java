@@ -1,6 +1,6 @@
 package com.insteip.backend.repository;
 
-import com.insteip.backend.entity.AvanceVideo;
+import com.insteip.backend.domain.entity.AvanceVideo;
 import org.springframework.data.jpa.repository.JpaRepository;
 public interface AvanceVideoRepository extends JpaRepository<AvanceVideo, Long> {
 

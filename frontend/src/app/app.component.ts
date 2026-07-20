@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SocialSidebarComponent } from './core/components/social-sidebar/social-sidebar.component';
 import { ToastComponent } from './core/components/toast/toast.component';
-import { ThemeService } from './core/services/theme.service';
+import { ThemeService } from './core/services/';
 
 @Component({
   selector: 'app-root',

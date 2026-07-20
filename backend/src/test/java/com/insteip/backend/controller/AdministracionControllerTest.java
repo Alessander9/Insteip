@@ -1,9 +1,11 @@
 package com.insteip.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.insteip.backend.dto.*;
-import com.insteip.backend.security.SecurityConfig;
-import com.insteip.backend.security.JwtAuthenticationFilter;
+import com.insteip.backend.domain.dto.configuracion.ConfiguracionResponse;
+import com.insteip.backend.domain.dto.matricula.MatriculaRequestDTO;
+import com.insteip.backend.domain.dto.matricula.MatriculaResponseDTO;
+import com.insteip.backend.infrastructure.security.SecurityConfig;
+import com.insteip.backend.infrastructure.security.JwtAuthenticationFilter;
 import com.insteip.backend.service.interfaces.AuditoriaService;
 import com.insteip.backend.service.interfaces.CertificadoService;
 import com.insteip.backend.service.interfaces.ConfiguracionService;
@@ -14,9 +16,9 @@ import com.insteip.backend.repository.CursoRepository;
 import com.insteip.backend.repository.MatriculaRepository;
 import com.insteip.backend.repository.PagoRepository;
 import com.insteip.backend.repository.UsuarioRepository;
-import com.insteip.backend.entity.Certificado;
-import com.insteip.backend.entity.Usuario;
-import com.insteip.backend.entity.Curso;
+import com.insteip.backend.domain.entity.Certificado;
+import com.insteip.backend.domain.entity.Usuario;
+import com.insteip.backend.domain.entity.Curso;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

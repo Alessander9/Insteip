@@ -2,14 +2,15 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ModuloService } from '../../../core/services/modulo.service';
-import { MaterialService } from '../../../core/services/material.service';
-import { ModuloResponse } from '../../../core/models/modulo.model';
-import { MaterialResponse } from '../../../core/models/material.model';
-import { ArchivoProtegidoService } from '../../../core/services/archivo-protegido.service';
-import { ToastService } from '../../../core/services/toast.service';
+import { HttpEventType } from '@angular/common/http';
+import { ModuloService, AuthService } from '../../../core/services/';
+import { MaterialService } from '../../../core/services/';
+import { ModuloResponse } from '../../../core/models/';
+import { MaterialResponse } from '../../../core/models/';
+import { ArchivoProtegidoService } from '../../../core/services/';
+import { ToastService } from '../../../core/services/';
 import { ConfirmModalComponent } from '../../../core/components/confirm-modal/confirm-modal.component';
-import { formatBytes, getFileIcon, getCleanFileType, getFileExtension } from '../../../core/utils/file.utils';
+import { formatBytes, getFileIcon, getCleanFileType, getFileExtension } from '../../../core/utils/';
 
 @Component({
   selector: 'app-materiales',
@@ -32,6 +33,9 @@ export class MaterialesComponent implements OnInit {
   private archivoProtegidoService = inject(ArchivoProtegidoService);
   private fb = inject(FormBuilder);
   private toastService = inject(ToastService);
+  private authService = inject(AuthService);
+
+  isDocente = false;
 
   moduloId!: number;
   modulo: ModuloResponse | null = null;
@@ -50,6 +54,8 @@ export class MaterialesComponent implements OnInit {
   isFormSubmitting = false;
   isFormSubmitted = false;
   modalErrorMsg = '';
+  uploadProgress = 0;
+  isUploading = false;
 
   // Confirm modal controls
   showConfirmModal = false;
@@ -67,13 +73,19 @@ export class MaterialesComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.authService.getProfile().subscribe(user => {
+      if (user && user.rol === 'DOCENTE') {
+        this.isDocente = true;
+      }
+    });
+
     this.route.paramMap.subscribe(params => {
       const idParam = params.get('id');
       if (idParam) {
         this.moduloId = Number(idParam);
         this.loadModuloData();
       } else {
-        this.router.navigate(['/dashboard/cursos']);
+        this.router.navigate([this.isDocente ? '/dashboard/mis-cursos-docente' : '/dashboard/cursos']);
       }
     });
   }
@@ -86,7 +98,7 @@ export class MaterialesComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al obtener modulo', err);
-        this.router.navigate(['/dashboard/cursos']);
+        this.router.navigate([this.isDocente ? '/dashboard/mis-cursos-docente' : '/dashboard/cursos']);
       }
     });
   }
@@ -172,6 +184,8 @@ export class MaterialesComponent implements OnInit {
     this.showMaterialModal = false;
     this.isFormSubmitting = false;
     this.isFormSubmitted = false;
+    this.isUploading = false;
+    this.uploadProgress = 0;
     this.selectedFile = null;
   }
 
@@ -187,15 +201,37 @@ export class MaterialesComponent implements OnInit {
         return;
       }
 
-      // Validate file size (10MB limit)
-      if (file.size > 10 * 1024 * 1024) {
-        this.modalErrorMsg = 'El archivo supera el límite de tamaño permitido (10MB).';
+      // Validate file size (100MB limit)
+      if (file.size > 100 * 1024 * 1024) {
+        this.modalErrorMsg = 'El archivo supera el límite de tamaño permitido (100MB).';
         this.selectedFile = null;
         return;
       }
       this.modalErrorMsg = '';
       this.selectedFile = file;
     }
+  }
+
+  eliminarMaterial(material: MaterialResponse): void {
+    this.confirmModalType = 'danger';
+    this.confirmModalTitle = '¿Eliminar Material?';
+    this.confirmModalMessage = `¿Estás seguro de que deseas ELIMINAR permanentemente el material "${material.nombre}"? Esta acción no se puede deshacer y eliminará el archivo físico.`;
+    
+    this.pendingMaterialAction = () => {
+      this.materialService.eliminarMaterial(material.id).subscribe({
+        next: () => {
+          this.toastService.success('Material eliminado permanentemente.');
+          this.loadMateriales();
+          this.showConfirmModal = false;
+        },
+        error: (err) => {
+          this.toastService.error(err.error?.message || 'Error al eliminar el material.');
+          this.showConfirmModal = false;
+        }
+      });
+    };
+    
+    this.showConfirmModal = true;
   }
 
   toggleEstado(material: MaterialResponse): void {
@@ -246,6 +282,8 @@ export class MaterialesComponent implements OnInit {
     }
 
     this.isFormSubmitting = true;
+    this.uploadProgress = 0;
+    this.isUploading = true;
     this.modalErrorMsg = '';
 
     const nombre = this.materialForm.value.nombre;
@@ -271,12 +309,16 @@ export class MaterialesComponent implements OnInit {
         },
         error: (err) => this.handleError(err)
       });
-    } else {
-      this.materialService.subirMaterial(this.moduloId, nombre, this.selectedFile!).subscribe({
-        next: () => {
-          this.loadMateriales();
-          this.toastService.success('Material de apoyo subido exitosamente.');
-          this.closeMaterialModal();
+    } else if (this.selectedFile) {
+      this.materialService.subirMaterialConProgreso(this.moduloId, nombre, this.selectedFile).subscribe({
+        next: (event) => {
+          if (event.type === HttpEventType.UploadProgress && event.total) {
+            this.uploadProgress = Math.round((100 * event.loaded) / event.total);
+          } else if (event.type === HttpEventType.Response) {
+            this.loadMateriales();
+            this.toastService.success('Material de apoyo subido exitosamente.');
+            this.closeMaterialModal();
+          }
         },
         error: (err) => this.handleError(err)
       });
@@ -301,6 +343,8 @@ export class MaterialesComponent implements OnInit {
 
   private handleError(err: any): void {
     this.isFormSubmitting = false;
+    this.isUploading = false;
+    this.uploadProgress = 0;
     this.modalErrorMsg = err.error?.message || 'Error al procesar el material.';
     this.toastService.error(this.modalErrorMsg);
   }

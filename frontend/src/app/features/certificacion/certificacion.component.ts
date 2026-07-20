@@ -2,12 +2,13 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../../core/components/navbar/navbar.component';
 import { FooterComponent } from '../../core/components/footer/footer.component';
-import { CertificadoService } from '../../core/services/certificado.service';
+import { SkeletonLoaderComponent } from '../../core/components/skeleton-loader/skeleton-loader.component';
+import { CertificadoService } from '../../core/services/';
 
 @Component({
   selector: 'app-certificacion',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, FooterComponent],
+  imports: [CommonModule, NavbarComponent, FooterComponent, SkeletonLoaderComponent],
   templateUrl: './certificacion.component.html',
   styleUrls: []
 })

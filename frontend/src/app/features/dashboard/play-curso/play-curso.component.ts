@@ -1,13 +1,15 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, inject, NgZone, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { AlumnoDashboardService, AlumnoPlayCourse, AlumnoPlayVideo } from '../../../core/services/alumno-dashboard.service';
-import { CertificadoService } from '../../../core/services/certificado.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { ArchivoProtegidoService } from '../../../core/services/archivo-protegido.service';
-import { UserProfile } from '../../../core/models/user-profile.model';
-import { extraerIdYoutube } from '../../../core/utils/youtube.utils';
-import { formatBytes, getCleanFileType, getFileExtension } from '../../../core/utils/file.utils';
+import { SkeletonLoaderComponent } from '../../../core/components/skeleton-loader/skeleton-loader.component';
+import { AlumnoDashboardService, AlumnoPlayCourse, AlumnoPlayVideo } from '../../../core/services/';
+import { CertificadoService } from '../../../core/services/';
+import { AuthService } from '../../../core/services/';
+import { ArchivoProtegidoService } from '../../../core/services/';
+import { VideoService } from '../../../core/services/';
+import { UserProfile } from '../../../core/models/';
+import { extraerIdYoutube } from '../../../core/utils/';
+import { formatBytes, getCleanFileType, getFileExtension } from '../../../core/utils/';
 import { environment } from '../../../../environments/environment';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -15,7 +17,7 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-play-curso',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, SkeletonLoaderComponent],
   templateUrl: './play-curso.component.html',
   styleUrls: ['./play-curso.component.css']
 })
@@ -26,6 +28,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
   private certificadoService = inject(CertificadoService);
   private authService = inject(AuthService);
   private archivoProtegidoService = inject(ArchivoProtegidoService);
+  private videoService = inject(VideoService);
   private ngZone = inject(NgZone);
 
   profile: UserProfile | null = null;
@@ -76,17 +79,28 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
   private isComponentAlive = true;
   // Robustness: track unsaved progress
   private hasUnsavedProgress = false;
+  private durationPersistedForVideoId: number | null = null;
   // Completion modal timers
   private completionModalTimeout: ReturnType<typeof setTimeout> | null = null;
   private completionCountdownInterval: ReturnType<typeof setInterval> | null = null;
   private nextChapterCountdownInterval: ReturnType<typeof setInterval> | null = null;
   private nextChapterTimeout: ReturnType<typeof setTimeout> | null = null;
 
+  private pendingVideoIdFromQuery: number | null = null;
+
   ngOnInit(): void {
     this.authService.getProfile().pipe(
       takeUntil(this.destroy$)
     ).subscribe({
       next: (user) => { this.profile = user; }
+    });
+
+    // Read query params for specific videoId
+    this.route.queryParamMap.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(queryParams => {
+      const videoIdParam = queryParams.get('videoId');
+      this.pendingVideoIdFromQuery = videoIdParam ? Number(videoIdParam) : null;
     });
 
     this.route.paramMap.pipe(
@@ -200,6 +214,21 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  private guardarDuracionReal(): void {
+    if (!this.currentVideo || !this.player) return;
+    if (this.durationPersistedForVideoId === this.currentVideo.id) return;
+    try {
+      const ytDuration = this.player.getDuration();
+      if (ytDuration && ytDuration > 0) {
+        this.durationPersistedForVideoId = this.currentVideo.id;
+        this.currentVideo.duracionSegundos = ytDuration;
+        this.videoService.actualizarDuracion(this.currentVideo.id, ytDuration).subscribe({
+          error: () => {}
+        });
+      }
+    } catch (_e) {}
+  }
+
   private forceCompleteCurrentVideo(): void {
     if (!this.currentVideo || this.currentVideo.completado) return;
 
@@ -223,7 +252,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
       next: (data) => {
         this.curso = data;
         this.isLoading = false;
-        this.selectDefaultVideo();
+        this.selectDefaultVideo(this.pendingVideoIdFromQuery);
         this.checkOverallCompletion(false);
       },
       error: () => {
@@ -232,18 +261,35 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  selectDefaultVideo(): void {
+  selectDefaultVideo(videoId?: number | null): void {
     if (!this.curso || this.curso.modulos.length === 0) return;
 
     let targetVideo: AlumnoPlayVideo | null = null;
 
-    for (const mod of this.curso.modulos) {
-      for (const vid of mod.videos) {
-        if (!vid.completado) { targetVideo = vid; break; }
+    // If a specific videoId was requested, find it
+    if (videoId) {
+      for (const mod of this.curso.modulos) {
+        for (const vid of mod.videos) {
+          if (vid.id === videoId) {
+            targetVideo = vid;
+            break;
+          }
+        }
+        if (targetVideo) break;
       }
-      if (targetVideo) break;
     }
 
+    // Otherwise, find first uncompleted video
+    if (!targetVideo) {
+      for (const mod of this.curso.modulos) {
+        for (const vid of mod.videos) {
+          if (!vid.completado) { targetVideo = vid; break; }
+        }
+        if (targetVideo) break;
+      }
+    }
+
+    // Fallback to first video
     if (!targetVideo) {
       for (const mod of this.curso.modulos) {
         if (mod.videos.length > 0) { targetVideo = mod.videos[0]; break; }
@@ -443,6 +489,14 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
             this.ngZone.run(() => {
               this.isPlayerReady = true;
               this.isPlayerLoading = false;
+              // Desactivar subtítulos por defecto
+              try {
+                if (this.player && this.player.setOption) {
+                  this.player.setOption('captions', 'track', {});
+                }
+              } catch (_e) {}
+              // Persistir duración real ni bien el player esté listo
+              this.guardarDuracionReal();
               this.startTicker();
             });
           },
@@ -488,6 +542,8 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     if (state === 1) {
       this.isVideoPlaying = true;
       this.isPlayerLoading = false;
+      // Persistir duración real al empezar a reproducir
+      this.guardarDuracionReal();
     } else if (state === 0) {
       // YT.PlayerState.ENDED is 0
       this.isVideoPlaying = false;

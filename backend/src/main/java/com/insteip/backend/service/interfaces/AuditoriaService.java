@@ -1,7 +1,7 @@
 package com.insteip.backend.service.interfaces;
 
-import com.insteip.backend.dto.EventoSistemaResponseDTO;
-import com.insteip.backend.dto.LoginAuditoriaResponseDTO;
+import com.insteip.backend.domain.dto.evento.EventoSistemaResponseDTO;
+import com.insteip.backend.domain.dto.evento.LoginAuditoriaResponseDTO;
 import java.time.LocalDate;
 import java.util.List;
 

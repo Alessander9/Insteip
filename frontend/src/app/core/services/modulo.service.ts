@@ -30,4 +30,8 @@ export class ModuloService {
   cambiarEstado(id: number, estado: boolean): Observable<void> {
     return this.http.patch<void>(`${this.baseApiUrl}/modulos/${id}/estado`, { estado });
   }
+
+  eliminarModulo(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseApiUrl}/modulos/${id}`);
+  }
 }

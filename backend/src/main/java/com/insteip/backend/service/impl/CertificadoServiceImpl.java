@@ -2,12 +2,13 @@ package com.insteip.backend.service.impl;
 
 
 import lombok.RequiredArgsConstructor;
-import com.insteip.backend.entity.*;
-import com.insteip.backend.exception.ResourceNotFoundException;
-import com.insteip.backend.exception.BadRequestException;
+import com.insteip.backend.domain.entity.*;
+import com.insteip.backend.domain.exception.ResourceNotFoundException;
+import com.insteip.backend.domain.exception.BadRequestException;
 import com.insteip.backend.repository.*;
+import com.insteip.backend.domain.dto.certificado.CertificadoResponseDTO;
 import com.insteip.backend.service.interfaces.CertificadoService;
-import com.insteip.backend.util.ProgresoAcademicoUtils;
+import com.insteip.backend.infrastructure.util.ProgresoAcademicoUtils;
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.pdf.*;
@@ -370,8 +371,8 @@ public class CertificadoServiceImpl implements CertificadoService {
     }
 
     @Override
-    public Page<com.insteip.backend.dto.CertificadoResponseDTO> listarCertificados(Pageable pageable, String search) {
-        return certificadoRepository.searchCertificadosPaged(search, pageable).map(cert -> new com.insteip.backend.dto.CertificadoResponseDTO(
+    public Page<CertificadoResponseDTO> listarCertificados(Pageable pageable, String search) {
+        return certificadoRepository.searchCertificadosPaged(search, pageable).map(cert -> new CertificadoResponseDTO(
                 cert.getId(),
                 cert.getUsuario().getId(),
                 cert.getCurso().getId(),

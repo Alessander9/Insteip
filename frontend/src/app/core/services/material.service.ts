@@ -1,6 +1,6 @@
 import { environment } from '../../../environments/environment';
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MaterialResponse } from '../models/material.model';
 import { PageResponse } from '../models/alumno.model';
@@ -37,6 +37,18 @@ export class MaterialService {
     return this.http.post<MaterialResponse>(`${this.baseApiUrl}/materiales`, formData);
   }
 
+  /** Subir material con seguimiento de progreso (reportProgress) */
+  subirMaterialConProgreso(moduloId: number, nombre: string, archivo: File): Observable<HttpEvent<MaterialResponse>> {
+    const formData = new FormData();
+    formData.append('moduloId', moduloId.toString());
+    formData.append('nombre', nombre);
+    formData.append('archivo', archivo);
+    return this.http.post<MaterialResponse>(`${this.baseApiUrl}/materiales`, formData, {
+      reportProgress: true,
+      observe: 'events'
+    });
+  }
+
   editarMaterial(id: number, nombre: string, archivo?: File): Observable<MaterialResponse> {
     const formData = new FormData();
     formData.append('nombre', nombre);
@@ -48,5 +60,9 @@ export class MaterialService {
 
   cambiarEstado(id: number, estado: boolean): Observable<void> {
     return this.http.patch<void>(`${this.baseApiUrl}/materiales/${id}/estado`, { estado });
+  }
+
+  eliminarMaterial(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseApiUrl}/materiales/${id}`);
   }
 }

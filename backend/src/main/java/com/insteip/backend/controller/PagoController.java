@@ -2,8 +2,8 @@ package com.insteip.backend.controller;
 
 
 import lombok.RequiredArgsConstructor;
-import com.insteip.backend.entity.Pago;
-import com.insteip.backend.entity.Usuario;
+import com.insteip.backend.domain.entity.Pago;
+import com.insteip.backend.domain.entity.Usuario;
 import com.insteip.backend.repository.PagoRepository;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.service.interfaces.AuditoriaService;

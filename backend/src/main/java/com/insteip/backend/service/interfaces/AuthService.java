@@ -1,14 +1,16 @@
 package com.insteip.backend.service.interfaces;
 
-import com.insteip.backend.dto.LoginRequest;
-import com.insteip.backend.dto.LoginResponse;
-import com.insteip.backend.dto.LogoutRequest;
-import com.insteip.backend.dto.UserProfileResponse;
+import com.insteip.backend.domain.dto.auth.LoginRequest;
+import com.insteip.backend.domain.dto.auth.LoginResponse;
+import com.insteip.backend.domain.dto.auth.LogoutRequest;
+import com.insteip.backend.domain.dto.auth.TokenRefreshRequest;
+import com.insteip.backend.domain.dto.auth.TokenRefreshResponse;
+import com.insteip.backend.domain.dto.auth.UserProfileResponse;
 
 public interface AuthService {
     LoginResponse login(LoginRequest request);
     UserProfileResponse getProfile(String correo);
-    com.insteip.backend.dto.TokenRefreshResponse refreshToken(com.insteip.backend.dto.TokenRefreshRequest request);
+    TokenRefreshResponse refreshToken(TokenRefreshRequest request);
     void logout(LogoutRequest request);
     void forgotPassword(String correo);
     void resetPassword(String token, String newPassword);

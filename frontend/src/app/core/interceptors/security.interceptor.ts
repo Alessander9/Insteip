@@ -30,12 +30,16 @@ export const securityInterceptor: HttpInterceptorFn = (req, next) => {
     });
   }
 
+  const skipErrorNotification = req.headers.has('X-Skip-Error-Notification');
+
   return next(req).pipe(
     catchError(error => {
-      if (error?.status === 0) {
-        toastService.error('No se pudo establecer conexión con el servidor. Verifica tu conexión de red.', 'Error de Conexión');
-      } else if (error?.status === 500) {
-        toastService.error('Error interno del servidor. Por favor, inténtelo de nuevo más tarde.', 'Error del Servidor');
+      if (!skipErrorNotification) {
+        if (error?.status === 0) {
+          toastService.error('No se pudo establecer conexión con el servidor. Verifica tu conexión de red.', 'Error de Conexión');
+        } else if (error?.status === 500) {
+          toastService.error('Error interno del servidor. Por favor, inténtelo de nuevo más tarde.', 'Error del Servidor');
+        }
       }
 
       if (error?.status !== 401 || isPublicRequest) {

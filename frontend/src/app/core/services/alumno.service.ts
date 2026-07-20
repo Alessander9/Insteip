@@ -49,4 +49,8 @@ export class AlumnoService {
   cambiarEstado(id: number, estado: boolean): Observable<void> {
     return this.http.patch<void>(`${this.apiUrl}/${id}/estado`, { estado });
   }
+
+  eliminarAlumno(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

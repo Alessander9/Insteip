@@ -2,12 +2,18 @@ package com.insteip.backend.service.impl;
 
 
 import lombok.RequiredArgsConstructor;
-import com.insteip.backend.dto.*;
-import com.insteip.backend.entity.*;
-import com.insteip.backend.exception.ResourceNotFoundException;
+import com.insteip.backend.domain.dto.certificado.AlumnoCertificadoResponse;
+import com.insteip.backend.domain.dto.alumno.AlumnoCursoResponse;
+import com.insteip.backend.domain.dto.alumno.AlumnoDashboardMetrics;
+import com.insteip.backend.domain.dto.alumno.AlumnoPlayCourseResponse;
+import com.insteip.backend.domain.dto.alumno.AlumnoPlayMaterial;
+import com.insteip.backend.domain.dto.alumno.AlumnoPlayModulo;
+import com.insteip.backend.domain.dto.alumno.AlumnoPlayVideo;
+import com.insteip.backend.domain.entity.*;
+import com.insteip.backend.domain.exception.ResourceNotFoundException;
 import com.insteip.backend.repository.*;
 import com.insteip.backend.service.interfaces.AlumnoDashboardService;
-import com.insteip.backend.util.ProgresoAcademicoUtils;
+import com.insteip.backend.infrastructure.util.ProgresoAcademicoUtils;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;

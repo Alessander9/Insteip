@@ -13,11 +13,9 @@
       </div>
     </div>
 
-    <!-- Loading State -->
-      <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-10">
-      <span class="animate-spin inline-block w-8 h-8 border-4 border-slate-900 dark:border-slate-100 border-t-transparent rounded-full mb-3"></span>
-      <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Validando firma...</span>
-      </div>
+    <ng-container *ngIf="isLoading">
+      <app-skeleton-loader type="custom"></app-skeleton-loader>
+    </ng-container>
 
     <div *ngIf="!isLoading">
       

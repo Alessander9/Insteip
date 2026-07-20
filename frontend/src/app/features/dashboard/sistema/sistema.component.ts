@@ -2,13 +2,16 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
-import { ToastService } from '../../../core/services/toast.service';
+import { ToastService } from '../../../core/services/';
+import { SkeletonLoaderComponent } from '../../../core/components/skeleton-loader/skeleton-loader.component';
 import { ConfirmModalComponent } from '../../../core/components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-sistema',
   standalone: true,
-  imports: [CommonModule, ConfirmModalComponent],
+  imports: [CommonModule,    ConfirmModalComponent,
+    SkeletonLoaderComponent
+  ],
   templateUrl: './sistema.component.html',
   styleUrls: ['./sistema.component.css']
 })

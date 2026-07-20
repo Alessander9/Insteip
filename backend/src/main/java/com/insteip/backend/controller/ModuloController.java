@@ -1,10 +1,11 @@
 package com.insteip.backend.controller;
 
-
-import lombok.RequiredArgsConstructor;
-import com.insteip.backend.dto.ModuloRequestDTO;
-import com.insteip.backend.dto.ModuloResponseDTO;
+import com.insteip.backend.domain.dto.material.MaterialResponseDTO;
+import com.insteip.backend.domain.dto.modulo.ModuloRequestDTO;
+import com.insteip.backend.domain.dto.modulo.ModuloResponseDTO;
+import com.insteip.backend.domain.dto.video.VideoResponseDTO;
 import com.insteip.backend.service.interfaces.ModuloService;
+import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class ModuloController {
 
     @GetMapping("/{id}/videos")
     @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessModulo(#id)")
-    public ResponseEntity<Page<com.insteip.backend.dto.VideoResponseDTO>> listarVideosPorModulo(
+    public ResponseEntity<Page<VideoResponseDTO>> listarVideosPorModulo(
             @PathVariable Long id,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -48,7 +49,7 @@ public class ModuloController {
 
     @GetMapping("/{id}/materiales")
     @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessModulo(#id)")
-    public ResponseEntity<Page<com.insteip.backend.dto.MaterialResponseDTO>> listarMaterialesPorModulo(
+    public ResponseEntity<Page<MaterialResponseDTO>> listarMaterialesPorModulo(
             @PathVariable Long id,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -67,6 +68,13 @@ public class ModuloController {
     @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessModulo(#id)")
     public ResponseEntity<ModuloResponseDTO> editarModulo(@PathVariable Long id, @Valid @RequestBody ModuloRequestDTO dto) {
         return ResponseEntity.ok(moduloService.editarModulo(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessModulo(#id)")
+    public ResponseEntity<Void> eliminarModulo(@PathVariable Long id) {
+        moduloService.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/estado")

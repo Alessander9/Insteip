@@ -1,14 +1,15 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { DocenteDashboardService, DocenteCurso } from '../../../../core/services/docente-dashboard.service';
+import { SkeletonLoaderComponent } from '../../../../core/components/skeleton-loader/skeleton-loader.component';
+import { DocenteDashboardService, DocenteCurso } from '../../../../core/services/';
 import { FormsModule } from '@angular/forms';
-import { matchesQuery, paginate, sortByDate, totalPages, SortOrder } from '../../../../core/utils/listing.utils';
+import { matchesQuery, paginate, sortByDate, totalPages, SortOrder } from '../../../../core/utils/';
 
 @Component({
   selector: 'app-mis-cursos-docente',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, SkeletonLoaderComponent],
   templateUrl: './mis-cursos-docente.component.html',
   styleUrls: ['./mis-cursos-docente.component.css']
 })

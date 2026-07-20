@@ -1,10 +1,10 @@
 package com.insteip.backend.service.impl;
 
-import com.insteip.backend.dto.CursoResponseDTO;
-import com.insteip.backend.dto.DocenteEstudianteProgressResponse;
-import com.insteip.backend.entity.*;
-import com.insteip.backend.exception.ForbiddenException;
-import com.insteip.backend.exception.ResourceNotFoundException;
+import com.insteip.backend.domain.dto.curso.CursoResponseDTO;
+import com.insteip.backend.domain.dto.docente.DocenteEstudianteProgressResponse;
+import com.insteip.backend.domain.entity.*;
+import com.insteip.backend.domain.exception.ForbiddenException;
+import com.insteip.backend.domain.exception.ResourceNotFoundException;
 import com.insteip.backend.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

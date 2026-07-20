@@ -2,7 +2,7 @@ package com.insteip.backend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.insteip.backend.entity.*;
+import com.insteip.backend.domain.entity.*;
 import com.insteip.backend.repository.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

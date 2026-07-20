@@ -40,4 +40,14 @@ export class VideoService {
   cambiarEstado(id: number, estado: boolean): Observable<void> {
     return this.http.patch<void>(`${this.baseApiUrl}/videos/${id}/estado`, { estado });
   }
+
+  eliminarVideo(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseApiUrl}/videos/${id}`);
+  }
+
+  actualizarDuracion(id: number, duracionSegundos: number): Observable<void> {
+    return this.http.post<void>(`${this.baseApiUrl}/videos/${id}/duracion`, { duracionSegundos }, {
+      headers: { 'X-Skip-Error-Notification': 'true' }
+    });
+  }
 }

@@ -1,10 +1,10 @@
 package com.insteip.backend.controller;
 
-
-import lombok.RequiredArgsConstructor;
-import com.insteip.backend.dto.CursoRequestDTO;
-import com.insteip.backend.dto.CursoResponseDTO;
+import com.insteip.backend.domain.dto.curso.CursoRequestDTO;
+import com.insteip.backend.domain.dto.curso.CursoResponseDTO;
+import com.insteip.backend.domain.dto.modulo.ModuloResponseDTO;
 import com.insteip.backend.service.interfaces.CursoService;
+import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +42,7 @@ public class CursoController {
 
     @GetMapping("/{id}/modulos")
     @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessCurso(#id)")
-    public ResponseEntity<List<com.insteip.backend.dto.ModuloResponseDTO>> listarModulosPorCurso(@PathVariable Long id) {
+    public ResponseEntity<List<ModuloResponseDTO>> listarModulosPorCurso(@PathVariable Long id) {
         return ResponseEntity.ok(moduloService.listarModulosPorCurso(id));
     }
 
@@ -56,6 +56,13 @@ public class CursoController {
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<CursoResponseDTO> editarCurso(@PathVariable Long id, @Valid @RequestBody CursoRequestDTO dto) {
         return ResponseEntity.ok(cursoService.editarCurso(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<Void> eliminarCurso(@PathVariable Long id) {
+        cursoService.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/estado")

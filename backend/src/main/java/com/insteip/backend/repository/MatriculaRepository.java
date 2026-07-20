@@ -1,6 +1,6 @@
 package com.insteip.backend.repository;
 
-import com.insteip.backend.entity.Matricula;
+import com.insteip.backend.domain.entity.Matricula;
 import org.springframework.data.jpa.repository.JpaRepository;
 public interface MatriculaRepository extends JpaRepository<Matricula, Long> {
 

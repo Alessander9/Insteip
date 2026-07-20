@@ -22,4 +22,8 @@ export class MatriculaService {
   cambiarEstado(id: number, estado: boolean): Observable<void> {
     return this.http.patch<void>(`${this.apiUrl}/${id}/estado`, { estado });
   }
+
+  eliminarMatricula(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

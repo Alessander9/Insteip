@@ -2,8 +2,8 @@ package com.insteip.backend.controller;
 
 
 import lombok.RequiredArgsConstructor;
-import com.insteip.backend.dto.VideoRequestDTO;
-import com.insteip.backend.dto.VideoResponseDTO;
+import com.insteip.backend.domain.dto.video.VideoRequestDTO;
+import com.insteip.backend.domain.dto.video.VideoResponseDTO;
 import com.insteip.backend.service.interfaces.VideoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -40,6 +40,21 @@ public class VideoController {
     @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessVideo(#id)")
     public ResponseEntity<VideoResponseDTO> editarVideo(@PathVariable Long id, @Valid @RequestBody VideoRequestDTO dto) {
         return ResponseEntity.ok(videoService.editarVideo(id, dto));
+    }
+
+    @PostMapping("/{id}/duracion")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DOCENTE', 'ALUMNO')")
+    public ResponseEntity<Void> actualizarDuracion(@PathVariable Long id, @RequestBody Map<String, Integer> body) {
+        Integer duracion = body.get("duracionSegundos");
+        videoService.actualizarDuracion(id, duracion);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessVideo(#id)")
+    public ResponseEntity<Void> eliminarVideo(@PathVariable Long id) {
+        videoService.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/estado")

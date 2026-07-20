@@ -1,4 +1,5 @@
-.completion-modal {
+.completion-modal,
+.next-chapter-modal {
   animation: modalPop 220ms ease-out;
 }
 

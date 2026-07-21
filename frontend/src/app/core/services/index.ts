@@ -17,3 +17,4 @@ export { ThemeService } from './theme.service';
 export { ToastService, ToastMessage } from './toast.service';
 export { UsuarioService, DocenteOption } from './usuario.service';
 export { VideoService } from './video.service';
+export { SeoService, SeoData, ROUTE_SEO } from './seo.service';

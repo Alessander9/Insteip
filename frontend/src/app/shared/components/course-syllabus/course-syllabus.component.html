@@ -1,0 +1,65 @@
+<section id="plan-estudios" class="acu-section acu-section--syllabus py-10 md:py-14">
+  <div class="acu-shell max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop space-y-10">
+    <div class="syllabus-header acu-section__heading space-y-2">
+      <span class="font-mono text-[9px] uppercase tracking-widest text-slate-500 font-bold">[ ESTRUCTURA ACADÉMICA ]</span>
+      <h2 class="text-2xl md:text-3xl font-extrabold text-[#1c1917] dark:text-white tracking-tight">Plan de Estudios</h2>
+    </div>
+
+    <!-- Tab Buttons -->
+    <div
+      class="acu-phase-tabs flex flex-col sm:flex-row bg-slate-200/60 dark:bg-[#081220] p-1 rounded-lg border border-slate-200/80 dark:border-slate-800 max-w-xl"
+      role="tablist" aria-label="Fases del plan de estudios">
+      <button *ngFor="let phase of phases" type="button" (click)="setPhase(phase.id)" role="tab" [attr.aria-selected]="activePhaseId === phase.id"
+        [attr.aria-controls]="phase.id + '-panel'"
+        class="px-4 py-2 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all w-full sm:w-auto"
+        [ngClass]="activePhaseId === phase.id ? 'bg-primary text-slate-950 shadow' : 'text-slate-600 dark:text-slate-400 hover:text-[#1c1917] hover:dark:text-white'">
+        {{ phase.tabLabel }}
+      </button>
+    </div>
+
+    <!-- Phase Contents -->
+    <ng-container *ngFor="let phase of phases">
+      <div *ngIf="activePhaseId === phase.id" [id]="phase.id + '-panel'" role="tabpanel"
+        class="acu-phase-panel grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch animate-scale-up">
+
+        <!-- Left: Syllabus Items (7 cols) -->
+        <div class="lg:col-span-7 flex flex-col justify-between space-y-6">
+          <div class="border-l-2 border-secondary pl-4 space-y-1.5">
+            <h3 class="text-base font-bold text-[#1c1917] dark:text-white uppercase tracking-wider">{{ phase.title }}</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              {{ phase.description }}
+            </p>
+          </div>
+
+          <div class="divide-y divide-slate-200 dark:divide-slate-900 border-y border-slate-200 dark:border-slate-900 mt-4">
+            
+            <!-- Items Loop -->
+            <div *ngFor="let item of phase.items"
+              class="py-3 flex gap-4 items-start hover:bg-slate-100/40 hover:dark:bg-white/[0.01] px-4 -mx-4 rounded-2xl transition-all duration-300 group">
+              <span class="font-mono text-[9px] text-secondary font-bold pt-0.5 group-hover:translate-x-1 transition-transform">{{ item.number }} //</span>
+              <div class="flex-1">
+                <div class="flex flex-wrap items-center gap-2">
+                  <h4 class="text-xs font-bold text-[#1c1917] dark:text-white uppercase tracking-wider group-hover:text-secondary transition-colors">{{ item.title }}</h4>
+                  <span class="text-[8px] font-mono font-bold tracking-widest uppercase bg-slate-200 dark:bg-slate-900 px-2 py-0.5 rounded text-slate-500 dark:text-slate-400">{{ item.badge1 }}</span>
+                  <span class="text-[8px] font-mono font-bold tracking-widest uppercase bg-secondary/15 text-secondary px-2 py-0.5 rounded">{{ item.badge2 }}</span>
+                </div>
+                <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1.5">{{ item.description }}</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right: Portrait Specimen Image (5 cols) -->
+        <div class="lg:col-span-5 relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-900 bg-slate-100 dark:bg-slate-900 group min-h-[250px] lg:min-h-full">
+          <img [src]="phase.image" [alt]="phase.imageAlt" class="w-full h-full object-cover filter grayscale group-hover:scale-[1.045] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]" />
+          <div class="absolute bottom-4 left-4 z-20 font-mono text-[8px] tracking-widest text-slate-400 uppercase">
+            {{ phase.specimenLabel }}
+          </div>
+        </div>
+
+      </div>
+    </ng-container>
+
+  </div>
+</section>

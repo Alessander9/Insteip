@@ -44,8 +44,11 @@ export const routes: Routes = [
   },
   {
     path: 'cursos/auriculoterapia',
-    loadComponent: () => import('./features/formaciones/presencial-course/presencial-course.component').then(m => m.PresencialCourseComponent),
-    data: { course: 'auriculoterapia' }
+    loadComponent: () => import('./features/formaciones/auriculoterapia/auriculoterapia.component').then(m => m.AuriculoterapiaComponent)
+  },
+  {
+    path: 'cursos/auriculoterapia.html',
+    loadComponent: () => import('./features/formaciones/auriculoterapia/auriculoterapia.component').then(m => m.AuriculoterapiaComponent)
   },
   {
     path: 'cursos/acupuntura-china',
@@ -57,36 +60,27 @@ export const routes: Routes = [
   },
   {
     path: 'cursos/masaje-terapeutico',
-    loadComponent: () => import('./features/formaciones/presencial-course/presencial-course.component').then(m => m.PresencialCourseComponent),
-    data: { course: 'masaje-terapeutico' }
+    loadComponent: () => import('./features/formaciones/masaje-terapeutico/masaje-terapeutico.component').then(m => m.MasajeTerapeticoComponent)
   },
   {
-    path: 'cursos/reflexologia-podal-presencial',
-    loadComponent: () => import('./features/formaciones/presencial-course/presencial-course.component').then(m => m.PresencialCourseComponent),
-    data: { course: 'reflexologia-podal-presencial' }
+    path: 'cursos/masaje-terapeutico.html',
+    loadComponent: () => import('./features/formaciones/masaje-terapeutico/masaje-terapeutico.component').then(m => m.MasajeTerapeticoComponent)
   },
   {
-    path: 'cursos/paralisis-facial-presencial',
-    loadComponent: () => import('./features/formaciones/presencial-course/presencial-course.component').then(m => m.PresencialCourseComponent),
-    data: { course: 'paralisis-facial-presencial' }
+    path: 'cursos/digitopresion-presencial',
+    loadComponent: () => import('./features/formaciones/digitopresion-presencial/digitopresion-presencial.component').then(m => m.DigitopresionPresencialComponent)
   },
   {
-    path: 'cursos/moxibustion-ventosas-presencial',
-    loadComponent: () => import('./features/formaciones/presencial-course/presencial-course.component').then(m => m.PresencialCourseComponent),
-    data: { course: 'moxibustion-ventosas-presencial' }
+    path: 'cursos/auriculoterapia-presencial',
+    loadComponent: () => import('./features/formaciones/auriculoterapia-presencial/auriculoterapia-presencial.component').then(m => m.AuriculoterapiaPresencialComponent)
   },
   {
-    path: 'cursos/acupuntura-estetica-presencial',
-    loadComponent: () => import('./features/formaciones/acupuntura-estetica-presencial/acupuntura-estetica-presencial.component').then(m => m.AcupunturaEsteticaPresencialComponent)
+    path: 'cursos/acupuntura-presencial',
+    loadComponent: () => import('./features/formaciones/acupuntura-presencial/acupuntura-presencial.component').then(m => m.AcupunturaPresencialComponent)
   },
   {
-    path: 'cursos/acupuntura-estetica-presencial.html',
-    loadComponent: () => import('./features/formaciones/acupuntura-estetica-presencial/acupuntura-estetica-presencial.component').then(m => m.AcupunturaEsteticaPresencialComponent)
-  },
-  {
-    path: 'cursos/stretching-terapeutico-presencial',
-    loadComponent: () => import('./features/formaciones/presencial-course/presencial-course.component').then(m => m.PresencialCourseComponent),
-    data: { course: 'stretching-terapeutico-presencial' }
+    path: 'cursos/dietetica-presencial',
+    loadComponent: () => import('./features/formaciones/dietetica-presencial/dietetica-presencial.component').then(m => m.DieteticaPresencialComponent)
   },
   {
     path: 'cursos/:id',

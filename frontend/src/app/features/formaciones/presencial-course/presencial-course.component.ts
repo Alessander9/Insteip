@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
@@ -24,60 +24,17 @@ interface PresencialCourse {
   outcomes: string[];
   modules: Array<{ number: string; title: string; description: string; icon: string }>;
   audience: Array<{ title: string; description: string; icon: string }>;
+  journeySteps: Array<{
+    shortTitle: string;
+    period: string;
+    icon: string;
+    title: string;
+    description: string;
+    outcomes: string[];
+  }>;
 }
 
 const COURSES: Record<string, PresencialCourse> = {
-  auriculoterapia: {
-    slug: 'auriculoterapia', type: 'Formación profesional', titleLead: 'Formación de', titleAccent: 'Auriculoterapia', edition: 'Edición 2026',
-    description: 'Aprende a identificar y estimular puntos reflejos del pabellón auricular con técnicas orientales y occidentales aplicables desde la primera sesión.',
-    duration: '2 meses', price: 'S/ 260.00', priceLabel: 'Mensualidad', schedule: 'Presencial · Domingos', image: 'assets/Auriculoterapia Insteip.png', icon: 'hearing', color: '#7b2f6d', softColor: '#f7e9f3',
-    outcomes: ['Kit clínico para prácticas', 'Manual y cartograma auricular', 'Certificación INSTEIP'],
-    modules: [
-      { number: '01', title: 'Fundamentos', description: 'Historia, neurofisiología y escuelas de auriculoterapia.', icon: 'neurology' },
-      { number: '02', title: 'Somatotopía', description: 'Lectura del pabellón auricular y localización precisa de puntos.', icon: 'hearing' },
-      { number: '03', title: 'Materiales', description: 'Semillas, balines, imanes, palpadores y bioseguridad.', icon: 'medical_services' },
-      { number: '04', title: 'Protocolos', description: 'Abordajes para dolor, estrés, ansiedad e insomnio.', icon: 'clinical_notes' }
-    ],
-    audience: [
-      { title: 'Profesionales de salud', description: 'Para complementar tratamientos con una técnica refleja.', icon: 'stethoscope' },
-      { title: 'Terapeutas holísticos', description: 'Para ampliar servicios y mejorar resultados clínicos.', icon: 'self_improvement' },
-      { title: 'Nuevos estudiantes', description: 'Para iniciar desde cero con una metodología práctica.', icon: 'school' }
-    ]
-  },
-  'acupuntura-china': {
-    slug: 'acupuntura-china', type: 'Formación anual', titleLead: 'Formación anual de', titleAccent: 'Acupuntura China', edition: 'Convocatoria 2026',
-    description: 'Programa integral de medicina tradicional china para dominar canales energéticos, puntos acupunturales, moxibustión y microsistemas con práctica supervisada.',
-    duration: '12 meses', price: 'S/ 290.00', priceLabel: 'Mensualidad', schedule: 'Híbrido · Teoría + clínica', image: 'assets/AcupunturaChinaInsteip.png', icon: 'adjust', color: '#003466', softColor: '#e5eef8',
-    outcomes: ['240 horas académicas', 'Prácticas clínicas guiadas', 'Certificación profesional'],
-    modules: [
-      { number: '01', title: 'Canales y puntos', description: 'Recorrido de meridianos y localización anatómica.', icon: 'route' },
-      { number: '02', title: 'Diagnóstico tradicional', description: 'Cinco elementos, valoración y principios terapéuticos.', icon: 'health_metrics' },
-      { number: '03', title: 'Técnicas complementarias', description: 'Moxibustión, ventosas y electroestimulación.', icon: 'local_fire_department' },
-      { number: '04', title: 'Microsistemas', description: 'Auriculoterapia, craneopuntura y reflexología.', icon: 'hub' }
-    ],
-    audience: [
-      { title: 'Profesionales de salud', description: 'Para integrar medicina tradicional china a su práctica.', icon: 'medical_services' },
-      { title: 'Terapeutas holísticos', description: 'Para profundizar diagnóstico y tratamiento energético.', icon: 'spa' },
-      { title: 'Estudiantes', description: 'Para construir una carrera en terapias complementarias.', icon: 'history_edu' }
-    ]
-  },
-  'masaje-terapeutico': {
-    slug: 'masaje-terapeutico', type: 'Formación intensiva', titleLead: 'Masaje Terapéutico y', titleAccent: 'Digitopresión Mecánica', edition: 'Edición 2026',
-    description: 'Domina liberación miofascial, digitopresión instrumental y protocolos para el manejo práctico del dolor y las tensiones musculares.',
-    duration: '1 o 2 meses', price: 'S/ 250.00', priceLabel: 'Mensualidad', schedule: 'Presencial · Práctico', image: 'assets/MasajeDigitoPresionInsteip.png', icon: 'front_hand', color: '#8a3c24', softColor: '#faece6',
-    outcomes: ['Manual técnico impreso', 'Uso de digitopresores', 'Evaluación práctica'],
-    modules: [
-      { number: '01', title: 'Tejido miofascial', description: 'Anatomía funcional, palpación y puntos gatillo.', icon: 'accessibility_new' },
-      { number: '02', title: 'Maniobras manuales', description: 'Amasamiento, fricción y liberación profunda.', icon: 'back_hand' },
-      { number: '03', title: 'Digitopresión', description: 'Uso seguro de herramientas y dosificación de fuerza.', icon: 'pan_tool' },
-      { number: '04', title: 'Abordaje clínico', description: 'Protocolos para espalda, cuello y extremidades.', icon: 'clinical_notes' }
-    ],
-    audience: [
-      { title: 'Masajistas', description: 'Para perfeccionar técnica y aumentar efectividad.', icon: 'front_hand' },
-      { title: 'Rehabilitadores', description: 'Para complementar el abordaje musculoesquelético.', icon: 'physical_therapy' },
-      { title: 'Emprendedores', description: 'Para iniciar servicios profesionales de bienestar.', icon: 'storefront' }
-    ]
-  },
   'reflexologia-podal-presencial': {
     slug: 'reflexologia-podal-presencial', type: 'Taller Full Day', titleLead: 'Taller de', titleAccent: 'Reflexología Podal', edition: 'Jornada práctica',
     description: 'Aprende a interpretar zonas reflejas del pie y aplicar una secuencia terapéutica para promover relajación, equilibrio y bienestar integral.',
@@ -93,6 +50,11 @@ const COURSES: Record<string, PresencialCourse> = {
       { title: 'Masajistas', description: 'Para incorporar reflexología a sus sesiones.', icon: 'front_hand' },
       { title: 'Terapeutas', description: 'Para sumar una técnica relajante y no invasiva.', icon: 'spa' },
       { title: 'Público general', description: 'Para aprender autocuidado y bienestar familiar.', icon: 'family_home' }
+    ],
+    journeySteps: [
+      { shortTitle: 'Fundamentos', period: 'Bloque 1', icon: 'map', title: 'Comprende el mapa reflejo del pie', description: 'Aprende la correspondencia entre zonas del pie, órganos y sistemas del cuerpo humano.', outcomes: ['Mapa podal completo', 'Correspondencias orgánicas', 'Principios de la reflexología'] },
+      { shortTitle: 'Técnica', period: 'Bloque 2', icon: 'front_hand', title: 'Desarrolla precisión manual y sensibilidad', description: 'Practica presiones digitales, deslizamientos y técnicas de movilización articular del pie.', outcomes: ['Presión y deslizamiento', 'Movilización articular', 'Secuencia completa'] },
+      { shortTitle: 'Protocolos', period: 'Bloque 3', icon: 'assignment', title: 'Aplica secuencias terapéuticas completas', description: 'Integra todo lo aprendido en protocolos para estrés, digestión y alivio corporal.', outcomes: ['Protocolo antiestrés', 'Abordaje digestivo', 'Certificación INSTEIP'] }
     ]
   },
   'paralisis-facial-presencial': {
@@ -110,6 +72,11 @@ const COURSES: Record<string, PresencialCourse> = {
       { title: 'Acupunturistas', description: 'Para especializar su abordaje neuromuscular.', icon: 'adjust' },
       { title: 'Fisioterapeutas', description: 'Para complementar la rehabilitación facial.', icon: 'physical_therapy' },
       { title: 'Profesionales de salud', description: 'Para actualizar criterios y protocolos de apoyo.', icon: 'medical_services' }
+    ],
+    journeySteps: [
+      { shortTitle: 'Anatomía', period: 'Bloque 1', icon: 'neurology', title: 'Comprende la anatomía del nervio facial', description: 'Estudia la inervación facial, los músculos implicados y los signos clínicos característicos.', outcomes: ['Nervio facial y ramas', 'Músculos de la expresión', 'Signos clínicos'] },
+      { shortTitle: 'Diagnóstico', period: 'Bloque 2', icon: 'diagnosis', title: 'Aprende a valorar y clasificar cada caso', description: 'Reconoce las fases de la parálisis facial y aplica criterios de atención diferenciados.', outcomes: ['Fases clínicas', 'Criterios de atención', 'Evaluación inicial'] },
+      { shortTitle: 'Práctica', period: 'Bloque 3', icon: 'clinical_notes', title: 'Integra puntos y secuencias terapéuticas', description: 'Selecciona puntos locales, distales y auriculares para un abordaje completo.', outcomes: ['Puntos faciales clave', 'Secuencia de tratamiento', 'Certificación INSTEIP'] }
     ]
   },
   'moxibustion-ventosas-presencial': {
@@ -127,23 +94,11 @@ const COURSES: Record<string, PresencialCourse> = {
       { title: 'Acupunturistas', description: 'Para potenciar tratamientos tradicionales.', icon: 'adjust' },
       { title: 'Masajistas', description: 'Para complementar liberación muscular y fascial.', icon: 'front_hand' },
       { title: 'Terapeutas', description: 'Para sumar calor y vacío a su práctica.', icon: 'spa' }
-    ]
-  },
-  'acupuntura-estetica-presencial': {
-    slug: 'acupuntura-estetica-presencial', type: 'Taller Full Day', titleLead: 'Taller de', titleAccent: 'Acupuntura Estética', edition: 'Belleza integrativa',
-    description: 'Técnicas de estimulación facial y corporal orientadas al bienestar estético, la tonificación y el cuidado integral de la piel.',
-    duration: 'Full Day', price: 'S/ 130.00', priceLabel: 'Pago único', schedule: '1 día completo · Presencial', image: 'https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=1200&q=85', icon: 'face_retouching_natural', color: '#a44b71', softColor: '#f9eaf1',
-    outcomes: ['Mapa facial de puntos', 'Práctica supervisada', 'Certificado de participación'],
-    modules: [
-      { number: '01', title: 'Anatomía facial', description: 'Músculos, líneas de tensión y zonas de trabajo.', icon: 'face' },
-      { number: '02', title: 'Puntos estéticos', description: 'Selección y localización según objetivos.', icon: 'target' },
-      { number: '03', title: 'Técnica segura', description: 'Higiene, inserción superficial y cuidados.', icon: 'health_and_safety' },
-      { number: '04', title: 'Protocolos', description: 'Tonificación, relajación y cuidado facial.', icon: 'auto_awesome' }
     ],
-    audience: [
-      { title: 'Acupunturistas', description: 'Para ampliar servicios hacia estética integrativa.', icon: 'adjust' },
-      { title: 'Esteticistas', description: 'Para incorporar estimulación tradicional segura.', icon: 'face_retouching_natural' },
-      { title: 'Terapeutas', description: 'Para sumar bienestar facial a su portafolio.', icon: 'spa' }
+    journeySteps: [
+      { shortTitle: 'Moxibustión', period: 'Bloque 1', icon: 'local_fire_department', title: 'Domina la técnica del calor terapéutico', description: 'Aprende los fundamentos de la moxibustión, tipos de moxa y su aplicación segura.', outcomes: ['Tipos de moxa', 'Técnicas de combustión', 'Seguridad y contraindicaciones'] },
+      { shortTitle: 'Ventosas', period: 'Bloque 2', icon: 'bubble_chart', title: 'Aplica ventosas con criterio terapéutico', description: 'Practica ventosa fija, móvil y técnicas de succión controlada.', outcomes: ['Ventosa fija y móvil', 'Succión controlada', 'Liberación miofascial'] },
+      { shortTitle: 'Práctica', period: 'Bloque 3', icon: 'science', title: 'Integra calor y vacío en protocolos', description: 'Combina ambas técnicas en secuencias para dolor, tensión y circulación.', outcomes: ['Protocolos combinados', 'Práctica supervisada', 'Certificación INSTEIP'] }
     ]
   },
   'stretching-terapeutico-presencial': {
@@ -161,6 +116,11 @@ const COURSES: Record<string, PresencialCourse> = {
       { title: 'Masajistas', description: 'Para cerrar sesiones con movilidad segura.', icon: 'front_hand' },
       { title: 'Entrenadores', description: 'Para mejorar recuperación y flexibilidad.', icon: 'fitness_center' },
       { title: 'Fisioterapeutas', description: 'Para ampliar recursos de movilidad asistida.', icon: 'physical_therapy' }
+    ],
+    journeySteps: [
+      { shortTitle: 'Evaluación', period: 'Bloque 1', icon: 'accessibility_new', title: 'Evalúa rangos articulares y tensiones', description: 'Aprende a medir movilidad y detectar patrones de acortamiento muscular.', outcomes: ['Rangos articulares', 'Evaluación postural', 'Detección de tensiones'] },
+      { shortTitle: 'Técnica', period: 'Bloque 2', icon: 'sports_gymnastics', title: 'Domina el estiramiento asistido', description: 'Practica técnicas pasivas, activas y controladas para cada grupo muscular.', outcomes: ['Estiramiento pasivo', 'Estiramiento activo', 'Técnicas controladas'] },
+      { shortTitle: 'Sesión', period: 'Bloque 3', icon: 'assignment', title: 'Diseña sesiones terapéuticas completas', description: 'Integra secuencias seguras dosificando intensidad según cada persona.', outcomes: ['Dosificación segura', 'Secuencia completa', 'Certificación INSTEIP'] }
     ]
   }
 };
@@ -170,15 +130,60 @@ const COURSES: Record<string, PresencialCourse> = {
   standalone: true,
   imports: [CommonModule, RouterLink, NavbarComponent, FooterComponent],
   templateUrl: './presencial-course.component.html',
-  styleUrls: ['./presencial-course.component.css']
+  styleUrls: ['./presencial-course.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
-export class PresencialCourseComponent implements AfterViewInit, OnDestroy {
+export class PresencialCourseComponent implements OnInit, AfterViewInit, OnDestroy {
   course: PresencialCourse;
+  activeBenefitIndex = 0;
+  activeJourneyStep = 0;
+  private autoplayInterval?: ReturnType<typeof setInterval>;
   private animationContext?: gsap.Context;
 
   constructor(route: ActivatedRoute, private readonly host: ElementRef<HTMLElement>) {
     const slug = route.snapshot.data['course'] as string;
-    this.course = COURSES[slug] ?? COURSES['auriculoterapia'];
+    this.course = COURSES[slug] ?? COURSES['reflexologia-podal-presencial'];
+  }
+
+  ngOnInit(): void {
+    this.startAutoplay();
+  }
+
+  startAutoplay(): void {
+    this.autoplayInterval = setInterval(() => {
+      this.nextBenefit(true);
+    }, 4500);
+  }
+
+  stopAutoplay(): void {
+    if (this.autoplayInterval) {
+      clearInterval(this.autoplayInterval);
+      this.autoplayInterval = undefined;
+    }
+  }
+
+  resetAutoplay(): void {
+    this.stopAutoplay();
+    this.startAutoplay();
+  }
+
+  prevBenefit(): void {
+    this.resetAutoplay();
+    this.activeBenefitIndex = this.activeBenefitIndex === 0 ? 2 : this.activeBenefitIndex - 1;
+  }
+
+  nextBenefit(isAuto = false): void {
+    if (!isAuto) this.resetAutoplay();
+    this.activeBenefitIndex = this.activeBenefitIndex === 2 ? 0 : this.activeBenefitIndex + 1;
+  }
+
+  setBenefit(i: number): void {
+    this.resetAutoplay();
+    this.activeBenefitIndex = i;
+  }
+
+  setJourneyStep(index: number): void {
+    this.activeJourneyStep = index;
   }
 
   ngAfterViewInit(): void {
@@ -186,29 +191,38 @@ export class PresencialCourseComponent implements AfterViewInit, OnDestroy {
 
     gsap.registerPlugin(ScrollTrigger);
     this.animationContext = gsap.context(() => {
-      const intro = gsap.timeline({ defaults: { ease: 'power3.out' } });
-      intro
-        .from('.pc-kicker', { opacity: 0, y: -12, duration: 0.45 })
-        .from('.pc-title', { opacity: 0, y: 24, duration: 0.75 }, '-=0.2')
-        .from('.pc-description, .pc-actions', { opacity: 0, y: 12, stagger: 0.08, duration: 0.45 }, '-=0.4')
-        .from('.pc-visual', { opacity: 0, scale: 0.96, duration: 0.75 }, '-=0.6')
-        .from('.pc-stat', { opacity: 0, y: 12, stagger: 0.07, duration: 0.4 }, '-=0.4');
+      const hero = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      hero
+        .from('.ac-kicker', { opacity: 0, y: -12, duration: 0.45 })
+        .from('.ac-title', { opacity: 0, y: 28, duration: 0.8 }, '-=0.2')
+        .from('.ac-description, .ac-actions, .ac-proof', { opacity: 0, y: 14, stagger: 0.08, duration: 0.45 }, '-=0.45')
+        .from('.ac-hero__visual', { opacity: 0, scale: 0.95, duration: 0.8 }, '-=0.65')
+        .from('.ac-fact', { opacity: 0, y: 12, stagger: 0.07, duration: 0.4 }, '-=0.4');
 
       gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((element) => {
-        gsap.from(element, {
-          scrollTrigger: { trigger: element, start: 'top 86%', once: true },
-          opacity: 0,
-          y: 24,
-          duration: 0.65,
-          ease: 'power3.out'
+        gsap.set(element, { autoAlpha: 1, y: 0 });
+        ScrollTrigger.create({
+          trigger: element,
+          start: 'top 88%',
+          once: true,
+          onEnter: () => {
+            gsap.fromTo(element,
+              { autoAlpha: 0, y: 22 },
+              { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', overwrite: 'auto' }
+            );
+          }
         });
       });
+      window.setTimeout(() => {
+        gsap.set('[data-reveal]', { autoAlpha: 1, y: 0, clearProps: 'visibility,opacity,transform' });
+      }, 1200);
     }, this.host.nativeElement);
 
     ScrollTrigger.refresh();
   }
 
   ngOnDestroy(): void {
+    this.stopAutoplay();
     this.animationContext?.revert();
   }
 }

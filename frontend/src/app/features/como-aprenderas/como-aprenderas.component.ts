@@ -9,6 +9,6 @@ import { FooterComponent } from '../../core/components/footer/footer.component';
   standalone: true,
   imports: [CommonModule, RouterLink, NavbarComponent, FooterComponent],
   templateUrl: './como-aprenderas.component.html',
-  styleUrls: []
+  styleUrls: ['./como-aprenderas.component.css']
 })
 export class ComoAprenderasComponent {}

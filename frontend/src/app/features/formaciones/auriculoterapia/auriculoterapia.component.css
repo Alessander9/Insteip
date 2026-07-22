@@ -387,7 +387,7 @@
   position: absolute;
   inset: 0;
   z-index: -2;
-  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=700&q=72');
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/AuriculoterapiaInsteip2.jpg');
   background-position: center;
   background-size: cover;
   opacity: 0;
@@ -397,15 +397,15 @@
 }
 
 .ac-fact:nth-child(2)::before {
-  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=700&q=72');
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/AuriculoterapiaInsteip3.jpg');
 }
 
 .ac-fact:nth-child(3)::before {
-  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/Auriculoterapia Insteip.png');
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/Auriculoterapia Insteip.jpg');
 }
 
 .ac-fact:nth-child(4)::before {
-  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=700&q=72');
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/AuriculoterapiaInsteip4.jpg');
 }
 
 .ac-fact:hover {
@@ -772,7 +772,7 @@
   position: absolute;
   inset: 0;
   z-index: -2;
-  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/Auriculoterapia Insteip.png');
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/AuriculoterapiaInsteip2.jpg');
   background-position: center;
   background-size: cover;
   opacity: 0;
@@ -782,15 +782,15 @@
 }
 
 .ac-journey__panel--step-0::before {
-  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/Auriculoterapia Insteip.png');
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/AuriculoterapiaInsteip3.jpg');
 }
 
 .ac-journey__panel--step-1::before {
-  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/Auriculoterapia Insteip.png');
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/AuriculoterapiaInsteip4.jpg');
 }
 
 .ac-journey__panel--step-2::before {
-  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/Auriculoterapia Insteip.png');
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/AuriculoterapiaInsteip2.jpg');
 }
 
 .ac-journey__panel:hover {
@@ -959,15 +959,15 @@
 }
 
 .ac-profile:nth-child(1) {
-  background-image: url('../../../../assets/Auriculoterapia Insteip.png');
+  background-image: url('../../../../assets/Auriculoterapia Insteip.jpg');
 }
 
 .ac-profile:nth-child(2) {
-  background-image: url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=900&q=76');
+  background-image: url('../../../../assets/AuriculoterapiaInsteip3.jpg');
 }
 
 .ac-profile:nth-child(3) {
-  background-image: url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=900&q=76');
+  background-image: url('../../../../assets/AuriculoterapiaInsteip4.jpg');
 }
 
 .ac-profile > * {

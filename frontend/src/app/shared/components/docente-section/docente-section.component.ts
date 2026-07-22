@@ -23,4 +23,5 @@ export interface DocenteData {
 })
 export class DocenteSectionComponent {
   @Input() docente?: DocenteData;
+  @Input() docenteSecundario?: DocenteData;
 }

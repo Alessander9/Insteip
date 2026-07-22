@@ -44,7 +44,7 @@ export class PublicCursosComponent {
       description: 'Formación profesional en medicina tradicional china con acceso virtual.',
       students: '+1,200',
       price: 'S/ 180',
-      image: 'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=800&q=80',
+      image: 'assets/acupuntura_china_virtual.jpg',
       customLink: '/cursos/acupuntura-china'
     },
     {
@@ -58,7 +58,7 @@ export class PublicCursosComponent {
       description: 'Diagnóstico, mapeo y estímulo terapéutico del pabellón auricular.',
       students: '+850',
       price: 'S/ 150',
-      image: 'https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&w=800&q=80',
+      image: 'assets/auriculoterapia_online.jpg',
       customLink: '/cursos/auriculoterapia'
     },
     {
@@ -72,14 +72,84 @@ export class PublicCursosComponent {
       description: 'Técnicas manuales y protocolos clínicos orientados a la salud y bienestar físico.',
       students: '+600',
       price: 'S/ 160',
-      image: 'https://images.unsplash.com/photo-1600335895229-6e75511892c8?auto=format&fit=crop&w=800&q=80',
+      image: 'assets/masaje_terapeutico_virtual.jpg',
       customLink: '/cursos/masaje-terapeutico'
+    },
+    {
+      slug: 'paralisis-facial-acupuntura-fisioterapia-online',
+      title: 'Parálisis Facial con Acupuntura y Fisioterapia (Online)',
+      category: 'CORTOS',
+      modality: 'ONLINE',
+      icon: 'neurology',
+      rating: 4.9,
+      duration: '2 horas',
+      description: 'Taller online para abordar parálisis facial integrando acupuntura, fisioterapia y criterio clínico complementario.',
+      students: '+180',
+      price: 'S/ 90',
+      image: 'assets/paralisis_virtual.jpg',
+      customLink: '/cursos/paralisis-facial-acupuntura-fisioterapia-online'
+    },
+    {
+      slug: 'control-peso-auriculoterapia-acupuntura-online',
+      title: 'Auriculoterapia y Acupuntura en Control de Peso (Online)',
+      category: 'CORTOS',
+      modality: 'ONLINE',
+      icon: 'monitor_weight',
+      rating: 4.9,
+      duration: '8 horas',
+      description: 'Seminario online para integrar auriculoterapia y acupuntura en protocolos de control de peso.',
+      students: '+240',
+      price: 'S/ 180',
+      image: 'assets/control_peso_online.jpg',
+      customLink: '/cursos/control-peso-auriculoterapia-acupuntura-online'
+    },
+    {
+      slug: 'stretching-terapeutico-online',
+      title: 'Stretching Terapéutico (Online)',
+      category: 'CORTOS',
+      modality: 'ONLINE',
+      icon: 'self_improvement',
+      rating: 4.8,
+      duration: '2 horas',
+      description: 'Taller online para aplicar movilidad, elongación y criterios de cuidado corporal con enfoque terapéutico.',
+      students: '+190',
+      price: 'S/ 90',
+      image: 'assets/stretching_online.jpg',
+      customLink: '/cursos/stretching-terapeutico-online'
+    },
+    {
+      slug: 'acupuntura-estetica-online',
+      title: 'Acupuntura Estética (Online)',
+      category: 'CORTOS',
+      modality: 'ONLINE',
+      icon: 'face_retouching_natural',
+      rating: 4.9,
+      duration: '2 horas',
+      description: 'Taller online de acupuntura estética para conocer protocolos faciales, seguridad y aplicación profesional.',
+      students: '+210',
+      price: 'S/ 90',
+      image: 'assets/acupuntura_estetica_virtual.jpg',
+      customLink: '/cursos/acupuntura-estetica-online'
+    },
+    {
+      slug: 'reflexologia-online',
+      title: 'Curso de Reflexología',
+      category: 'CORTOS',
+      modality: 'ONLINE',
+      icon: 'footprint',
+      rating: 4.8,
+      duration: '2 horas',
+      description: 'Curso online de reflexología para aprender una base clara, ordenada y aplicable al bienestar integral.',
+      students: '+160',
+      price: 'S/ 120',
+      image: 'assets/reflexologia_online.jpg',
+      customLink: '/cursos/reflexologia-online'
     },
 
     // 4 Cursos Presenciales
     {
       slug: 'digitopresion-presencial',
-      title: 'Digitopresión',
+      title: 'Digitopresión Mecánica',
       category: 'CORTOS',
       modality: 'PRESENCIAL',
       icon: 'touch_app',
@@ -88,7 +158,7 @@ export class PublicCursosComponent {
       description: 'Aprende técnicas de presión digital terapéutica para tratar contracturas, puntos gatillo y dolor musculoesquelético con seguridad clínica.',
       students: '+320',
       price: 'S/ 260',
-      image: 'assets/curso_masaje.png',
+      image: 'assets/digitopresion_presencial.jpg',
       customLink: '/cursos/digitopresion-presencial'
     },
     {
@@ -102,7 +172,7 @@ export class PublicCursosComponent {
       description: 'Domina el diagnóstico y la estimulación del pabellón auricular con técnicas orientales y occidentales para resultados clínicos reales.',
       students: '+450',
       price: 'S/ 260',
-      image: 'assets/Auriculoterapia Insteip.png',
+      image: 'assets/curso_auriculoterapia_presencial.jpg',
       customLink: '/cursos/auriculoterapia-presencial'
     },
     {
@@ -116,7 +186,7 @@ export class PublicCursosComponent {
       description: 'Especialízate con la formación presencial más completa en medicina tradicional china, moxibustión y microsistemas con práctica clínica supervisada.',
       students: '+600',
       price: 'S/ 290',
-      image: 'assets/AcupunturaChinaInsteip.png',
+      image: 'assets/acupuntura_china_presencial.jpg',
       customLink: '/cursos/acupuntura-presencial'
     },
     {
@@ -130,7 +200,7 @@ export class PublicCursosComponent {
       description: 'Aprende a evaluar el estado nutricional y diseñar planes dietéticos terapéuticos para las condiciones de salud más frecuentes.',
       students: '+210',
       price: 'S/ 260',
-      image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=800&q=80',
+      image: 'assets/curso_dietetica.jpg',
       customLink: '/cursos/dietetica-presencial'
     }
   ];

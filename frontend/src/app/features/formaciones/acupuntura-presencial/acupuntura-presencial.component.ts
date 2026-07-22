@@ -95,7 +95,7 @@ export class AcupunturaPresencialComponent implements OnInit, AfterViewInit, OnD
     nombre: 'Lic. Lázaro José Regalado Ponte',
     cargo: 'Docente Especialista',
     biografia: 'Licenciado en <span class="text-brand-blue font-semibold">Fisioterapia y Rehabilitación</span>, especialista en acupuntura clínica, moxibustión y digitopuntura con amplia trayectoria académica y docente universitaria en <span class="text-brand-blue font-semibold">Cuba y Perú</span>.',
-    fotoUrl: 'https://static.wixstatic.com/media/3c52e9_47a9cbbe9d954ced8e74d4950711a55e~mv2.jpg',
+    fotoUrl: 'assets/Lic Lazaro.jpg',
     kicker: 'DOCENCIA EXCLUSIVA',
     especialidades: [
       { icon: 'verified', label: 'Especialista Clínico' },

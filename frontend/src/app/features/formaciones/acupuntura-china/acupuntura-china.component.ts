@@ -65,7 +65,7 @@ export class AcupunturaChinaComponent implements OnInit, AfterViewInit, OnDestro
       tabLabel: '01 · Acupuntura Clásica (Meses 1-6)',
       title: 'Fase 1: Acupuntura Clásica',
       description: 'Estudio profundo de los principios milenarios, anatomía de canales energéticos y puntos reflejos primarios.',
-      image: 'assets/insteip acupuntura temario 1.png',
+      image: 'assets/insteip acupuntura temario 1.jpg',
       imageAlt: 'Acupuntura Clásica',
       specimenLabel: 'SPECIMEN // CANALES ENERGÉTICOS ACUPUNTURALES',
       items: [
@@ -80,7 +80,7 @@ export class AcupunturaChinaComponent implements OnInit, AfterViewInit, OnDestro
       tabLabel: '02 · Microsistemas (Meses 7-12)',
       title: 'Fase 2: Microsistemas de Acupuntura',
       description: 'Especialización en sistemas de estimulación refleja y técnicas avanzadas de estimulación eléctrica.',
-      image: 'assets/insteip acupuntura temario 2.png',
+      image: 'assets/insteip acupuntura temario 2.jpg',
       imageAlt: 'Microsistemas',
       specimenLabel: 'SPECIMEN // ESTIMULACIÓN REFLEJA Y MICROSISTEMAS',
       items: [
@@ -97,7 +97,7 @@ export class AcupunturaChinaComponent implements OnInit, AfterViewInit, OnDestro
     nombre: 'Lic. Lázaro José Regalado Ponte',
     cargo: 'Docente Especialista',
     biografia: 'Licenciado en <span class="text-brand-blue font-semibold">Fisioterapia y Rehabilitación</span>, especialista en acupuntura clínica, moxibustión y digitopuntura con amplia trayectoria académica y docente universitaria internacional en <span class="text-brand-blue font-semibold">Cuba y Perú</span>.',
-    fotoUrl: 'https://static.wixstatic.com/media/3c52e9_47a9cbbe9d954ced8e74d4950711a55e~mv2.jpg',
+    fotoUrl: 'assets/Lic Lazaro.jpg',
     kicker: 'DOCENCIA EXCLUSIVA',
     especialidades: [
       { icon: 'verified', label: 'Especialista Clínico' },

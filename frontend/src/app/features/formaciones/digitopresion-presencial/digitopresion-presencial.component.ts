@@ -92,38 +92,38 @@ export class DigitopresionPresencialComponent implements OnInit, AfterViewInit, 
   ];
 
   docenteData: DocenteData = {
-    nombre: 'Lic. Lázaro José Regalado Ponte',
-    cargo: 'Docente Especialista',
-    biografia: 'Licenciado en <span class="text-brand-blue font-semibold">Fisioterapia y Rehabilitación</span>, especialista en técnicas manuales, digitopresión y acupuntura clínica con amplia trayectoria docente universitaria en <span class="text-brand-blue font-semibold">Cuba y Perú</span>.',
-    fotoUrl: 'https://static.wixstatic.com/media/3c52e9_47a9cbbe9d954ced8e74d4950711a55e~mv2.jpg',
-    kicker: 'DOCENCIA EXCLUSIVA',
+    nombre: 'Emanuel Cabanillas Bardales',
+    cargo: 'Docente principal',
+    biografia: 'Especialista en técnicas manuales, masoterapia clínica, anatomía aplicada y digitopresión con amplia trayectoria clínica en la formación de terapeutas profesionales.',
+    fotoUrl: 'assets/Lic Emanuel.jpg',
+    kicker: 'DOCENCIA INSTEIP',
     especialidades: [
       { icon: 'verified', label: 'Especialista Clínico' },
-      { icon: 'school', label: 'Ex-Docente U.' }
+      { icon: 'school', label: 'Docente principal' }
     ]
   };
 
   ctaData: CourseCtaData = {
-    precio: 260,
-    cuotasInfo: '2 cuotas · Sin intereses · Matrícula incluida',
+    precio: 250,
+    cuotasInfo: '2 meses · Matrícula S/ 30 · Clases los domingos (3:00 PM – 6:00 PM)',
     plazasDisponibles: 8,
-    whatsappLink: 'https://wa.me/51939371250',
+    whatsappLink: 'https://wa.me/51939371250?text=Hola%2C%20deseo%20reservar%20mi%20cupo%20para%20la%20Formaci%C3%B3n%20de%20Masaje%20Terap%C3%A9utico%20y%20Digitopresi%C3%B3n%20Mec%C3%A1nica',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
-      '2 meses de clases presenciales cada domingo en Lince, Lima',
-      'Práctica clínica supervisada con pacientes reales',
-      'Material didáctico digital oficial incluido',
-      'Certificado profesional oficial emitido por Insteip'
+      '2 meses de clases presenciales (domingos 3:00 PM – 6:00 PM)',
+      'Sede: Julio C Tello 438, Lince, Lima, Perú',
+      'Práctica presencial 100% interactiva en camillas',
+      'Docente: Emanuel Cabanillas Bardales'
     ],
     headlineHtml: 'El momento de iniciar tu<br><span class="text-secondary">carrera en digitopresión</span> es ahora.',
-    description: 'Cupos <span class="text-brand-blue font-semibold">muy limitados</span> por grupo. Una vez llenos, la siguiente convocatoria puede demorar meses. Reserva tu lugar hoy.',
+    description: 'Cupos <span class="text-brand-blue font-semibold">limitados por sesión</span> en Lince, Lima. Matrícula S/ 30.00.',
     faqs: [
-      { icon: 'help', pregunta: '¿Sin experiencia previa?', respuesta: 'No se requieren conocimientos previos. Comenzamos desde la anatomía básica.' },
-      { icon: 'schedule', pregunta: '¿Cuándo son las clases?', respuesta: 'Domingos de 10:00 AM a 1:00 PM en nuestro centro en Lince, Lima.' },
-      { icon: 'verified', pregunta: '¿El certificado es válido?', respuesta: 'Sí. Emitido por Insteip con respaldo institucional reconocido en Perú.' },
-      { icon: 'location_on', pregunta: '¿Dónde son las prácticas?', respuesta: 'En nuestro centro clínico en Lince, Lima — grupos reducidos de máximo 8 personas.' }
+      { icon: 'help', pregunta: '¿Sin experiencia previa?', respuesta: 'No se requieren conocimientos previos. Comenzamos desde las bases prácticas elementales.' },
+      { icon: 'schedule', pregunta: '¿Cuál es el horario y sede?', respuesta: 'Domingos de 3:00 PM a 6:00 PM en Julio C Tello 438, Lince, Lima, Perú.' },
+      { icon: 'verified', pregunta: '¿Qué certificación recibo?', respuesta: 'Constancia oficial emitida por INSTEIP respaldando tu formación.' },
+      { icon: 'location_on', pregunta: '¿Cómo me inscribo?', respuesta: 'Puedes reservar por WhatsApp al +51 939 371 250.' }
     ],
-    trustText: 'Pago seguro · Sin compromiso de permanencia · Asesoría personalizada antes de matricularte'
+    trustText: 'Reserva segura · Asesoría personalizada vía WhatsApp +51 939 371 250'
   };
 
   constructor(private readonly host: ElementRef<HTMLElement>) { }

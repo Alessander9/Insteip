@@ -89,13 +89,26 @@ print_ok "Firewall activado (SSH + Nginx Full)"
 ufw status verbose | head -5
 
 # ──────────────────────────────────────────────────────────────────────────────
-#  PASO 4: Crear estructura de directorios
+#  PASO 4: Crear estructura de directorios y usuario del sistema
 # ──────────────────────────────────────────────────────────────────────────────
-print_step 4 "Crear estructura de directorios"
+print_step 4 "Crear estructura de directorios y usuario del sistema"
+
+# Crear usuario sin privilegios 'insteip'
+if ! id "insteip" &>/dev/null; then
+    useradd -r -s /bin/false insteip
+    print_ok "Usuario del sistema 'insteip' creado"
+else
+    print_ok "Usuario 'insteip' ya existe"
+fi
 
 mkdir -p /opt/insteip/database
 mkdir -p /opt/insteip/data/materiales
-print_ok "Directorios creados en /opt/insteip/"
+
+# Asignar pertenencia de la carpeta de datos al usuario insteip
+chown -R insteip:insteip /opt/insteip/data
+chmod -R 750 /opt/insteip/data
+
+print_ok "Directorios creados en /opt/insteip/ y permisos asignados a 'insteip'"
 
 # ──────────────────────────────────────────────────────────────────────────────
 #  PASO 5: Iniciar PostgreSQL con Docker

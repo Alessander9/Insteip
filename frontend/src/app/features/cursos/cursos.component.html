@@ -93,11 +93,10 @@
             <a [routerLink]="curso.customLink ? [curso.customLink] : ['/cursos', curso.slug]" class="course-card__media" [attr.aria-label]="'Ver ' + curso.title">
               <img [src]="curso.image" [alt]="curso.title" loading="lazy" decoding="async" />
               <span class="course-card__modality"><i></i>{{ curso.modality }}</span>
-              <span class="course-card__number">{{ (i + 1).toString().padStart(2, '0') }}</span>
             </a>
 
             <div class="course-card__body">
-              <div class="course-card__meta"><span><span class="material-symbols-outlined">{{ curso.icon }}</span>INSTEIP Oficial</span><strong>{{ curso.duration }}</strong></div>
+              <div class="course-card__meta"><span class="course-card__inst-badge">INSTEIP Oficial</span><strong>{{ curso.duration }}</strong></div>
               <h3><span class="course-card__title-icon material-symbols-outlined">{{ curso.icon }}</span><a [routerLink]="curso.customLink ? [curso.customLink] : ['/cursos', curso.slug]">{{ curso.title }}</a></h3>
               <p>{{ curso.description }}</p>
               <footer><span><span class="material-symbols-outlined">groups</span>{{ curso.students }} estudiantes</span><strong>{{ curso.price }}</strong><a [routerLink]="curso.customLink ? [curso.customLink] : ['/cursos', curso.slug]" aria-label="Ver detalles"><span class="course-card__cta-text">Ver curso</span><span class="material-symbols-outlined">arrow_outward</span></a></footer>
@@ -124,11 +123,10 @@
             <a [routerLink]="curso.customLink ? [curso.customLink] : ['/cursos', curso.slug]" class="course-card__media" [attr.aria-label]="'Ver ' + curso.title">
               <img [src]="curso.image" [alt]="curso.title" loading="lazy" decoding="async" />
               <span class="course-card__modality"><i></i>{{ curso.modality }}</span>
-              <span class="course-card__number">{{ (i + 1).toString().padStart(2, '0') }}</span>
             </a>
 
             <div class="course-card__body">
-              <div class="course-card__meta"><span><span class="material-symbols-outlined">{{ curso.icon }}</span>INSTEIP Oficial</span><strong>{{ curso.duration }}</strong></div>
+              <div class="course-card__meta"><span class="course-card__inst-badge">INSTEIP Oficial</span><strong>{{ curso.duration }}</strong></div>
               <h3><span class="course-card__title-icon material-symbols-outlined">{{ curso.icon }}</span><a [routerLink]="curso.customLink ? [curso.customLink] : ['/cursos', curso.slug]">{{ curso.title }}</a></h3>
               <p>{{ curso.description }}</p>
               <footer><span><span class="material-symbols-outlined">groups</span>{{ curso.students }} estudiantes</span><strong>{{ curso.price }}</strong><a [routerLink]="curso.customLink ? [curso.customLink] : ['/cursos', curso.slug]" aria-label="Ver detalles"><span class="course-card__cta-text">Ver curso</span><span class="material-symbols-outlined">arrow_outward</span></a></footer>

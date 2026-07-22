@@ -9,7 +9,7 @@ import { FooterComponent } from '../../core/components/footer/footer.component';
   standalone: true,
   imports: [CommonModule, FormsModule, NavbarComponent, FooterComponent],
   templateUrl: './por-que-elegirnos.component.html',
-  styleUrls: []
+  styleUrls: ['./por-que-elegirnos.component.css']
 })
 export class PorQueElegirnosComponent {
   // Simulator inputs

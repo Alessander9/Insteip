@@ -33,97 +33,112 @@ export class AuriculoterapiaPresencialComponent implements OnInit, AfterViewInit
 
   readonly journeySteps = [
     {
-      shortTitle: 'Fundamentos',
-      period: 'Semana 1 al 3',
+      shortTitle: 'Neurofisiología',
+      period: 'Módulo 1',
+      icon: 'neurology',
+      title: 'Comprende la neurofisiología y vertientes',
+      description: 'Estudia la historia (Dr. Paul Nogier), vertientes china, francesa y neuromodulación, junto con la relevancia del Nervio Vago y la teoría polivagal.',
+      outcomes: ['Aportes del Dr. Paul Nogier', 'Nervio Vago y neurofisiología', 'Teoría polivagal y convergencia']
+    },
+    {
+      shortTitle: 'Somatotopía',
+      period: 'Módulo 2',
       icon: 'hearing',
-      title: 'Anatomía auricular y mapeo reflejo',
-      description: 'Aprende la topografía del pabellón auricular, los sistemas de diagnóstico y los puntos de mayor relevancia clínica.',
-      outcomes: ['Anatomía del pabellón', 'Sistemas de cartografía', 'Diagnóstico auricular']
+      title: 'Domina la somatotopía y materiales de aplicación',
+      description: 'Aprende el mapeo auricular del feto invertido, el uso de materiales invasivos (agujas, ASP), no invasivos (semillas, balines) y masaje auricular.',
+      outcomes: ['Somatotopía y cartografías', 'Materiales invasivos y no invasivos', 'Técnica exclusiva de masaje auricular']
     },
     {
-      shortTitle: 'Técnica',
-      period: 'Semana 4 al 6',
-      icon: 'grain',
-      title: 'Técnicas de estimulación y protocolos',
-      description: 'Domina las técnicas de estimulación con semillas, balines y agujas, y diseña protocolos para condiciones frecuentes.',
-      outcomes: ['Semillas y balines', 'Agujas auriculares', 'Protocolos clínicos']
-    },
-    {
-      shortTitle: 'Profesión',
-      period: 'Semana 7 al 8',
-      icon: 'workspace_premium',
-      title: 'Práctica clínica y certificación',
-      description: 'Aplica tus conocimientos con pacientes reales bajo supervisión y obtén tu certificación profesional de Insteip.',
-      outcomes: ['Casos clínicos reales', 'Evaluación práctica', 'Certificación institucional']
+      shortTitle: 'Protocolos',
+      period: 'Módulo 3',
+      icon: 'medical_services',
+      title: 'Aplica la Tríada auricular y protocolos clínicos',
+      description: 'Implementa la Tríada (Shen Men, Riñón, Simpático), localización por áreas y protocolos para dolor, estrés, peso y bioseguridad.',
+      outcomes: ['Tríada auricular de inicio', 'Protocolos clínicos específicos', 'Higiene, bioseguridad y ética']
     }
   ];
 
   syllabusData: SyllabusPhase[] = [
     {
       id: 'fase1',
-      tabLabel: '01 · Auriculoterapia Clásica (Semanas 1-4)',
-      title: 'Fase 1: Fundamentos de Auriculoterapia',
-      description: 'Estudio del pabellón auricular como microsistema reflejo del organismo y técnicas básicas de estimulación.',
-      image: 'assets/Auriculoterapia Insteip.png',
-      imageAlt: 'Auriculoterapia presencial',
-      specimenLabel: 'SPECIMEN // CARTOGRAFÍA AURICULAR CLÍNICA',
+      tabLabel: 'Módulo 1: Neurofisiología',
+      title: 'Módulo 1: Fundamentos y Neurofisiología',
+      description: 'Historia de la auriculoterapia, aportes de Nogier, vertientes principales y la neurofisiología del Nervio Vago.',
+      image: 'assets/insteip AURICULOTERAPIA temario 1.png',
+      imageAlt: 'Módulo 1 - Fundamentos y Neurofisiología',
+      specimenLabel: 'SPECIMEN // FUNDAMENTOS Y NEUROFISIOLOGÍA',
       items: [
-        { number: '01', title: 'Topografía Auricular', badge1: 'Teoría', badge2: 'Fase 1', description: 'Estudio detallado de las zonas anatómicas del pabellón y su correspondencia corporal refleja.' },
-        { number: '02', title: 'Sistemas de Diagnóstico', badge1: 'Diagnóstico', badge2: 'Fase 1', description: 'Métodos de detección de puntos activos: inspección visual, palpación y electroneurometría básica.' },
-        { number: '03', title: 'Semillas y Balines', badge1: 'Práctica', badge2: 'No invasivo', description: 'Técnica de estimulación con semillas de vaccaria, balines de metal y materiales magnetoterapéuticos.' },
-        { number: '04', title: 'Auriculoterapia Francesa y China', badge1: 'Sistemas', badge2: 'Comparativo', description: 'Diferencias y complementariedad entre el sistema de Nogier (francés) y el sistema chino de auriculopuntura.' }
+        { number: '01', title: 'Historia de la Auriculoterapia', badge1: 'Teoría', badge2: 'Dr. Nogier', description: 'Historia de la auriculoterapia y aportes fundamentales del Dr. Paul Nogier.' },
+        { number: '02', title: 'Vertientes Principales', badge1: 'Sistemas', badge2: 'Comparativo', description: 'Vertientes China, Francesa y Neuromodulación auricular.' },
+        { number: '03', title: 'Neurofisiología y Nervio Vago', badge1: 'Clínica', badge2: 'Vago', description: 'Neurofisiología auricular e importancia clínica del Nervio Vago.' },
+        { number: '04', title: 'Teorías Energéticas y Biológicas', badge1: 'Conceptos', badge2: 'Biológicas', description: 'Teoría de convergencia y Teoría polivagal aplicadas a la terapia.' }
       ]
     },
     {
       id: 'fase2',
-      tabLabel: '02 · Protocolos Avanzados (Semanas 5-8)',
-      title: 'Fase 2: Protocolos Clínicos Avanzados',
-      description: 'Aplicación de protocolos específicos para condiciones de alta prevalencia clínica y práctica supervisada.',
-      image: 'https://images.unsplash.com/photo-1589330694653-ded6df53f7ee?auto=format&fit=crop&w=800&q=80',
-      imageAlt: 'Protocolo auricular avanzado',
-      specimenLabel: 'SPECIMEN // PROTOCOLOS AURICULARES ESPECIALIZADOS',
+      tabLabel: 'Módulo 2: Somatotopía',
+      title: 'Módulo 2: Somatotopía y Materiales de aplicación',
+      description: 'Cartografía del feto invertido, uso de materiales invasivos y no invasivos, y técnica exclusiva de masaje auricular.',
+      image: 'assets/insteip AURICULOTERAPIA temario 2.png',
+      imageAlt: 'Módulo 2 - Somatotopía y Materiales',
+      specimenLabel: 'SPECIMEN // SOMATOTOPÍA Y MATERIALES',
       items: [
-        { number: '01', title: 'Protocolo Antidolor', badge1: 'Analgesia', badge2: 'Fase 2', description: 'Secuencias auriculares para el manejo del dolor agudo y crónico de origen musculoesquelético.' },
-        { number: '02', title: 'Estrés y Ansiedad', badge1: 'Emocional', badge2: 'Fase 2', description: 'Protocolo de equilibrio neuroemocional para el abordaje del estrés, insomnio y estados ansiosos.' },
-        { number: '03', title: 'Adicciones y Hábitos', badge1: 'NADA', badge2: 'Fase 2', description: 'Protocolo NADA (5 puntos) y variantes para el apoyo terapéutico en cesación del tabaco y otras conductas.' },
-        { number: '04', title: 'Práctica con Pacientes', badge1: 'Clínica', badge2: 'Supervisada', description: 'Sesiones de práctica clínica real con pacientes bajo supervisión directa del docente especialista.' }
+        { number: '01', title: 'Somatotopía Auricular', badge1: 'Mapeo', badge2: 'Feto Invertido', description: 'Somatotopía auricular: analogía del feto invertido y cartografías oficiales.' },
+        { number: '02', title: 'Materiales Invasivos', badge1: 'Agujas', badge2: 'ASP', description: 'Uso de agujas de acupuntura, chinchetas, ASP y aplicador.' },
+        { number: '03', title: 'Materiales No Invasivos', badge1: 'Semillas', badge2: 'Balines', description: 'Semillas de vaccaria, balines de oro/plata e imanes.' },
+        { number: '04', title: 'Masaje Auricular Exclusivo', badge1: 'Técnica', badge2: 'Emanuel C.', description: 'Técnica exclusiva de masaje auricular desarrollada por Emanuel Cabanillas.' }
+      ]
+    },
+    {
+      id: 'fase3',
+      tabLabel: 'Módulo 3: Puntos y Protocolos',
+      title: 'Módulo 3: Puntos Auriculares y Protocolos Clínicos',
+      description: 'Tríada auricular, localización detallada por áreas y protocolos específicos con bioseguridad.',
+      image: 'assets/insteip AURICULOTERAPIA temario 3.png',
+      imageAlt: 'Módulo 3 - Puntos y Protocolos',
+      specimenLabel: 'SPECIMEN // PROTOCOLOS CLÍNICOS Y ÉTICA',
+      items: [
+        { number: '01', title: 'Protocolo de Inicio', badge1: 'Tríada', badge2: 'Shen Men', description: 'Protocolo de inicio: Tríada auricular (Shen Men, Riñón, Simpático).' },
+        { number: '02', title: 'Localización por Áreas', badge1: 'Anatomía', badge2: 'Puntos', description: 'Localización detallada por áreas: Antitrago, Trago, Anti-hélix, Hélix, Lóbulo y Concha.' },
+        { number: '03', title: 'Protocolos Clínicos Específicos', badge1: 'Tratamiento', badge2: 'Salud', description: 'Protocolos clínicos específicos: estrés, ansiedad, insomnio, dolor musculoesquelético y control de peso.' },
+        { number: '04', title: 'Bioseguridad y Ética', badge1: 'Higiene', badge2: 'Asepsia', description: 'Higiene, desinfección, bioseguridad y ética en consulta con pacientes.' }
       ]
     }
   ];
 
   docenteData: DocenteData = {
-    nombre: 'Lic. Lázaro José Regalado Ponte',
-    cargo: 'Docente Especialista',
-    biografia: 'Licenciado en <span class="text-brand-blue font-semibold">Fisioterapia y Rehabilitación</span>, especialista en auriculoterapia clínica, acupuntura y técnicas reflejas con amplia trayectoria docente universitaria en <span class="text-brand-blue font-semibold">Cuba y Perú</span>.',
-    fotoUrl: 'https://static.wixstatic.com/media/3c52e9_47a9cbbe9d954ced8e74d4950711a55e~mv2.jpg',
-    kicker: 'DOCENCIA EXCLUSIVA',
+    nombre: 'Emanuel Cabanillas Bardales',
+    cargo: 'Docente principal de Auriculoterapia',
+    biografia: 'Especialista en Auriculoterapia y Medicinas Complementarias con amplia trayectoria clínica en la aplicación de protocolos reflejos, diagnóstico auricular e integración terapéutica.',
+    fotoUrl: 'assets/Lic Emanuel.jpg',
+    kicker: 'DOCENCIA INSTEIP',
     especialidades: [
-      { icon: 'verified', label: 'Especialista Clínico' },
-      { icon: 'school', label: 'Ex-Docente U.' }
+      { icon: 'verified', label: 'Especialista clínico' },
+      { icon: 'school', label: 'Docente INSTEIP' }
     ]
   };
 
   ctaData: CourseCtaData = {
     precio: 260,
-    cuotasInfo: '2 cuotas · Sin intereses · Matrícula incluida',
+    cuotasInfo: '2 meses · Matrícula S/ 30 · Reserva S/ 50 (vía WhatsApp)',
     plazasDisponibles: 8,
-    whatsappLink: 'https://wa.me/51939371250',
+    whatsappLink: 'https://wa.me/51939371250?text=Hola%2C%20deseo%20reservar%20mi%20cupo%20para%20la%20Formaci%C3%B3n%20de%20Auriculoterapia',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
-      '2 meses de clases presenciales cada domingo en Lince, Lima',
-      'Kit de materiales clínicos incluido (semillas, balines, cartograma)',
-      'Manual impreso ilustrado de por vida',
-      'Certificado profesional oficial emitido por Insteip'
+      '2 meses de clases presenciales (domingos 10:00 AM – 1:00 PM)',
+      'Sede: Julio C Tello 438, Lince, Lima, Perú',
+      'Kit de materiales clínicos e impresos incluidos',
+      'Docente: Emanuel Cabanillas Bardales'
     ],
     headlineHtml: 'El momento de iniciar tu<br><span class="text-secondary">práctica en auriculoterapia</span> es ahora.',
-    description: 'Cupos <span class="text-brand-blue font-semibold">muy limitados</span> por grupo. Una vez llenos, la siguiente convocatoria puede demorar meses. Reserva tu lugar hoy.',
+    description: 'Cupos <span class="text-brand-blue font-semibold">limitados</span> en Lince, Lima. Reserva de cupo S/ 50.00 vía WhatsApp.',
     faqs: [
       { icon: 'help', pregunta: '¿Sin experiencia previa?', respuesta: 'No se requieren conocimientos previos. Comenzamos desde la anatomía auricular básica.' },
-      { icon: 'schedule', pregunta: '¿Cuándo son las clases?', respuesta: 'Domingos de 10:00 AM a 1:00 PM en nuestro centro en Lince, Lima.' },
-      { icon: 'verified', pregunta: '¿El certificado es válido?', respuesta: 'Sí. Emitido por Insteip con respaldo institucional reconocido en Perú.' },
-      { icon: 'location_on', pregunta: '¿Dónde son las prácticas?', respuesta: 'En nuestro centro clínico en Lince, Lima — grupos reducidos de máximo 8 personas.' }
+      { icon: 'schedule', pregunta: '¿Cuándo y dónde son las clases?', respuesta: 'Domingos de 10:00 AM a 1:00 PM en Julio C Tello 438, Lince, Lima, Perú.' },
+      { icon: 'payments', pregunta: '¿Cómo es el pago?', respuesta: 'Matrícula S/ 30, Mensualidad S/ 260 por mes. Reserva tu cupo con S/ 50 vía WhatsApp.' },
+      { icon: 'verified', pregunta: '¿Quién dicta el curso?', respuesta: 'Emanuel Cabanillas Bardales.' }
     ],
-    trustText: 'Pago seguro · Sin compromiso de permanencia · Asesoría personalizada antes de matricularte'
+    trustText: 'Reserva segura · Asesoría personalizada vía WhatsApp +51 939 371 250'
   };
 
   constructor(private readonly host: ElementRef<HTMLElement>) { }

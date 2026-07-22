@@ -1,5 +1,5 @@
 <section id="plan-estudios" class="acu-section acu-section--syllabus py-10 md:py-14">
-  <div class="acu-shell max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop space-y-10">
+  <div class="acu-shell max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop space-y-4">
     <div class="syllabus-header acu-section__heading space-y-2">
       <span class="font-mono text-[9px] uppercase tracking-widest text-slate-500 font-bold">[ ESTRUCTURA ACADÉMICA ]</span>
       <h2 class="text-2xl md:text-3xl font-extrabold text-[#1c1917] dark:text-white tracking-tight">Plan de Estudios</h2>
@@ -23,7 +23,7 @@
         class="acu-phase-panel grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch animate-scale-up">
 
         <!-- Left: Syllabus Items (7 cols) -->
-        <div class="lg:col-span-7 flex flex-col justify-between space-y-6">
+        <div class="lg:col-span-7 flex flex-col gap-3">
           <div class="border-l-2 border-secondary pl-4 space-y-1.5">
             <h3 class="text-base font-bold text-[#1c1917] dark:text-white uppercase tracking-wider">{{ phase.title }}</h3>
             <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -31,7 +31,7 @@
             </p>
           </div>
 
-          <div class="divide-y divide-slate-200 dark:divide-slate-900 border-y border-slate-200 dark:border-slate-900 mt-4">
+          <div class="divide-y divide-slate-200 dark:divide-slate-900 border-y border-slate-200 dark:border-slate-900">
             
             <!-- Items Loop -->
             <div *ngFor="let item of phase.items"

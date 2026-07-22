@@ -75,7 +75,7 @@ export class MasajeTerapeticoComponent implements OnInit, AfterViewInit, OnDestr
       tabLabel: 'Sesión 1: Miofascial',
       title: 'Sesión 1: Fundamentos Miofasciales',
       description: 'Principios anatómicos del tejido blando, palpación diagnóstica y técnicas básicas.',
-      image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80',
+      image: 'assets/insteip masaje temario 1.jpg',
       imageAlt: 'Miofascial',
       specimenLabel: 'SPECIMEN // PALPACIÓN Y ANATOMÍA MIOFASCIAL',
       items: [
@@ -89,13 +89,13 @@ export class MasajeTerapeticoComponent implements OnInit, AfterViewInit, OnDestr
       tabLabel: 'Sesión 2: Digitopresión',
       title: 'Sesión 2: Digitopresión Mecánica',
       description: 'Presión instrumental clínica, dosificación de fuerza y cuidado articular del terapeuta.',
-      image: 'https://images.unsplash.com/photo-1600335895229-6e75511892c8?auto=format&fit=crop&w=800&q=80',
+      image: 'assets/insteip masaje temario 2.jpg',
       imageAlt: 'Digitopresión',
       specimenLabel: 'SPECIMEN // DIGITOPRESORES E INSTRUMENTOS',
       items: [
         { number: '01', title: 'Instrumentación de Presión', badge1: 'Herramientas', badge2: 'Madera', description: 'Uso de digitopresores profesionales de madera y resina para puntos gatillo difíciles.' },
         { number: '02', title: 'Zonas de Tratamiento', badge1: 'Focalizado', badge2: 'Espalda', description: 'Tratamiento de espalda alta, zona dorsal, trapecios y cervicales mediante presión y liberación fascial.' },
-        { number: '03', title: 'Ergonomía del Terapeuta', badge1: 'Postura', badge2: 'Ergo', description: 'Ergonomía corporal y posicionamiento óptimo del terapeuta para evitar fatiga o lesiones en la consulta.' }
+        { number: '03', title: 'Ergonomía del Terapeuta', badge1: 'Postura', badge2: 'Ergo', description: 'Ergonomía corporal y posicionamiento óptimo del terapeuta durante el masaje.' }
       ]
     },
     {
@@ -103,7 +103,7 @@ export class MasajeTerapeticoComponent implements OnInit, AfterViewInit, OnDestr
       tabLabel: 'Sesión 3: Clínico',
       title: 'Sesión 3: Abordaje Clínico del Dolor',
       description: 'Protocolos de tratamiento para lumbalgias, cervicalgias y síndromes de tensión crónicos.',
-      image: 'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=800&q=80',
+      image: 'assets/insteip masaje temario 3.jpg',
       imageAlt: 'Abordaje Clínico',
       specimenLabel: 'SPECIMEN // MANIOBRAS DE TRACCIÓN Y ALIVIO',
       items: [
@@ -117,13 +117,11 @@ export class MasajeTerapeticoComponent implements OnInit, AfterViewInit, OnDestr
       tabLabel: 'Sesión 4: Práctica',
       title: 'Sesión 4: Aplicación y Práctica Integrada',
       description: 'Casos prácticos de simulación integradora en el aula y feedback en tiempo real.',
-      image: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=800&q=80',
+      image: 'assets/insteip masaje temario 4.jpg',
       imageAlt: 'Práctica',
       specimenLabel: 'SPECIMEN // CASOS CLÍNICOS Y SIMULACIONES',
       items: [
-        { number: '01', title: 'Prácticas en Camilla', badge1: 'Vivencial', badge2: 'Camilla', description: 'Simulación clínica completa en camilla de clases aplicando todas las técnicas aprendidas.' },
-        { number: '02', title: 'Fichas de Evaluación', badge1: 'Registro', badge2: 'Fichas', description: 'Evaluación inicial, seguimiento y evolución clínica del progreso y dolor del paciente.' },
-        { number: '03', title: 'Evaluación Supervisada', badge1: 'Examen', badge2: 'Supervisión', description: 'Examen práctico final presencial supervisado por el docente para validación del aprendizaje.' }
+        { number: '01', title: 'Prácticas en Camilla', badge1: 'Vivencial', badge2: 'Camilla', description: 'Simulación clínica completa en camilla con control de tiempos, trato al paciente e informe de sesión.' }
       ]
     }
   ];
@@ -133,7 +131,7 @@ export class MasajeTerapeticoComponent implements OnInit, AfterViewInit, OnDestr
     nombre: 'Emanuel Cabanillas Bardales',
     cargo: 'Docente Especialista',
     biografia: '<span class=\"text-brand-blue font-semibold\">Fisioterapeuta</span> con más de 12 años de experiencia clínica, instructor de Pilates clínico, especialista en terapias manuales y medicina tradicional china. <span class=\"text-brand-blue font-semibold\">Ponente de primer nivel</span> exclusivo en INSTEIP.',
-    fotoUrl: 'https://static.wixstatic.com/media/3c52e9_21f716254eb94148954b4982e67769c0~mv2.jpg',
+    fotoUrl: 'assets/Lic Emanuel.jpg',
     kicker: 'DOCENCIA EXCLUSIVA',
     especialidades: [
       { icon: 'verified', label: '+12 años de Exp.' },

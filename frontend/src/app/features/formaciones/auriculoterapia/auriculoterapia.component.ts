@@ -13,9 +13,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
   selector: 'app-auriculoterapia',
   standalone: true,
   imports: [
-    CommonModule, 
-    RouterLink, 
-    NavbarComponent, 
+    CommonModule,
+    RouterLink,
+    NavbarComponent,
     FooterComponent,
     CourseSyllabusComponent,
     DocenteSectionComponent,
@@ -29,7 +29,7 @@ export class AuriculoterapiaComponent implements OnInit, AfterViewInit, OnDestro
   private animationContext?: gsap.Context;
   activeBenefitIndex = 0;
   activeJourneyStep = 0;
-  private autoplayInterval?: any;
+  private autoplayInterval?: ReturnType<typeof setInterval>;
 
   readonly journeySteps = [
     {
@@ -67,8 +67,8 @@ export class AuriculoterapiaComponent implements OnInit, AfterViewInit, OnDestro
       tabLabel: '01 · Fundamentos y Neurofisiología',
       title: 'Módulo 1: Fundamentos y Neurofisiología',
       description: 'Principios científicos e históricos de la tradición china y la reflexología francesa.',
-      image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80',
-      imageAlt: 'Fundamentos Auriculares',
+      image: 'assets/insteip AURICULOTERAPIA temario 1.jpg',
+      imageAlt: 'Plan de estudios auriculoterapia - Módulo 1',
       specimenLabel: 'SPECIMEN // TEORÍA Y NEUROFISIOLOGÍA',
       items: [
         { number: '01', title: 'Historia y Aportes', badge1: 'Origen', badge2: 'Dr. Nogier', description: 'Historia de la auriculoterapia tradicional y los aportes fundamentales de la escuela reflexológica francesa del Dr. Paul Nogier.' },
@@ -81,8 +81,8 @@ export class AuriculoterapiaComponent implements OnInit, AfterViewInit, OnDestro
       tabLabel: '02 · Somatotopía y Materiales',
       title: 'Módulo 2: Somatotopía y Materiales',
       description: 'Mapeo de la oreja, uso de insumos clínicos y aplicación segura de la técnica.',
-      image: 'https://images.unsplash.com/photo-1600335895229-6e75511892c8?auto=format&fit=crop&w=800&q=80',
-      imageAlt: 'Somatotopía y Materiales',
+      image: 'assets/insteip AURICULOTERAPIA temario 2.jpg',
+      imageAlt: 'Plan de estudios auriculoterapia - Módulo 2',
       specimenLabel: 'SPECIMEN // SOMATOTOPÍA Y PRÁCTICA',
       items: [
         { number: '01', title: 'Somatotopía Auricular', badge1: 'Mapeo', badge2: 'Feto Invertido', description: 'Estudio de las proyecciones reflejas orgánicas y la analogía clásica del feto invertido en la oreja.' },
@@ -95,8 +95,8 @@ export class AuriculoterapiaComponent implements OnInit, AfterViewInit, OnDestro
       tabLabel: '03 · Puntos y Protocolos Clínicos',
       title: 'Módulo 3: Puntos y Protocolos Clínicos',
       description: 'Tratamientos terapéuticos para dolor, estrés, peso y trastornos nerviosos.',
-      image: 'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=800&q=80',
-      imageAlt: 'Protocolos Clínicos',
+      image: 'assets/insteip AURICULOTERAPIA temario 3.jpg',
+      imageAlt: 'Plan de estudios auriculoterapia - Módulo 3',
       specimenLabel: 'SPECIMEN // PROTOCOLOS CLÍNICOS AURICULARES',
       items: [
         { number: '01', title: 'Protocolo de Regulación Inicial', badge1: 'Básico', badge2: 'Shen Men', description: 'Localización y estimulación del triángulo de regulación sistémica primario: Shen Men, Riñón y Simpático.' },
@@ -111,7 +111,7 @@ export class AuriculoterapiaComponent implements OnInit, AfterViewInit, OnDestro
     nombre: 'Emanuel Cabanillas Bardales',
     cargo: 'Docente Especialista',
     biografia: '<span class=\"text-brand-blue font-semibold\">Fisioterapeuta</span> con más de 12 años de experiencia clínica, instructor de Pilates clínico, especialista en terapias manuales y medicina tradicional china. <span class=\"text-brand-blue font-semibold\">Ponente de primer nivel</span> exclusivo en INSTEIP.',
-    fotoUrl: 'https://static.wixstatic.com/media/3c52e9_21f716254eb94148954b4982e67769c0~mv2.jpg',
+    fotoUrl: 'assets/Lic Emanuel.jpg',
     kicker: 'DOCENCIA EXCLUSIVA',
     especialidades: [
       { icon: 'verified', label: '+12 años de Exp.' },
@@ -165,19 +165,19 @@ export class AuriculoterapiaComponent implements OnInit, AfterViewInit, OnDestro
     this.startAutoplay();
   }
 
-  prevBenefit() {
+  prevBenefit(): void {
     this.resetAutoplay();
     this.activeBenefitIndex = this.activeBenefitIndex === 0 ? 2 : this.activeBenefitIndex - 1;
   }
 
-  nextBenefit(isAuto = false) {
+  nextBenefit(isAuto = false): void {
     if (!isAuto) {
       this.resetAutoplay();
     }
     this.activeBenefitIndex = this.activeBenefitIndex === 2 ? 0 : this.activeBenefitIndex + 1;
   }
 
-  setBenefit(i: number) {
+  setBenefit(i: number): void {
     this.resetAutoplay();
     this.activeBenefitIndex = i;
   }
@@ -187,7 +187,14 @@ export class AuriculoterapiaComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   ngAfterViewInit(): void {
-    if (typeof window === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (typeof window === 'undefined') return;
+
+    const revealSections = this.host.nativeElement.querySelectorAll<HTMLElement>('[data-reveal]');
+    revealSections.forEach((element) => {
+      gsap.set(element, { clearProps: 'opacity,visibility,transform' });
+    });
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     gsap.registerPlugin(ScrollTrigger);
     this.animationContext = gsap.context(() => {
@@ -200,25 +207,16 @@ export class AuriculoterapiaComponent implements OnInit, AfterViewInit, OnDestro
         .from('.ac-fact', { opacity: 0, y: 12, stagger: 0.07, duration: 0.4 }, '-=0.4');
 
       gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((element) => {
-        gsap.set(element, { autoAlpha: 1, y: 0 });
-        ScrollTrigger.create({
-          trigger: element,
-          start: 'top 88%',
-          once: true,
-          onEnter: () => {
-            gsap.fromTo(element,
-              { autoAlpha: 0, y: 22 },
-              { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', overwrite: 'auto' }
-            );
-          }
+        gsap.from(element, {
+          y: 18,
+          duration: 0.25,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: element, start: 'top 92%', once: true }
         });
       });
-      window.setTimeout(() => {
-        gsap.set('[data-reveal]', { autoAlpha: 1, y: 0, clearProps: 'visibility,opacity,transform' });
-      }, 1200);
     }, this.host.nativeElement);
 
-    ScrollTrigger.refresh();
+    requestAnimationFrame(() => ScrollTrigger.refresh());
   }
 
   ngOnDestroy(): void {

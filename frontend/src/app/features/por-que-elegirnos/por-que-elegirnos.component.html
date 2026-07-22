@@ -1,347 +1,291 @@
-/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 */
 <app-navbar></app-navbar>
 
-<main class="pt-20 bg-surface dark:bg-slate-950 transition-colors duration-300 min-h-screen">
-  
-  <!-- Hero Section (Editorial / Specimen style headers with Vertical Rail) -->
-  <div class="relative bg-[#001428] dark:bg-[#020b18] text-white overflow-hidden border-b border-slate-200/10 dark:border-slate-800/60 py-20 lg:py-28">
-    <!-- Subtle linear background mesh pattern -->
-    <div class="absolute inset-0 bg-[radial-gradient(#ffffff04_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none"></div>
+<main class="why-page">
+  <div class="why-page__grid" aria-hidden="true"></div>
+  <div class="why-page__orb why-page__orb--one" aria-hidden="true"></div>
+  <div class="why-page__orb why-page__orb--two" aria-hidden="true"></div>
 
-    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative z-10 flex gap-12 items-center">
-      <!-- Vertical Rail (HP1) -->
-      <div class="hidden md:flex flex-col items-center justify-between h-36 border-r border-white/10 pr-6 mr-2 shrink-0">
-        <p class="[writing-mode:vertical-rl] [text-orientation:mixed] font-mono text-[9px] font-bold tracking-[0.3em] text-white/35 uppercase select-none">
-          MÉTODO INSTEIP
-        </p>
-        <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+  <header class="why-hero">
+    <div class="why-shell">
+      <nav class="why-breadcrumbs" aria-label="Navegación secundaria">
+        <a routerLink="/inicio">Inicio</a>
+        <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+        <span>Por qué elegirnos</span>
+      </nav>
+
+      <div class="why-hero__layout">
+        <div class="why-hero__copy">
+          <span class="why-kicker"><i></i> Método INSTEIP · Proyección Profesional</span>
+          <h1>Una decisión que transforma <span>tu futuro clínico.</span></h1>
+          <p>Descubre por qué miles de alumnos eligen nuestro modelo práctico, respaldado institucionalmente y enfocado en una inserción laboral real.</p>
+        </div>
+
+        <div class="why-hero__visual">
+          <div class="why-visual__halo" aria-hidden="true"></div>
+          <figure class="why-visual__frame">
+            <img src="assets/elegirnos_primera.png" alt="Comunidad de estudiantes e instructores INSTEIP" fetchpriority="high">
+          </figure>
+          <span class="why-visual__caption">INSTEIP · EXCELENCIA ACADÉMICA</span>
+        </div>
       </div>
 
-      <div class="space-y-6 max-w-4xl">
-        <nav class="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider text-white/40">
-          <a routerLink="/inicio" class="hover:text-white transition-colors">Inicio</a>
-          <span class="text-white/20">/</span>
-          <span class="text-white/85">Por qué elegirnos</span>
-        </nav>
-
-        <div class="space-y-4">
-          <span class="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-secondary">
-            <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-            Proyección Profesional
-          </span>
-          <h1 class="font-headline-xl text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.05] text-white">
-            La decisión que transforma<br/> tu futuro clínico
-          </h1>
-          <p class="font-body-lg text-base md:text-lg text-slate-350 leading-relaxed max-w-2xl">
-            Descubre por qué miles de alumnos eligen nuestro modelo práctico, respaldado por gremios internacionales y enfocado en la inserción laboral real.
-          </p>
+      <div class="why-stats-bar" aria-label="Estadísticas de impacto">
+        <div class="why-stat-item">
+          <strong>+15K</strong>
+          <small>Alumnos Graduados</small>
+        </div>
+        <div class="why-stat-item">
+          <strong>98.4%</strong>
+          <small>Casos de Éxito</small>
+        </div>
+        <div class="why-stat-item">
+          <strong>+30</strong>
+          <small>Países Conectados</small>
+        </div>
+        <div class="why-stat-item">
+          <strong>+40</strong>
+          <small>Mentores Clínicos</small>
         </div>
       </div>
     </div>
-  </div>
+  </header>
 
-  <!-- Key Metrics / Statistics (Stat-Led style card block) -->
-  <section class="py-8 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/60 relative z-20 -mt-8 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop rounded-2xl shadow-xl transition-colors duration-300">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 divide-y-0 divide-x divide-slate-100 dark:divide-slate-800/60">
-      <div class="text-center space-y-1">
-        <p class="text-3xl md:text-4xl font-extrabold text-primary dark:text-secondary-fixed tracking-tight font-mono">+15K</p>
-        <p class="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest">Alumnos Graduados</p>
-      </div>
-      <div class="text-center space-y-1">
-        <p class="text-3xl md:text-4xl font-extrabold text-primary dark:text-secondary-fixed tracking-tight font-mono">98.4%</p>
-        <p class="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest">Casos de Éxito</p>
-      </div>
-      <div class="text-center space-y-1">
-        <p class="text-3xl md:text-4xl font-extrabold text-primary dark:text-secondary-fixed tracking-tight font-mono">+30</p>
-        <p class="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest">Países Conectados</p>
-      </div>
-      <div class="text-center space-y-1">
-        <p class="text-3xl md:text-4xl font-extrabold text-primary dark:text-secondary-fixed tracking-tight font-mono">+40</p>
-        <p class="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest">Mentores Clínicos</p>
+  <!-- Key Benefits -->
+  <section class="why-section" aria-label="Beneficios principales">
+    <div class="why-shell">
+      <div class="why-split-rows">
+        <!-- Row 1 -->
+        <div class="why-split-row">
+          <div class="why-split-row__copy">
+            <span class="why-split-row__tag">Flexibilidad Absoluta</span>
+            <h3>Estudia sin interferir en tu vida actual</h3>
+            <p>Nuestro campus virtual está disponible las 24 horas del día, los 7 días de la semana. Organiza tus sesiones teóricas y descargas de materiales a tu propio ritmo, sin presiones de horarios fijos.</p>
+            <div class="why-split-row__metrics">
+              <div class="why-split-row__metric-item">
+                <strong>100%</strong>
+                <small>Online</small>
+              </div>
+              <div class="why-split-row__metric-item">
+                <strong>24/7</strong>
+                <small>Disponibilidad</small>
+              </div>
+            </div>
+          </div>
+          <div class="why-split-row__media">
+            <img src="assets/elegirnos_segundo.png" alt="Estudiante revisando contenido online">
+          </div>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="why-split-row">
+          <div class="why-split-row__media">
+            <img src="assets/elegirnos_docentes.png" alt="Docente dando consejería clínica">
+          </div>
+          <div class="why-split-row__copy">
+            <span class="why-split-row__tag">Experiencia Real</span>
+            <h3>Mentores y profesionales activos del sector</h3>
+            <p>Nuestros instructores no solo enseñan; atienden a pacientes reales a diario. Adquiere conocimientos prácticos y metodologías probadas clínicamente en el campo del bienestar.</p>
+            <div class="why-split-row__metrics">
+              <div class="why-split-row__metric-item">
+                <strong>+40</strong>
+                <small>Docentes y Mentores</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3 -->
+        <div class="why-split-row">
+          <div class="why-split-row__copy">
+            <span class="why-split-row__tag">Inversión Segura</span>
+            <h3>Acceso vitalicio a materiales y actualizaciones</h3>
+            <p>Paga tu matrícula una sola vez y disfruta de acceso de por vida a manuales interactivos, grabaciones en alta definición y todas las futuras actualizaciones que reciba el programa.</p>
+            <div class="why-split-row__metrics">
+              <div class="why-split-row__metric-item">
+                <strong>Matrícula Única</strong>
+                <small>Sin mensualidades sorpresa</small>
+              </div>
+            </div>
+          </div>
+          <div class="why-split-row__media">
+            <img src="assets/elegirnos_oportunidad_laboral.png" alt="Materiales y manuales de estudio">
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Key Benefits (Split Studio alternating rows - Macrostructure 15) -->
-  <section class="py-24 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-    <div class="space-y-24 w-full">
-      
-      <!-- Row 1: Flexibilidad -->
-      <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-        <div class="flex-1 space-y-5">
-          <span class="text-xs font-bold text-secondary dark:text-secondary-fixed uppercase tracking-widest">[ FLEXIBILIDAD ABSOLUTA ]</span>
-          <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white leading-none tracking-tight">Estudia sin interferir en tu vida actual</h3>
-          <p class="text-slate-600 dark:text-slate-350 text-sm leading-relaxed">
-            Nuestro campus virtual está disponible las 24 horas del día, los 7 días de la semana. Organiza tus sesiones teóricas y descargas de materiales a tu propio ritmo, sin presiones de horarios fijos.
-          </p>
-          <div class="flex gap-8 pt-4">
+  <!-- Educational Pillars -->
+  <section class="why-section" aria-labelledby="pillars-title">
+    <div class="why-shell">
+      <div class="why-section-heading">
+        <span class="why-eyebrow"><span class="material-symbols-outlined">auto_awesome</span> Método de Enseñanza</span>
+        <h2 id="pillars-title">Nuestros Pilares Educativos</h2>
+        <p>Cómo garantizamos un aprendizaje de alto impacto y una formación altamente competitiva.</p>
+      </div>
+
+      <div class="why-pillars-grid">
+        <div class="why-pillar-card">
+          <div class="why-pillar-card__icon">
+            <span class="material-symbols-outlined">auto_stories</span>
+          </div>
+          <div>
+            <h4>Enfoque 80% Práctico</h4>
+            <p>Fomentamos prácticas reales y casos clínicos guiados desde las fases iniciales, asegurando que asimiles conocimientos de forma aplicada.</p>
+          </div>
+        </div>
+
+        <div class="why-pillar-card">
+          <div class="why-pillar-card__icon">
+            <span class="material-symbols-outlined">devices</span>
+          </div>
+          <div>
+            <h4>Campus Virtual de Vanguardia</h4>
+            <p>Plataforma totalmente optimizada para dispositivos móviles y tablets. Visualiza tus clases y rinde tus evaluaciones sin interrupciones.</p>
+          </div>
+        </div>
+
+        <div class="why-pillar-card">
+          <div class="why-pillar-card__icon">
+            <span class="material-symbols-outlined">support_agent</span>
+          </div>
+          <div>
+            <h4>Tutoría Activa e Individual</h4>
+            <p>Contamos con un equipo docente calificado para responder tus dudas académicas e individuales de forma ágil y oportuna.</p>
+          </div>
+        </div>
+
+        <div class="why-pillar-card">
+          <div class="why-pillar-card__icon">
+            <span class="material-symbols-outlined">qr_code_scanner</span>
+          </div>
+          <div>
+            <h4>Certificación Registrada</h4>
+            <p>Cada diploma emitido cuenta con un sistema digital de validación pública QR, garantizando su respaldo institucional.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROI Calculator -->
+  <section class="why-section" aria-labelledby="roi-title">
+    <div class="why-shell">
+      <div class="why-roi-box">
+        <div class="why-roi-copy">
+          <span class="why-eyebrow" style="color: #9ee8ff;"><span class="material-symbols-outlined">query_stats</span> Estadísticas & Rentabilidad</span>
+          <h2 id="roi-title">Simula tu Retorno de Inversión (ROI)</h2>
+          <p>Formarte como terapeuta complementario es una inversión con alta demanda. Ajusta los controles interactivos para estimar tu proyección de ingresos mensuales y verificar el tiempo estimado para recuperar tu inversión académica.</p>
+
+          <div class="why-roi-info">
+            <strong><span class="material-symbols-outlined">info</span> Costos de referencia de matrículas:</strong>
+            <div class="why-roi-info-row">
+              <span>Curso Corto Promedio:</span>
+              <span>S/ 180</span>
+            </div>
+            <div class="why-roi-info-row">
+              <span>Diplomado Completo Promedio:</span>
+              <span>S/ 1,850</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="why-calculator-card">
+          <h3><span class="material-symbols-outlined text-secondary text-lg">calculate</span> Calculadora de Ingresos</h3>
+
+          <div class="why-calc-control">
+            <div class="why-calc-control__head">
+              <span>Pacientes por semana</span>
+              <span>{{ pacientesPorSemana }} pacientes</span>
+            </div>
+            <div class="why-calc-control__inputs">
+              <button (click)="ajustarPacientes(-1)" class="why-calc-control__btn">-</button>
+              <input type="range" min="1" max="25" [(ngModel)]="pacientesPorSemana" class="why-calc-control__range" />
+              <button (click)="ajustarPacientes(1)" class="why-calc-control__btn">+</button>
+            </div>
+          </div>
+
+          <div class="why-calc-control">
+            <div class="why-calc-control__head">
+              <span>Tarifa por sesión</span>
+              <span>S/ {{ precioSesion }}</span>
+            </div>
+            <div class="why-calc-control__inputs">
+              <button (click)="ajustarPrecio(-10)" class="why-calc-control__btn">-</button>
+              <input type="range" min="30" max="350" step="10" [(ngModel)]="precioSesion" class="why-calc-control__range" />
+              <button (click)="ajustarPrecio(10)" class="why-calc-control__btn">+</button>
+            </div>
+          </div>
+
+          <div class="why-calc-results">
             <div>
-              <p class="text-2xl font-black text-primary dark:text-secondary-fixed leading-tight">100%</p>
-              <p class="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Online</p>
+              <small>Ingreso Semanal</small>
+              <strong>S/ {{ ingresosSemanales }}</strong>
             </div>
             <div>
-              <p class="text-2xl font-black text-primary dark:text-secondary-fixed leading-tight">24/7</p>
-              <p class="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Disponibilidad</p>
+              <small>Ingreso Mensual</small>
+              <strong>S/ {{ ingresosMensuales }}</strong>
+            </div>
+          </div>
+
+          <div class="why-calc-speed">
+            <div class="why-calc-speed-item">
+              <span>Recuperación (Curso Corto):</span>
+              <span>{{ recuperacionCurso }}</span>
+            </div>
+            <div class="why-calc-speed-item">
+              <span>Recuperación (Diplomado):</span>
+              <span>{{ recuperacionDiplomado }}</span>
             </div>
           </div>
         </div>
-        <div class="flex-1 w-full">
-          <div class="relative aspect-[1.618/1] rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-800/60 shadow-lg hover:shadow-xl hover:border-primary/30 dark:hover:border-secondary-fixed/30 hover:-translate-y-1 transition-all duration-500 group">
-            <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=700&q=80" alt="Estudiante Flexible" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"/>
-            <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Row 2: Docencia -->
-      <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-        <div class="flex-1 w-full order-last lg:order-first">
-          <div class="relative aspect-[1.618/1] rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-800/60 shadow-lg hover:shadow-xl hover:border-primary/30 dark:hover:border-secondary-fixed/30 hover:-translate-y-1 transition-all duration-500 group">
-            <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=700&q=80" alt="Mentores Clínicos" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"/>
-            <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-          </div>
-        </div>
-        <div class="flex-1 space-y-5">
-          <span class="text-xs font-bold text-secondary dark:text-secondary-fixed uppercase tracking-widest">[ EXPERIENCIA REAL ]</span>
-          <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white leading-none tracking-tight">Mentores y profesionales activos del sector</h3>
-          <p class="text-slate-600 dark:text-slate-355 text-sm leading-relaxed">
-            Nuestros instructores no solo enseñan; atienden a pacientes reales a diario. Adquiere conocimientos prácticos y metodologías probadas clínicamente en el campo del bienestar.
-          </p>
-          <div class="flex items-center gap-3 pt-4">
-            <div class="flex -space-x-2.5">
-              <img src="https://i.pravatar.cc/32?img=11" class="w-7 h-7 rounded-full border-2 border-white dark:border-[#0a1628] object-cover" alt=""/>
-              <img src="https://i.pravatar.cc/32?img=21" class="w-7 h-7 rounded-full border-2 border-white dark:border-[#0a1628] object-cover" alt=""/>
-              <img src="https://i.pravatar.cc/32?img=31" class="w-7 h-7 rounded-full border-2 border-white dark:border-[#0a1628] object-cover" alt=""/>
-            </div>
-            <span class="text-xs text-slate-550 dark:text-slate-400 font-semibold">+40 mentores médicos y terapeutas</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Row 3: Acceso Vitalicio -->
-      <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-        <div class="flex-1 space-y-5">
-          <span class="text-xs font-bold text-secondary dark:text-secondary-fixed uppercase tracking-widest">[ INVERSIÓN SEGURA ]</span>
-          <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white leading-none tracking-tight">Acceso vitalicio a materiales y actualizaciones</h3>
-          <p class="text-slate-600 dark:text-slate-350 text-sm leading-relaxed">
-            Paga tu matrícula una sola vez y disfruta de acceso de por vida a los manuales interactivos, grabaciones en alta definición y todas las futuras actualizaciones que reciba el programa.
-          </p>
-          <div class="pt-2">
-            <span class="inline-flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 px-3.5 py-1 rounded-full text-xs font-bold">
-              <span class="material-symbols-outlined text-sm font-bold">check_circle</span>
-              Matrícula Única y Transparente
-            </span>
-          </div>
-        </div>
-        <div class="flex-1 w-full">
-          <div class="relative aspect-[1.618/1] rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-800/60 shadow-lg hover:shadow-xl hover:border-primary/30 dark:hover:border-secondary-fixed/30 hover:-translate-y-1 transition-all duration-500 group">
-            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=700&q=80" alt="Acceso de por vida" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"/>
-            <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- Educational Pillars Section -->
-  <section class="bg-slate-50 dark:bg-[#060d1a] py-24 border-t border-b border-slate-200/60 dark:border-slate-850 transition-colors duration-300">
-    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop space-y-16">
-      <div class="text-center space-y-3">
-        <span class="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-secondary dark:text-secondary-fixed">
-          <span class="w-1.5 h-1.5 rounded-full bg-secondary dark:bg-secondary-fixed"></span>
-          Método de Enseñanza
-        </span>
-        <h2 class="font-headline-lg text-slate-900 dark:text-white font-extrabold tracking-tight leading-tight">Nuestros Pilares Educativos</h2>
-        <p class="font-body-lg text-slate-600 dark:text-slate-400 text-sm md:text-base max-w-xl mx-auto">Cómo garantizamos un aprendizaje de alto impacto y una formación altamente competitiva.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-14">
-        <!-- Pillar 1 -->
-        <div class="flex items-start gap-5">
-          <div class="w-12 h-12 rounded-xl bg-white dark:bg-[#0a1628] border border-slate-200/80 dark:border-slate-800/60 flex items-center justify-center text-primary dark:text-secondary-fixed shadow-sm shrink-0">
-            <span class="material-symbols-outlined text-xl">auto_stories</span>
-          </div>
-          <div class="space-y-2">
-            <h4 class="font-bold text-slate-900 dark:text-white text-base">Enfoque 80% Práctico</h4>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Fomentamos prácticas reales y casos clínicos guiados desde las fases iniciales, asegurando que asimiles los conocimientos de forma aplicada.</p>
-          </div>
-        </div>
-        <!-- Pillar 2 -->
-        <div class="flex items-start gap-5">
-          <div class="w-12 h-12 rounded-xl bg-white dark:bg-[#0a1628] border border-slate-200/80 dark:border-slate-800/60 flex items-center justify-center text-primary dark:text-secondary-fixed shadow-sm shrink-0">
-            <span class="material-symbols-outlined text-xl">devices</span>
-          </div>
-          <div class="space-y-2">
-            <h4 class="font-bold text-slate-900 dark:text-white text-base">Campus Virtual de Vanguardia</h4>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Plataforma totalmente optimizada para dispositivos móviles y tablets. Visualiza tus clases y rinde tus evaluaciones sin interrupciones.</p>
-          </div>
-        </div>
-        <!-- Pillar 3 -->
-        <div class="flex items-start gap-5">
-          <div class="w-12 h-12 rounded-xl bg-white dark:bg-[#0a1628] border border-slate-200/80 dark:border-slate-800/60 flex items-center justify-center text-primary dark:text-secondary-fixed shadow-sm shrink-0">
-            <span class="material-symbols-outlined text-xl">support_agent</span>
-          </div>
-          <div class="space-y-2">
-            <h4 class="font-bold text-slate-900 dark:text-white text-base">Tutoría Activa e Individual</h4>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Contamos con un equipo docente calificado para responder tus dudas académicas e individuales de forma ágil y oportuna.</p>
-          </div>
-        </div>
-        <!-- Pillar 4 -->
-        <div class="flex items-start gap-5">
-          <div class="w-12 h-12 rounded-xl bg-white dark:bg-[#0a1628] border border-slate-200/80 dark:border-slate-800/60 flex items-center justify-center text-primary dark:text-secondary-fixed shadow-sm shrink-0">
-            <span class="material-symbols-outlined text-xl">qr_code_scanner</span>
-          </div>
-          <div class="space-y-2">
-            <h4 class="font-bold text-slate-900 dark:text-white text-base">Certificación Registrada</h4>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Cada diploma emitido cuenta con un sistema digital de validación pública QR, garantizando su respaldo oficial internacional.</p>
-          </div>
-        </div>
       </div>
     </div>
   </section>
 
-  <!-- Interactive ROI Calculator (Tactile / Premium simulator device mockup) -->
-  <section class="py-24 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-    <div class="bg-gradient-to-br from-[#00172e] via-[#002549] to-[#001428] rounded-3xl p-8 md:p-16 text-white shadow-2xl relative overflow-hidden flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-      
-      <!-- Subtle internal backdrop mesh -->
-      <div class="absolute inset-0 bg-[radial-gradient(#ffffff03_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
-
-      <!-- Text side -->
-      <div class="flex-1 space-y-6 relative z-10">
-        <span class="inline-flex items-center gap-2 text-[10px] font-mono tracking-widest text-secondary uppercase bg-white/5 border border-white/10 px-3.5 py-1.5 rounded-full">
-          Estadísticas & Rentabilidad
-        </span>
-        <h2 class="font-headline-lg text-white font-extrabold leading-tight">Simula tu Retorno de Inversión (ROI)</h2>
-        <p class="text-slate-300 text-sm leading-relaxed">
-          Formarte como terapeuta complementario es una inversión con alta demanda. Ajusta los controles interactivos para estimar tu proyección de ingresos mensuales y verificar el tiempo estimado para recuperar tu inversión académica.
-        </p>
-        <div class="bg-white/5 border border-white/10 p-5 rounded-2xl space-y-2 text-xs text-slate-300 max-w-md">
-          <p class="font-bold text-white flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-sm text-secondary">info</span>
-            Costos de referencia de matrículas:
-          </p>
-          <div class="flex justify-between border-b border-white/5 pb-2">
-            <span>Curso Corto Promedio:</span>
-            <span class="font-mono font-bold text-white">S/ 180</span>
-          </div>
-          <div class="flex justify-between">
-            <span>Diplomado Completo Promedio:</span>
-            <span class="font-mono font-bold text-white">S/ 1,850</span>
-          </div>
-        </div>
+  <!-- Comparison Table -->
+  <section class="why-section" aria-labelledby="compare-title">
+    <div class="why-shell">
+      <div class="why-section-heading">
+        <span class="why-eyebrow"><span class="material-symbols-outlined">fact_check</span> Transparencia</span>
+        <h2 id="compare-title">INSTEIP vs. Otras Academias</h2>
+        <p>Analiza las ventajas reales de nuestro modelo frente a alternativas tradicionales.</p>
       </div>
 
-      <!-- Calculator Box Side -->
-      <div class="flex-1 w-full bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 rounded-2xl p-6 md:p-8 shadow-2xl relative z-10 border border-slate-100 dark:border-slate-800 space-y-6 transition-colors duration-300">
-        <h3 class="font-bold text-slate-900 dark:text-white text-base border-b border-slate-100 dark:border-slate-800 pb-3 flex items-center gap-2">
-          <span class="material-symbols-outlined text-secondary text-lg">calculate</span>
-          Calculadora de Ingresos Estimados
-        </h3>
-
-        <!-- Control 1: Patients per week -->
-        <div class="space-y-3">
-          <div class="flex justify-between items-center text-xs font-bold text-slate-500 dark:text-slate-400">
-            <span>Sesiones / Pacientes por semana</span>
-            <span class="font-mono text-primary dark:text-secondary-fixed text-sm">{{ pacientesPorSemana }} pacientes</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <button (click)="ajustarPacientes(-1)" class="w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex items-center justify-center font-extrabold hover:bg-slate-100 dark:hover:bg-slate-900 hover:-translate-y-0.5 active:scale-95 transition-all">-</button>
-            <input type="range" min="1" max="25" [(ngModel)]="pacientesPorSemana" class="flex-1 accent-primary h-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer" />
-            <button (click)="ajustarPacientes(1)" class="w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex items-center justify-center font-extrabold hover:bg-slate-100 dark:hover:bg-slate-900 hover:-translate-y-0.5 active:scale-95 transition-all">+</button>
-          </div>
-        </div>
-
-        <!-- Control 2: Price per session -->
-        <div class="space-y-3">
-          <div class="flex justify-between items-center text-xs font-bold text-slate-500 dark:text-slate-400">
-            <span>Tarifa promedio por sesión</span>
-            <span class="font-mono text-primary dark:text-secondary-fixed text-sm">S/ {{ precioSesion }}</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <button (click)="ajustarPrecio(-10)" class="w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex items-center justify-center font-extrabold hover:bg-slate-100 dark:hover:bg-slate-900 hover:-translate-y-0.5 active:scale-95 transition-all">-</button>
-            <input type="range" min="30" max="350" step="10" [(ngModel)]="precioSesion" class="flex-1 accent-primary h-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer" />
-            <button (click)="ajustarPrecio(10)" class="w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex items-center justify-center font-extrabold hover:bg-slate-100 dark:hover:bg-slate-900 hover:-translate-y-0.5 active:scale-95 transition-all">+</button>
-          </div>
-        </div>
-
-        <!-- Outputs -->
-        <div class="bg-slate-50 dark:bg-slate-950/60 p-4 rounded-xl border border-slate-150 dark:border-slate-800/80 grid grid-cols-2 gap-4 divide-x divide-slate-200 dark:divide-slate-800">
-          <div class="text-center">
-            <p class="text-[9px] text-slate-500 dark:text-slate-450 uppercase font-bold tracking-wider">Ingreso Semanal</p>
-            <p class="text-lg font-black text-primary dark:text-secondary-fixed mt-1 font-mono">S/ {{ ingresosSemanales }}</p>
-          </div>
-          <div class="text-center">
-            <p class="text-[9px] text-slate-500 dark:text-slate-450 uppercase font-bold tracking-wider">Ingreso Mensual</p>
-            <p class="text-lg font-black text-primary dark:text-secondary-fixed mt-1 font-mono">S/ {{ ingresosMensuales }}</p>
-          </div>
-        </div>
-
-        <!-- Speed calculations -->
-        <div class="border-t border-slate-100 dark:border-slate-800 pt-4 space-y-3 text-[11px] text-slate-600 dark:text-slate-400">
-          <div class="flex justify-between items-center">
-            <span>Retorno de inversión (Curso Corto):</span>
-            <span class="font-extrabold text-secondary bg-secondary/10 px-2.5 py-1 rounded font-mono">{{ recuperacionCurso }}</span>
-          </div>
-          <div class="flex justify-between items-center">
-            <span>Retorno de inversión (Diplomado):</span>
-            <span class="font-extrabold text-primary dark:text-secondary-fixed bg-primary/10 dark:bg-secondary-fixed/10 px-2.5 py-1 rounded font-mono">{{ recuperacionDiplomado }}</span>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-  </section>
-
-  <!-- Comparison Table: INSTEIP vs Others (Editorial style grid columns) -->
-  <section class="bg-slate-50 dark:bg-[#060d1a] py-24 border-t border-b border-slate-200/60 dark:border-slate-850 transition-colors duration-300">
-    <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop space-y-16">
-      <div class="text-center space-y-3">
-        <span class="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-secondary dark:text-secondary-fixed">
-          <span class="w-1.5 h-1.5 rounded-full bg-secondary dark:bg-secondary-fixed"></span>
-          Transparencia
-        </span>
-        <h2 class="font-headline-lg text-slate-900 dark:text-white font-extrabold tracking-tight leading-tight">INSTEIP vs. Otras Academias</h2>
-        <p class="font-body-lg text-slate-600 dark:text-slate-400 text-sm md:text-base max-w-xl mx-auto">Analiza las ventajas reales de nuestro modelo frente a alternativas tradicionales.</p>
-      </div>
-
-      <!-- Table Frame -->
-      <div class="overflow-x-auto rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-xl bg-white dark:bg-slate-900">
-        <table class="w-full text-left border-collapse text-xs md:text-sm">
+      <div class="why-compare-table-wrapper">
+        <table class="why-compare-table">
           <thead>
-            <tr class="bg-primary text-white border-b border-primary-variant/30">
-              <th class="p-4 md:p-5 font-bold tracking-tight">Características</th>
-              <th class="p-4 md:p-5 font-bold text-center bg-white/5 tracking-tight w-1/4">INSTEIP</th>
-              <th class="p-4 md:p-5 font-bold text-center opacity-85 tracking-tight w-1/4">Otros Cursos</th>
+            <tr>
+              <th>Características</th>
+              <th>INSTEIP</th>
+              <th>Otros Cursos</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
-            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-850/40 transition-colors">
-              <td class="p-4 font-bold text-slate-900 dark:text-white">Acceso de por vida</td>
-              <td class="p-4 text-center"><span class="material-symbols-outlined text-secondary font-bold">check_circle</span></td>
-              <td class="p-4 text-center text-slate-500 dark:text-slate-400"><span class="material-symbols-outlined text-red-500 font-bold">cancel</span> <span class="text-[9px] block">Expira en 6 meses</span></td>
+          <tbody>
+            <tr>
+              <td><strong>Acceso de por vida</strong></td>
+              <td><span class="material-symbols-outlined check-icon">check_circle</span></td>
+              <td><span class="material-symbols-outlined cross-icon">cancel</span><span class="why-compare-sub">Expira en 6 meses</span></td>
             </tr>
-            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-850/40 transition-colors">
-              <td class="p-4 font-bold text-slate-900 dark:text-white">Verificación digital QR pública</td>
-              <td class="p-4 text-center"><span class="material-symbols-outlined text-secondary font-bold">check_circle</span></td>
-              <td class="p-4 text-center text-slate-500 dark:text-slate-400"><span class="material-symbols-outlined text-red-500 font-bold">cancel</span></td>
+            <tr>
+              <td><strong>Verificación digital QR pública</strong></td>
+              <td><span class="material-symbols-outlined check-icon">check_circle</span></td>
+              <td><span class="material-symbols-outlined cross-icon">cancel</span></td>
             </tr>
-            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-850/40 transition-colors">
-              <td class="p-4 font-bold text-slate-900 dark:text-white">Tutoría personalizada uno a uno</td>
-              <td class="p-4 text-center"><span class="material-symbols-outlined text-secondary font-bold">check_circle</span></td>
-              <td class="p-4 text-center text-slate-500 dark:text-slate-400"><span class="material-symbols-outlined text-amber-500 font-bold">info</span> <span class="text-[9px] block">Solo foros generales</span></td>
+            <tr>
+              <td><strong>Tutoría personalizada uno a uno</strong></td>
+              <td><span class="material-symbols-outlined check-icon">check_circle</span></td>
+              <td><span class="material-symbols-outlined cross-icon" style="color: #d97706;">info</span><span class="why-compare-sub">Solo foros generales</span></td>
             </tr>
-            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-850/40 transition-colors">
-              <td class="p-4 font-bold text-slate-900 dark:text-white">Examen clínico práctico</td>
-              <td class="p-4 text-center"><span class="material-symbols-outlined text-secondary font-bold">check_circle</span></td>
-              <td class="p-4 text-center text-slate-500 dark:text-slate-400"><span class="material-symbols-outlined text-red-500 font-bold">cancel</span> <span class="text-[9px] block">Evaluaciones automatizadas</span></td>
+            <tr>
+              <td><strong>Examen clínico práctico</strong></td>
+              <td><span class="material-symbols-outlined check-icon">check_circle</span></td>
+              <td><span class="material-symbols-outlined cross-icon">cancel</span><span class="why-compare-sub">Evaluaciones automatizadas</span></td>
             </tr>
-            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-850/40 transition-colors">
-              <td class="p-4 font-bold text-slate-900 dark:text-white">Avales y respaldo gremial</td>
-              <td class="p-4 text-center"><span class="material-symbols-outlined text-secondary font-bold">check_circle</span></td>
-              <td class="p-4 text-center text-slate-500 dark:text-slate-400"><span class="material-symbols-outlined text-amber-500 font-bold">info</span> <span class="text-[9px] block">Sin respaldo oficial</span></td>
+            <tr>
+              <td><strong>Respaldo e infraestructura</strong></td>
+              <td><span class="material-symbols-outlined check-icon">check_circle</span></td>
+              <td><span class="material-symbols-outlined cross-icon" style="color: #d97706;">info</span><span class="why-compare-sub">Sin respaldo oficial</span></td>
             </tr>
           </tbody>
         </table>
@@ -349,102 +293,80 @@
     </div>
   </section>
 
-  <!-- Testimonials Grid -->
-  <section class="py-24 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop space-y-16">
-    <div class="text-center space-y-3">
-      <span class="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-secondary dark:text-secondary-fixed">
-        <span class="w-1.5 h-1.5 rounded-full bg-secondary dark:bg-secondary-fixed"></span>
-        Experiencia de Alumnos
-      </span>
-      <h2 class="font-headline-lg text-slate-900 dark:text-white font-extrabold tracking-tight leading-tight">Lo que dicen nuestros graduados</h2>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      
-      <!-- Testimonial 1 -->
-      <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200/80 dark:border-slate-800/60 shadow-sm hover:shadow-xl hover:border-primary/20 dark:hover:border-secondary-fixed/20 transition-all duration-500 relative flex flex-col justify-between group">
-        <span class="font-serif absolute -top-4 -right-1 text-8xl text-slate-100 dark:text-slate-800/40 select-none leading-none pointer-events-none">“</span>
-        <div class="relative z-10 space-y-4">
-          <div class="flex text-amber-500">
-            <span class="material-symbols-outlined text-[15px] fill">star</span>
-            <span class="material-symbols-outlined text-[15px] fill">star</span>
-            <span class="material-symbols-outlined text-[15px] fill">star</span>
-            <span class="material-symbols-outlined text-[15px] fill">star</span>
-            <span class="material-symbols-outlined text-[15px] fill">star</span>
-          </div>
-          <p class="text-slate-600 dark:text-slate-350 text-xs leading-relaxed">
-            "La doble certificación internacional le dio un impulso increíble a mi perfil clínico. Pude establecer mi consultorio privado y atender pacientes independientes gracias al respaldo de los avales."
-          </p>
-        </div>
-        <div class="flex items-center gap-4 mt-8 border-t border-slate-100 dark:border-slate-800/60 pt-4">
-          <img alt="María P." class="w-10 h-10 rounded-full object-cover border border-slate-200/60 dark:border-slate-800/60" src="https://i.pravatar.cc/100?img=41"/>
-          <div>
-            <p class="font-bold text-slate-900 dark:text-white m-0 text-xs flex items-center gap-1">
-              María P. 
-              <span class="material-symbols-outlined text-secondary text-sm fill">verified</span>
-            </p>
-            <p class="text-secondary dark:text-secondary-fixed m-0 text-[9px] font-bold uppercase tracking-wider">Terapeuta Acupuntora</p>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Testimonial 2 -->
-      <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200/80 dark:border-slate-800/60 shadow-sm hover:shadow-xl hover:border-primary/20 dark:hover:border-secondary-fixed/20 transition-all duration-500 relative flex flex-col justify-between group">
-        <span class="font-serif absolute -top-4 -right-1 text-8xl text-slate-100 dark:text-slate-800/40 select-none leading-none pointer-events-none">“</span>
-        <div class="relative z-10 space-y-4">
-          <div class="flex text-amber-500">
-            <span class="material-symbols-outlined text-[15px] fill">star</span>
-            <span class="material-symbols-outlined text-[15px] fill">star</span>
-            <span class="material-symbols-outlined text-[15px] fill">star</span>
-            <span class="material-symbols-outlined text-[15px] fill">star</span>
-            <span class="material-symbols-outlined text-[15px] fill">star</span>
-          </div>
-          <p class="text-slate-600 dark:text-slate-350 text-xs leading-relaxed">
-            "El campus virtual es súper intuitivo. Puedo repasar las clases de auriculoterapia desde mi celular camino al trabajo. Los materiales en PDF y manuales prácticos son de una calidad excepcional."
-          </p>
-        </div>
-        <div class="flex items-center gap-4 mt-8 border-t border-slate-100 dark:border-slate-800/60 pt-4">
-          <img alt="Carlos R." class="w-10 h-10 rounded-full object-cover border border-slate-200/60 dark:border-slate-800/60" src="https://i.pravatar.cc/100?img=11"/>
-          <div>
-            <p class="font-bold text-slate-900 dark:text-white m-0 text-xs flex items-center gap-1">
-              Carlos R.
-              <span class="material-symbols-outlined text-secondary text-sm fill">verified</span>
-            </p>
-            <p class="text-secondary dark:text-secondary-fixed m-0 text-[9px] font-bold uppercase tracking-wider">Terapeuta de Auriculoterapia</p>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Testimonial 3 -->
-      <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200/80 dark:border-slate-800/60 shadow-sm hover:shadow-xl hover:border-primary/20 dark:hover:border-secondary-fixed/20 transition-all duration-500 relative flex flex-col justify-between group">
-        <span class="font-serif absolute -top-4 -right-1 text-8xl text-slate-100 dark:text-slate-800/40 select-none leading-none pointer-events-none">“</span>
-        <div class="relative z-10 space-y-4">
-          <div class="flex text-amber-500">
-            <span class="material-symbols-outlined text-[15px] fill">star</span>
-            <span class="material-symbols-outlined text-[15px] fill">star</span>
-            <span class="material-symbols-outlined text-[15px] fill">star</span>
-            <span class="material-symbols-outlined text-[15px] fill">star</span>
-            <span class="material-symbols-outlined text-[15px] fill">star</span>
-          </div>
-          <p class="text-slate-600 dark:text-slate-355 text-xs leading-relaxed">
-            "Lo que más destaco es la tutoría. Mis dudas sobre anatomía y puntos reflejos en los masajes fueron resueltas detalladamente por los docentes. Te sientes acompañado durante todo el diplomado."
-          </p>
-        </div>
-        <div class="flex items-center gap-4 mt-8 border-t border-slate-100 dark:border-slate-800/60 pt-4">
-          <img alt="Ana G." class="w-10 h-10 rounded-full object-cover border border-slate-200/60 dark:border-slate-800/60" src="https://i.pravatar.cc/100?img=43"/>
-          <div>
-            <p class="font-bold text-slate-900 dark:text-white m-0 text-xs flex items-center gap-1">
-              Ana G.
-              <span class="material-symbols-outlined text-secondary text-sm fill">verified</span>
-            </p>
-            <p class="text-secondary dark:text-secondary-fixed m-0 text-[9px] font-bold uppercase tracking-wider">Terapeuta de Masaje Clínico</p>
-          </div>
-        </div>
+  <!-- Testimonials -->
+  <section class="why-section" aria-labelledby="testimonials-title">
+    <div class="why-shell">
+      <div class="why-section-heading">
+        <span class="why-eyebrow"><span class="material-symbols-outlined">forum</span> Experiencia de Alumnos</span>
+        <h2 id="testimonials-title">Lo que dicen nuestros graduados</h2>
       </div>
 
+      <div class="why-testimonials-grid">
+        <div class="why-testimonial-card">
+          <span class="why-testimonial-quote" aria-hidden="true">“</span>
+          <div>
+            <div class="why-testimonial-stars">
+              <span class="material-symbols-outlined">star</span>
+              <span class="material-symbols-outlined">star</span>
+              <span class="material-symbols-outlined">star</span>
+              <span class="material-symbols-outlined">star</span>
+              <span class="material-symbols-outlined">star</span>
+            </div>
+            <p>"La doble certificación internacional le dio un impulso increíble a mi perfil clínico. Pude establecer mi consultorio privado y atender pacientes independientes con total respaldo."</p>
+          </div>
+          <div class="why-testimonial-author">
+            <img src="https://i.pravatar.cc/100?img=41" alt="María P.">
+            <div>
+              <strong>María P. <span class="material-symbols-outlined">verified</span></strong>
+              <small>Terapeuta Acupuntora</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="why-testimonial-card">
+          <span class="why-testimonial-quote" aria-hidden="true">“</span>
+          <div>
+            <div class="why-testimonial-stars">
+              <span class="material-symbols-outlined">star</span>
+              <span class="material-symbols-outlined">star</span>
+              <span class="material-symbols-outlined">star</span>
+              <span class="material-symbols-outlined">star</span>
+              <span class="material-symbols-outlined">star</span>
+            </div>
+            <p>"El campus virtual es súper intuitivo. Puedo repasar clases de auriculoterapia desde mi celular camino al trabajo. Los materiales en PDF y manuales son de calidad excepcional."</p>
+          </div>
+          <div class="why-testimonial-author">
+            <img src="https://i.pravatar.cc/100?img=11" alt="Carlos R.">
+            <div>
+              <strong>Carlos R. <span class="material-symbols-outlined">verified</span></strong>
+              <small>Terapeuta de Auriculoterapia</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="why-testimonial-card">
+          <span class="why-testimonial-quote" aria-hidden="true">“</span>
+          <div>
+            <div class="why-testimonial-stars">
+              <span class="material-symbols-outlined">star</span>
+              <span class="material-symbols-outlined">star</span>
+              <span class="material-symbols-outlined">star</span>
+              <span class="material-symbols-outlined">star</span>
+              <span class="material-symbols-outlined">star</span>
+            </div>
+            <p>"Lo que más destaco es la tutoría. Mis dudas sobre anatomía y puntos reflejos en masajes fueron resueltas detalladamente por docentes. Te sientes acompañado durante todo el programa."</p>
+          </div>
+          <div class="why-testimonial-author">
+            <img src="https://i.pravatar.cc/100?img=43" alt="Ana G.">
+            <div>
+              <strong>Ana G. <span class="material-symbols-outlined">verified</span></strong>
+              <small>Terapeuta de Masaje Clínico</small>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
-
 </main>
 
 <app-footer></app-footer>

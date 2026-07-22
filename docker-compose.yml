@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: insteip_password
       POSTGRES_DB: insteip_db
     ports:
-      - "5455:5432"
+      - "127.0.0.1:5455:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql

@@ -67,6 +67,26 @@ export const routes: Routes = [
     loadComponent: () => import('./features/formaciones/masaje-terapeutico/masaje-terapeutico.component').then(m => m.MasajeTerapeticoComponent)
   },
   {
+    path: 'cursos/paralisis-facial-acupuntura-fisioterapia-online',
+    loadComponent: () => import('./features/formaciones/online-workshop/online-workshop.component').then(m => m.OnlineWorkshopComponent)
+  },
+  {
+    path: 'cursos/control-peso-auriculoterapia-acupuntura-online',
+    loadComponent: () => import('./features/formaciones/online-workshop/online-workshop.component').then(m => m.OnlineWorkshopComponent)
+  },
+  {
+    path: 'cursos/stretching-terapeutico-online',
+    loadComponent: () => import('./features/formaciones/online-workshop/online-workshop.component').then(m => m.OnlineWorkshopComponent)
+  },
+  {
+    path: 'cursos/acupuntura-estetica-online',
+    loadComponent: () => import('./features/formaciones/online-workshop/online-workshop.component').then(m => m.OnlineWorkshopComponent)
+  },
+  {
+    path: 'cursos/reflexologia-online',
+    loadComponent: () => import('./features/formaciones/online-workshop/online-workshop.component').then(m => m.OnlineWorkshopComponent)
+  },
+  {
     path: 'cursos/digitopresion-presencial',
     loadComponent: () => import('./features/formaciones/digitopresion-presencial/digitopresion-presencial.component').then(m => m.DigitopresionPresencialComponent)
   },

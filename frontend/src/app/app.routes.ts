@@ -95,6 +95,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/formaciones/auriculoterapia-presencial/auriculoterapia-presencial.component').then(m => m.AuriculoterapiaPresencialComponent)
   },
   {
+    path: 'cursos/acupuntura-china-7-meses',
+    loadComponent: () => import('./features/formaciones/acupuntura-china-7-meses/acupuntura-china-7-meses.component').then(m => m.AcupunturaChina7MesesComponent)
+  },
+  {
+    path: 'cursos/acupuntura-china-7-meses.html',
+    loadComponent: () => import('./features/formaciones/acupuntura-china-7-meses/acupuntura-china-7-meses.component').then(m => m.AcupunturaChina7MesesComponent)
+  },
+  {
     path: 'cursos/acupuntura-presencial',
     loadComponent: () => import('./features/formaciones/acupuntura-presencial/acupuntura-presencial.component').then(m => m.AcupunturaPresencialComponent)
   },

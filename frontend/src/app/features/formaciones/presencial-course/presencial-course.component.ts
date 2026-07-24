@@ -38,7 +38,7 @@ const COURSES: Record<string, PresencialCourse> = {
   'reflexologia-podal-presencial': {
     slug: 'reflexologia-podal-presencial', type: 'Taller Full Day', titleLead: 'Taller de', titleAccent: 'Reflexología Podal', edition: 'Jornada práctica',
     description: 'Aprende a interpretar zonas reflejas del pie y aplicar una secuencia terapéutica para promover relajación, equilibrio y bienestar integral.',
-    duration: 'Full Day', price: 'S/ 130.00', priceLabel: 'Pago único', schedule: '1 día completo · Presencial', image: 'https://images.unsplash.com/photo-1519689680058-324335c77ebe?auto=format&fit=crop&w=1200&q=85', icon: 'footprint', color: '#256657', softColor: '#e6f3ef',
+    duration: 'Full Day', price: 'S/ 130.00', priceLabel: 'Pago único', schedule: '1 día completo · Presencial', image: 'assets/reflexologia_img_curso.jpg', icon: 'footprint', color: '#256657', softColor: '#e6f3ef',
     outcomes: ['Mapa podal ilustrado', 'Secuencia práctica completa', 'Certificado de participación'],
     modules: [
       { number: '01', title: 'Mapa reflejo', description: 'Correspondencia entre pies, órganos y sistemas.', icon: 'map' },
@@ -60,7 +60,7 @@ const COURSES: Record<string, PresencialCourse> = {
   'paralisis-facial-presencial': {
     slug: 'paralisis-facial-presencial', type: 'Taller Full Day', titleLead: 'Acupuntura en', titleAccent: 'Parálisis Facial', edition: 'Práctica clínica',
     description: 'Entrenamiento intensivo para abordar la parálisis facial mediante acupuntura, estimulación refleja y ejercicios complementarios de rehabilitación.',
-    duration: 'Full Day', price: 'S/ 180.00', priceLabel: 'Pago único', schedule: '1 día completo · Presencial', image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=85', icon: 'face', color: '#74455f', softColor: '#f4eaf0',
+    duration: 'Full Day', price: 'S/ 180.00', priceLabel: 'Pago único', schedule: '1 día completo · Presencial', image: 'assets/paralisis_facial_img_curso.jpg', icon: 'face', color: '#74455f', softColor: '#f4eaf0',
     outcomes: ['Guía de puntos faciales', 'Práctica de localización', 'Protocolo clínico estructurado'],
     modules: [
       { number: '01', title: 'Bases anatómicas', description: 'Nervio facial, músculos y signos clínicos.', icon: 'neurology' },
@@ -75,14 +75,14 @@ const COURSES: Record<string, PresencialCourse> = {
     ],
     journeySteps: [
       { shortTitle: 'Anatomía', period: 'Bloque 1', icon: 'neurology', title: 'Comprende la anatomía del nervio facial', description: 'Estudia la inervación facial, los músculos implicados y los signos clínicos característicos.', outcomes: ['Nervio facial y ramas', 'Músculos de la expresión', 'Signos clínicos'] },
-      { shortTitle: 'Diagnóstico', period: 'Bloque 2', icon: 'diagnosis', title: 'Aprende a valorar y clasificar cada caso', description: 'Reconoce las fases de la parálisis facial y aplica criterios de atención diferenciados.', outcomes: ['Fases clínicas', 'Criterios de atención', 'Evaluación inicial'] },
+      { shortTitle: 'Diagnóstico', period: 'Bloque 2', icon: 'diagnosis', title: 'Aprende a valorar y clasificar cada caso', description: 'Reconoce las fases de la parálisis facial and aplica criterios de atención diferenciados.', outcomes: ['Fases clínicas', 'Criterios de atención', 'Evaluación inicial'] },
       { shortTitle: 'Práctica', period: 'Bloque 3', icon: 'clinical_notes', title: 'Integra puntos y secuencias terapéuticas', description: 'Selecciona puntos locales, distales y auriculares para un abordaje completo.', outcomes: ['Puntos faciales clave', 'Secuencia de tratamiento', 'Certificación INSTEIP'] }
     ]
   },
   'moxibustion-ventosas-presencial': {
     slug: 'moxibustion-ventosas-presencial', type: 'Taller / Seminario', titleLead: 'Moxibustión y', titleAccent: 'Ventosaterapia', edition: 'Técnicas tradicionales',
     description: 'Aprende a aplicar calor terapéutico y presión negativa para aliviar tensión, movilizar tejidos y complementar tratamientos de bienestar.',
-    duration: '1 o 2 días', price: 'Desde S/ 130.00', priceLabel: 'Pago único', schedule: 'Presencial · Intensivo', image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=1200&q=85', icon: 'local_fire_department', color: '#a04422', softColor: '#faebe4',
+    duration: '1 o 2 días', price: 'Desde S/ 130.00', priceLabel: 'Pago único', schedule: 'Presencial · Intensivo', image: 'assets/AcupunturaInsteip2.jpg', icon: 'local_fire_department', color: '#a04422', softColor: '#faebe4',
     outcomes: ['Materiales de práctica', 'Protocolos de seguridad', 'Certificado de participación'],
     modules: [
       { number: '01', title: 'Moxibustión', description: 'Fundamentos, tipos de moxa y aplicación segura.', icon: 'local_fire_department' },
@@ -104,7 +104,7 @@ const COURSES: Record<string, PresencialCourse> = {
   'stretching-terapeutico-presencial': {
     slug: 'stretching-terapeutico-presencial', type: 'Taller Full Day', titleLead: 'Taller de', titleAccent: 'Stretching Terapéutico', edition: 'Movilidad y recuperación',
     description: 'Aprende estiramientos asistidos para mejorar movilidad, reducir tensión y diseñar sesiones seguras de recuperación corporal.',
-    duration: 'Full Day', price: 'S/ 130.00', priceLabel: 'Pago único', schedule: '1 día completo · Presencial', image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=1200&q=85', icon: 'accessibility_new', color: '#365f94', softColor: '#e8f0fa',
+    duration: 'Full Day', price: 'S/ 130.00', priceLabel: 'Pago único', schedule: '1 día completo · Presencial', image: 'assets/img_curso_stretching_online.jpg', icon: 'accessibility_new', color: '#365f94', softColor: '#e8f0fa',
     outcomes: ['Manual de secuencias', 'Práctica por cadenas musculares', 'Certificado de participación'],
     modules: [
       { number: '01', title: 'Movilidad', description: 'Rangos articulares y evaluación inicial.', icon: 'accessibility_new' },

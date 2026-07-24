@@ -30,10 +30,10 @@
          [attr.aria-hidden]="currentSlide !== i"
          [attr.data-active]="currentSlide === i ? 'true' : 'false'">
 
-      <div class="w-full max-w-6xl mx-auto px-4 md:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      <div class="w-full max-w-7xl mx-auto px-4 md:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
-        <!-- Left column: Content (7 cols) -->
-        <div class="col-span-12 lg:col-span-7 flex flex-col justify-center text-center lg:text-left items-center lg:items-start">
+        <!-- Left column: Content (6 cols) -->
+        <div class="col-span-12 lg:col-span-6 flex flex-col justify-center text-center lg:text-left items-center lg:items-start">
           <!-- Badge del curso -->
           <div class="pill-item inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-[9px] md:text-[11px] font-semibold tracking-widest uppercase mb-4 md:mb-6 w-fit"
                style="background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.6); border:1px solid rgba(255,255,255,0.1); opacity:0;">
@@ -43,7 +43,7 @@
 
           <!-- Título principal (solo visible para slide activo) -->
           <div role="heading" aria-level="1" class="headline-item font-extrabold leading-[1.15] tracking-tight mb-4 md:mb-6"
-              style="font-size:clamp(1.6rem,4.5vw,3.2rem); color:#ffffff; opacity:0;">
+               style="font-size:clamp(1.6rem,4.5vw,3.2rem); color:#ffffff; opacity:0;">
             {{ slide.headline }}
           </div>
 
@@ -65,11 +65,11 @@
           </nav>
         </div>
 
-        <!-- Right column: Image Mockup (5 cols) -->
-        <div class="hidden lg:block lg:col-span-5 visual-item relative group" style="opacity: 0;">
+        <!-- Right column: Image Mockup (6 cols) -->
+        <div class="hidden lg:block lg:col-span-6 visual-item relative group" style="opacity: 0;">
           <div class="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#4db8ff]/20 to-[#1a4b84]/20 opacity-40 blur group-hover:opacity-75 transition duration-500"></div>
-          <div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-slate-950/40">
-            <img [src]="slide.image" [alt]="'Imagen ilustrativa: ' + slide.headline" class="w-full h-full object-cover filter brightness-[0.9] saturate-[0.8] hover:saturate-100 transition-all duration-700" loading="lazy" decoding="async" />
+          <div class="relative w-full max-w-[520px] aspect-square mx-auto rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-white">
+            <img [src]="slide.image" [alt]="'Imagen ilustrativa: ' + slide.headline" class="w-full h-full object-cover filter brightness-[0.95] hover:brightness-100 transition-all duration-700" loading="lazy" decoding="async" />
             <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent"></div>
             
             <!-- caption/label -->
@@ -196,7 +196,7 @@
 <article class="bg-white dark:bg-slate-900 rounded-[28px] border border-surface-variant/40 dark:border-slate-800 flex flex-col h-full relative transform hover:-translate-y-2.5 hover:border-primary/50 dark:hover:border-secondary-fixed/50 hover:shadow-[0_20px_50px_rgba(0,55,103,0.08)] dark:hover:shadow-[0_20px_50px_rgba(92,225,230,0.12)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group overflow-hidden">
   <!-- Card Header Image -->
   <div class="relative h-48 w-full flex-shrink-0">
-    <img src="https://images.unsplash.com/photo-1600335895229-6e75511892c8?auto=format&fit=crop&w=800&q=80" alt="Masaje Terapéutico y Digitopresión Mecánica" class="w-full h-full object-cover rounded-t-[28px] group-hover:scale-[1.03] transition-transform duration-500" />
+    <img src="assets/curso_masaje.jpg" alt="Masaje Terapéutico y Digitopresión Mecánica" class="w-full h-full object-cover rounded-t-[28px] group-hover:scale-[1.03] transition-transform duration-500" />
     <div class="absolute inset-0 bg-gradient-to-t from-black/15 to-transparent rounded-t-[28px]"></div>
     
     <div class="absolute bottom-0 left-0 rounded-tr-2xl bg-white dark:bg-slate-900 px-4 py-2 flex items-center gap-1.5 z-10 transition-colors duration-300 select-none">
@@ -263,7 +263,7 @@
 <article class="bg-white dark:bg-slate-900 rounded-[28px] border border-surface-variant/40 dark:border-slate-800 flex flex-col h-full relative transform hover:-translate-y-2.5 hover:border-primary/50 dark:hover:border-secondary-fixed/50 hover:shadow-[0_20px_50px_rgba(0,55,103,0.08)] dark:hover:shadow-[0_20px_50px_rgba(92,225,230,0.12)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group overflow-hidden">
   <!-- Card Header Image -->
   <div class="relative h-48 w-full flex-shrink-0">
-    <img src="https://images.unsplash.com/photo-1519689680058-324335c77ebe?auto=format&fit=crop&w=800&q=80" alt="Taller: Reflexología Podal" class="w-full h-full object-cover rounded-t-[28px] group-hover:scale-[1.03] transition-transform duration-500" />
+    <img src="assets/reflexologia_img_curso.jpg" alt="Taller: Reflexología Podal" class="w-full h-full object-cover rounded-t-[28px] group-hover:scale-[1.03] transition-transform duration-500" />
     <div class="absolute inset-0 bg-gradient-to-t from-black/15 to-transparent rounded-t-[28px]"></div>
     
     <!-- Duration Badge (Cutout Inset Label bottom-left) -->
@@ -331,7 +331,7 @@
 <article class="bg-white dark:bg-slate-900 rounded-[28px] border border-surface-variant/40 dark:border-slate-800 flex flex-col h-full relative transform hover:-translate-y-2.5 hover:border-primary/50 dark:hover:border-secondary-fixed/50 hover:shadow-[0_20px_50px_rgba(0,55,103,0.08)] dark:hover:shadow-[0_20px_50px_rgba(92,225,230,0.12)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group overflow-hidden">
   <!-- Card Header Image -->
   <div class="relative h-48 w-full flex-shrink-0">
-    <img src="https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=800&q=80" alt="Taller de Moxibustión y Ventosas" class="w-full h-full object-cover rounded-t-[28px] group-hover:scale-[1.03] transition-transform duration-500" />
+    <img src="assets/curso_moxi_index.jpg" alt="Taller de Moxibustión y Ventosas" class="w-full h-full object-cover rounded-t-[28px] group-hover:scale-[1.03] transition-transform duration-500" />
     <div class="absolute inset-0 bg-gradient-to-t from-black/15 to-transparent rounded-t-[28px]"></div>
     
     <!-- Duration Badge (Cutout Inset Label bottom-left) -->
@@ -409,7 +409,7 @@
 <article class="bg-white dark:bg-slate-900 rounded-[28px] border-2 border-secondary flex flex-col h-full relative transform md:-translate-y-2 hover:-translate-y-4 hover:shadow-[0_20px_50px_rgba(92,225,230,0.18)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group overflow-hidden">
   
   <div class="relative h-48 w-full flex-shrink-0">
-    <img src="https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=800&q=80" alt="Formación Anual de Acupuntura China" class="w-full h-full object-cover rounded-t-[28px] group-hover:scale-[1.03] transition-transform duration-500" />
+    <img src="assets/AcupunturaChinaInsteip.jpg" alt="Formación Anual de Acupuntura China" class="w-full h-full object-cover rounded-t-[28px] group-hover:scale-[1.03] transition-transform duration-500" />
     <div class="absolute inset-0 bg-gradient-to-t from-black/15 to-transparent rounded-t-[28px]"></div>
     
     <div class="absolute top-4 left-4 bg-secondary text-on-secondary px-3.5 py-1 rounded-full font-label-md text-[10px] font-extrabold uppercase shadow-md whitespace-nowrap z-20">
@@ -487,7 +487,7 @@
 <article class="bg-white dark:bg-slate-900 rounded-[28px] border border-surface-variant/40 dark:border-slate-800 flex flex-col h-full relative transform hover:-translate-y-2.5 hover:border-primary/50 dark:hover:border-secondary-fixed/50 hover:shadow-[0_20px_50px_rgba(0,55,103,0.08)] dark:hover:shadow-[0_20px_50px_rgba(92,225,230,0.12)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group overflow-hidden">
   
   <div class="relative h-48 w-full flex-shrink-0">
-    <img src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&w=800&q=80" alt="Formación de Auriculoterapia" class="w-full h-full object-cover rounded-t-[28px] group-hover:scale-[1.03] transition-transform duration-500" />
+    <img src="assets/curso_auriculoterapia_presencial.jpg" alt="Formación de Auriculoterapia" class="w-full h-full object-cover rounded-t-[28px] group-hover:scale-[1.03] transition-transform duration-500" />
     <div class="absolute inset-0 bg-gradient-to-t from-black/15 to-transparent rounded-t-[28px]"></div>
     
     <div class="absolute bottom-0 left-0 rounded-tr-2xl bg-white dark:bg-slate-900 px-4 py-2 flex items-center gap-1.5 z-10 transition-colors duration-300 select-none">
@@ -595,8 +595,8 @@
           </div>
           <!-- Image column -->
           <div class="w-full md:w-1/2 timeline-image pl-10 md:pl-0">
-            <div class="relative aspect-[4/3] rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-800/60 shadow-lg hover:shadow-xl hover:border-primary/30 dark:hover:border-secondary-fixed/30 hover:-translate-y-1 transition-all duration-500">
-              <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80" alt="Elige tu especialización" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"/>
+            <div class="relative w-full max-w-[460px] aspect-square mx-auto rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-800/60 shadow-lg hover:shadow-xl hover:border-primary/30 dark:hover:border-secondary-fixed/30 hover:-translate-y-1 transition-all duration-500 bg-white">
+              <img src="assets/index_linea_tiempo_1.jpg" alt="Elige tu especialización" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"/>
               <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
             </div>
           </div>
@@ -606,8 +606,8 @@
         <div class="timeline-item flex flex-col md:flex-row items-center gap-8 md:gap-16 group">
           <!-- Image column (appears first on desktop) -->
           <div class="w-full md:w-1/2 order-last md:order-first timeline-image pl-10 md:pl-0">
-            <div class="relative aspect-[4/3] rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-800/60 shadow-lg hover:shadow-xl hover:border-primary/30 dark:hover:border-secondary-fixed/30 hover:-translate-y-1 transition-all duration-500">
-              <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=80" alt="Estudia y practica" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"/>
+            <div class="relative w-full max-w-[460px] aspect-square mx-auto rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-800/60 shadow-lg hover:shadow-xl hover:border-primary/30 dark:hover:border-secondary-fixed/30 hover:-translate-y-1 transition-all duration-500 bg-white">
+              <img src="assets/index_linea_tiempo_2.jpg" alt="Estudia y practica" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"/>
               <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
             </div>
           </div>
@@ -641,8 +641,8 @@
           </div>
           <!-- Image column -->
           <div class="w-full md:w-1/2 timeline-image pl-10 md:pl-0">
-            <div class="relative aspect-[4/3] rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-800/60 shadow-lg hover:shadow-xl hover:border-primary/30 dark:hover:border-secondary-fixed/30 hover:-translate-y-1 transition-all duration-500">
-              <img src="https://images.unsplash.com/photo-1598256989800-fe5f95da9787?auto=format&fit=crop&w=800&q=80" alt="Certifícate y abre tu consulta" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"/>
+            <div class="relative w-full max-w-[460px] aspect-square mx-auto rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-800/60 shadow-lg hover:shadow-xl hover:border-primary/30 dark:hover:border-secondary-fixed/30 hover:-translate-y-1 transition-all duration-500 bg-white">
+              <img src="assets/index_linea_tiempo_3.jpg" alt="Certifícate y abre tu consulta" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"/>
               <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
             </div>
           </div>
@@ -708,22 +708,22 @@
           <div class="bento-float-item flex gap-6 pt-6 border-t border-slate-100 dark:border-slate-800/50 mt-6">
             <div class="stat-item">
               <p class="text-2xl font-black text-primary dark:text-secondary-fixed leading-none mb-1">100%</p>
-              <p class="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Online</p>
+              <p class="text-[9px] text-slate-550 dark:text-slate-400 font-bold uppercase tracking-wider">Online</p>
             </div>
             <div class="stat-item">
               <p class="text-2xl font-black text-primary dark:text-secondary-fixed leading-none mb-1">24/7</p>
-              <p class="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Acceso</p>
+              <p class="text-[9px] text-slate-550 dark:text-slate-400 font-bold uppercase tracking-wider">Acceso</p>
             </div>
             <div class="stat-item">
               <p class="text-2xl font-black text-primary dark:text-secondary-fixed leading-none mb-1">∞</p>
-              <p class="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">De por vida</p>
+              <p class="text-[9px] text-slate-550 dark:text-slate-400 font-bold uppercase tracking-wider">De por vida</p>
             </div>
           </div>
         </div>
 
         <!-- Right Column: Premium Image -->
         <div class="flex-1 min-h-[200px] md:min-h-full rounded-2xl overflow-hidden border border-slate-200/50 dark:border-slate-800/40 relative shadow-sm">
-          <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&q=80" alt="Ritmo Flexible" class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"/>
+          <img src="assets/index_elegirnos_1.jpg" alt="Ritmo Flexible" class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"/>
           <div class="absolute inset-0 bg-gradient-to-t from-black/15 to-transparent"></div>
         </div>
       </div>
@@ -744,7 +744,7 @@
 
           <!-- Centered Image Box -->
           <div class="relative w-full h-28 rounded-2xl overflow-hidden border border-slate-200/60 dark:border-slate-800/40 my-4 shadow-sm">
-            <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=80" alt="Práctica Clínica" class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"/>
+            <img src="assets/index_elegirnos_2.jpg" alt="Práctica Clínica" class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"/>
             <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
           </div>
         </div>
@@ -755,7 +755,7 @@
             <img src="https://i.pravatar.cc/32?img=20" class="w-7 h-7 rounded-full border-2 border-white dark:border-[#0a1628] object-cover" alt="Terapeuta"/>
             <img src="https://i.pravatar.cc/32?img=30" class="w-7 h-7 rounded-full border-2 border-white dark:border-[#0a1628] object-cover" alt="Terapeuta"/>
           </div>
-          <span class="text-[11px] text-slate-550 dark:text-slate-400 font-semibold">+40 terapeutas activos</span>
+          <span class="text-[11px] text-slate-550 dark:text-slate-450 font-semibold">+40 terapeutas activos</span>
         </div>
       </div>
 
@@ -769,13 +769,13 @@
             </div>
           </div>
           <h3 class="text-xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight mt-4">Talleres y prácticas aplicadas</h3>
-          <p class="text-slate-600 dark:text-slate-350 text-xs leading-relaxed mt-2">
+          <p class="text-slate-600 dark:text-slate-355 text-xs leading-relaxed mt-2">
             Consolida tu aprendizaje mediante casos de estudio reales, prácticas guiadas y talleres diseñados para el ejercicio profesional.
           </p>
 
           <!-- Centered Image Box -->
           <div class="relative w-full h-28 rounded-2xl overflow-hidden border border-slate-200/60 dark:border-slate-800/40 my-4 shadow-sm">
-            <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80" alt="Talleres y Prácticas" class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"/>
+            <img src="assets/index_elegirnos_3.jpg" alt="Talleres y Prácticas" class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"/>
             <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
           </div>
         </div>
@@ -820,7 +820,7 @@
 
         <!-- Right Column: Premium Image -->
         <div class="flex-1 min-h-[200px] md:min-h-full rounded-2xl overflow-hidden border border-slate-200/50 dark:border-slate-800/40 relative shadow-sm">
-          <img src="https://images.unsplash.com/photo-1589330694653-ded6df53f7ee?auto=format&fit=crop&w=800&q=80" alt="Certificación Oficial" class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"/>
+          <img src="assets/index_elegirnos_4.jpg" alt="Certificación Oficial" class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"/>
           <div class="absolute inset-0 bg-gradient-to-t from-black/15 to-transparent"></div>
         </div>
       </div>
@@ -846,7 +846,7 @@
     <div class="success-bento">
       <article class="success-bento-card success-bento-card--main">
         <div class="success-bento-card__photo">
-          <img src="https://i.pravatar.cc/600?img=41" alt="María P., egresada de INSTEIP" loading="lazy" decoding="async" />
+          <img src="assets/caso_exito_1.jpg" alt="María P., egresada de INSTEIP" loading="lazy" decoding="async" />
           <span><span class="material-symbols-outlined">verified</span> Testimonio verificado</span>
         </div>
         <div class="success-bento-card__content">
@@ -859,19 +859,19 @@
       <article class="success-bento-card success-bento-card--story">
         <div class="success-bento-card__meta"><span>02 · Mindfulness</span><span class="material-symbols-outlined">self_improvement</span></div>
         <blockquote>“Transformó mi rutina diaria. La plataforma y la comunidad hicieron el aprendizaje mucho más cercano.”</blockquote>
-        <footer><img src="https://i.pravatar.cc/100?img=11" alt="Carlos R." loading="lazy" decoding="async" /><div><strong>Carlos R.</strong><small>Coach de Bienestar</small></div><span class="material-symbols-outlined">verified</span></footer>
+        <footer><img src="assets/caso_exito_2.jpg" alt="Carlos R." loading="lazy" decoding="async" /><div><strong>Carlos R.</strong><small>Coach de Bienestar</small></div><span class="material-symbols-outlined">verified</span></footer>
       </article>
 
       <article class="success-bento-card success-bento-card--story success-bento-card--green">
         <div class="success-bento-card__meta"><span>03 · Terapia floral</span><span class="material-symbols-outlined">local_florist</span></div>
         <blockquote>“El material y el soporte docente me dieron seguridad para comenzar a atender profesionalmente.”</blockquote>
-        <footer><img src="https://i.pravatar.cc/100?img=43" alt="Ana G." loading="lazy" decoding="async" /><div><strong>Ana G.</strong><small>Terapeuta Floral</small></div><span class="material-symbols-outlined">verified</span></footer>
+        <footer><img src="assets/caso_exito_3.jpg" alt="Ana G." loading="lazy" decoding="async" /><div><strong>Ana G.</strong><small>Terapeuta Floral</small></div><span class="material-symbols-outlined">verified</span></footer>
       </article>
 
       <article class="success-bento-card success-bento-card--story success-bento-card--blue">
         <div class="success-bento-card__meta"><span>04 · Masaje terapéutico</span><span class="material-symbols-outlined">volunteer_activism</span></div>
         <blockquote>“Las prácticas guiadas mejoraron mi técnica y me ayudaron a abrir mi propio espacio de atención.”</blockquote>
-        <footer><img src="https://i.pravatar.cc/100?img=12" alt="Luis M." loading="lazy" decoding="async" /><div><strong>Luis M.</strong><small>Masajista Terapéutico</small></div><span class="material-symbols-outlined">verified</span></footer>
+        <footer><img src="assets/caso_exito_4.jpg" alt="Luis M." loading="lazy" decoding="async" /><div><strong>Luis M.</strong><small>Masajista Terapéutico</small></div><span class="material-symbols-outlined">verified</span></footer>
       </article>
 
       <article class="success-bento-card success-bento-card--metrics">

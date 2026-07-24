@@ -176,8 +176,22 @@ export class PublicCursosComponent {
       customLink: '/cursos/auriculoterapia-presencial'
     },
     {
+      slug: 'acupuntura-china-7-meses',
+      title: 'Acupuntura China (7 meses)',
+      category: 'DIPLOMADOS',
+      modality: 'PRESENCIAL',
+      icon: 'adjust',
+      rating: 4.9,
+      duration: '7 meses',
+      description: 'Formación profesional intensiva para dominar los principios de la Medicina Tradicional China y aprender la práctica clínica de la acupuntura.',
+      students: '+150',
+      price: 'S/ 150/mes',
+      image: 'assets/acupuntura_7_meses_curso.jpg',
+      customLink: '/cursos/acupuntura-china-7-meses'
+    },
+    {
       slug: 'acupuntura-presencial',
-      title: 'Acupuntura',
+      title: 'Acupuntura China',
       category: 'DIPLOMADOS',
       modality: 'PRESENCIAL',
       icon: 'adjust',

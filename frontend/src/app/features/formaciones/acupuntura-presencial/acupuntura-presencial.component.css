@@ -401,7 +401,7 @@
 }
 
 .ac-fact:nth-child(3)::before {
-  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/AcupunturaChinaInsteip.png');
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/acupuntura_presencial_curso.jpg');
 }
 
 .ac-fact:nth-child(4)::before {
@@ -886,7 +886,7 @@
 }
 
 .ac-profile:nth-child(1) {
-  background-image: url('../../../../assets/AcupunturaChinaInsteip.png');
+  background-image: url('../../../../assets/acupuntura_presencial_curso.jpg');
 }
 
 .ac-profile:nth-child(2) {

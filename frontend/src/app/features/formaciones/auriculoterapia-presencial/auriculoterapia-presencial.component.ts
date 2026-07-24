@@ -64,7 +64,7 @@ export class AuriculoterapiaPresencialComponent implements OnInit, AfterViewInit
       tabLabel: 'Módulo 1: Neurofisiología',
       title: 'Módulo 1: Fundamentos y Neurofisiología',
       description: 'Historia de la auriculoterapia, aportes de Nogier, vertientes principales y la neurofisiología del Nervio Vago.',
-      image: 'assets/insteip AURICULOTERAPIA temario 1.png',
+      image: 'assets/plan_estudios_auriculoterapia_1.jpg',
       imageAlt: 'Módulo 1 - Fundamentos y Neurofisiología',
       specimenLabel: 'SPECIMEN // FUNDAMENTOS Y NEUROFISIOLOGÍA',
       items: [
@@ -79,7 +79,7 @@ export class AuriculoterapiaPresencialComponent implements OnInit, AfterViewInit
       tabLabel: 'Módulo 2: Somatotopía',
       title: 'Módulo 2: Somatotopía y Materiales de aplicación',
       description: 'Cartografía del feto invertido, uso de materiales invasivos y no invasivos, y técnica exclusiva de masaje auricular.',
-      image: 'assets/insteip AURICULOTERAPIA temario 2.png',
+      image: 'assets/plan_estudios_auriculoterapia_2.jpg',
       imageAlt: 'Módulo 2 - Somatotopía y Materiales',
       specimenLabel: 'SPECIMEN // SOMATOTOPÍA Y MATERIALES',
       items: [
@@ -94,7 +94,7 @@ export class AuriculoterapiaPresencialComponent implements OnInit, AfterViewInit
       tabLabel: 'Módulo 3: Puntos y Protocolos',
       title: 'Módulo 3: Puntos Auriculares y Protocolos Clínicos',
       description: 'Tríada auricular, localización detallada por áreas y protocolos específicos con bioseguridad.',
-      image: 'assets/insteip AURICULOTERAPIA temario 3.png',
+      image: 'assets/plan_estudios_auriculoterapia_3.jpg',
       imageAlt: 'Módulo 3 - Puntos y Protocolos',
       specimenLabel: 'SPECIMEN // PROTOCOLOS CLÍNICOS Y ÉTICA',
       items: [

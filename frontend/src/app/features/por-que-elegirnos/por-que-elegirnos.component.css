@@ -150,8 +150,8 @@
 
 .why-hero__visual {
   position: relative;
-  width: min(100%, 30rem);
-  aspect-ratio: 1672 / 941;
+  width: min(100%, 34rem);
+  aspect-ratio: 1 / 1;
   justify-self: end;
 }
 
@@ -177,8 +177,8 @@
 .why-visual__frame img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  background: #f2f8fd;
+  object-fit: cover;
+  background: #ffffff;
   filter: saturate(92%) brightness(98%);
 }
 
@@ -194,6 +194,10 @@
 }
 
 .why-stats-bar {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  isolation: isolate;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
@@ -204,6 +208,62 @@
   background: var(--why-card);
   box-shadow: var(--why-shadow);
   backdrop-filter: blur(14px);
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease, color 220ms ease;
+}
+
+.why-stats-bar::before {
+  position: absolute;
+  inset: auto -20% -45% auto;
+  width: 10rem;
+  height: 10rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(22, 133, 220, 0.16), transparent 68%);
+  z-index: 1;
+  transition: opacity 220ms ease, transform 420ms ease;
+  content: '';
+  opacity: 0;
+  pointer-events: none;
+}
+
+.why-stats-bar:hover::before {
+  opacity: 0.28;
+  transform: scale(1.15);
+}
+
+.why-stats-bar::after {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.9), rgba(11, 99, 181, 0.65)), url('https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80');
+  background-position: center;
+  background-size: cover;
+  opacity: 0;
+  transform: scale(1.08);
+  transition: opacity 220ms ease, transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+  content: '';
+  pointer-events: none;
+}
+
+.why-stats-bar:hover::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.why-stats-bar > * {
+  position: relative;
+  z-index: 2;
+  transition: color 220ms ease;
+}
+
+.why-stats-bar:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.38);
+  box-shadow: 0 20px 44px rgba(6, 38, 74, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.why-stats-bar:hover .why-stat-item strong,
+.why-stats-bar:hover .why-stat-item small {
+  color: #ffffff !important;
 }
 
 .why-stat-item {
@@ -232,6 +292,7 @@
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1;
+  transition: color 220ms ease;
 }
 
 .why-stat-item small {
@@ -241,6 +302,7 @@
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  transition: color 220ms ease;
 }
 
 .why-section {
@@ -387,6 +449,10 @@
 }
 
 .why-pillar-card {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  isolation: isolate;
   display: flex;
   align-items: flex-start;
   gap: 1.15rem;
@@ -395,12 +461,84 @@
   border-radius: 1.45rem;
   background: var(--why-card);
   box-shadow: var(--why-shadow);
-  transition: transform 220ms ease, box-shadow 220ms ease;
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease, color 220ms ease;
+}
+
+.why-pillar-card::before {
+  position: absolute;
+  inset: auto -20% -45% auto;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(22, 133, 220, 0.16), transparent 68%);
+  z-index: 1;
+  transition: opacity 220ms ease, transform 420ms ease;
+  content: '';
+  opacity: 0;
+  pointer-events: none;
+}
+
+.why-pillar-card:hover::before {
+  opacity: 0.28;
+  transform: scale(1.15);
+}
+
+.why-pillar-card::after {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  transform: scale(1.08);
+  transition: opacity 220ms ease, transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+  content: '';
+  pointer-events: none;
+}
+
+.why-pillar-card:hover::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Background images for teaching method pillars */
+.why-pillar-card:nth-of-type(1)::after {
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.9), rgba(11, 99, 181, 0.65)), url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=900&q=78');
+  background-position: center;
+  background-size: cover;
+}
+
+.why-pillar-card:nth-of-type(2)::after {
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.9), rgba(11, 99, 181, 0.65)), url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=78');
+  background-position: center;
+  background-size: cover;
+}
+
+.why-pillar-card:nth-of-type(3)::after {
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.9), rgba(11, 99, 181, 0.65)), url('https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=900&q=78');
+  background-position: center;
+  background-size: cover;
+}
+
+.why-pillar-card:nth-of-type(4)::after {
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.9), rgba(11, 99, 181, 0.65)), url('https://images.unsplash.com/photo-1589330694653-ded6df53f7ee?auto=format&fit=crop&w=900&q=78');
+  background-position: center;
+  background-size: cover;
+}
+
+.why-pillar-card > * {
+  position: relative;
+  z-index: 2;
+  transition: color 220ms ease;
 }
 
 .why-pillar-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 28px 60px rgba(6, 38, 74, 0.13);
+  border-color: rgba(255, 255, 255, 0.38);
+  box-shadow: 0 20px 44px rgba(6, 38, 74, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.why-pillar-card:hover h4,
+.why-pillar-card:hover p {
+  color: #ffffff !important;
 }
 
 .why-pillar-card__icon {
@@ -412,10 +550,22 @@
   border-radius: 1rem;
   color: var(--why-blue);
   background: var(--why-soft);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.3s ease, color 0.3s ease;
+}
+
+.why-pillar-card:hover .why-pillar-card__icon {
+  transform: scale(1.12) rotate(-6deg);
+  background-color: #ffffff !important;
+  color: #06264a !important;
+}
+
+.why-pillar-card:hover .why-pillar-card__icon .material-symbols-outlined {
+  color: #06264a !important;
 }
 
 .why-pillar-card__icon .material-symbols-outlined {
   font-size: 1.35rem;
+  transition: color 0.3s ease;
 }
 
 .why-pillar-card h4 {
@@ -423,6 +573,7 @@
   color: var(--why-navy);
   font-size: 1.1rem;
   font-weight: 800;
+  transition: color 220ms ease;
 }
 
 .why-pillar-card p {
@@ -430,6 +581,7 @@
   color: var(--why-muted);
   font-size: 0.84rem;
   line-height: 1.65;
+  transition: color 220ms ease;
 }
 
 .why-roi-box {
@@ -706,6 +858,9 @@
 
 .why-testimonial-card {
   position: relative;
+  z-index: 1;
+  overflow: hidden;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -714,12 +869,87 @@
   border-radius: 1.6rem;
   background: var(--why-card);
   box-shadow: var(--why-shadow);
-  transition: transform 220ms ease, box-shadow 220ms ease;
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease, color 220ms ease;
+}
+
+.why-testimonial-card::before {
+  position: absolute;
+  inset: auto -20% -45% auto;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(22, 133, 220, 0.16), transparent 68%);
+  z-index: 1;
+  transition: opacity 220ms ease, transform 420ms ease;
+  content: '';
+  opacity: 0;
+  pointer-events: none;
+}
+
+.why-testimonial-card:hover::before {
+  opacity: 0.28;
+  transform: scale(1.15);
+}
+
+.why-testimonial-card::after {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  transform: scale(1.08);
+  transition: opacity 220ms ease, transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+  content: '';
+  pointer-events: none;
+}
+
+.why-testimonial-card:hover::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Background images for testimonial cards */
+.why-testimonial-card:nth-of-type(1)::after {
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.9), rgba(11, 99, 181, 0.65)), url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=900&q=78');
+  background-position: center;
+  background-size: cover;
+}
+
+.why-testimonial-card:nth-of-type(2)::after {
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.9), rgba(11, 99, 181, 0.65)), url('https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=900&q=78');
+  background-position: center;
+  background-size: cover;
+}
+
+.why-testimonial-card:nth-of-type(3)::after {
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.9), rgba(11, 99, 181, 0.65)), url('https://images.unsplash.com/photo-1519823551278-64ac92834909?auto=format&fit=crop&w=900&q=78');
+  background-position: center;
+  background-size: cover;
+}
+
+.why-testimonial-card > * {
+  position: relative;
+  z-index: 2;
+  transition: color 220ms ease;
 }
 
 .why-testimonial-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 30px 65px rgba(6, 38, 74, 0.14);
+  border-color: rgba(255, 255, 255, 0.38);
+  box-shadow: 0 30px 65px rgba(6, 38, 74, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.why-testimonial-card:hover p,
+.why-testimonial-card:hover .why-testimonial-author strong,
+.why-testimonial-card:hover .why-testimonial-author small {
+  color: #ffffff !important;
+}
+
+.why-testimonial-card:hover .why-testimonial-quote {
+  color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.why-testimonial-card:hover .why-testimonial-author {
+  border-top-color: rgba(255, 255, 255, 0.18) !important;
 }
 
 .why-testimonial-quote {
@@ -774,12 +1004,14 @@
   gap: 0.35rem;
   color: var(--why-navy);
   font-size: 0.84rem;
+  transition: color 220ms ease;
 }
 
 .why-testimonial-author strong .material-symbols-outlined {
   color: var(--why-blue);
   font-size: 0.95rem;
   font-variation-settings: 'FILL' 1;
+  transition: color 220ms ease;
 }
 
 .why-testimonial-author small {
@@ -790,6 +1022,7 @@
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  transition: color 220ms ease;
 }
 
 @keyframes whyOrbFloat {

@@ -30,13 +30,13 @@ export class InicioComponent implements OnInit, OnDestroy, AfterViewInit {
     {
       pill: 'INSTEIP — Instituto de Terapias Integrales',
       pillIcon: 'school',
-      headline: '+30 CURSOS ONLINE DE TERAPIAS COMPLEMENTARIAS CON CERTIFICACIÓN INTERNACIONAL',
-      description: 'Más de 5,000 terapeutas ya obtuvieron su certificación internacional. Estudia desde casa y transforma tu carrera profesional.',
+      headline: 'CURSOS ONLINE DE TERAPIAS COMPLEMENTARIAS CON RESPALDO INTERNACIONAL',
+      description: 'Más de 500 terapeutas ya obtuvieron su certificado con respaldo internacional. Estudia desde casa y transforma tu carrera profesional.',
       cta: [
         { text: 'Explorar Cursos', link: '/cursos', primary: true },
         { text: 'Iniciar Sesión', link: '/login', primary: false }
       ],
-      image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80',
+      image: 'assets/index_hero_1.jpg',
       imageLabel: 'LÁMINA 01 / ECOESFERA DE ESTUDIOS'
     },
     {
@@ -48,31 +48,31 @@ export class InicioComponent implements OnInit, OnDestroy, AfterViewInit {
         { text: 'Ver Programas', link: '/programas', primary: true },
         { text: 'Acupuntura', link: '/cursos/acupuntura-china', primary: false }
       ],
-      image: 'https://images.unsplash.com/photo-1600335895229-6e75511892c8?auto=format&fit=crop&w=800&q=80',
+      image: 'assets/index_hero_2.jpg',
       imageLabel: 'LÁMINA 02 / PRÁCTICA CLÍNICA'
     },
     {
       pill: 'Certificación y Respaldo',
       pillIcon: 'workspace_premium',
-      headline: 'CERTIFICACIÓN INTERNACIONAL VERIFICABLE',
-      description: 'Obtén un certificado digital con respaldo internacional, verificable en LinkedIn y respaldado por Global Therapy Alliance.',
+      headline: 'CERTIFICACIÓN CON RESPALDO INTERNACIONAL',
+      description: 'Obtén un certificado digital con respaldo internacional',
       cta: [
         { text: 'Más Información', link: '/certificacion', primary: true },
         { text: 'Validar Certificado', link: '/certificados/validar', primary: false }
       ],
-      image: 'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=800&q=80',
+      image: 'assets/index_hero_3.jpg',
       imageLabel: 'LÁMINA 03 / ACREDITACIÓN GLOBAL'
     },
     {
       pill: 'Comunidad INSTEIP',
       pillIcon: 'diversity_3',
-      headline: '+5,000 TERAPEUTAS YA CONFÍAN EN NOSOTROS',
+      headline: '+1000 TERAPEUTAS YA CONFÍAN EN NOSOTROS',
       description: 'Únete a una comunidad de profesionales que transforman vidas a través de las terapias complementarias. 100% online, 100% flexible.',
       cta: [
         { text: 'Comenzar Ahora', link: '/cursos', primary: true },
         { text: 'Saber Más', link: '/por-que-elegirnos', primary: false }
       ],
-      image: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=800&q=80',
+      image: 'assets/index_hero_4.jpg',
       imageLabel: 'LÁMINA 04 / CONEXIÓN COMUNITARIA'
     }
   ];

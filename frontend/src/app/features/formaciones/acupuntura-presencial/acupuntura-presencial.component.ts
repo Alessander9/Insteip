@@ -64,7 +64,7 @@ export class AcupunturaPresencialComponent implements OnInit, AfterViewInit, OnD
       tabLabel: '01 · Acupuntura Clásica (Meses 1-6)',
       title: 'Fase 1: Acupuntura Clásica Presencial',
       description: 'Aprendizaje presencial de los principios de la MTC, los canales energéticos y las técnicas básicas de acupuntura.',
-      image: 'assets/AcupunturaChinaInsteip.png',
+      image: 'assets/plan_estudios_acupuntura_presencial1.jpg',
       imageAlt: 'Acupuntura presencial',
       specimenLabel: 'SPECIMEN // CANALES ENERGÉTICOS Y PUNTOS ACUPUNTURALES',
       items: [
@@ -79,7 +79,7 @@ export class AcupunturaPresencialComponent implements OnInit, AfterViewInit, OnD
       tabLabel: '02 · Microsistemas (Meses 7-12)',
       title: 'Fase 2: Microsistemas y Práctica Clínica',
       description: 'Especialización en microsistemas de acupuntura y práctica supervisada con pacientes reales.',
-      image: 'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=800&q=80',
+      image: 'assets/plan_estudios_acupuntura_presencial2.jpg',
       imageAlt: 'Microsistemas de acupuntura',
       specimenLabel: 'SPECIMEN // MICROSISTEMAS Y CASOS CLÍNICOS',
       items: [

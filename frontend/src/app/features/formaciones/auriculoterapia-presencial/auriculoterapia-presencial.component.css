@@ -401,7 +401,7 @@
 }
 
 .ac-fact:nth-child(3)::before {
-  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/Auriculoterapia Insteip.png');
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/curso_auriculoterapia_presencial_imagen.jpg');
 }
 
 .ac-fact:nth-child(4)::before {
@@ -772,7 +772,7 @@
   position: absolute;
   inset: 0;
   z-index: -2;
-  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/Auriculoterapia Insteip.png');
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/curso_auriculoterapia_presencial_imagen.jpg');
   background-position: center;
   background-size: cover;
   opacity: 0;
@@ -782,15 +782,15 @@
 }
 
 .ac-journey__panel--step-0::before {
-  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/Auriculoterapia Insteip.png');
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/plan_estudios_auriculoterapia_1.jpg');
 }
 
 .ac-journey__panel--step-1::before {
-  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/Auriculoterapia Insteip.png');
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/formacion_auriculoterapia_presencial_2.jpg');
 }
 
 .ac-journey__panel--step-2::before {
-  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/Auriculoterapia Insteip.png');
+  background-image: linear-gradient(145deg, rgba(6, 38, 74, 0.88), rgba(20, 120, 212, 0.62)), url('../../../../assets/formacion_auriculoterapia_presencial_3.jpg');
 }
 
 .ac-journey__panel:hover {
@@ -959,7 +959,7 @@
 }
 
 .ac-profile:nth-child(1) {
-  background-image: url('../../../../assets/Auriculoterapia Insteip.png');
+  background-image: url('../../../../assets/curso_auriculoterapia_presencial_imagen.jpg');
 }
 
 .ac-profile:nth-child(2) {

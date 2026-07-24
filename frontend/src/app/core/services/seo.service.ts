@@ -180,7 +180,7 @@ const KNOWN_COURSES = [
   'acupuntura-china', 'auriculoterapia', 'masaje-terapeutico',
   'reflexologia-podal-presencial', 'paralisis-facial-presencial',
   'moxibustion-ventosas-presencial', 'acupuntura-estetica-presencial',
-  'stretching-terapeutico-presencial'
+  'stretching-terapeutico-presencial', 'acupuntura-china-7-meses'
 ];
 
 /**

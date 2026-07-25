@@ -38,6 +38,8 @@ CREATE TABLE usuarios (
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     intentos_fallidos INTEGER DEFAULT 0,
     bloqueado_hasta TIMESTAMP,
+    password_reset_token VARCHAR(100),
+    password_reset_token_expira TIMESTAMP,
 
     CONSTRAINT fk_usuario_rol
         FOREIGN KEY (rol_id)
@@ -387,9 +389,12 @@ CREATE TABLE configuracion_institucion (
     id BIGSERIAL PRIMARY KEY,
     nombre_institucion VARCHAR(250),
     logo_url TEXT,
-    correo_contacto VARCHAR(150),
+    correo VARCHAR(150),
     telefono VARCHAR(50),
+    direccion VARCHAR(250),
     qr_yape TEXT,
     qr_plin TEXT,
-    paypal_url TEXT
+    paypal_url TEXT,
+    color_principal VARCHAR(50),
+    color_secundario VARCHAR(50)
 );

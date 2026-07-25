@@ -82,7 +82,9 @@ El Súper Test E2E de Selenium (`scripts/selenium-super-test.js`) automatiza el 
 * **Catálogo de Cursos (`/cursos`)**: Renderizado de las tarjetas del catálogo público.
 * **Portal de Certificación (`/certificacion`)**: Formulario para validación de certificados.
 
-### 2.2 Flujo del Administrador (`admin@insteip.com` / `Admin123!`)
+### 2.2 Flujo del Administrador
+
+La cuenta QA se obtiene de `QA_ADMIN_EMAIL` y `QA_ADMIN_PASSWORD`; no se documentan credenciales reales en este archivo.
 * **Acceso y Estadísticas**: Validación de tarjetas de resumen (Total Alumnos, Cursos, Certificados).
 * **Gestión de Alumnos**:
   * Creación de un alumno dinámico.
@@ -149,7 +151,8 @@ Para garantizar que todos los componentes interactúen de forma limpia y transpa
    ```bash
    cd backend
    # En Windows:
-   $env:DB_URL="jdbc:postgresql://localhost:5455/insteip_db"; $env:DB_USERNAME="insteip_user"; $env:DB_PASSWORD="insteip_password"; .\mvnw.cmd spring-boot:run
+   # Define DB_URL, DB_USERNAME y DB_PASSWORD en el entorno antes de ejecutar:
+   .\mvnw.cmd spring-boot:run
    ```
 3. **Arrancar frontend (Puerto 4200)**:
    ```bash
@@ -160,7 +163,8 @@ Para garantizar que todos los componentes interactúen de forma limpia y transpa
    ```bash
    cd backend
    # En Windows:
-   $env:DB_URL="jdbc:postgresql://localhost:5455/insteip_db"; $env:DB_USERNAME="insteip_user"; $env:DB_PASSWORD="insteip_password"; .\mvnw.cmd test
+   # Define DB_URL, DB_USERNAME y DB_PASSWORD en el entorno antes de ejecutar:
+   .\mvnw.cmd test
    ```
 5. **Ejecutar pruebas del frontend (Selenium)**:
    ```bash

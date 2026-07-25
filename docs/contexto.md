@@ -246,13 +246,64 @@ El administrador sigue siendo quien asigna docentes a cursos desde el frontend.
 
 Estado de verificación y calidad del sistema:
 
-- **Pruebas de Backend**: `./mvnw test` ejecutándose sobre base de datos Postgres (con 53 tests integrados y unitarios pasando en su totalidad).
+- **Pruebas de Backend**: `./mvnw clean test` ejecutado con PostgreSQL disponible (53 tests integrados y unitarios pasando en su totalidad).
 - **Pruebas del Frontend**: compilación exitosa sin advertencias (`npm run build`).
 - **Súper Test E2E de Selenium**: `scripts/tests/e2e/selenium-super-test.js` con 14/14 pasos OK.
 
 Documento maestro de QA:
 
 - [docs/QA_UNIFICADO.md](./QA_UNIFICADO.md)
+
+## 9.1 Estado de infraestructura y deploy
+
+La infraestructura de producción activa y configurada es:
+
+- **Proveedor VPS:** Contabo.
+- **Plan:** Cloud VPS Core 6.
+- **Recursos:** 6 vCPU, 12 GB RAM, 200 GB SSD, 2 snapshots y puerto de 300 Mbit/s.
+- **Sistema operativo:** Ubuntu 24.04.
+- **IPv4 pública:** `62.146.226.81`.
+- **Puerto SSH:** `22` (acceso restringido y asegurado).
+- **Dominio:** `insteip.com` (y `www.insteip.com`), registrado en DonWeb resolviendo al VPS.
+
+Estado actual:
+
+- **Despliegue Completo:** El frontend Angular y el backend Spring Boot están instalados, activos y sirviendo tráfico productivo a través de Nginx.
+- **HTTPS Let's Encrypt:** Configurado y funcionando de forma segura en [https://insteip.com](https://insteip.com).
+- **Base de Datos Productiva:** PostgreSQL 15 en contenedor Docker privado (`insteip-postgres`) con puerto `5455` mapeado internamente.
+- **Carga de Datos:** Totalmente completada con datos reales (5 cursos con toda su estructura de módulos y videos, más la cuenta Administrador y 20 cuentas de estudiantes matriculados).
+- El despliegue detallado y el mantenimiento se documentan en [docs/estado_deploy_contabo_donweb.md](./estado_deploy_contabo_donweb.md).
+
+Arquitectura de producción activa:
+
+```text
+https://insteip.com
+        |
+        v
+Nginx :443
+   |            |
+   |            `-- /api/ -> Spring Boot 127.0.0.1:8081
+   |
+   `-- Frontend Angular estático (compilado en producción)
+
+PostgreSQL productivo: insteip_db, privado/local (contenedor Docker)
+```
+
+Puertos públicos habilitados:
+
+```text
+22     SSH
+80     HTTP (redirección a HTTPS y renovación SSL)
+443    HTTPS (sitio web principal)
+```
+
+Puertos internos no expuestos públicamente:
+
+```text
+5432   (PostgreSQL interno del contenedor)
+5455   (PostgreSQL expuesto al host)
+8081   (Tomcat de Spring Boot backend)
+```
 
 ## 10. Estructura del Proyecto (Organizada)
 

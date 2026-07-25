@@ -25,8 +25,29 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final MatriculaRepository matriculaRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${application.frontend.base-url:http://localhost:4200}")
+    @Value("${application.frontend.base-url}")
     private String frontendBaseUrl;
+
+    @Value("${SEED_DEFAULT_USERS:false}")
+    private boolean seedDefaultUsers;
+
+    @Value("${SEED_ADMIN_EMAIL:}")
+    private String seedAdminEmail;
+
+    @Value("${SEED_ADMIN_PASSWORD:}")
+    private String seedAdminPassword;
+
+    @Value("${SEED_ALUMNO_EMAIL:}")
+    private String seedAlumnoEmail;
+
+    @Value("${SEED_ALUMNO_PASSWORD:}")
+    private String seedAlumnoPassword;
+
+    @Value("${SEED_DOCENTE_EMAIL:}")
+    private String seedDocenteEmail;
+
+    @Value("${SEED_DOCENTE_PASSWORD:}")
+    private String seedDocentePassword;
 
     @Override
     public void run(String... args) throws Exception {
@@ -49,7 +70,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         }
 
         // 3. Seedar Usuarios de prueba con contraseñas encriptadas
-        if (usuarioRepository.count() == 0) {
+        if (seedDefaultUsers && usuarioRepository.count() == 0) {
             Rol adminRol = rolRepository.findByNombre("ADMINISTRADOR").orElse(null);
             Rol docenteRol = rolRepository.findByNombre("DOCENTE").orElse(null);
             Rol alumnoRol = rolRepository.findByNombre("ALUMNO").orElse(null);
@@ -62,8 +83,8 @@ public class DatabaseSeeder implements CommandLineRunner {
                 Usuario admin = Usuario.builder()
                         .nombres("Admin")
                         .apellidos("Insteip")
-                        .correo("admin@insteip.com")
-                        .passwordHash(passwordEncoder.encode("Admin123!"))
+                        .correo(seedAdminEmail)
+                        .passwordHash(passwordEncoder.encode(seedAdminPassword))
                         .rol(adminRol)
                         .estado(true)
                         .build();
@@ -74,8 +95,8 @@ public class DatabaseSeeder implements CommandLineRunner {
                 Usuario alumno = Usuario.builder()
                         .nombres("Juan")
                         .apellidos("Pérez")
-                        .correo("juan.perez@insteip.com")
-                        .passwordHash(passwordEncoder.encode("Alumno123!"))
+                        .correo(seedAlumnoEmail)
+                        .passwordHash(passwordEncoder.encode(seedAlumnoPassword))
                         .rol(alumnoRol)
                         .nivelSuscripcion(premium)
                         .estado(true)
@@ -87,20 +108,20 @@ public class DatabaseSeeder implements CommandLineRunner {
                 Usuario docente = Usuario.builder()
                         .nombres("Carla")
                         .apellidos("Gutiérrez")
-                        .correo("docente@insteip.com")
-                        .passwordHash(passwordEncoder.encode("Docente123!"))
+                        .correo(seedDocenteEmail)
+                        .passwordHash(passwordEncoder.encode(seedDocentePassword))
                         .rol(docenteRol)
                         .estado(true)
                         .build();
                 usuarioRepository.save(docente);
             }
-        } else {
+        } else if (seedDefaultUsers) {
             // Asegurar que nombres, apellidos, suscripción premium y contraseñas coincidan exactamente con el super-test
-            usuarioRepository.findByCorreo("admin@insteip.com").ifPresent(admin -> {
-                admin.setPasswordHash(passwordEncoder.encode("Admin123!"));
+            usuarioRepository.findByCorreo(seedAdminEmail).ifPresent(admin -> {
+                admin.setPasswordHash(passwordEncoder.encode(seedAdminPassword));
                 usuarioRepository.save(admin);
             });
-            usuarioRepository.findByCorreo("juan.perez@insteip.com").ifPresent(juan -> {
+            usuarioRepository.findByCorreo(seedAlumnoEmail).ifPresent(juan -> {
                 if (!"Juan".equals(juan.getNombres()) || !"Pérez".equals(juan.getApellidos())) {
                     juan.setNombres("Juan");
                     juan.setApellidos("Pérez");
@@ -112,10 +133,10 @@ public class DatabaseSeeder implements CommandLineRunner {
                 if (premium != null) {
                     juan.setNivelSuscripcion(premium);
                 }
-                juan.setPasswordHash(passwordEncoder.encode("Alumno123!"));
+                juan.setPasswordHash(passwordEncoder.encode(seedAlumnoPassword));
                 usuarioRepository.save(juan);
             });
-            usuarioRepository.findByCorreo("docente@insteip.com").ifPresent(docente -> {
+            usuarioRepository.findByCorreo(seedDocenteEmail).ifPresent(docente -> {
                 if (!"Carla".equals(docente.getNombres()) || !"Gutiérrez".equals(docente.getApellidos())) {
                     docente.setNombres("Carla");
                     docente.setApellidos("Gutiérrez");
@@ -124,7 +145,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 if (docenteRol != null) {
                     docente.setRol(docenteRol);
                 }
-                docente.setPasswordHash(passwordEncoder.encode("Docente123!"));
+                docente.setPasswordHash(passwordEncoder.encode(seedDocentePassword));
                 usuarioRepository.save(docente);
             });
         }

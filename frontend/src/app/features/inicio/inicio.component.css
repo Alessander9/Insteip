@@ -1093,6 +1093,24 @@
   .success-bento-card--metrics {
     min-height: 12rem;
   }
+
+  .success-bento-card footer {
+    align-items: flex-start;
+  }
+
+  .success-bento-card footer img {
+    width: 5rem;
+    height: 5rem;
+    flex-basis: 5rem;
+  }
+
+  .success-bento-card footer > div {
+    min-width: 0;
+  }
+
+  .success-bento-card footer small {
+    line-height: 1.35;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

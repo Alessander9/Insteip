@@ -17,8 +17,8 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    // Clave secreta por defecto en Base64 (mínimo 256 bits para HS256)
-    @Value("${application.security.jwt.secret-key:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}")
+    // The runtime must provide a unique Base64-encoded key.
+    @Value("${application.security.jwt.secret-key}")
     private String secretKey;
 
     @Value("${application.security.jwt.expiration:900000}") // 15 minutos en milisegundos

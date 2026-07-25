@@ -124,11 +124,11 @@ services:
     container_name: insteip-postgres
     restart: always
     environment:
-      POSTGRES_USER: insteip_user
-      POSTGRES_PASSWORD: insteip_password
-      POSTGRES_DB: insteip_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5455:5432"
+      - "127.0.0.1:5455:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -136,7 +136,7 @@ volumes:
   postgres_data:
 ```
 
-> **⚠️ Seguridad:** Cambia `insteip_password` por una contraseña segura en producción.  
+> **Seguridad:** Define `POSTGRES_PASSWORD` fuera del repositorio; nunca escribas una contraseña real en este archivo.
 > Los scripts `schema.sql` y `seed.sql` se ejecutarán a través de Spring Boot con `ddl-auto=update`, por lo que no son necesarios en el docker-compose.
 
 ### 5.3 Iniciar PostgreSQL
@@ -329,11 +329,12 @@ Requires=docker.service
 
 [Service]
 Type=simple
-User=root
+User=insteip
+Group=insteip
 WorkingDirectory=/opt/insteip
 Environment="DB_URL=jdbc:postgresql://localhost:5455/insteip_db"
 Environment="DB_USERNAME=insteip_user"
-Environment="DB_PASSWORD=insteip_password"
+EnvironmentFile=/etc/insteip/backend.env
 Environment="STORAGE_PATH=/opt/insteip/data"
 Environment="API_BASE_URL=https://tudominio.com"
 Environment="FRONTEND_BASE_URL=https://tudominio.com"
@@ -370,10 +371,7 @@ journalctl -u insteip-backend -f  # Ver logs en tiempo real
 # Health check
 curl https://tudominio.com/actuator/health
 
-# Login de prueba
-curl -X POST https://tudominio.com/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"correo":"admin@insteip.com","password":"Admin123!"}'
+# Login QA: usa QA_ADMIN_EMAIL y QA_ADMIN_PASSWORD; no pongas credenciales en el historial de shell.
 
 # Deberías recibir un token JWT
 ```
@@ -572,7 +570,7 @@ certbot renew --dry-run     # Probar renovación automática
 - [ ] Servicio systemd creado y habilitado
 - [ ] Firewall configurado (ufw)
 - [ ] Backup automático configurado
-- [ ] Login de prueba funciona (admin@insteip.com / Admin123!)
+- [ ] Login QA funciona usando `QA_ADMIN_EMAIL` y `QA_ADMIN_PASSWORD`.
 - [ ] Página principal carga por HTTPS
 - [ ] Archivos se pueden subir y descargar
 

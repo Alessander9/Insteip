@@ -111,7 +111,7 @@
               id="email"
               type="email"
               autocomplete="email"
-              placeholder="correo@institucion.com">
+              placeholder="usuario@insteip.com">
           </div>
           @if (loginForm.get('correo')?.hasError('required') && loginForm.get('correo')?.touched) {
             <p class="field-error">
@@ -186,27 +186,6 @@
           }
         </button>
       </form>
-
-      <section class="quick-access" aria-label="Acceso rapido de prueba">
-        <div class="quick-access-head">
-          <span class="quick-access-label">Acceso rapido de prueba</span>
-          <span class="quick-access-meta">2 perfiles</span>
-        </div>
-
-        <div class="quick-access-grid">
-          <button type="button" class="quick-card" (click)="autofill('admin')">
-            <span class="material-symbols-outlined quick-card-icon quick-card-icon--primary">admin_panel_settings</span>
-            <span class="quick-card-role">Administrador</span>
-            <span class="quick-card-mail">admin&#64;insteip.com</span>
-          </button>
-
-          <button type="button" class="quick-card quick-card--gold" (click)="autofill('student')">
-            <span class="material-symbols-outlined quick-card-icon quick-card-icon--gold">school</span>
-            <span class="quick-card-role">Alumno</span>
-            <span class="quick-card-mail">juan.perez&#64;insteip.com</span>
-          </button>
-        </div>
-      </section>
     </section>
 
     <footer class="form-footer">

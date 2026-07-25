@@ -71,7 +71,7 @@ async function runSuperTest() {
     console.log('\n[1/12] Iniciando sesión como Administrador...');
     await page.goto('http://localhost:4200/login');
     await page.fill('input[type="email"]', 'admin@insteip.com');
-    await page.fill('input[type="password"]', 'Admin123!');
+    await page.fill('input[type="password"]', process.env.QA_ADMIN_PASSWORD);
     await page.click('button[type="submit"]');
 
     // Wait for dashboard load
@@ -156,7 +156,7 @@ async function runSuperTest() {
     await page.fill('input[formControlName="apellidos"]', 'Prueba Automatizada');
     await page.fill('input[formControlName="correo"]', createdAlumnoEmail);
     await page.fill('input[formControlName="telefono"]', '987654321');
-    await page.fill('input[formControlName="password"]', 'Alumno123!');
+    await page.fill('input[formControlName="password"]', process.env.QA_ALUMNO_PASSWORD);
     await page.selectOption('select[formControlName="nivelSuscripcionId"]', '3'); // PREMIUM
     await waitForButtonEnabled(page, 'Guardar Alumno');
     await page.getByRole('button', { name: 'Guardar Alumno' }).click();
@@ -483,7 +483,7 @@ async function runSuperTest() {
     // ------------------------------------------------------------------
     console.log('\n[10/12] Iniciando sesión como Estudiante (Juan Pérez)...');
     await page.fill('input[type="email"]', 'juan.perez@insteip.com');
-    await page.fill('input[type="password"]', 'Alumno123!');
+      await page.fill('input[type="password"]', process.env.QA_ALUMNO_PASSWORD);
     await page.click('button[type="submit"]');
 
     await page.waitForURL('**/dashboard');

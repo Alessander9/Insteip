@@ -1,10 +1,15 @@
 const fs = require('fs');
 
-const API_BASE_URL = 'http://localhost:8081/api';
+const API_BASE_URL = process.env.QA_API_BASE_URL || 'http://localhost:8081/api';
+const QA_ADMIN_EMAIL = process.env.QA_ADMIN_EMAIL;
+const QA_ADMIN_PASSWORD = process.env.QA_ADMIN_PASSWORD;
 let authToken = '';
 let currentUserId = null;
 let currentCursoId = null;
 let currentModuloId = null;
+let currentVideoId = null;
+let currentMatriculaId = null;
+let testUserId = null;
 
 // Colores para la consola
 const colors = {
@@ -70,13 +75,17 @@ async function apiRequest(endpoint, method = 'GET', body = null, isFormData = fa
 async function runApiSuperTest() {
     printTitle('INSTEIP - INICIANDO SUPER TEST DE API BACKEND (100% ENDPOINTS)');
 
+    if (!QA_ADMIN_EMAIL || !QA_ADMIN_PASSWORD) {
+        throw new Error('Define QA_ADMIN_EMAIL y QA_ADMIN_PASSWORD antes de ejecutar la prueba API.');
+    }
+
     try {
         // 1. AUTHENTICATION & LOGIN
         printTitle('1. TEST DE AUTENTICACIÓN Y SEGURIDAD');
         printInfo('Realizando Login como Administrador...');
         const loginData = await apiRequest('/auth/login', 'POST', {
-            correo: 'admin@insteip.com',
-            password: 'Admin123!'
+            correo: QA_ADMIN_EMAIL,
+            password: QA_ADMIN_PASSWORD
         });
         authToken = loginData.token || loginData.accessToken;
         printSuccess('Login exitoso. Token recibido.');
@@ -103,7 +112,7 @@ async function runApiSuperTest() {
             nivelSuscripcionId: 1 // Agregado requerido por el backend
         };
         const usuarioCreado = await apiRequest('/usuarios', 'POST', nuevoUsuario);
-        const testUserId = usuarioCreado.id;
+        testUserId = usuarioCreado.id;
         printSuccess(`Usuario creado con ID: ${testUserId}`);
 
         printInfo(`Obteniendo detalles del usuario ID ${testUserId}...`);
@@ -153,10 +162,11 @@ async function runApiSuperTest() {
         // 4. MATRÍCULAS Y AVANCE
         printTitle('4. TEST DE MATRÍCULAS Y AVANCES');
         printInfo(`Matriculando al usuario ID ${testUserId} en el curso ID ${currentCursoId}...`);
-        await apiRequest('/matriculas', 'POST', {
+        const matriculaCreada = await apiRequest('/matriculas', 'POST', {
             usuarioId: testUserId,
             cursoId: currentCursoId
         });
+        currentMatriculaId = matriculaCreada.id;
         printSuccess('Matrícula registrada exitosamente.');
 
         printInfo(`Consultando matrículas del curso ID ${currentCursoId}...`);
@@ -166,23 +176,29 @@ async function runApiSuperTest() {
         // 5. VIDEOS Y MATERIALES (SIMULADO)
         printTitle('5. TEST DE VIDEOS Y MATERIALES');
         printInfo(`Añadiendo Video al módulo ID ${currentModuloId}...`);
-        await apiRequest('/videos', 'POST', {
+        const videoCreado = await apiRequest('/videos', 'POST', {
             moduloId: currentModuloId,
             titulo: "Video de Prueba API",
             youtubeUrl: "https://youtube.com/watch?v=123",
             descripcion: "Video test",
             orden: 1
         });
+        currentVideoId = videoCreado.id;
         printSuccess('Video añadido.');
 
         printInfo(`Registrando avance de video...`);
-        // Asumimos un endpoint de avance con POST (ajustar payload según backend)
         await apiRequest('/avance', 'POST', {
-            usuarioId: testUserId,
-            videoId: 1, // ID simulado
-            completado: true
-        }).catch(e => printInfo('Aviso: endpoint de avance puede requerir IDs exactos, continuando...'));
+            videoId: currentVideoId,
+            ultimoSegundo: 30,
+            duracionSegundos: 60
+        });
+        printSuccess('Avance guardado correctamente.');
 
+        const avance = await apiRequest(`/avance/video/${currentVideoId}`, 'GET');
+        if (avance.videoId !== currentVideoId || avance.ultimoSegundo !== 30) {
+            throw new Error(`El avance recuperado no coincide: ${JSON.stringify(avance)}`);
+        }
+        printSuccess('Avance recuperado y verificado correctamente.');
         // 6. DASHBOARD DEL ALUMNO
         printTitle('6. TEST DE RUTAS DEL DASHBOARD DEL ALUMNO');
         printInfo('Obteniendo Dashboard General del Alumno...');
@@ -227,6 +243,28 @@ async function runApiSuperTest() {
 
     } catch (error) {
         printError('EL TEST SE DETUVO DEBIDO A UN ERROR CRÍTICO.');
+        process.exitCode = 1;
+    } finally {
+        if (authToken) {
+            printTitle('LIMPIEZA DE DATOS DE PRUEBA');
+            const cleanup = [
+                currentMatriculaId && [`/matriculas/${currentMatriculaId}`, 'DELETE'],
+                currentVideoId && [`/videos/${currentVideoId}`, 'DELETE'],
+                currentModuloId && [`/modulos/${currentModuloId}`, 'DELETE'],
+                currentCursoId && [`/cursos/${currentCursoId}`, 'DELETE'],
+                testUserId && [`/usuarios/${testUserId}`, 'DELETE']
+            ].filter(Boolean);
+
+            for (const [endpoint, method] of cleanup) {
+                try {
+                    await apiRequest(endpoint, method);
+                    printSuccess(`Eliminado recurso de prueba: ${endpoint}`);
+                } catch (cleanupError) {
+                    printError(`No se pudo limpiar ${endpoint}: ${cleanupError.message}`);
+                    process.exitCode = 1;
+                }
+            }
+        }
     }
 }
 

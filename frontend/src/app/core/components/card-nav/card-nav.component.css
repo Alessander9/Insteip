@@ -192,7 +192,7 @@
   top: calc(100% + 12px);
   left: 50%;
   transform: translateX(-50%);
-  width: 480px;
+  width: min(480px, calc(100vw - 2rem));
   background: var(--dropdown-bg);
   border: 1px solid var(--dropdown-border);
   border-radius: 1.25rem;
@@ -726,6 +726,12 @@
   .nav-brand-text {
     font-size: 1.15rem;
   }
+
+  .dropdown-card {
+    left: auto;
+    right: 0;
+    transform: none;
+  }
 }
 
 @media (max-width: 480px) {
@@ -745,5 +751,10 @@
   
   .nav-brand-text {
     display: none; /* Ocultar texto de marca en pantallas pequeñas para optimizar espacio */
+  }
+
+  .dropdown-card {
+    right: 0;
+    padding: 0.85rem;
   }
 }

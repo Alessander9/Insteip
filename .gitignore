@@ -9,3 +9,16 @@ run-logs/
 .metadata/
 manual-assets/
 maven/
+.env
+.env.*
+!.env.example
+*.secret
+*.key
+*.pem
+
+# Local PostgreSQL data directory; production is initialized from migrations or a controlled dump.
+database/local_data/
+database/backups/
+nul
+usuarios_insteip.csv
+

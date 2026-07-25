@@ -100,10 +100,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .nombres(dto.nombres())
                 .apellidos(dto.apellidos())
                 .correo(dto.correo())
-                .passwordHash(passwordEncoder.encode(
-                        dto.password() != null && !dto.password().isBlank()
-                                ? dto.password()
-                                : "Alumno123!")) // Contraseña por defecto si no se indica
+                .passwordHash(passwordEncoder.encode(requirePassword(dto.password())))
                 .telefono(dto.telefono())
                 .rol(rol)
                 .nivelSuscripcion(sub)
@@ -128,10 +125,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .nombres(dto.nombres())
                 .apellidos(dto.apellidos())
                 .correo(dto.correo())
-                .passwordHash(passwordEncoder.encode(
-                        dto.password() != null && !dto.password().isBlank()
-                                ? dto.password()
-                                : "Docente123!"))
+                .passwordHash(passwordEncoder.encode(requirePassword(dto.password())))
                 .telefono(dto.telefono())
                 .rol(rol)
                 .nivelSuscripcion(null)
@@ -248,6 +242,16 @@ public class UsuarioServiceImpl implements UsuarioService {
         certificadoRepository.eliminarPorUsuarioId(id);
         usuarioRepository.deleteById(id);
         auditoriaService.registrarEvento("DOCENTES", "ELIMINAR", "Eliminado docente: " + nombreDocente + " (ID: " + id + ")");
+    }
+
+    private String requirePassword(String password) {
+        if (password == null || password.isBlank()) {
+            throw new BadRequestException("La contraseña es obligatoria");
+        }
+        if (password.length() < 8) {
+            throw new BadRequestException("La contraseña debe tener al menos 8 caracteres");
+        }
+        return password;
     }
 
     private UsuarioResponseDTO convertToResponseDto(Usuario u) {

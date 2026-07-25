@@ -300,11 +300,16 @@ npm start
 
 ## Credenciales de prueba
 
-| Rol | Correo | Contraseña |
-|---|---|---|
-| Admin | `admin@insteip.com` | `Admin123!` |
-| Alumno | `juan.perez@insteip.com` | `Alumno123!` |
-| Docente | `docente@insteip.com` | `Docente123!` |
+Las credenciales QA no se publican en el repositorio. Defínelas localmente mediante variables de entorno antes de ejecutar las pruebas:
+
+```env
+QA_ADMIN_EMAIL=
+QA_ADMIN_PASSWORD=
+QA_DOCENTE_EMAIL=
+QA_DOCENTE_PASSWORD=
+QA_ALUMNO_EMAIL=
+QA_ALUMNO_PASSWORD=
+```
 
 ## Notas
 

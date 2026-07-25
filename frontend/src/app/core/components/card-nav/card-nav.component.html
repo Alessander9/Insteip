@@ -43,16 +43,8 @@
       </div>
     </div>
 
-    <!-- Right: Theme Toggle + Login (Desktop) & Hamburger (Mobile) -->
+    <!-- Right: Login (Desktop) & Hamburger (Mobile) -->
     <div class="nav-actions">
-      <!-- Theme Toggle -->
-      <button class="nav-icon-btn" (click)="themeService.toggleTheme()" aria-label="Cambiar tema">
-        <div class="theme-icon-container" [class.dark]="themeService.isDarkMode()">
-          <span class="material-symbols-outlined sun-icon">light_mode</span>
-          <span class="material-symbols-outlined moon-icon">dark_mode</span>
-        </div>
-      </button>
-
       <!-- Login button -->
       <a routerLink="/login" class="nav-login-btn">
         <span class="material-symbols-outlined login-btn-icon">login</span>
@@ -122,12 +114,6 @@
   </div>
   
   <div class="mobile-drawer-footer">
-    <button class="mobile-theme-toggle" (click)="themeService.toggleTheme()" aria-label="Cambiar tema">
-      <span class="material-symbols-outlined">
-        {{ themeService.isDarkMode() ? 'light_mode' : 'dark_mode' }}
-      </span>
-      <span>{{ themeService.isDarkMode() ? 'Modo Claro' : 'Modo Oscuro' }}</span>
-    </button>
     <a routerLink="/login" class="mobile-login-btn-full" (click)="closeMobileMenu()">
       <span class="material-symbols-outlined">login</span>
       <span>Ingresar al Campus</span>

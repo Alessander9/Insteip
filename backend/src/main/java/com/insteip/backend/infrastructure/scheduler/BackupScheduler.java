@@ -25,7 +25,7 @@ public class BackupScheduler {
     @Value("${spring.datasource.url}")
     private String dbUrl;
 
-    @Value("${application.storage.path:uploads}")
+    @Value("${application.storage.path}")
     private String storagePathSetting;
 
     private String getBackupDir() {

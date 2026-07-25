@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/configuracion")
-@CrossOrigin(origins = "*")
 @PreAuthorize("hasRole('ADMINISTRADOR')")
 @RequiredArgsConstructor
 public class ConfiguracionController {

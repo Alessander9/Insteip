@@ -26,7 +26,6 @@ import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("/api/certificados")
-@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class CertificadoController {
 
@@ -36,8 +35,14 @@ public class CertificadoController {
 
     private final com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
 
-    @Value("${application.storage.path:uploads}")
+    @Value("${application.storage.path}")
     private String storagePathSetting;
+
+    @Value("${application.api.base-url}")
+    private String apiBaseUrl;
+
+    @Value("${application.frontend.base-url}")
+    private String frontendBaseUrl;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ALUMNO')")
@@ -82,10 +87,10 @@ public class CertificadoController {
                 cert.getCurso().getNombre(),
                 cert.getCodigo(),
                 (cert.getArchivoPdf() == null || cert.getArchivoPdf().isBlank())
-                        ? "http://localhost:8081/api/certificados/" + cert.getId() + "/download"
+                        ? apiBaseUrl + "/api/certificados/" + cert.getId() + "/download"
                         : cert.getArchivoPdf(),
                 (cert.getUrlValidacion() == null || cert.getUrlValidacion().isBlank())
-                        ? "http://localhost:4200/certificados/validar/" + cert.getCodigo()
+                        ? frontendBaseUrl + "/certificados/validar/" + cert.getCodigo()
                         : cert.getUrlValidacion(),
                 cert.getNumeroRegistro(),
                 cert.getFechaEmision()

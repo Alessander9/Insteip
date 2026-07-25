@@ -70,10 +70,10 @@ public class MaterialServiceImpl implements MaterialService {
 
     private final AuditoriaService auditoriaService;
 
-    @org.springframework.beans.factory.annotation.Value("${application.storage.path:uploads}")
+    @org.springframework.beans.factory.annotation.Value("${application.storage.path}")
     private String storagePathSetting;
 
-    @org.springframework.beans.factory.annotation.Value("${application.api.base-url:http://localhost:8081}")
+    @org.springframework.beans.factory.annotation.Value("${application.api.base-url}")
     private String apiBaseUrl;
 
     private String UPLOADS_DIR;

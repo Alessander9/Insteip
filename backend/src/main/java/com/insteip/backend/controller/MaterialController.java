@@ -18,7 +18,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/materiales")
-@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class MaterialController {
 

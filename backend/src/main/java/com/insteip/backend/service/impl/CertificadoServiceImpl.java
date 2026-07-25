@@ -46,13 +46,13 @@ public class CertificadoServiceImpl implements CertificadoService {
 
     private final PlantillaCertificadoRepository plantillaCertificadoRepository;
 
-    @org.springframework.beans.factory.annotation.Value("${application.storage.path:uploads}")
+    @org.springframework.beans.factory.annotation.Value("${application.storage.path}")
     private String storagePathSetting;
 
-    @org.springframework.beans.factory.annotation.Value("${application.api.base-url:http://localhost:8081}")
+    @org.springframework.beans.factory.annotation.Value("${application.api.base-url}")
     private String apiBaseUrl;
 
-    @org.springframework.beans.factory.annotation.Value("${application.frontend.base-url:http://localhost:4200}")
+    @org.springframework.beans.factory.annotation.Value("${application.frontend.base-url}")
     private String frontendBaseUrl;
 
     private String UPLOADS_DIR;

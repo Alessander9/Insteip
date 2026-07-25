@@ -1026,9 +1026,9 @@
   .ac-actions { flex-direction: column; }
   .ac-button { width: 100%; }
   .ac-hero__visual { width: 100%; }
-  .ac-visual__card { min-width: 9rem; }
-  .ac-visual__card--top { top: 5%; right: 0.5rem; }
-  .ac-visual__card--bottom { bottom: 2%; left: 0.5rem; }
+  .ac-visual__card { min-width: 0; max-width: min(10.8rem, 44vw); padding: 0.6rem; gap: 0.5rem; }
+  .ac-visual__card--top { top: 5%; right: 0; transform: translate(0, -10%); }
+  .ac-visual__card--bottom { bottom: 2%; left: 0; transform: translate(0, 10%); }
   .ac-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
   .ac-fact { min-height: 6.5rem; padding: 0.85rem; }
   .ac-benefit-media { min-height: 20rem; }

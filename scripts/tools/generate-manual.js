@@ -44,7 +44,7 @@ async function main() {
     // ------------------------------------------------------------------
     console.log('\n[Paso 2] Iniciando sesión de Administrador y capturando paneles...');
     await page.fill('input[type="email"]', 'admin@insteip.com');
-    await page.fill('input[type="password"]', 'Admin123!');
+    await page.fill('input[type="password"]', process.env.QA_ADMIN_PASSWORD);
     await page.click('button[type="submit"]');
     await page.waitForURL('**/dashboard');
     await page.waitForSelector('h1:has-text("Campus Virtual INSTEIP")');
@@ -106,7 +106,7 @@ async function main() {
     // ------------------------------------------------------------------
     console.log('\n[Paso 3] Iniciando sesión de Estudiante (Juan Pérez)...');
     await page.fill('input[type="email"]', 'juan.perez@insteip.com');
-    await page.fill('input[type="password"]', 'Alumno123!');
+    await page.fill('input[type="password"]', process.env.QA_ALUMNO_PASSWORD);
     await page.click('button[type="submit"]');
     await page.waitForURL('**/dashboard');
     await page.waitForSelector('h1:has-text("¡Hola de nuevo, Juan!")');

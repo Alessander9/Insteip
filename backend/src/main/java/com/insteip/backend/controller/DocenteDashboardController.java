@@ -13,7 +13,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/docente")
-@CrossOrigin(origins = "*")
 @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DOCENTE')")
 @RequiredArgsConstructor
 public class DocenteDashboardController {

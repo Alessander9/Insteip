@@ -13,11 +13,13 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -33,6 +35,18 @@ public class SystemIntegrationTest {
 
     @Autowired
     private javax.sql.DataSource dataSource;
+
+    @Value("${SEED_ADMIN_EMAIL}")
+    private String adminEmail;
+
+    @Value("${SEED_ADMIN_PASSWORD}")
+    private String adminPassword;
+
+    @Value("${SEED_ALUMNO_EMAIL}")
+    private String alumnoEmail;
+
+    @Value("${SEED_ALUMNO_PASSWORD}")
+    private String alumnoPassword;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -109,7 +123,7 @@ public class SystemIntegrationTest {
         String alumnoRefreshToken = "";
 
         // Obtener datos dinámicos de la base de datos
-        Long testAlumnoId = usuarioRepository.findByCorreo("juan.perez@insteip.com").map(usuario -> usuario.getId()).orElse(2L);
+        Long testAlumnoId = usuarioRepository.findByCorreo(alumnoEmail).map(usuario -> usuario.getId()).orElse(2L);
         
         // Buscar un curso en el que Juan Pérez esté matriculado para garantizar permisos de Alumno
         Long testCursoId = 1L;
@@ -184,7 +198,7 @@ public class SystemIntegrationTest {
         try {
             MvcResult res = mockMvc.perform(post("/api/auth/login")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("{\"correo\":\"admin@insteip.com\",\"password\":\"Admin123!\"}"))
+                    .content(objectMapper.writeValueAsString(Map.of("correo", adminEmail, "password", adminPassword))))
                     .andReturn();
             t2.actualStatus = res.getResponse().getStatus();
             if (t2.actualStatus == 200) {
@@ -207,7 +221,7 @@ public class SystemIntegrationTest {
         try {
             MvcResult res = mockMvc.perform(post("/api/auth/login")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("{\"correo\":\"juan.perez@insteip.com\",\"password\":\"Alumno123!\"}"))
+                    .content(objectMapper.writeValueAsString(Map.of("correo", alumnoEmail, "password", alumnoPassword))))
                     .andReturn();
             t3.actualStatus = res.getResponse().getStatus();
             if (t3.actualStatus == 200) {

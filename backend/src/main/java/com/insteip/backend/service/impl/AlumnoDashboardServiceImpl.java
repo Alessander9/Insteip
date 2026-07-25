@@ -15,6 +15,7 @@ import com.insteip.backend.repository.*;
 import com.insteip.backend.service.interfaces.AlumnoDashboardService;
 import com.insteip.backend.infrastructure.util.ProgresoAcademicoUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -30,6 +31,12 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
     private final MatriculaRepository matriculaRepository;
 
     private final CertificadoRepository certificadoRepository;
+
+    @Value("${application.api.base-url}")
+    private String apiBaseUrl;
+
+    @Value("${application.frontend.base-url}")
+    private String frontendBaseUrl;
 
     private final CursoRepository cursoRepository;
 
@@ -126,10 +133,10 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
                 c.getCurso().getNombre(),
                 c.getFechaEmision(),
                 c.getArchivoPdf() == null || c.getArchivoPdf().isBlank()
-                        ? "http://localhost:8081/api/certificados/" + c.getId() + "/download"
+                        ? apiBaseUrl + "/api/certificados/" + c.getId() + "/download"
                         : c.getArchivoPdf(),
                 c.getUrlValidacion() == null || c.getUrlValidacion().isBlank()
-                        ? "http://localhost:4200/certificados/validar/" + c.getCodigo()
+                        ? frontendBaseUrl + "/certificados/validar/" + c.getCodigo()
                         : c.getUrlValidacion()
         )).collect(Collectors.toList());
     }

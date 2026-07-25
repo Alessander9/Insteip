@@ -19,7 +19,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/modulos")
-@CrossOrigin(origins = "*")
 @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DOCENTE')")
 @RequiredArgsConstructor
 public class ModuloController {

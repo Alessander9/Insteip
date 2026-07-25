@@ -1402,6 +1402,16 @@
     justify-self: center;
   }
 
+  .ac-visual__card--top {
+    right: 0;
+    transform: translate(8%, -14%);
+  }
+
+  .ac-visual__card--bottom {
+    left: 0;
+    transform: translate(-8%, 14%);
+  }
+
   .ac-facts {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1423,6 +1433,32 @@
   .ac-shell,
   .acu-page .acu-shell {
     width: min(100% - 2rem, 1180px);
+  }
+
+  .ac-hero__visual {
+    width: min(100%, 24rem);
+  }
+
+  .ac-visual__card {
+    min-width: 0;
+    max-width: min(10.8rem, 44vw);
+    padding: 0.6rem;
+    gap: 0.5rem;
+  }
+
+  .ac-visual__card--top {
+    right: 0;
+    transform: translate(0, -10%);
+  }
+
+  .ac-visual__card--bottom {
+    left: 0;
+    transform: translate(0, 10%);
+  }
+
+  .ac-visual__card strong,
+  .ac-visual__card small {
+    overflow-wrap: anywhere;
   }
 
   .ac-hero {

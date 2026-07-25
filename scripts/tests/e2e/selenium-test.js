@@ -1,5 +1,6 @@
 const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
+const FRONTEND_BASE_URL = process.env.QA_FRONTEND_BASE_URL || 'http://localhost:4200';
 
 async function runSeleniumTest() {
   console.log('================================================================');
@@ -28,7 +29,7 @@ async function runSeleniumTest() {
     // STEP 1: VALIDATE PUBLIC LANDING PAGE
     // ------------------------------------------------------------------
     console.log('\n[1/3] Navegando a la Página de Inicio pública...');
-    await driver.get('http://localhost:4200/inicio');
+    await driver.get(`${FRONTEND_BASE_URL}/inicio`);
 
     // Esperar a que el titular principal de la landing se renderice
     await driver.wait(until.elementLocated(By.xpath("//h1")), 10000);
@@ -40,11 +41,11 @@ async function runSeleniumTest() {
     // STEP 2: VALIDATE PUBLIC COURSE CATALOG
     // ------------------------------------------------------------------
     console.log('\n[2/3] Navegando al Catálogo de Cursos público...');
-    await driver.get('http://localhost:4200/cursos');
+    await driver.get(`${FRONTEND_BASE_URL}/cursos`);
 
-    // Esperar a que se cargue la grilla de cursos
-    await driver.wait(until.elementLocated(By.css('.grid')), 10000);
-    const courseCards = await driver.findElements(By.css('.grid > div'));
+    // Esperar a que se cargue el catálogo actual
+    await driver.wait(until.elementLocated(By.css('.course-grid')), 10000);
+    const courseCards = await driver.findElements(By.css('.course-card'));
     console.log(`     Cantidad de cursos visibles en catálogo: ${courseCards.length}`);
     if (courseCards.length === 0) {
       throw new Error('El catálogo de cursos está vacío o no se renderizó ningún curso.');
@@ -56,15 +57,21 @@ async function runSeleniumTest() {
     // ------------------------------------------------------------------
     console.log('\n[3/3] Probando pasarela de validación con código de prueba...');
     // Código semilla cargado por defecto en la base de datos (seed.sql)
-    const testCode = 'CERT-ANG-2026-8891';
-    await driver.get('http://localhost:4200/certificacion');
+    const testCode = 'INS-2026-ABX9F2K8';
+    await driver.get(`${FRONTEND_BASE_URL}/certificacion`);
 
     const input = await driver.wait(until.elementLocated(By.css('input[placeholder="Ej. INST-2026-9842"]')), 10000);
     await input.clear();
     await input.sendKeys(testCode);
 
     const verifyButton = await driver.findElement(By.xpath("//button[contains(., 'Verificar')]"));
-    await verifyButton.click();
+    await driver.executeScript("arguments[0].scrollIntoView({block: 'center'});", verifyButton);
+    await driver.wait(until.elementIsVisible(verifyButton), 10000);
+    try {
+      await verifyButton.click();
+    } catch {
+      await driver.executeScript("arguments[0].click();", verifyButton);
+    }
 
     // Esperar a que la pasarela devuelva el estado exitoso
     await driver.wait(async () => {

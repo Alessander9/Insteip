@@ -104,8 +104,8 @@ export class AcupunturaPresencialComponent implements OnInit, AfterViewInit, OnD
   };
 
   ctaData: CourseCtaData = {
-    precio: 290,
-    cuotasInfo: '12 cuotas · Sin intereses · Matrícula incluida',
+    precio: 270,
+    cuotasInfo: '12 cuotas · Matrícula: S/ 30',
     plazasDisponibles: 8,
     whatsappLink: 'https://wa.me/51939371250',
     email: 'ecabanillasbardales@gmail.com',

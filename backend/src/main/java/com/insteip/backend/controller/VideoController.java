@@ -14,7 +14,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/videos")
-@CrossOrigin(origins = "*")
 @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DOCENTE')")
 @RequiredArgsConstructor
 public class VideoController {

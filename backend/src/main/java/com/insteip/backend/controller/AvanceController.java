@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/avance")
-@CrossOrigin(origins = "*")
 @PreAuthorize("hasAnyRole('ALUMNO', 'ADMINISTRADOR')")
 @RequiredArgsConstructor
 public class AvanceController {
@@ -25,11 +24,11 @@ public class AvanceController {
 
     private Long getUsuarioId(Authentication authentication) {
         if (authentication == null) {
-            return 2L; // Estudiante seed de prueba por defecto
+            throw new IllegalStateException("La autenticación es obligatoria");
         }
         return usuarioRepository.findByCorreo(authentication.getName())
                 .map(usuario -> usuario.getId())
-                .orElse(2L);
+                .orElseThrow(() -> new IllegalStateException("Usuario autenticado no encontrado"));
     }
 
     @PostMapping

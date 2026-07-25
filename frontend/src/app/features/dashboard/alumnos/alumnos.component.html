@@ -304,7 +304,7 @@
               placeholder="Mínimo 6 caracteres">
             <p *ngIf="alumnoForm.get('password')?.hasError('minlength') && alumnoForm.get('password')?.touched" class="text-[10px] text-red-600 mt-1">Mínimo 6 caracteres.</p>
             <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">
-              {{ isEditMode ? 'Déjala vacía si no deseas cambiarla.' : 'Si no la defines, se usará Alumno123! por defecto.' }}
+              {{ isEditMode ? 'Déjala vacía si no deseas cambiarla.' : 'Define una contraseña segura para el nuevo alumno.' }}
             </p>
           </div>
           <div class="hidden md:block"></div>

@@ -16,7 +16,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/matriculas")
-@CrossOrigin(origins = "*")
 @PreAuthorize("hasRole('ADMINISTRADOR')")
 @RequiredArgsConstructor
 public class MatriculaController {

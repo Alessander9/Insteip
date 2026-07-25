@@ -180,7 +180,7 @@ const courses: Record<string, WorkshopCourse> = {
     slug: 'paralisis-facial-acupuntura-fisioterapia-online',
     title: 'Paralisis Facial con Acupuntura y Fisioterapia',
     fullName: 'Taller Paralisis Facial con Acupuntura y Fisioterapia',
-    price: 90,
+    price: 120,
     duration: '2 horas',
     access: '12 meses',
     teacher: 'Lazaro Regalado Ponte',

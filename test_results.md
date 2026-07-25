@@ -4,8 +4,8 @@ Este reporte contiene los resultados detallados de la ejecución automática de 
 
 ### Resumen Ejecutivo
 - **Total de Pruebas**: 60
-- **Pruebas Exitosas (PASSED)**: 60 (100%)
-- **Pruebas Fallidas (FAILED)**: 0 (0%)
+- **Pruebas Exitosas (PASSED)**: 57 (95%)
+- **Pruebas Fallidas (FAILED)**: 3 (5%)
 
 ---
 
@@ -26,31 +26,31 @@ Este reporte contiene los resultados detallados de la ejecución automática de 
 | 11 | USUARIOS | Listar alumnos con paginación backend | `GET` | `/api/usuarios` | 200 | 200 | ✅ **PASSED** |
 | 12 | USUARIOS | Buscar alumnos en backend | `GET` | `/api/usuarios?search=Juan` | 200 | 200 | ✅ **PASSED** |
 | 13 | USUARIOS | Obtener detalle de alumno por ID | `GET` | `/api/usuarios/3` | 200 | 200 | ✅ **PASSED** |
-| 14 | USUARIOS | Crear un nuevo alumno | `POST` | `/api/usuarios` | 201 | 201 | ✅ **PASSED** |
+| 14 | USUARIOS | Crear un nuevo alumno | `POST` | `/api/usuarios` | 201 | 400 | ❌ **FAILED** |
 | 15 | USUARIOS | Editar alumno existente | `PUT` | `/api/usuarios/3` | 200 | 200 | ✅ **PASSED** |
 | 16 | USUARIOS | Modificar estado (Borrado lógico) de alumno | `PATCH` | `/api/usuarios/3/estado` | 204 | 204 | ✅ **PASSED** |
 | 17 | CURSOS | Listar cursos con paginación backend | `GET` | `/api/cursos` | 200 | 200 | ✅ **PASSED** |
 | 18 | CURSOS | Buscar cursos en backend | `GET` | `/api/cursos?search=Excel` | 200 | 200 | ✅ **PASSED** |
-| 19 | CURSOS | Obtener detalle del curso por ID | `GET` | `/api/cursos/1` | 200 | 200 | ✅ **PASSED** |
-| 20 | CURSOS | Listar módulos asociados a un curso | `GET` | `/api/cursos/1/modulos` | 200 | 200 | ✅ **PASSED** |
+| 19 | CURSOS | Obtener detalle del curso por ID | `GET` | `/api/cursos/4` | 200 | 200 | ✅ **PASSED** |
+| 20 | CURSOS | Listar módulos asociados a un curso | `GET` | `/api/cursos/4/modulos` | 200 | 200 | ✅ **PASSED** |
 | 21 | CURSOS | Crear un nuevo curso | `POST` | `/api/cursos` | 201 | 201 | ✅ **PASSED** |
-| 22 | CURSOS | Editar curso existente | `PUT` | `/api/cursos/1` | 200 | 200 | ✅ **PASSED** |
-| 23 | CURSOS | Modificar estado (Borrado lógico) de curso | `PATCH` | `/api/cursos/1/estado` | 204 | 204 | ✅ **PASSED** |
+| 22 | CURSOS | Editar curso existente | `PUT` | `/api/cursos/4` | 200 | 200 | ✅ **PASSED** |
+| 23 | CURSOS | Modificar estado (Borrado lógico) de curso | `PATCH` | `/api/cursos/4/estado` | 204 | 204 | ✅ **PASSED** |
 | 24 | MÓDULOS | Obtener detalle del módulo por ID | `GET` | `/api/modulos/1` | 200 | 200 | ✅ **PASSED** |
 | 25 | MÓDULOS | Listar videos de un módulo específico | `GET` | `/api/modulos/1/videos` | 200 | 200 | ✅ **PASSED** |
 | 26 | MÓDULOS | Listar materiales didácticos de un módulo | `GET` | `/api/modulos/1/materiales` | 200 | 200 | ✅ **PASSED** |
 | 27 | MÓDULOS | Crear un nuevo módulo en un curso | `POST` | `/api/modulos` | 201 | 201 | ✅ **PASSED** |
-| 28 | MÓDULOS | Editar módulo existente | `PUT` | `/api/modulos/1` | 200 | 200 | ✅ **PASSED** |
-| 29 | MÓDULOS | Modificar estado (Borrado lógico) de módulo | `PATCH` | `/api/modulos/1/estado` | 204 | 204 | ✅ **PASSED** |
+| 28 | MÓDULOS | Editar módulo existente | `PUT` | `/api/modulos/4` | 200 | 200 | ✅ **PASSED** |
+| 29 | MÓDULOS | Modificar estado (Borrado lógico) de módulo | `PATCH` | `/api/modulos/4/estado` | 204 | 204 | ✅ **PASSED** |
 | 30 | VIDEOS | Listar videos con paginación backend | `GET` | `/api/videos` | 200 | 200 | ✅ **PASSED** |
 | 31 | VIDEOS | Crear un nuevo video en un módulo | `POST` | `/api/videos` | 201 | 201 | ✅ **PASSED** |
-| 32 | VIDEOS | Editar video existente | `PUT` | `/api/videos/1` | 200 | 200 | ✅ **PASSED** |
-| 33 | VIDEOS | Modificar estado (Borrado lógico) de video | `PATCH` | `/api/videos/1/estado` | 204 | 204 | ✅ **PASSED** |
+| 32 | VIDEOS | Editar video existente | `PUT` | `/api/videos/5` | 200 | 200 | ✅ **PASSED** |
+| 33 | VIDEOS | Modificar estado (Borrado lógico) de video | `PATCH` | `/api/videos/5/estado` | 204 | 204 | ✅ **PASSED** |
 | 34 | MATERIALES | Subir un material (Multipart Form-Data) | `POST` | `/api/materiales` | 201 | 201 | ✅ **PASSED** |
 | 35 | MATERIALES | Editar material existente (Multipart) | `PUT` | `/api/materiales/1` | 200 | 200 | ✅ **PASSED** |
 | 36 | MATERIALES | Modificar estado (Borrado lógico) de material | `PATCH` | `/api/materiales/1/estado` | 204 | 204 | ✅ **PASSED** |
 | 37 | MATERIALES | Descargar archivo binario de un material | `GET` | `/api/materiales/1/download` | 200 | 200 | ✅ **PASSED** |
-| 38 | MATRÍCULAS | Matricular un alumno en un curso | `POST` | `/api/matriculas` | 201 | 201 | ✅ **PASSED** |
+| 38 | MATRÍCULAS | Matricular un alumno en un curso | `POST` | `/api/matriculas` | 201 | 500 | ❌ **FAILED** |
 | 39 | MATRÍCULAS | Listar matriculados en un curso | `GET` | `/api/matriculas/curso/1` | 200 | 200 | ✅ **PASSED** |
 | 40 | MATRÍCULAS | Modificar estado (Borrado lógico) de matrícula | `PATCH` | `/api/matriculas/1/estado` | 204 | 204 | ✅ **PASSED** |
 | 41 | AVANCE REPRODUCCIÓN | Guardar progreso de reproducción de video | `POST` | `/api/avance` | 200 | 200 | ✅ **PASSED** |
@@ -72,8 +72,12 @@ Este reporte contiene los resultados detallados de la ejecución automática de 
 | 57 | SISTEMA Y MONITOREO | Obtener estado actual de recursos y bases de datos | `GET` | `/api/sistema/status` | 200 | 200 | ✅ **PASSED** |
 | 58 | SISTEMA Y MONITOREO | Ejecutar y disparar manualmente copia de seguridad | `POST` | `/api/sistema/backup` | 200 | 200 | ✅ **PASSED** |
 | 59 | SISTEMA Y MONITOREO | Verificar endpoint de salud Spring Boot Actuator | `GET` | `/actuator/health` | 200 | 200 | ✅ **PASSED** |
-| 60 | SISTEMA Y MONITOREO | Verificar endpoint de métricas Spring Boot Actuator | `GET` | `/actuator/metrics` | 200 | 200 | ✅ **PASSED** |
+| 60 | SISTEMA Y MONITOREO | Verificar endpoint de métricas Spring Boot Actuator | `GET` | `/actuator/metrics` | 200 | 500 | ❌ **FAILED** |
 
 ### Detalles de Errores Encontrados
 
-¡Todas las pruebas pasaron exitosamente! Ningún error reportado.
+| ID | Módulo | Ruta | Error / Excepción |
+|---|---|---|---|
+| 14 | USUARIOS | `/api/usuarios` | Estado: 400 |
+| 38 | MATRÍCULAS | `/api/matriculas` | Estado: 500 |
+| 60 | SISTEMA Y MONITOREO | `/actuator/metrics` | Estado: 500 |

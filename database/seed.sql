@@ -29,7 +29,7 @@ INSERT INTO usuarios (rol_id, nivel_suscripcion_id, nombres, apellidos, correo, 
   'Admin',
   'Insteip',
   'admin@insteip.com',
-  '$2b$12$bri6YkCKP0IdTNWppx5RwO/5rqlH4gDftHHuLqSAxApcal9akw5yq', -- contraseña: Admin123!
+  '$2b$12$bri6YkCKP0IdTNWppx5RwO/5rqlH4gDftHHuLqSAxApcal9akw5yq',
   '+51 987654321'
 ),
 (
@@ -38,7 +38,7 @@ INSERT INTO usuarios (rol_id, nivel_suscripcion_id, nombres, apellidos, correo, 
   'Carlos Alberto',
   'Docente Prado',
   'docente@insteip.com',
-  '$2b$12$itDYwja7vYFphrRYO37rpulZi2AlRyLH97eoofNNeQOOftzZznSEO', -- contraseña: Docente123!
+  '$2b$12$itDYwja7vYFphrRYO37rpulZi2AlRyLH97eoofNNeQOOftzZznSEO',
   '+51 999111222'
 ),
 (
@@ -47,7 +47,7 @@ INSERT INTO usuarios (rol_id, nivel_suscripcion_id, nombres, apellidos, correo, 
   'Juan Carlos',
   'Pérez Gómez',
   'juan.perez@insteip.com',
-  '$2b$12$tdNEq3dmIAzzoWaJNz3TG.9QcbxVJSPWAvQi8hjCgMM53rVdhAAQO', -- contraseña: Alumno123!
+  '$2b$12$tdNEq3dmIAzzoWaJNz3TG.9QcbxVJSPWAvQi8hjCgMM53rVdhAAQO',
   '+51 912345678'
 )
 ON CONFLICT (correo) DO NOTHING;
@@ -475,9 +475,9 @@ INSERT INTO certificados (usuario_id, curso_id, codigo, archivo_pdf, url_validac
 (
   (SELECT id FROM usuarios WHERE correo = 'juan.perez@insteip.com'),
   (SELECT id FROM cursos WHERE nombre = 'Desarrollo Web Moderno con Angular'),
-  'CERT-ANG-2026-8891',
+  'INS-2026-ABX9F2K8',
   'http://localhost:8081/api/certificados/1/download',
-  'http://localhost:4200/certificados/validar/CERT-ANG-2026-8891',
+  'http://localhost:4200/certificados/validar/INS-2026-ABX9F2K8',
   'REG-2026-90812'
 );
 

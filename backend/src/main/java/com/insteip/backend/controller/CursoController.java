@@ -15,7 +15,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/cursos")
-@CrossOrigin(origins = "*")
 @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DOCENTE')")
 @RequiredArgsConstructor
 public class CursoController {

@@ -104,8 +104,8 @@ export class DieteticaPresencialComponent implements OnInit, AfterViewInit, OnDe
   };
 
   ctaData: CourseCtaData = {
-    precio: 260,
-    cuotasInfo: '2 cuotas · Sin intereses · Matrícula incluida',
+    precio: 220,
+    cuotasInfo: '2 cuotas · Sin matrícula',
     plazasDisponibles: 8,
     whatsappLink: 'https://wa.me/51939371250',
     email: 'ecabanillasbardales@gmail.com',

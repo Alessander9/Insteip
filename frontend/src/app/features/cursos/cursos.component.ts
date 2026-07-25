@@ -43,7 +43,7 @@ export class PublicCursosComponent {
       duration: 'Online / Acceso virtual',
       description: 'Formación profesional en medicina tradicional china con acceso virtual.',
       students: '+1,200',
-      price: 'S/ 180',
+      price: 'S/ 180/mes',
       image: 'assets/acupuntura_china_virtual.jpg',
       customLink: '/cursos/acupuntura-china'
     },
@@ -57,7 +57,7 @@ export class PublicCursosComponent {
       duration: 'Online / Acceso virtual',
       description: 'Diagnóstico, mapeo y estímulo terapéutico del pabellón auricular.',
       students: '+850',
-      price: 'S/ 150',
+      price: 'S/ 150/mes',
       image: 'assets/auriculoterapia_online.jpg',
       customLink: '/cursos/auriculoterapia'
     },
@@ -71,7 +71,7 @@ export class PublicCursosComponent {
       duration: 'Online / Acceso virtual',
       description: 'Técnicas manuales y protocolos clínicos orientados a la salud y bienestar físico.',
       students: '+600',
-      price: 'S/ 160',
+      price: 'S/ 160/mes',
       image: 'assets/masaje_terapeutico_virtual.jpg',
       customLink: '/cursos/masaje-terapeutico'
     },
@@ -85,7 +85,7 @@ export class PublicCursosComponent {
       duration: '2 horas',
       description: 'Taller online para abordar parálisis facial integrando acupuntura, fisioterapia y criterio clínico complementario.',
       students: '+180',
-      price: 'S/ 90',
+      price: 'S/ 120',
       image: 'assets/paralisis_virtual.jpg',
       customLink: '/cursos/paralisis-facial-acupuntura-fisioterapia-online'
     },
@@ -146,7 +146,7 @@ export class PublicCursosComponent {
       customLink: '/cursos/reflexologia-online'
     },
 
-    // 4 Cursos Presenciales
+    // 5 Cursos Presenciales
     {
       slug: 'digitopresion-presencial',
       title: 'Digitopresión Mecánica',
@@ -157,7 +157,7 @@ export class PublicCursosComponent {
       duration: '2 meses',
       description: 'Aprende técnicas de presión digital terapéutica para tratar contracturas, puntos gatillo y dolor musculoesquelético con seguridad clínica.',
       students: '+320',
-      price: 'S/ 260',
+      price: 'S/ 260/mes',
       image: 'assets/digitopresion_presencial.jpg',
       customLink: '/cursos/digitopresion-presencial'
     },
@@ -171,7 +171,7 @@ export class PublicCursosComponent {
       duration: '2 meses',
       description: 'Domina el diagnóstico y la estimulación del pabellón auricular con técnicas orientales y occidentales para resultados clínicos reales.',
       students: '+450',
-      price: 'S/ 260',
+      price: 'S/ 260/mes',
       image: 'assets/curso_auriculoterapia_presencial.jpg',
       customLink: '/cursos/auriculoterapia-presencial'
     },
@@ -191,7 +191,7 @@ export class PublicCursosComponent {
     },
     {
       slug: 'acupuntura-presencial',
-      title: 'Acupuntura China',
+      title: 'Acupuntura China (12 meses)',
       category: 'DIPLOMADOS',
       modality: 'PRESENCIAL',
       icon: 'adjust',
@@ -199,7 +199,7 @@ export class PublicCursosComponent {
       duration: '12 meses',
       description: 'Especialízate con la formación presencial más completa en medicina tradicional china, moxibustión y microsistemas con práctica clínica supervisada.',
       students: '+600',
-      price: 'S/ 290',
+      price: 'S/ 270/mes',
       image: 'assets/acupuntura_china_presencial.jpg',
       customLink: '/cursos/acupuntura-presencial'
     },
@@ -213,7 +213,7 @@ export class PublicCursosComponent {
       duration: '2 meses',
       description: 'Aprende a evaluar el estado nutricional y diseñar planes dietéticos terapéuticos para las condiciones de salud más frecuentes.',
       students: '+210',
-      price: 'S/ 260',
+      price: 'S/ 220/mes',
       image: 'assets/curso_dietetica.jpg',
       customLink: '/cursos/dietetica-presencial'
     }

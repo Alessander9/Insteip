@@ -116,20 +116,6 @@ export class LoginComponent {
     });
   }
 
-  autofill(role: 'admin' | 'student'): void {
-    if (role === 'admin') {
-      this.loginForm.patchValue({
-        correo: 'admin@insteip.com',
-        password: 'Admin123!'
-      });
-    } else {
-      this.loginForm.patchValue({
-        correo: 'juan.perez@insteip.com',
-        password: 'Alumno123!'
-      });
-    }
-  }
-
   onSubmit(): void {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();

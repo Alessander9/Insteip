@@ -15,7 +15,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/alumno")
-@CrossOrigin(origins = "*")
 @PreAuthorize("hasAnyRole('ALUMNO', 'ADMINISTRADOR')")
 @RequiredArgsConstructor
 public class AlumnoDashboardController {
@@ -24,7 +23,7 @@ public class AlumnoDashboardController {
 
     private String getCorreo(Authentication authentication) {
         if (authentication == null) {
-            return "juan.perez@insteip.com"; // Fallback para pruebas y seed
+            throw new IllegalStateException("La autenticación es obligatoria");
         }
         return authentication.getName();
     }

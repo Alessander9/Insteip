@@ -2,6 +2,12 @@ const { Builder, By, until, logging } = require('selenium-webdriver');
 const chromeDriver = require('selenium-webdriver/chrome');
 const path = require('path');
 const fs = require('fs');
+const FRONTEND_BASE_URL = process.env.QA_FRONTEND_BASE_URL || 'http://localhost:4200';
+const BACKEND_BASE_URL = process.env.QA_BACKEND_BASE_URL || 'http://localhost:8081';
+const QA_ADMIN_EMAIL = process.env.QA_ADMIN_EMAIL;
+const QA_ADMIN_PASSWORD = process.env.QA_ADMIN_PASSWORD;
+const QA_ALUMNO_PASSWORD = process.env.QA_ALUMNO_PASSWORD;
+const QA_DOCENTE_PASSWORD = process.env.QA_DOCENTE_PASSWORD;
 
 // Ensure dummy test-material.pdf exists in scripts directory
 const uploadFilePath = path.join(__dirname, 'test-material.pdf');
@@ -11,6 +17,9 @@ if (!fs.existsSync(uploadFilePath)) {
 }
 
 async function runSeleniumSuperTest() {
+  if (!QA_ADMIN_EMAIL || !QA_ADMIN_PASSWORD || !QA_ALUMNO_PASSWORD || !QA_DOCENTE_PASSWORD) {
+    throw new Error('Define las credenciales QA antes de ejecutar Selenium.');
+  }
   console.log('================================================================');
   console.log('         INSTEIP - INICIANDO SÚPER TEST E2E CON SELENIUM        ');
   console.log('================================================================');
@@ -131,24 +140,24 @@ async function runSeleniumSuperTest() {
     // STEP 1: PUBLIC VIEW TESTING
     // ==================================================================
     console.log('\n[1/14] Navegando a la Página de Inicio pública...');
-    await driver.get('http://localhost:4200/inicio');
+    await driver.get(`${FRONTEND_BASE_URL}/inicio`);
     await driver.wait(until.elementLocated(By.xpath("//h1")), 10000);
     const mainTitle = await driver.findElement(By.xpath("//h1")).getText();
     console.log(`     ✔ Título encontrado: "${mainTitle.replace(/\n/g, ' ')}"`);
 
     console.log('   - Accediendo al catálogo público...');
-    await driver.get('http://localhost:4200/cursos');
-    await driver.wait(until.elementLocated(By.css('.grid')), 10000);
-    const courses = await driver.findElements(By.css('.grid > div'));
+    await driver.get(`${FRONTEND_BASE_URL}/cursos`);
+    await driver.wait(until.elementLocated(By.css('.course-grid')), 10000);
+    const courses = await driver.findElements(By.css('.course-card'));
     console.log(`     ✔ Cursos visibles en catálogo: ${courses.length}`);
 
     // ==================================================================
     // STEP 2: LOGIN AS ADMINISTRATOR
     // ==================================================================
     console.log('\n[2/14] Iniciando sesión como Administrador...');
-    await driver.get('http://localhost:4200/login');
-    await waitAndSendKeys(By.css('input[type="email"]'), 'admin@insteip.com');
-    await waitAndSendKeys(By.css('input[type="password"]'), 'Admin123!');
+    await driver.get(`${FRONTEND_BASE_URL}/login`);
+    await waitAndSendKeys(By.css('input[type="email"]'), QA_ADMIN_EMAIL);
+    await waitAndSendKeys(By.css('input[type="password"]'), QA_ADMIN_PASSWORD);
     await waitAndClick(By.css('button[type="submit"]'));
 
     await driver.wait(until.urlContains('/dashboard'), 15000);
@@ -184,7 +193,7 @@ async function runSeleniumSuperTest() {
     await waitAndSendKeys(By.css('input[formControlName="apellidos"]'), 'Selenium');
     await waitAndSendKeys(By.css('input[formControlName="correo"]'), testAlumnoEmail);
     await waitAndSendKeys(By.css('input[formControlName="telefono"]'), '987654321');
-    await waitAndSendKeys(By.css('input[formControlName="password"]'), 'Alumno123!');
+    await waitAndSendKeys(By.css('input[formControlName="password"]'), QA_ALUMNO_PASSWORD);
     
     // Select Subscription Level (Premium is index/value 3)
     const selectSub = await driver.findElement(By.css('select[formControlName="nivelSuscripcionId"]'));
@@ -241,7 +250,7 @@ async function runSeleniumSuperTest() {
     await waitAndSendKeys(By.css('input[formControlName="apellidos"]'), 'Selenium');
     await waitAndSendKeys(By.css('input[formControlName="correo"]'), testDocenteEmail);
     await waitAndSendKeys(By.css('input[formControlName="telefono"]'), '999888777');
-    await waitAndSendKeys(By.css('input[formControlName="password"]'), 'Docente123!');
+    await waitAndSendKeys(By.css('input[formControlName="password"]'), QA_DOCENTE_PASSWORD);
 
     await waitAndClick(By.xpath("//button[contains(., 'Guardar Docente')]"));
     await waitForModalToClose("//h3[contains(., 'Registrar Nuevo Docente')]");
@@ -441,7 +450,7 @@ async function runSeleniumSuperTest() {
     // ==================================================================
     console.log(`\n[10/14] Iniciando sesión como el Docente Creado (${testDocenteEmail})...`);
     await waitAndSendKeys(By.css('input[type="email"]'), testDocenteEmail);
-    await waitAndSendKeys(By.css('input[type="password"]'), 'Docente123!');
+    await waitAndSendKeys(By.css('input[type="password"]'), QA_DOCENTE_PASSWORD);
     await waitAndClick(By.css('button[type="submit"]'));
 
     await driver.wait(until.urlContains('/dashboard'), 15000);
@@ -451,7 +460,10 @@ async function runSeleniumSuperTest() {
     await driver.wait(until.urlContains('/dashboard/mis-cursos-docente'), 10000);
     const headerDocCursos = await driver.wait(until.elementLocated(By.xpath("//h1[contains(., 'Mis Cursos')]")), 10000);
     await driver.wait(until.elementIsVisible(headerDocCursos), 10000);
-    const assignedCourses = await driver.findElements(By.css('.grid > div'));
+    const assignedCourses = await driver.findElements(By.xpath("//button[contains(., 'Estudiantes')]"));
+    if (assignedCourses.length === 0) {
+      throw new Error('El docente creado no tiene cursos asignados. La prueba de permisos no puede continuar.');
+    }
     console.log(`     ✔ Cursos asignados al docente: ${assignedCourses.length}`);
 
     // Click "Estudiantes" on the first course
@@ -469,7 +481,7 @@ async function runSeleniumSuperTest() {
     // ==================================================================
     console.log(`\n[11/14] Iniciando sesión como el Alumno Creado (${testAlumnoEmail})...`);
     await waitAndSendKeys(By.css('input[type="email"]'), testAlumnoEmail);
-    await waitAndSendKeys(By.css('input[type="password"]'), 'Alumno123!');
+    await waitAndSendKeys(By.css('input[type="password"]'), QA_ALUMNO_PASSWORD);
     await waitAndClick(By.css('button[type="submit"]'));
 
     await driver.wait(until.urlContains('/dashboard'), 15000);
@@ -489,7 +501,7 @@ async function runSeleniumSuperTest() {
     await driver.wait(until.elementIsVisible(headerAluCursos), 10000);
 
     // Start Course
-    await waitAndClick(By.xpath("//button[contains(., 'Iniciar Curso') or contains(., 'Continuar Aprendizaje')]"));
+    await waitAndClick(By.xpath("//button[contains(., 'Iniciar') or contains(., 'Continuar')]"));
     await driver.wait(until.urlContains('/dashboard/cursos-play/'), 10000);
 
     // Click class/video to play
@@ -517,7 +529,7 @@ async function runSeleniumSuperTest() {
     const coursePlayId = courseIdMatch ? courseIdMatch[1] : '';
     
     // Fetch course structure via API to get video ID
-    const apiBase = 'http://localhost:8081/api';
+    const apiBase = `${BACKEND_BASE_URL}/api`;
     const authHeaders = { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' };
     
     const playResponse = await fetch(`${apiBase}/alumno/cursos/${coursePlayId}/play`, { headers: authHeaders });
@@ -626,7 +638,7 @@ async function runSeleniumSuperTest() {
     // STEP 13: PUBLIC CERTIFICATE VALIDATION GATEWAY
     // ==================================================================
     console.log('\n[13/14] Validando firma digital en la pasarela pública de validación...');
-    const validationUrl = `http://localhost:4200/certificados/validar/${cleanCertCode}`;
+    const validationUrl = `${FRONTEND_BASE_URL}/certificados/validar/${cleanCertCode}`;
     await driver.get(validationUrl);
 
     await driver.wait(until.elementLocated(By.xpath("//span[contains(text(), 'CERTIFICADO VÁLIDO')]")), 15000);
@@ -643,7 +655,7 @@ async function runSeleniumSuperTest() {
     // STEP 14: API ENDPOINT ROBUST CHECK
     // ==================================================================
     console.log('\n[14/14] Ejecutando comprobación final de salud de las APIs...');
-    await driver.get('http://localhost:8081/actuator/health');
+    await driver.get(`${BACKEND_BASE_URL}/actuator/health`);
     const bodyContent = await driver.findElement(By.tagName('body')).getText();
     if (bodyContent.includes('"status":"UP"') || bodyContent.includes('UP')) {
       console.log('     ✔ API Actuator Health: UP.');
@@ -674,6 +686,42 @@ async function runSeleniumSuperTest() {
     }
     process.exit(1);
   } finally {
+    try {
+      const loginResponse = await fetch(`${BACKEND_BASE_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ correo: QA_ADMIN_EMAIL, password: QA_ADMIN_PASSWORD })
+      });
+      const loginData = await loginResponse.json();
+      const adminToken = loginData.token || loginData.accessToken;
+      const headers = { Authorization: `Bearer ${adminToken}` };
+      const [usersResponse, docentesResponse, cursosResponse] = await Promise.all([
+        fetch(`${BACKEND_BASE_URL}/api/usuarios?size=100`, { headers }),
+        fetch(`${BACKEND_BASE_URL}/api/usuarios/docentes?size=100`, { headers }),
+        fetch(`${BACKEND_BASE_URL}/api/cursos?size=100`, { headers })
+      ]);
+      const users = (await usersResponse.json()).content || [];
+      const docentes = (await docentesResponse.json()).content || [];
+      const cursos = (await cursosResponse.json()).content || [];
+      const course = cursos.find(item => item.nombre === testCourseName);
+      const createdUsers = users.filter(item => item.correo === testAlumnoEmail);
+      const createdDocentes = docentes.filter(item => item.correo === testDocenteEmail);
+
+      if (course) {
+        await fetch(`${BACKEND_BASE_URL}/api/cursos/${course.id}`, { method: 'DELETE', headers });
+        console.log(`   ✔ Curso Selenium limpiado: ${course.id}`);
+      }
+      for (const user of [...createdUsers, ...createdDocentes]) {
+        const endpoint = createdDocentes.includes(user)
+          ? `/api/usuarios/docentes/${user.id}`
+          : `/api/usuarios/${user.id}`;
+        await fetch(`${BACKEND_BASE_URL}${endpoint}`, { method: 'DELETE', headers });
+        console.log(`   ✔ Usuario Selenium limpiado: ${user.id}`);
+      }
+    } catch (cleanupError) {
+      console.error('No se pudo completar la limpieza de datos Selenium:', cleanupError.message);
+      process.exitCode = 1;
+    }
     await driver.quit();
   }
 }

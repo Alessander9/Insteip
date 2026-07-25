@@ -13,9 +13,7 @@ export class ThemeService {
 
   private initializeTheme(): void {
     const savedTheme = localStorage.getItem(this.THEME_KEY);
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    const shouldBeDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+    const shouldBeDark = savedTheme === 'dark';
     this.isDarkMode.set(shouldBeDark);
     this.applyTheme(shouldBeDark);
   }

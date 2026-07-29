@@ -31,6 +31,7 @@ public class MatriculaServiceImpl implements MatriculaService {
     private final com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
 
     @Override
+    @Transactional
     public MatriculaResponseDTO matricularAlumno(MatriculaRequestDTO dto) {
         Usuario usuario = usuarioRepository.findById(dto.usuarioId())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + dto.usuarioId()));
@@ -61,6 +62,7 @@ public class MatriculaServiceImpl implements MatriculaService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<MatriculaResponseDTO> listarMatriculadosPorCurso(Long cursoId) {
         return matriculaRepository.findByCursoId(cursoId).stream()
                 .map(this::toResponse)
@@ -68,6 +70,7 @@ public class MatriculaServiceImpl implements MatriculaService {
     }
 
     @Override
+    @Transactional
     public void cambiarEstado(Long matriculaId, Boolean estado) {
         Matricula matricula = matriculaRepository.findById(matriculaId)
                 .orElseThrow(() -> new ResourceNotFoundException("Matrícula no encontrada con id: " + matriculaId));

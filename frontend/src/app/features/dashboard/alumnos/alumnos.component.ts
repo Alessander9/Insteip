@@ -51,6 +51,8 @@ export class AlumnosComponent implements OnInit {
   isEditMode = false;
   isFormSubmitting = false;
   modalErrorMsg = '';
+  hideDetailPassword = true;
+  hideFormPassword = true;
 
   // Confirm modal controls
   showConfirmModal = false;
@@ -139,6 +141,7 @@ export class AlumnosComponent implements OnInit {
     this.isEditMode = false;
     this.modalErrorMsg = '';
     this.selectedAlumno = null;
+    this.hideFormPassword = true;
     this.alumnoForm.reset({
       nombres: '',
       apellidos: '',
@@ -154,6 +157,7 @@ export class AlumnosComponent implements OnInit {
     this.isEditMode = true;
     this.modalErrorMsg = '';
     this.selectedAlumno = alumno;
+    this.hideFormPassword = true;
     
     // Map subscription name back to numeric ID
     let subId = 1;
@@ -181,6 +185,7 @@ export class AlumnosComponent implements OnInit {
 
   openDetailModal(alumno: AlumnoResponse): void {
     this.selectedAlumno = alumno;
+    this.hideDetailPassword = true;
     this.showDetailModal = true;
   }
 

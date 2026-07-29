@@ -101,6 +101,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .apellidos(dto.apellidos())
                 .correo(dto.correo())
                 .passwordHash(passwordEncoder.encode(requirePassword(dto.password())))
+                .passwordPlain(dto.password())
                 .telefono(dto.telefono())
                 .rol(rol)
                 .nivelSuscripcion(sub)
@@ -126,6 +127,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .apellidos(dto.apellidos())
                 .correo(dto.correo())
                 .passwordHash(passwordEncoder.encode(requirePassword(dto.password())))
+                .passwordPlain(dto.password())
                 .telefono(dto.telefono())
                 .rol(rol)
                 .nivelSuscripcion(null)
@@ -154,6 +156,11 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setApellidos(dto.apellidos());
         usuario.setCorreo(dto.correo());
         usuario.setTelefono(dto.telefono());
+
+        if (dto.password() != null && !dto.password().isBlank()) {
+            usuario.setPasswordHash(passwordEncoder.encode(requirePassword(dto.password())));
+            usuario.setPasswordPlain(dto.password());
+        }
 
         if (dto.nivelSuscripcionId() != null) {
             NivelSuscripcion sub = suscripcionRepository.findById(dto.nivelSuscripcionId())
@@ -185,6 +192,11 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setApellidos(dto.apellidos());
         usuario.setCorreo(dto.correo());
         usuario.setTelefono(dto.telefono());
+
+        if (dto.password() != null && !dto.password().isBlank()) {
+            usuario.setPasswordHash(passwordEncoder.encode(requirePassword(dto.password())));
+            usuario.setPasswordPlain(dto.password());
+        }
 
         Usuario saved = usuarioRepository.save(usuario);
         auditoriaService.registrarEvento("DOCENTES", "EDITAR", "Editado docente: " + saved.getNombres() + " " + saved.getApellidos() + " (ID: " + saved.getId() + ")");
@@ -263,7 +275,8 @@ public class UsuarioServiceImpl implements UsuarioService {
                 u.getTelefono(),
                 u.getNivelSuscripcion() != null ? u.getNivelSuscripcion().getNombre() : "NINGUNO",
                 u.getEstado(),
-                u.getFechaRegistro()
+                u.getFechaRegistro(),
+                u.getPasswordPlain()
         );
     }
 }

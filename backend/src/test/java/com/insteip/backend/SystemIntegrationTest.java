@@ -444,7 +444,7 @@ public class SystemIntegrationTest {
             MvcResult res = mockMvc.perform(post("/api/usuarios")
                     .header("Authorization", "Bearer " + adminToken)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(String.format("{\"nombres\":\"Maria\",\"apellidos\":\"Lopez\",\"correo\":\"%s\",\"telefono\":\"955444333\",\"nivelSuscripcionId\":%d}", uniqueEmail, testSubId)))
+                    .content(String.format("{\"nombres\":\"Maria\",\"apellidos\":\"Lopez\",\"correo\":\"%s\",\"telefono\":\"955444333\",\"nivelSuscripcionId\":%d,\"password\":\"securePassword123\"}", uniqueEmail, testSubId)))
                     .andReturn();
             t14.actualStatus = res.getResponse().getStatus();
             if (t14.actualStatus == 201 || t14.actualStatus == 200) {

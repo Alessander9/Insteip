@@ -18,6 +18,7 @@ interface NavItem {
   bgColor: string;
   textColor: string;
   links: NavLink[];
+  ctaRoute?: string;
 }
 
 @Component({
@@ -51,10 +52,22 @@ export class CardNavComponent implements OnInit, OnDestroy {
       label: 'Cursos Online',
       bgColor: '#1e293b',
       textColor: '#fff',
+      ctaRoute: '/cursos-online',
       links: [
         { label: 'Acupuntura China', route: '/cursos/acupuntura-china', ariaLabel: 'Curso de Acupuntura China', description: 'Formación profesional en medicina tradicional', icon: 'spa' },
         { label: 'Auriculoterapia', route: '/cursos/auriculoterapia', ariaLabel: 'Curso de Auriculoterapia', description: 'Diagnóstico y estímulo del pabellón auricular', icon: 'hearing' },
         { label: 'Masaje Terapéutico', route: '/cursos/masaje-terapeutico', ariaLabel: 'Curso de Masaje Terapéutico', description: 'Técnicas manuales para la salud y bienestar', icon: 'physical_therapy' }
+      ]
+    },
+    {
+      label: 'Cursos Presenciales',
+      bgColor: '#1e293b',
+      textColor: '#fff',
+      ctaRoute: '/cursos-presenciales',
+      links: [
+        { label: 'Digitopresión Mecánica', route: '/cursos/digitopresion-presencial', ariaLabel: 'Curso de Digitopresión', description: 'Técnicas de presión digital terapéutica', icon: 'touch_app' },
+        { label: 'Auriculoterapia', route: '/cursos/auriculoterapia-presencial', ariaLabel: 'Curso de Auriculoterapia Presencial', description: 'Diagnóstico y estimulación del pabellón auricular', icon: 'hearing' },
+        { label: 'Acupuntura China', route: '/cursos/acupuntura-presencial', ariaLabel: 'Curso de Acupuntura China Presencial', description: 'Formación completa en medicina tradicional china', icon: 'adjust' }
       ]
     },
     {
@@ -64,6 +77,14 @@ export class CardNavComponent implements OnInit, OnDestroy {
       textColor: '#fff',
       links: []
     },
+    {
+      label: 'Certificación Internacional',
+      route: '/certificacion',
+      bgColor: '#1e293b',
+      textColor: '#fff',
+      links: []
+    },
+    /*
     {
       label: 'Por qué elegirnos',
       route: '/por-que-elegirnos',
@@ -77,7 +98,7 @@ export class CardNavComponent implements OnInit, OnDestroy {
       bgColor: '#1e293b',
       textColor: '#fff',
       links: []
-    }
+    }*/
   ];
 
   ngOnInit(): void {

@@ -107,7 +107,7 @@ export class AcupunturaChinaComponent implements OnInit, AfterViewInit, OnDestro
 
   // CTA configuration data
   ctaData: CourseCtaData = {
-    precio: 250,
+    precio: 270,
     cuotasInfo: '12 cuotas · Sin intereses · Matrícula incluida',
     plazasDisponibles: 8,
     whatsappLink: 'https://wa.me/51939371250',

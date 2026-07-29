@@ -6,6 +6,8 @@ import com.insteip.backend.domain.dto.auth.UserProfileResponse;
 import com.insteip.backend.domain.dto.auth.TokenRefreshRequest;
 import com.insteip.backend.domain.dto.auth.TokenRefreshResponse;
 import com.insteip.backend.domain.dto.auth.LogoutRequest;
+import com.insteip.backend.domain.dto.auth.ChangePasswordRequest;
+import com.insteip.backend.service.interfaces.AuditoriaService;
 import com.insteip.backend.domain.entity.Usuario;
 import com.insteip.backend.domain.entity.LoginAuditoria;
 import com.insteip.backend.domain.entity.RefreshToken;
@@ -41,6 +43,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final HttpServletRequest httpServletRequest;
     private final Optional<org.springframework.mail.javamail.JavaMailSender> mailSender;
+    private final AuditoriaService auditoriaService;
 
     @Override
     @Transactional
@@ -48,13 +51,14 @@ public class AuthServiceImpl implements AuthService {
         String ip = getClientIp(httpServletRequest);
         String userAgent = httpServletRequest.getHeader("User-Agent");
         
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreo(request.getCorreo());
+        String correo = request.getCorreo() != null ? request.getCorreo().trim() : "";
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreo(correo);
         
         if (usuarioOpt.isPresent()) {
             Usuario usuario = usuarioOpt.get();
             if (usuario.getBloqueadoHasta() != null && usuario.getBloqueadoHasta().isAfter(LocalDateTime.now())) {
                 String msg = "Su cuenta ha sido bloqueada temporalmente por múltiples intentos fallidos. Intente nuevamente más tarde.";
-                logLoginFailure(usuario, request.getCorreo(), ip, userAgent, msg);
+                logLoginFailure(usuario, correo, ip, userAgent, msg);
                 throw new BadRequestException(msg);
             }
         }
@@ -62,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            request.getCorreo(),
+                            correo,
                             request.getPassword()
                     )
             );
@@ -79,10 +83,10 @@ public class AuthServiceImpl implements AuthService {
                     responseMessage = "Su cuenta ha sido bloqueada temporalmente por múltiples intentos fallidos. Intente nuevamente más tarde.";
                 }
                 usuarioRepository.save(usuario);
-                logLoginFailure(usuario, request.getCorreo(), ip, userAgent, motivo);
+                logLoginFailure(usuario, correo, ip, userAgent, motivo);
                 throw new BadRequestException(responseMessage);
             } else {
-                logLoginFailure(null, request.getCorreo(), ip, userAgent, "Usuario no encontrado");
+                logLoginFailure(null, correo, ip, userAgent, "Usuario no encontrado");
             }
             throw new BadRequestException("Credenciales inválidas");
         }
@@ -134,7 +138,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional(readOnly = true)
     public UserProfileResponse getProfile(String correo) {
-        Usuario usuario = usuarioRepository.findByCorreo(correo)
+        String cleanCorreo = correo != null ? correo.trim() : "";
+        Usuario usuario = usuarioRepository.findByCorreo(cleanCorreo)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
         return UserProfileResponse.builder()
@@ -233,8 +238,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public void forgotPassword(String correo) {
-        Usuario usuario = usuarioRepository.findByCorreo(correo)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con correo: " + correo));
+        String cleanCorreo = correo != null ? correo.trim() : "";
+        Usuario usuario = usuarioRepository.findByCorreo(cleanCorreo)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con correo: " + cleanCorreo));
 
         String token = String.format("%06d", new java.util.Random().nextInt(1000000));
         usuario.setPasswordResetToken(token);
@@ -275,10 +281,31 @@ public class AuthServiceImpl implements AuthService {
         }
 
         usuario.setPasswordHash(passwordEncoder.encode(newPassword));
+        usuario.setPasswordPlain(newPassword);
         usuario.setPasswordResetToken(null);
         usuario.setPasswordResetTokenExpira(null);
         usuario.setIntentosFallidos(0);
         usuario.setBloqueadoHasta(null);
         usuarioRepository.save(usuario);
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(String correo, ChangePasswordRequest request) {
+        String cleanCorreo = correo != null ? correo.trim() : "";
+        Usuario usuario = usuarioRepository.findByCorreo(cleanCorreo)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con correo: " + cleanCorreo));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), usuario.getPasswordHash())) {
+            throw new BadRequestException("La contraseña actual es incorrecta");
+        }
+
+        usuario.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        usuario.setPasswordPlain(request.getNewPassword());
+        usuario.setIntentosFallidos(0);
+        usuario.setBloqueadoHasta(null);
+        usuarioRepository.save(usuario);
+
+        auditoriaService.registrarEvento("AUTENTICACIÓN", "CAMBIAR_PASSWORD", "El usuario " + cleanCorreo + " cambió su contraseña.");
     }
 }

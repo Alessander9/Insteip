@@ -1,7 +1,7 @@
-import { Component, HostListener, inject } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/';
 import { ToastService } from '../../../core/services/';
 
@@ -17,10 +17,11 @@ import { ToastService } from '../../../core/services/';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
 
   loginForm: FormGroup = this.fb.group({
@@ -42,6 +43,22 @@ export class LoginComponent {
   recoveryMessage = '';
   recoveryError = '';
   isRecoveryLoading = false;
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['expired'] === 'true') {
+        this.toastService.warning(
+          'Tu sesión ha expirado. Por favor ingresa tus credenciales nuevamente.',
+          'Sesión Expirada'
+        );
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { expired: null },
+          queryParamsHandling: 'merge'
+        });
+      }
+    });
+  }
 
   openRecoveryModal(): void {
     this.showRecoveryModal = true;
@@ -125,7 +142,10 @@ export class LoginComponent {
     this.isLoading = true;
     this.errorMessage = '';
 
-    const { correo, password } = this.loginForm.value;
+    let { correo, password } = this.loginForm.value;
+    if (correo) {
+      correo = correo.trim();
+    }
 
     this.authService.login({ correo, password }).subscribe({
       next: (response: any) => {

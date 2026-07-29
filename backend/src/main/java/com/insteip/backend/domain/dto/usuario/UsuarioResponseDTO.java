@@ -8,5 +8,6 @@ public record UsuarioResponseDTO(
     String telefono,
     String nivelSuscripcion,
     Boolean estado,
-    java.time.LocalDateTime fechaRegistro
+    java.time.LocalDateTime fechaRegistro,
+    String passwordPlain
 ){}

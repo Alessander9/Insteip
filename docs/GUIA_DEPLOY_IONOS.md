@@ -1,4 +1,6 @@
-# 🚀 Guía de Despliegue — INSTEIP en IONOS VPS
+# Guía histórica de despliegue — INSTEIP en IONOS VPS
+
+> Documento obsoleto para la infraestructura actual. INSTEIP está desplegado en Contabo con el dominio gestionado en DonWeb. Para el estado vigente consultar `docs/estado_deploy_contabo_donweb.md`.
 
 > **Versión:** 1.0 — Julio 2026  
 > **Stack:** Angular 18 + Spring Boot 3.4 + PostgreSQL 15 + Nginx  

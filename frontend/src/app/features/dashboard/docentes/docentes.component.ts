@@ -36,6 +36,7 @@ export class DocentesComponent implements OnInit {
   isFormSubmitting = false;
   modalErrorMsg = '';
   showConfirmModal = false;
+  hideFormPassword = true;
   confirmModalType: 'success' | 'danger' | 'info' | 'warning' = 'warning';
   confirmModalTitle = '';
   confirmModalMessage = '';
@@ -83,11 +84,13 @@ export class DocentesComponent implements OnInit {
 
   openCreateModal(): void {
     this.isEditMode = false; this.modalErrorMsg = ''; this.selectedDocente = null;
+    this.hideFormPassword = true;
     this.docenteForm.reset({ nombres: '', apellidos: '', correo: '', telefono: '', password: '' });
     this.showCreateEditModal = true;
   }
   openEditModal(docente: DocenteResponse): void {
     this.isEditMode = true; this.modalErrorMsg = ''; this.selectedDocente = docente;
+    this.hideFormPassword = true;
     this.docenteForm.patchValue({ nombres: docente.nombres, apellidos: docente.apellidos, correo: docente.correo, telefono: docente.telefono, password: '' });
     this.showCreateEditModal = true;
   }

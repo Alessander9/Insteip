@@ -39,6 +39,19 @@
               </div>
             </a>
           </div>
+
+          <!-- CTA card: solo para ítems con ctaRoute definido -->
+          <a *ngIf="item.ctaRoute"
+             [routerLink]="item.ctaRoute"
+             class="dropdown-cta-card"
+             (click)="hideDropdown()">
+            <span class="material-symbols-outlined">
+              {{ item.label === 'Cursos Presenciales' ? 'location_on' : 'devices' }}
+            </span>
+            <span>{{ item.label === 'Cursos Presenciales' ? 'Ver más cursos presenciales' : 'Ver más cursos online' }}</span>
+            <span class="material-symbols-outlined dropdown-cta-arrow">arrow_outward</span>
+          </a>
+
         </div>
       </div>
     </div>
@@ -99,7 +112,20 @@
                </div>
             </a>
           </div>
+
+          <!-- CTA card mobile: solo para ítems con ctaRoute -->
+          <a *ngIf="item.ctaRoute"
+             [routerLink]="item.ctaRoute"
+             class="dropdown-cta-card mobile-cta-card"
+             (click)="closeMobileMenu()">
+            <span class="material-symbols-outlined">
+              {{ item.label === 'Cursos Presenciales' ? 'location_on' : 'devices' }}
+            </span>
+            <span>{{ item.label === 'Cursos Presenciales' ? 'Ver más cursos presenciales' : 'Ver más cursos online' }}</span>
+            <span class="material-symbols-outlined dropdown-cta-arrow">arrow_outward</span>
+          </a>
         </div>
+
 
         <!-- Direct Link (For items with NO links) -->
         <a *ngIf="!item.links || item.links.length === 0" 

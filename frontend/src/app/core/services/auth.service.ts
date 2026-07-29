@@ -1,11 +1,12 @@
 import { environment } from '../../../environments/environment';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, tap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, of, tap, throwError } from 'rxjs';
 import { LoginRequest } from '../models/login-request.model';
 import { LoginResponse } from '../models/login-response.model';
 import { UserProfile } from '../models/user-profile.model';
 import { TokenRefreshRequest, TokenRefreshResponse } from '../models/token-refresh.model';
+import { ChangePasswordRequest } from '../models/change-password-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,9 @@ export class AuthService {
   
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl + '/auth';
+
+  public isRefreshing = false;
+  public refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
   login(request: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, request).pipe(
@@ -106,5 +110,9 @@ export class AuthService {
 
   resetPassword(token: string, newPassword: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/reset-password`, { token, newPassword });
+  }
+
+  changePassword(request: ChangePasswordRequest): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/change-password`, request);
   }
 }

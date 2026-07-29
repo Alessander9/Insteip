@@ -4,9 +4,14 @@ import com.insteip.backend.domain.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
-    java.util.Optional<Usuario> findByCorreo(String correo);
+    @org.springframework.data.jpa.repository.Query("SELECT u FROM Usuario u WHERE LOWER(u.correo) = LOWER(:correo)")
+    java.util.Optional<Usuario> findByCorreo(@org.springframework.data.repository.query.Param("correo") String correo);
+
     java.util.List<Usuario> findByRolNombre(String rolNombre);
-    boolean existsByCorreo(String correo);
+
+    @org.springframework.data.jpa.repository.Query("SELECT COUNT(u) > 0 FROM Usuario u WHERE LOWER(u.correo) = LOWER(:correo)")
+    boolean existsByCorreo(@org.springframework.data.repository.query.Param("correo") String correo);
+
     java.util.Optional<Usuario> findByPasswordResetToken(String passwordResetToken);
 
     @org.springframework.data.jpa.repository.Query("SELECT u FROM Usuario u WHERE u.rol.nombre = 'ALUMNO' AND " +

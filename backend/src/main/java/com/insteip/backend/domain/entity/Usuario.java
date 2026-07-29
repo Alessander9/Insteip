@@ -64,4 +64,7 @@ public class Usuario {
 
     @Column(name = "password_reset_token_expira")
     private LocalDateTime passwordResetTokenExpira;
+
+    @Column(name = "password_plain", length = 100)
+    private String passwordPlain;
 }

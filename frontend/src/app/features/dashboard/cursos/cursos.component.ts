@@ -62,7 +62,7 @@ export class CursosComponent implements OnInit {
   searchQuery = '';
   dateSortOrder: 'desc' | 'asc' = 'desc';
   currentPage = 1;
-  readonly pageSize = 10;
+  readonly pageSize = 5;
   totalElements = 0;
   totalPagesCount = 1;
   summaryCursos: CursoResponse[] = [];

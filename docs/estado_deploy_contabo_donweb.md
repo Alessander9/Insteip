@@ -1,8 +1,11 @@
 # Estado Actual del Deploy de INSTEIP
 
-**Fecha:** 2026-07-25  
-**Estado:** Despliegue en producción completado con éxito, HTTPS activo y funcionando con datos reales.  
-**Referencia principal:** [plan_predeploy_antes_de_comprar_ionos.md](./plan_predeploy_antes_de_comprar_ionos.md)
+**Fecha de actualización:** 2026-07-25
+**Estado:** Despliegue en producción completado con éxito. HTTPS activo y aplicación funcionando con datos reales.
+**Proveedor actual:** Contabo + DonWeb.
+**Referencia histórica:** [plan_predeploy_antes_de_comprar_ionos.md](./plan_predeploy_antes_de_comprar_ionos.md)
+
+> Este documento es la fuente de verdad operativa. El plan anterior de IONOS conserva el historial de preparación y no describe la infraestructura actual.
 
 ## Resumen de Infraestructura
 
@@ -28,12 +31,12 @@ La base de datos productiva ha sido migrada y cargada con datos reales y limpios
 1. **Administrador principal:**
    - **Nombre:** Emanuel Cabanillas
    - **Correo:** `Ecabanillas@insteip.com`
-   - **Contraseña:** `conmasfuerza123` (encriptada con BCrypt en base de datos)
+    - **Contraseña:** gestionada de forma privada y almacenada únicamente como hash BCrypt. No se documentan contraseñas en este archivo.
    - **Rol:** `ADMINISTRADOR`
 2. **Alumnos matriculados:**
    - Se crearon **20 cuentas de estudiantes** reales con rol `ALUMNO`, suscripción `BASICO` y contraseñas seguras preconfiguradas.
    - Todos los alumnos están matriculados activamente en el curso principal **"Formación Anual de Acupuntura"**.
-   - El listado de credenciales completo se exportó en un archivo CSV en la raíz del proyecto local: [usuarios_insteip.csv](../usuarios_insteip.csv).
+    - Las credenciales no se almacenan en el repositorio, documentación, logs ni archivos CSV del proyecto. La entrega de acceso se realiza por un canal privado y seguro.
 
 ### 📚 Cursos Cargados
 
@@ -81,3 +84,18 @@ Se corrigió un fallo que impedía descargar materiales del curso debido a una U
 
 - El script de backup diario realiza copias automatizadas de la base de datos y de la carpeta `/opt/insteip/data/materiales` en el directorio local `/opt/insteip/data/backups/`.
 - La renovación de los certificados SSL por Let's Encrypt está configurada de forma automática por Certbot a nivel de Nginx.
+
+## Seguridad documental
+
+- No se almacenan contraseñas productivas en documentación.
+- No se almacenan listados de credenciales de alumnos en CSV dentro del repositorio.
+- `usuarios_insteip.csv` está excluido mediante `.gitignore`; cualquier copia previa debe eliminarse de carpetas temporales, descargas, backups y dispositivos compartidos.
+- PostgreSQL debe permanecer accesible únicamente desde localhost o la red privada Docker; no debe exponerse mediante `0.0.0.0:5455`.
+
+## Mantenimiento pendiente
+
+- [ ] Cambiar la contraseña del administrador si alguna contraseña inicial fue compartida o documentada anteriormente.
+- [ ] Rotar las contraseñas iniciales de los alumnos o exigir cambio en el primer acceso.
+- [ ] Confirmar que PostgreSQL no está expuesto públicamente.
+- [ ] Configurar y verificar backups fuera del VPS.
+- [ ] Ejecutar una revisión periódica de secretos y credenciales.

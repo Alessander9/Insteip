@@ -1,10 +1,15 @@
 @echo off
-set DB_URL=jdbc:postgresql://localhost:5455/insteip_db
-set DB_USERNAME=insteip_user
-if "%DB_PASSWORD%"=="" (
-  echo Define DB_PASSWORD antes de iniciar el backend.
-  exit /b 1
-)
+if "%DB_URL%"=="" set DB_URL=jdbc:postgresql://localhost:5455/insteip_db
+if "%DB_USERNAME%"=="" set DB_USERNAME=insteip_user
+if "%DB_PASSWORD%"=="" set DB_PASSWORD=insteip_password
+if "%JWT_SECRET%"=="" set JWT_SECRET=VGhpcy1pcy1hLXRlc3Qta2V5LW9ubHktZm9yLWxvY2FsLXRlc3Rz
+if "%JWT_EXPIRATION%"=="" set JWT_EXPIRATION=1800000
+if "%API_BASE_URL%"=="" set API_BASE_URL=http://localhost:8081
+if "%FRONTEND_BASE_URL%"=="" set FRONTEND_BASE_URL=http://localhost:4200
+if "%STORAGE_PATH%"=="" set STORAGE_PATH=uploads
+if "%CORS_ALLOWED_ORIGINS%"=="" set CORS_ALLOWED_ORIGINS=http://localhost:4200,http://127.0.0.1:4200
+if "%SEED_DEFAULT_USERS%"=="" set SEED_DEFAULT_USERS=true
+
 cd /d "%~dp0"
 start /B .\mvnw.cmd spring-boot:run -q > ..\run-logs\backend-current.out.log 2> ..\run-logs\backend-current.err.log
 echo Backend iniciado en segundo plano.

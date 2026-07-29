@@ -8,6 +8,7 @@ import com.insteip.backend.domain.dto.auth.ResetPasswordRequest;
 import com.insteip.backend.domain.dto.auth.TokenRefreshRequest;
 import com.insteip.backend.domain.dto.auth.TokenRefreshResponse;
 import com.insteip.backend.domain.dto.auth.UserProfileResponse;
+import com.insteip.backend.domain.dto.auth.ChangePasswordRequest;
 import com.insteip.backend.service.interfaces.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +61,20 @@ public class AuthController {
         authService.resetPassword(request.getToken(), request.getNewPassword());
         java.util.Map<String, String> response = new java.util.HashMap<>();
         response.put("mensaje", "Contraseña restablecida exitosamente.");
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<java.util.Map<String, String>> changePassword(
+            Authentication authentication,
+            @Valid @RequestBody ChangePasswordRequest request
+    ) {
+        if (authentication == null) {
+            return ResponseEntity.status(401).build();
+        }
+        authService.changePassword(authentication.getName(), request);
+        java.util.Map<String, String> response = new java.util.HashMap<>();
+        response.put("mensaje", "Contraseña cambiada exitosamente.");
         return ResponseEntity.ok(response);
     }
 }

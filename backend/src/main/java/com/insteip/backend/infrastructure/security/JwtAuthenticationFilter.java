@@ -70,25 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (ExpiredJwtException e) {
-            String ip = getClientIp(request);
-            String userAgent = request.getHeader("User-Agent");
-            String claimsEmail = e.getClaims().getSubject();
-            
-            Usuario usuario = null;
-            if (claimsEmail != null) {
-                usuario = usuarioRepository.findByCorreo(claimsEmail).orElse(null);
-            }
-
-            LoginAuditoria audit = LoginAuditoria.builder()
-                    .usuario(usuario)
-                    .correo(claimsEmail)
-                    .ip(ip)
-                    .userAgent(userAgent)
-                    .exitoso(false)
-                    .motivo("Token expirado")
-                    .fecha(LocalDateTime.now())
-                    .build();
-            loginAuditoriaRepository.save(audit);
+            // No registrar en base de datos para no contaminar la bitácora con expiraciones normales de Access Token
         } catch (Exception e) {
             String ip = getClientIp(request);
             String userAgent = request.getHeader("User-Agent");

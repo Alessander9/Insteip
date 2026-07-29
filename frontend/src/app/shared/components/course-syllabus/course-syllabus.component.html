@@ -51,11 +51,15 @@
         </div>
 
         <!-- Right: Portrait Specimen Image (5 cols) -->
-        <div class="lg:col-span-5 relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-900 bg-slate-100 dark:bg-slate-900 group min-h-[250px] lg:min-h-full">
+        <div class="lg:col-span-5 relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-900 bg-slate-100 dark:bg-slate-900 group min-h-[250px] lg:min-h-full cursor-pointer" (click)="openLightbox(phase.image)">
           <img [src]="phase.image" [alt]="phase.imageAlt" class="w-full h-full object-cover filter grayscale group-hover:scale-[1.045] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]" />
           <div class="absolute bottom-4 left-4 z-20 font-mono text-[8px] tracking-widest text-slate-400 uppercase">
             {{ phase.specimenLabel }}
           </div>
+          <button type="button" (click)="openLightbox(phase.image); $event.stopPropagation()" class="absolute bottom-4 right-4 z-30 flex items-center gap-1.5 px-3 py-1.5 bg-slate-950/75 hover:bg-slate-950 text-white rounded-md text-[9px] font-bold uppercase tracking-wider backdrop-blur-sm transition-all shadow-lg active:scale-95 border border-white/10">
+            <span class="material-symbols-outlined text-[12px] block">zoom_in</span>
+            Ampliar Imagen
+          </button>
         </div>
 
       </div>
@@ -63,3 +67,17 @@
 
   </div>
 </section>
+
+<!-- Lightbox Modal Overlay -->
+<div *ngIf="showLightbox" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[9999] flex items-center justify-center p-4 transition-opacity duration-300" (click)="closeLightbox()">
+  <!-- Close Button -->
+  <button type="button" (click)="closeLightbox()" class="absolute top-6 right-6 text-white/75 hover:text-white transition-all p-2 rounded-full hover:bg-white/10 flex z-50">
+    <span class="material-symbols-outlined text-2xl">close</span>
+  </button>
+  
+  <!-- Image Container -->
+  <div class="max-w-4xl max-h-[85vh] w-full flex items-center justify-center relative" (click)="$event.stopPropagation()">
+    <img [src]="lightboxImage" alt="Plan de estudios ampliado" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl border border-white/15 animate-[fadeIn_0.2s_ease-out]" />
+  </div>
+</div>
+

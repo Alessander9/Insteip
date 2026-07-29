@@ -31,7 +31,26 @@ export class CourseSyllabusComponent {
   @Input() phases: SyllabusPhase[] = [];
   activePhaseId = 'fase1';
 
+  showLightbox = false;
+  lightboxImage = '';
+
   setPhase(phaseId: string): void {
     this.activePhaseId = phaseId;
+  }
+
+  openLightbox(imagePath: string): void {
+    this.lightboxImage = imagePath;
+    this.showLightbox = true;
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  closeLightbox(): void {
+    this.showLightbox = false;
+    this.lightboxImage = '';
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = '';
+    }
   }
 }

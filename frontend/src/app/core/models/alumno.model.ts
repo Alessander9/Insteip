@@ -16,6 +16,7 @@ export interface AlumnoResponse {
   nivelSuscripcion: string;
   estado: boolean;
   fechaRegistro: string;
+  passwordPlain?: string;
 }
 
 export interface PageResponse<T> {

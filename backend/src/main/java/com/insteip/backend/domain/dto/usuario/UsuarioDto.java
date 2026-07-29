@@ -20,4 +20,5 @@ public class UsuarioDto {
     private String rolNombre;
     private Long nivelSuscripcionId;
     private String nivelSuscripcionNombre;
+    private String passwordPlain;
 }

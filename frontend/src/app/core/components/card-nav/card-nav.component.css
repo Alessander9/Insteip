@@ -204,6 +204,7 @@
   backdrop-filter: blur(16px);
   pointer-events: auto;
   z-index: 110;
+  flex-direction: column;
 }
 
 .dropdown-card::before {
@@ -758,3 +759,51 @@
     padding: 0.85rem;
   }
 }
+
+/* ── CTA card "Ver más cursos" ── */
+.dropdown-cta-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: flex-start;
+  margin-top: 0.6rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 0.65rem;
+  background: linear-gradient(135deg, #0b63b5, #1685dc);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  box-shadow: 0 4px 14px rgba(11, 99, 181, 0.28);
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.dropdown-cta-card:hover {
+  background: linear-gradient(135deg, #1685dc, #2197f3);
+  box-shadow: 0 8px 22px rgba(11, 99, 181, 0.38);
+  transform: translateY(-2px);
+  color: #fff;
+}
+
+.dropdown-cta-card .material-symbols-outlined {
+  font-size: 0.95rem;
+}
+
+.dropdown-cta-arrow {
+  margin-left: auto;
+  font-size: 0.85rem !important;
+  opacity: 0.85;
+}
+
+/* ── Variante mobile de la CTA card ── */
+.mobile-cta-card {
+  width: calc(100% - 1rem);
+  margin: 0.5rem 0.5rem 0.25rem;
+  padding: 0.6rem 1rem;
+  font-size: 0.8rem;
+  border-radius: 0.75rem;
+  justify-content: flex-start;
+}
+
+

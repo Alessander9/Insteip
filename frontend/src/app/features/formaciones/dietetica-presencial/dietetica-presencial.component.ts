@@ -33,97 +33,87 @@ export class DieteticaPresencialComponent implements OnInit, AfterViewInit, OnDe
 
   readonly journeySteps = [
     {
-      shortTitle: 'Fundamentos',
-      period: 'Semana 1 al 3',
+      shortTitle: 'Principios',
+      period: 'Semanas 1 y 2',
       icon: 'nutrition',
-      title: 'Bases de nutrición y dietética clínica',
-      description: 'Aprende los principios de la nutrición humana, los macronutrientes, micronutrientes y su rol en la salud integral.',
-      outcomes: ['Macronutrientes y micronutrientes', 'Metabolismo energético', 'Valoración nutricional']
+      title: 'Principios de la dietética y alimentación saludable',
+      description: 'Aprende las bases científicas de una alimentación equilibrada y el metabolismo de los nutrientes.',
+      outcomes: ['Principios de la dietética', 'Alimentación saludable', 'Hábitos nutricionales']
     },
     {
-      shortTitle: 'Evaluación',
-      period: 'Semana 4 al 6',
+      shortTitle: 'Planificación',
+      period: 'Semanas 3 y 4',
       icon: 'monitoring',
-      title: 'Evaluación nutricional y planificación',
-      description: 'Desarrolla habilidades para evaluar el estado nutricional y diseñar planes dietéticos adaptados a cada paciente.',
-      outcomes: ['Antropometría clínica', 'Análisis dietético', 'Planes nutricionales']
-    },
-    {
-      shortTitle: 'Profesión',
-      period: 'Semana 7 al 8',
-      icon: 'workspace_premium',
-      title: 'Aplicación clínica y certificación',
-      description: 'Pon en práctica tus conocimientos con casos reales y obtén la certificación profesional de Insteip.',
-      outcomes: ['Casos clínicos reales', 'Dietética terapéutica', 'Certificación institucional']
+      title: 'Planificación de dietas y hábitos',
+      description: 'Diseña menús y dietas balanceadas para mejorar tu estilo de vida o el de otros de forma práctica.',
+      outcomes: ['Planificación de dietas', 'Hábitos nutricionales', 'Certificación oficial']
     }
   ];
 
   syllabusData: SyllabusPhase[] = [
     {
       id: 'fase1',
-      tabLabel: '01 · Nutrición Básica (Semanas 1-4)',
-      title: 'Fase 1: Fundamentos de Nutrición y Dietética',
-      description: 'Estudio de los principios nutricionales, el metabolismo y los métodos de evaluación del estado nutricional.',
-      image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=800&q=80',
-      imageAlt: 'Nutrición y dietética',
-      specimenLabel: 'SPECIMEN // FUNDAMENTOS DE NUTRICIÓN CLÍNICA',
+      tabLabel: '01 · Principios y Alimentación (Sem. 1-2)',
+      title: 'Fase 1: Principios de la Dietética y Alimentación Saludable',
+      description: 'Aprende los fundamentos de la dietética, metabolismo, y cómo lograr una alimentación equilibrada y de hábitos correctos.',
+      image: 'assets/plan_estudios_dietetica1.jpg',
+      imageAlt: 'Alimentación Saludable',
+      specimenLabel: 'CURSO // PRINCIPIOS Y ALIMENTACIÓN',
       items: [
-        { number: '01', title: 'Macronutrientes y Micronutrientes', badge1: 'Teoría', badge2: 'Fase 1', description: 'Funciones, fuentes alimentarias y requerimientos de proteínas, grasas, carbohidratos, vitaminas y minerales.' },
-        { number: '02', title: 'Metabolismo Energético', badge1: 'Fisiología', badge2: 'Fase 1', description: 'Cálculo del gasto energético basal, total y ajuste por actividad física y condición de salud.' },
-        { number: '03', title: 'Valoración Nutricional', badge1: 'Evaluación', badge2: 'Clínica', description: 'Métodos antropométricos, bioquímicos, clínicos y dietéticos para la valoración integral del estado nutricional.' },
-        { number: '04', title: 'Alimentación Saludable', badge1: 'Preventiva', badge2: 'Fase 1', description: 'Principios de una alimentación equilibrada, guías alimentarias y estrategias de educación nutricional.' }
+        { number: '01', title: 'Principios de la Dietética', badge1: 'Teoría', badge2: 'Semana 1', description: 'Fundamentos de la nutrición humana y el rol de los nutrientes en el cuerpo.' },
+        { number: '02', title: 'Alimentación Saludable', badge1: 'Salud', badge2: 'Semana 2', description: 'Cómo estructurar comidas completas y nutritivas con hábitos sostenibles en el tiempo.' }
       ]
     },
     {
       id: 'fase2',
-      tabLabel: '02 · Dietética Clínica (Semanas 5-8)',
-      title: 'Fase 2: Dietética Clínica y Terapéutica',
-      description: 'Diseño de planes dietéticos específicos para condiciones de salud frecuentes y práctica clínica supervisada.',
-      image: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=800&q=80',
-      imageAlt: 'Dietética clínica',
-      specimenLabel: 'SPECIMEN // DIETAS TERAPÉUTICAS Y PLANES NUTRICIONALES',
+      tabLabel: '02 · Planificación de Dietas (Sem. 3-4)',
+      title: 'Fase 2: Planificación de Dietas y Cambios de Vida',
+      description: 'Diseño de planes alimenticios personalizados y cómo construir hábitos duraderos de forma saludable.',
+      image: 'assets/plan_estudios_dietetica2.jpg',
+      imageAlt: 'Planificación de Dietas',
+      specimenLabel: 'CURSO // PLANES Y NUTRICIÓN',
       items: [
-        { number: '01', title: 'Dieta en Obesidad y Sobrepeso', badge1: 'Terapéutica', badge2: 'Fase 2', description: 'Estrategias dietéticas basadas en evidencia para el manejo del exceso de peso y la obesidad.' },
-        { number: '02', title: 'Nutrición en Diabetes', badge1: 'Metabólica', badge2: 'Fase 2', description: 'Planificación dietética para el control glucémico y la prevención de complicaciones en diabetes tipo 2.' },
-        { number: '03', title: 'Dieta Antiinflamatoria', badge1: 'Integral', badge2: 'Fase 2', description: 'Selección de alimentos y patrones dietéticos con efecto antiinflamatorio para la salud musculoesquelética.' },
-        { number: '04', title: 'Planes Nutricionales Prácticos', badge1: 'Aplicada', badge2: 'Práctica', description: 'Elaboración de menús semanales completos y planes nutricionales personalizados bajo supervisión docente.' }
+        { number: '03', title: 'Planificación de Dietas', badge1: 'Práctica', badge2: 'Semana 3', description: 'Métodos para calcular porciones y diseñar menús adaptados a diferentes necesidades.' },
+        { number: '04', title: 'Hábitos Nutricionales', badge1: 'Nutrición', badge2: 'Semana 4', description: 'Estrategias conductuales para mantener una alimentación saludable y evitar recaídas.' }
       ]
     }
   ];
 
   docenteData: DocenteData = {
-    nombre: 'Docente Especialista en Nutrición',
-    cargo: 'Nutricionista Clínico',
-    biografia: 'Profesional especializado en <span class="text-brand-blue font-semibold">Dietética y Nutrición Clínica</span> con amplia experiencia en el diseño de planes nutricionales terapéuticos y la educación en salud integral en <span class="text-brand-blue font-semibold">Lima, Perú</span>.',
-    fotoUrl: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=400&q=80',
-    kicker: 'DOCENCIA ESPECIALIZADA',
+    nombre: 'Karen Pacheco Díaz',
+    cargo: 'Especialista en Nutrición y Dietética',
+    biografia: 'La especialista <span class="text-brand-blue font-semibold">Karen Pacheco Díaz</span> te guiará paso a paso en el aprendizaje de la dietética, la planificación de menús equilibrados y la mejora de los hábitos nutricionales de forma práctica.',
+    fotoUrl: 'assets/imagen_karen.jpg',
+    kicker: 'ESPECIALISTA Y DOCENTE',
     especialidades: [
-      { icon: 'verified', label: 'Nutricionista Clínico' },
-      { icon: 'school', label: 'Docente Certificado' }
+      { icon: 'verified', label: 'Especialista en Nutrición' },
+      { icon: 'school', label: 'Docente Autorizada' }
     ]
   };
 
   ctaData: CourseCtaData = {
-    precio: 220,
-    cuotasInfo: '2 cuotas · Sin matrícula',
+    precio: 250,
+    cuotasInfo: 'Presencial: S/ 250.00 | Online: S/ 100.00',
     plazasDisponibles: 8,
-    whatsappLink: 'https://wa.me/51939371250',
+    whatsappLink: 'https://wa.me/51939371250?text=Hola%2C%20deseo%20matricularme%20en%20el%20Curso%20de%20Diet%C3%A9tica',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
-      '2 meses de clases presenciales cada domingo en Lince, Lima',
-      'Material didáctico digital oficial incluido',
-      'Guías de planes nutricionales de referencia',
-      'Certificado profesional oficial emitido por Insteip'
+      'Modalidad Presencial (Lince): S/ 250.00',
+      'Modalidad Online (Aula Virtual): S/ 100.00',
+      'Duración: 1 mes (Domingos 10:00 a.m. a 1:00 p.m.)',
+      'Inicio oficial: 14 de Junio',
+      'Incluye certificado oficial emitido por INSTEIP',
+      'Temario práctico y cupos limitados'
     ],
-    headlineHtml: 'El momento de iniciar tu<br><span class="text-secondary">carrera en dietética</span> es ahora.',
-    description: 'Cupos <span class="text-brand-blue font-semibold">muy limitados</span> por grupo. Una vez llenos, la siguiente convocatoria puede demorar meses. Reserva tu lugar hoy.',
+    headlineHtml: '¡Inscríbete ahora y empieza a cambiar tu vida de forma saludable!',
+    description: 'Aprende los principios de la dietética, alimentación saludable y hábitos de la mano de nuestra especialista. ¡Cupos limitados!',
     faqs: [
-      { icon: 'help', pregunta: '¿Sin experiencia previa?', respuesta: 'No se requieren conocimientos previos. Comenzamos desde los fundamentos de la nutrición.' },
-      { icon: 'schedule', pregunta: '¿Cuándo son las clases?', respuesta: 'Domingos de 10:00 AM a 1:00 PM en nuestro centro en Lince, Lima.' },
-      { icon: 'verified', pregunta: '¿El certificado es válido?', respuesta: 'Sí. Emitido por Insteip con respaldo institucional reconocido en Perú.' },
-      { icon: 'location_on', pregunta: '¿Dónde son las clases?', respuesta: 'En nuestro centro en Lince, Lima — grupos reducidos de máximo 8 personas.' }
+      { icon: 'help', pregunta: '¿Sin conocimientos previos?', respuesta: 'Completamente desde cero. El curso está diseñado para que cualquiera aprenda a comer mejor.' },
+      { icon: 'payments', pregunta: '¿Cuáles son los costos?', respuesta: 'Presencial S/ 250.00 y Online S/ 100.00. Incluye certificado.' },
+      { icon: 'verified', pregunta: '¿Incluye certificado?', respuesta: 'Sí, recibirás un certificado de INSTEIP al completar la formación.' },
+      { icon: 'location_on', pregunta: '¿Dónde y cuándo es?', respuesta: 'Clases los Domingos de 10:00 a.m. a 1:00 p.m. Presencial en Lince o 100% Online.' }
     ],
-    trustText: 'Pago seguro · Sin compromiso de permanencia · Asesoría personalizada antes de matricularte'
+    trustText: 'Pago seguro · Sello de calidad INSTEIP · Reserva de vacante inmediata'
   };
 
   constructor(private readonly host: ElementRef<HTMLElement>) { }

@@ -1,7 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../../core/services/';
-import { AlumnoDashboardService } from '../../../core/services/';
+import { AuthService, AlumnoDashboardService, ToastService } from '../../../core/services/';
 import { UserProfile } from '../../../core/models/';
 import { AlumnoCurso } from '../../../core/services/';
 import { FormsModule } from '@angular/forms';
@@ -17,6 +16,7 @@ import { matchesQuery, paginate, sortByDate, totalPages, SortOrder } from '../..
 export class PerfilComponent implements OnInit {
   private authService = inject(AuthService);
   private dashboardService = inject(AlumnoDashboardService);
+  private toastService = inject(ToastService);
 
   profile: UserProfile | null = null;
   isLoading = true;
@@ -27,10 +27,31 @@ export class PerfilComponent implements OnInit {
   cursosPage = 1;
   cursosPageSize = 3;
 
+  // Change Password fields
+  currentPassword = '';
+  newPassword = '';
+  confirmNewPassword = '';
+  isSavingPassword = false;
+  passwordError = '';
+  
+  hideCurrentPassword = true;
+  hideNewPassword = true;
+  hideConfirmNewPassword = true;
+
   ngOnInit(): void {
     this.authService.getProfile().subscribe({
       next: (data) => {
         this.profile = data;
+        
+        // Pre-fill current password based on role for local testing convenience
+        if (data.rol === 'ADMINISTRADOR') {
+          this.currentPassword = 'Admin123!';
+        } else if (data.rol === 'DOCENTE') {
+          this.currentPassword = 'Docente123!';
+        } else if (data.rol === 'ALUMNO') {
+          this.currentPassword = 'Alumno123!';
+        }
+
         if (data.rol === 'ALUMNO') {
           this.loadStudentMetrics();
           this.loadRecentCursos();
@@ -99,5 +120,43 @@ export class PerfilComponent implements OnInit {
 
   nextCursosPage(): void {
     if (this.cursosPage < this.totalRecentPages) this.cursosPage++;
+  }
+
+  onChangePassword(): void {
+    if (!this.currentPassword || !this.newPassword || !this.confirmNewPassword) {
+      this.passwordError = 'Por favor complete todos los campos';
+      return;
+    }
+
+    if (this.newPassword.length < 6) {
+      this.passwordError = 'La nueva contraseña debe tener al menos 6 caracteres';
+      return;
+    }
+
+    if (this.newPassword !== this.confirmNewPassword) {
+      this.passwordError = 'La nueva contraseña y la confirmación no coinciden';
+      return;
+    }
+
+    this.passwordError = '';
+    this.isSavingPassword = true;
+
+    this.authService.changePassword({
+      currentPassword: this.currentPassword,
+      newPassword: this.newPassword
+    }).subscribe({
+      next: (res) => {
+        this.isSavingPassword = false;
+        this.toastService.success(res.mensaje || 'Contraseña cambiada exitosamente.');
+        this.currentPassword = this.newPassword;
+        this.newPassword = '';
+        this.confirmNewPassword = '';
+      },
+      error: (err) => {
+        this.isSavingPassword = false;
+        this.passwordError = err.error?.message || 'Error al cambiar la contraseña. Verifique sus datos.';
+        this.toastService.error(this.passwordError, 'Fallo de Cambio de Contraseña');
+      }
+    });
   }
 }

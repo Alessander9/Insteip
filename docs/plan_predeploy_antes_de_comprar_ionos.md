@@ -3,7 +3,9 @@
 ## Estado de ejecución
 
 **Actualizado:** 2026-07-24  
-**Estado:** Preparado para compra de infraestructura. Los bloqueadores locales de datos, secretos y pruebas críticas están cerrados; quedan pendientes de infraestructura y rotación productiva.
+**Estado:** Documento histórico de preparación. La infraestructura actual es Contabo + DonWeb y el despliegue productivo está documentado en `docs/estado_deploy_contabo_donweb.md`.
+
+> No usar este documento como guía operativa actual. Conserva el historial de decisiones y validaciones previas a la compra del VPS.
 
 ## Pendientes antes de comprar el servidor
 

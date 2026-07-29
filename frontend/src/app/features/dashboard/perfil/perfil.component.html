@@ -287,6 +287,60 @@
           </div>
         </div>
       </div>
+
+      <!-- Change Password Card -->
+      <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 shadow-[4px_4px_0px_0px_rgba(15,23,42,0.03)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.22)] transition-colors duration-300">
+        <h2 class="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-wider mb-6 border-b border-slate-100 dark:border-slate-800 pb-3 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-base text-indigo-600">lock</span>
+          Cambiar Contraseña
+        </h2>
+        
+        <form (ngSubmit)="onChangePassword()" class="space-y-4 text-xs">
+          <div>
+            <label class="block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Contraseña Actual</label>
+            <div class="relative">
+              <input [type]="hideCurrentPassword ? 'password' : 'text'" [(ngModel)]="currentPassword" name="currentPassword" placeholder="••••••••" class="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 font-semibold outline-none focus:border-slate-900 dark:focus:border-slate-100">
+              <button type="button" (click)="hideCurrentPassword = !hideCurrentPassword" class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <span class="material-symbols-outlined text-[18px] select-none">
+                  {{ hideCurrentPassword ? 'visibility' : 'visibility_off' }}
+                </span>
+              </button>
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Nueva Contraseña</label>
+            <div class="relative">
+              <input [type]="hideNewPassword ? 'password' : 'text'" [(ngModel)]="newPassword" name="newPassword" placeholder="••••••••" class="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 font-semibold outline-none focus:border-slate-900 dark:focus:border-slate-100">
+              <button type="button" (click)="hideNewPassword = !hideNewPassword" class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <span class="material-symbols-outlined text-[18px] select-none">
+                  {{ hideNewPassword ? 'visibility' : 'visibility_off' }}
+                </span>
+              </button>
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Confirmar Nueva Contraseña</label>
+            <div class="relative">
+              <input [type]="hideConfirmNewPassword ? 'password' : 'text'" [(ngModel)]="confirmNewPassword" name="confirmNewPassword" placeholder="••••••••" class="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 font-semibold outline-none focus:border-slate-900 dark:focus:border-slate-100">
+              <button type="button" (click)="hideConfirmNewPassword = !hideConfirmNewPassword" class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <span class="material-symbols-outlined text-[18px] select-none">
+                  {{ hideConfirmNewPassword ? 'visibility' : 'visibility_off' }}
+                </span>
+              </button>
+            </div>
+          </div>
+          
+          <div *ngIf="passwordError" class="text-[10px] text-red-600 dark:text-red-400 font-bold uppercase tracking-wider">
+            {{ passwordError }}
+          </div>
+          
+          <button type="submit" [disabled]="isSavingPassword" class="w-full text-center py-2.5 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 text-[10px] font-bold uppercase tracking-widest border border-slate-900 dark:border-slate-100 disabled:opacity-50 transition-colors">
+            {{ isSavingPassword ? 'GUARDANDO...' : 'ACTUALIZAR CONTRASEÑA' }}
+          </button>
+        </form>
+      </div>
       
     </div>
 

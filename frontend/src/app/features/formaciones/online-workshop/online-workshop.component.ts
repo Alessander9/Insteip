@@ -87,14 +87,18 @@ const courses: Record<string, WorkshopCourse> = {
     ],
     audienceIntro: 'Dirigido a profesionales y estudiantes que quieren aplicar el contenido con una base clara y ordenada.',
     syllabusData: [
-      { id: 'fase1', tabLabel: '01 · Fundamentos', title: 'Fundamentos de Reflexologia', description: 'Principios, zonas reflejas y criterios basicos para una practica segura.', image: 'assets/plan_estudios_reflexologia_1.jpg', imageAlt: 'Fundamentos de reflexologia', specimenLabel: 'SPECIMEN // MAPA REFLEJO', items: [
-        { number: '01', title: 'Mapa reflejo', badge1: 'Base', badge2: 'Teoria', description: 'Reconocimiento de zonas reflejas principales y su lectura general.' },
-        { number: '02', title: 'Preparacion', badge1: 'Sesion', badge2: 'Orden', description: 'Organizacion del espacio, higiene, postura y comunicacion con el consultante.' }
-      ] },
-      { id: 'fase2', tabLabel: '02 · Aplicacion', title: 'Aplicacion Practica', description: 'Secuencia breve de trabajo y recomendaciones para integrar el contenido.', image: 'assets/plan_estudios_reflexologia_1.jpg', imageAlt: 'Aplicacion de reflexologia', specimenLabel: 'SPECIMEN // SECUENCIA PRACTICA', items: [
-        { number: '01', title: 'Maniobras', badge1: 'Practica', badge2: 'Tecnica', description: 'Presion, ritmo y direccion de maniobras basicas.' },
-        { number: '02', title: 'Integracion', badge1: 'Consulta', badge2: 'Uso', description: 'Como integrar la reflexologia como recurso complementario.' }
-      ] }
+      {
+        id: 'fase1', tabLabel: '01 · Fundamentos', title: 'Fundamentos de Reflexologia', description: 'Principios, zonas reflejas y criterios basicos para una practica segura.', image: 'assets/plan_estudios_reflexologia_1.jpg', imageAlt: 'Fundamentos de reflexologia', specimenLabel: 'SPECIMEN // MAPA REFLEJO', items: [
+          { number: '01', title: 'Mapa reflejo', badge1: 'Base', badge2: 'Teoria', description: 'Reconocimiento de zonas reflejas principales y su lectura general.' },
+          { number: '02', title: 'Preparacion', badge1: 'Sesion', badge2: 'Orden', description: 'Organizacion del espacio, higiene, postura y comunicacion con el consultante.' }
+        ]
+      },
+      {
+        id: 'fase2', tabLabel: '02 · Aplicacion', title: 'Aplicacion Practica', description: 'Secuencia breve de trabajo y recomendaciones para integrar el contenido.', image: 'assets/plan_estudios_reflexologia_1.jpg', imageAlt: 'Aplicacion de reflexologia', specimenLabel: 'SPECIMEN // SECUENCIA PRACTICA', items: [
+          { number: '01', title: 'Maniobras', badge1: 'Practica', badge2: 'Tecnica', description: 'Presion, ritmo y direccion de maniobras basicas.' },
+          { number: '02', title: 'Integracion', badge1: 'Consulta', badge2: 'Uso', description: 'Como integrar la reflexologia como recurso complementario.' }
+        ]
+      }
     ],
     journeySteps: []
   },
@@ -126,14 +130,18 @@ const courses: Record<string, WorkshopCourse> = {
     ],
     audienceIntro: 'Ideal para terapeutas, estudiantes y profesionales que desean sumar una herramienta estetica complementaria.',
     syllabusData: [
-      { id: 'fase1', tabLabel: '01 · Bases esteticas', title: 'Bases de Acupuntura Estetica', description: 'Fundamentos del abordaje facial y objetivos terapeutico-esteticos.', image: 'assets/plan_estudios_estetica_1.jpg', imageAlt: 'Bases de acupuntura estetica', specimenLabel: 'SPECIMEN // ACUPUNTURA ESTETICA', items: [
-        { number: '01', title: 'Criterio facial', badge1: 'Base', badge2: 'Estetica', description: 'Lectura inicial de necesidades y objetivos esteticos frecuentes.' },
-        { number: '02', title: 'Seguridad', badge1: 'Practica', badge2: 'Cuidado', description: 'Indicaciones, cuidados y limites de aplicacion.' }
-      ] },
-      { id: 'fase2', tabLabel: '02 · Protocolos', title: 'Protocolos de Aplicacion', description: 'Secuencias y puntos principales para integrar a una sesion estetica.', image: 'assets/plan_estudios_estetica_2.jpg', imageAlt: 'Protocolos de acupuntura estetica', specimenLabel: 'SPECIMEN // PROTOCOLOS FACIALES', items: [
-        { number: '01', title: 'Puntos clave', badge1: 'Tecnica', badge2: 'Puntos', description: 'Seleccion y combinacion de puntos orientados al trabajo facial.' },
-        { number: '02', title: 'Sesion', badge1: 'Orden', badge2: 'Aplicacion', description: 'Estructura breve de una sesion con enfoque estetico.' }
-      ] }
+      {
+        id: 'fase1', tabLabel: '01 · Bases esteticas', title: 'Bases de Acupuntura Estetica', description: 'Fundamentos del abordaje facial y objetivos terapeutico-esteticos.', image: 'assets/plan_estudios_estetica_1.jpg', imageAlt: 'Bases de acupuntura estetica', specimenLabel: 'SPECIMEN // ACUPUNTURA ESTETICA', items: [
+          { number: '01', title: 'Criterio facial', badge1: 'Base', badge2: 'Estetica', description: 'Lectura inicial de necesidades y objetivos esteticos frecuentes.' },
+          { number: '02', title: 'Seguridad', badge1: 'Practica', badge2: 'Cuidado', description: 'Indicaciones, cuidados y limites de aplicacion.' }
+        ]
+      },
+      {
+        id: 'fase2', tabLabel: '02 · Protocolos', title: 'Protocolos de Aplicacion', description: 'Secuencias y puntos principales para integrar a una sesion estetica.', image: 'assets/plan_estudios_estetica_2.jpg', imageAlt: 'Protocolos de acupuntura estetica', specimenLabel: 'SPECIMEN // PROTOCOLOS FACIALES', items: [
+          { number: '01', title: 'Puntos clave', badge1: 'Tecnica', badge2: 'Puntos', description: 'Seleccion y combinacion de puntos orientados al trabajo facial.' },
+          { number: '02', title: 'Sesion', badge1: 'Orden', badge2: 'Aplicacion', description: 'Estructura breve de una sesion con enfoque estetico.' }
+        ]
+      }
     ],
     journeySteps: []
   },
@@ -165,14 +173,18 @@ const courses: Record<string, WorkshopCourse> = {
     ],
     audienceIntro: 'Dirigido a estudiantes, terapeutas y profesionales del movimiento que desean aplicar stretching con orden.',
     syllabusData: [
-      { id: 'fase1', tabLabel: '01 · Fundamentos', title: 'Bases de Stretching Terapeutico', description: 'Principios de movilidad, elongacion y progresion segura.', image: 'assets/stretching_plan_estudios1.jpg', imageAlt: 'Fundamentos de stretching terapeutico', specimenLabel: 'SPECIMEN // MOVILIDAD Y ELONGACION', items: [
-        { number: '01', title: 'Movilidad', badge1: 'Base', badge2: 'Control', description: 'Conceptos de rango, tension y adaptacion corporal.' },
-        { number: '02', title: 'Seguridad', badge1: 'Cuidado', badge2: 'Progresion', description: 'Como ajustar intensidad y evitar molestias innecesarias.' }
-      ] },
-      { id: 'fase2', tabLabel: '02 · Rutinas', title: 'Rutinas y Aplicacion', description: 'Secuencias practicas para aplicar en bienestar y cuidado corporal.', image: 'assets/stretching_plan_estudios2.jpg', imageAlt: 'Rutinas de stretching terapeutico', specimenLabel: 'SPECIMEN // SECUENCIAS PRACTICAS', items: [
-        { number: '01', title: 'Secuencias', badge1: 'Practica', badge2: 'Rutina', description: 'Orden de ejercicios para zonas frecuentes de tension.' },
-        { number: '02', title: 'Integracion', badge1: 'Uso', badge2: 'Bienestar', description: 'Como sumar stretching a una sesion o rutina personal.' }
-      ] }
+      {
+        id: 'fase1', tabLabel: '01 · Fundamentos', title: 'Bases de Stretching Terapeutico', description: 'Principios de movilidad, elongacion y progresion segura.', image: 'assets/stretching_plan_estudios1.jpg', imageAlt: 'Fundamentos de stretching terapeutico', specimenLabel: 'SPECIMEN // MOVILIDAD Y ELONGACION', items: [
+          { number: '01', title: 'Movilidad', badge1: 'Base', badge2: 'Control', description: 'Conceptos de rango, tension y adaptacion corporal.' },
+          { number: '02', title: 'Seguridad', badge1: 'Cuidado', badge2: 'Progresion', description: 'Como ajustar intensidad y evitar molestias innecesarias.' }
+        ]
+      },
+      {
+        id: 'fase2', tabLabel: '02 · Rutinas', title: 'Rutinas y Aplicacion', description: 'Secuencias practicas para aplicar en bienestar y cuidado corporal.', image: 'assets/stretching_plan_estudios2.jpg', imageAlt: 'Rutinas de stretching terapeutico', specimenLabel: 'SPECIMEN // SECUENCIAS PRACTICAS', items: [
+          { number: '01', title: 'Secuencias', badge1: 'Practica', badge2: 'Rutina', description: 'Orden de ejercicios para zonas frecuentes de tension.' },
+          { number: '02', title: 'Integracion', badge1: 'Uso', badge2: 'Bienestar', description: 'Como sumar stretching a una sesion o rutina personal.' }
+        ]
+      }
     ],
     journeySteps: []
   },
@@ -204,14 +216,18 @@ const courses: Record<string, WorkshopCourse> = {
     ],
     audienceIntro: 'Pensado para profesionales y estudiantes que buscan una vision integrada entre acupuntura y fisioterapia.',
     syllabusData: [
-      { id: 'fase1', tabLabel: '01 · Evaluacion', title: 'Evaluacion y Criterio Clinico', description: 'Bases para comprender paralisis facial y objetivos de intervencion.', image: 'assets/paralisis_estudiar1.jpg', imageAlt: 'Evaluacion en paralisis facial', specimenLabel: 'SPECIMEN // EVALUACION CLINICA', items: [
-        { number: '01', title: 'Cuadro clinico', badge1: 'Base', badge2: 'Clinica', description: 'Reconocimiento de signos, necesidades y objetivos terapeuticos.' },
-        { number: '02', title: 'Plan', badge1: 'Orden', badge2: 'Ruta', description: 'Organizacion de prioridades para una intervencion complementaria.' }
-      ] },
-      { id: 'fase2', tabLabel: '02 · Intervencion', title: 'Acupuntura y Fisioterapia', description: 'Recursos practicos para acompanar la recuperacion funcional.', image: 'assets/paralisis_estudiar2.jpg', imageAlt: 'Intervencion en paralisis facial', specimenLabel: 'SPECIMEN // RECURSOS TERAPEUTICOS', items: [
-        { number: '01', title: 'Acupuntura', badge1: 'Puntos', badge2: 'Tecnica', description: 'Criterio de puntos y estimulos complementarios.' },
-        { number: '02', title: 'Ejercicio', badge1: 'Funcion', badge2: 'Practica', description: 'Pautas funcionales y recomendaciones de seguimiento.' }
-      ] }
+      {
+        id: 'fase1', tabLabel: '01 · Evaluacion', title: 'Evaluacion y Criterio Clinico', description: 'Bases para comprender paralisis facial y objetivos de intervencion.', image: 'assets/paralisis_estudiar1.jpg', imageAlt: 'Evaluacion en paralisis facial', specimenLabel: 'SPECIMEN // EVALUACION CLINICA', items: [
+          { number: '01', title: 'Cuadro clinico', badge1: 'Base', badge2: 'Clinica', description: 'Reconocimiento de signos, necesidades y objetivos terapeuticos.' },
+          { number: '02', title: 'Plan', badge1: 'Orden', badge2: 'Ruta', description: 'Organizacion de prioridades para una intervencion complementaria.' }
+        ]
+      },
+      {
+        id: 'fase2', tabLabel: '02 · Intervencion', title: 'Acupuntura y Fisioterapia', description: 'Recursos practicos para acompanar la recuperacion funcional.', image: 'assets/paralisis_estudiar2.jpg', imageAlt: 'Intervencion en paralisis facial', specimenLabel: 'SPECIMEN // RECURSOS TERAPEUTICOS', items: [
+          { number: '01', title: 'Acupuntura', badge1: 'Puntos', badge2: 'Tecnica', description: 'Criterio de puntos y estimulos complementarios.' },
+          { number: '02', title: 'Ejercicio', badge1: 'Funcion', badge2: 'Practica', description: 'Pautas funcionales y recomendaciones de seguimiento.' }
+        ]
+      }
     ],
     journeySteps: []
   },
@@ -243,14 +259,18 @@ const courses: Record<string, WorkshopCourse> = {
     ],
     audienceIntro: 'Dirigido a profesionales y estudiantes que desean abordar control de peso desde terapias complementarias.',
     syllabusData: [
-      { id: 'fase1', tabLabel: '01 · Fundamentos', title: 'Bases del Control de Peso', description: 'Criterios iniciales, objetivos y lectura complementaria del caso.', image: 'assets/auriculoterapia_control_peso_plan_estudios_1.jpg', imageAlt: 'Bases de control de peso', specimenLabel: 'SPECIMEN // CONTROL DE PESO', items: [
-        { number: '01', title: 'Evaluacion', badge1: 'Base', badge2: 'Criterio', description: 'Identificacion de objetivos y factores frecuentes.' },
-        { number: '02', title: 'Plan', badge1: 'Ruta', badge2: 'Objetivos', description: 'Estructura de intervencion complementaria.' }
-      ] },
-      { id: 'fase2', tabLabel: '02 · Protocolos', title: 'Auriculoterapia y Acupuntura', description: 'Protocolos combinados para acompanar control de peso.', image: 'assets/auriculoterapia_control_peso_plan_estudios_2.jpg', imageAlt: 'Protocolos para control de peso', specimenLabel: 'SPECIMEN // PROTOCOLOS COMBINADOS', items: [
-        { number: '01', title: 'Auricular', badge1: 'Puntos', badge2: 'Oreja', description: 'Mapas y puntos auriculares frecuentes.' },
-        { number: '02', title: 'Corporal', badge1: 'Puntos', badge2: 'Acupuntura', description: 'Seleccion de puntos corporales y seguimiento.' }
-      ] }
+      {
+        id: 'fase1', tabLabel: '01 · Fundamentos', title: 'Bases del Control de Peso', description: 'Criterios iniciales, objetivos y lectura complementaria del caso.', image: 'assets/auriculoterapia_control_peso_plan_estudios_1.jpg', imageAlt: 'Bases de control de peso', specimenLabel: 'SPECIMEN // CONTROL DE PESO', items: [
+          { number: '01', title: 'Evaluacion', badge1: 'Base', badge2: 'Criterio', description: 'Identificacion de objetivos y factores frecuentes.' },
+          { number: '02', title: 'Plan', badge1: 'Ruta', badge2: 'Objetivos', description: 'Estructura de intervencion complementaria.' }
+        ]
+      },
+      {
+        id: 'fase2', tabLabel: '02 · Protocolos', title: 'Auriculoterapia y Acupuntura', description: 'Protocolos combinados para acompanar control de peso.', image: 'assets/auriculoterapia_control_peso_plan_estudios_2.jpg', imageAlt: 'Protocolos para control de peso', specimenLabel: 'SPECIMEN // PROTOCOLOS COMBINADOS', items: [
+          { number: '01', title: 'Auricular', badge1: 'Puntos', badge2: 'Oreja', description: 'Mapas y puntos auriculares frecuentes.' },
+          { number: '02', title: 'Corporal', badge1: 'Puntos', badge2: 'Acupuntura', description: 'Seleccion de puntos corporales y seguimiento.' }
+        ]
+      }
     ],
     journeySteps: []
   }

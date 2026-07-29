@@ -11,3 +11,5 @@ export { ModuloRequest, ModuloResponse } from './modulo.model';
 export { TokenRefreshRequest, TokenRefreshResponse } from './token-refresh.model';
 export { UserProfile } from './user-profile.model';
 export { VideoRequest, VideoResponse } from './video.model';
+export { ChangePasswordRequest } from './change-password-request.model';
+

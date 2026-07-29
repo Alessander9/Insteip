@@ -145,6 +145,20 @@ export class PublicCursosComponent {
       image: 'assets/reflexologia_online.jpg',
       customLink: '/cursos/reflexologia-online'
     },
+    {
+      slug: 'seminario-reflexologia-online',
+      title: 'Seminario de Reflexología (Online)',
+      category: 'CORTOS',
+      modality: 'ONLINE',
+      icon: 'footprint',
+      rating: 4.9,
+      duration: 'Clases en vivo',
+      description: 'Especialízate en Reflexología Podal con enfoque clínico y su integración con principios de Acupuntura.',
+      students: '+120',
+      price: 'S/ 150',
+      image: 'assets/seminario_reflexologia.jpg',
+      customLink: '/cursos/seminario-reflexologia-online'
+    },
 
     // 5 Cursos Presenciales
     {
@@ -210,12 +224,26 @@ export class PublicCursosComponent {
       modality: 'PRESENCIAL',
       icon: 'nutrition',
       rating: 4.8,
-      duration: '2 meses',
+      duration: '1 mes',
       description: 'Aprende a evaluar el estado nutricional y diseñar planes dietéticos terapéuticos para las condiciones de salud más frecuentes.',
       students: '+210',
-      price: 'S/ 220/mes',
+      price: 'S/ 250/mes',
       image: 'assets/curso_dietetica.jpg',
       customLink: '/cursos/dietetica-presencial'
+    },
+    {
+      slug: 'fitoterapia-presencial',
+      title: 'Fitoterapia',
+      category: 'CORTOS',
+      modality: 'PRESENCIAL',
+      icon: 'local_pharmacy',
+      rating: 4.9,
+      duration: '1 mes',
+      description: 'Aprende el uso terapéutico de las plantas medicinales de forma segura, práctica y basada en la evidencia científica.',
+      students: '+180',
+      price: 'S/ 250/mes',
+      image: 'assets/fitoterapia_insteip.jpeg',
+      customLink: '/cursos/fitoterapia-presencial'
     }
   ];
 

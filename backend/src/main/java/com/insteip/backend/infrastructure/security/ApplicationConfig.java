@@ -21,13 +21,16 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> usuarioRepository.findByCorreo(username)
-                .map(u -> org.springframework.security.core.userdetails.User.builder()
-                        .username(u.getCorreo())
-                        .password(u.getPasswordHash())
-                        .authorities("ROLE_" + u.getRol().getNombre()) // Convierte ADMINISTRADOR a ROLE_ADMINISTRADOR, etc.
-                        .build())
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con correo: " + username));
+        return username -> {
+            String cleanUsername = username != null ? username.trim() : "";
+            return usuarioRepository.findByCorreo(cleanUsername)
+                    .map(u -> org.springframework.security.core.userdetails.User.builder()
+                            .username(u.getCorreo())
+                            .password(u.getPasswordHash())
+                            .authorities("ROLE_" + u.getRol().getNombre()) // Convierte ADMINISTRADOR a ROLE_ADMINISTRADOR, etc.
+                            .build())
+                    .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con correo: " + cleanUsername));
+        };
     }
 
     @Bean

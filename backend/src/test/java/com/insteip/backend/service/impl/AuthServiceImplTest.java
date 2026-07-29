@@ -11,6 +11,8 @@ import com.insteip.backend.domain.entity.Usuario;
 import com.insteip.backend.domain.exception.BadRequestException;
 import com.insteip.backend.repository.LoginAuditoriaRepository;
 import com.insteip.backend.repository.RefreshTokenRepository;
+import com.insteip.backend.domain.dto.auth.ChangePasswordRequest;
+import com.insteip.backend.service.interfaces.AuditoriaService;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.infrastructure.security.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,6 +50,7 @@ class AuthServiceImplTest {
     @Mock private RefreshTokenRepository refreshTokenRepository;
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private HttpServletRequest httpServletRequest;
+    @Mock private AuditoriaService auditoriaService;
 
     private JwtService jwtService;
     private AuthServiceImpl authService;
@@ -69,7 +72,8 @@ class AuthServiceImplTest {
                 jwtService,
                 passwordEncoder,
                 httpServletRequest,
-                java.util.Optional.empty()
+                java.util.Optional.empty(),
+                auditoriaService
         );
 
         Rol rol = Rol.builder().id(1L).nombre("ADMINISTRADOR").estado(true).build();
@@ -196,5 +200,32 @@ class AuthServiceImplTest {
         assertNull(usuario.getPasswordResetToken());
         assertNull(usuario.getPasswordResetTokenExpira());
         verify(usuarioRepository).save(usuario);
+    }
+
+    @Test
+    void changePassword_should_update_password_when_current_password_matches() {
+        ChangePasswordRequest request = new ChangePasswordRequest("OldPassword123!", "NewPassword123!");
+        when(usuarioRepository.findByCorreo(usuario.getCorreo())).thenReturn(Optional.of(usuario));
+        when(passwordEncoder.matches("OldPassword123!", usuario.getPasswordHash())).thenReturn(true);
+        when(passwordEncoder.encode("NewPassword123!")).thenReturn("new-hash");
+
+        authService.changePassword(usuario.getCorreo(), request);
+
+        assertEquals("new-hash", usuario.getPasswordHash());
+        verify(usuarioRepository).save(usuario);
+        verify(auditoriaService).registrarEvento(eq("AUTENTICACIÓN"), eq("CAMBIAR_PASSWORD"), anyString());
+    }
+
+    @Test
+    void changePassword_should_throw_exception_when_current_password_mismatches() {
+        ChangePasswordRequest request = new ChangePasswordRequest("wrong-password", "NewPassword123!");
+        when(usuarioRepository.findByCorreo(usuario.getCorreo())).thenReturn(Optional.of(usuario));
+        when(passwordEncoder.matches("wrong-password", usuario.getPasswordHash())).thenReturn(false);
+
+        assertThrows(BadRequestException.class, () -> {
+            authService.changePassword(usuario.getCorreo(), request);
+        });
+
+        verify(usuarioRepository, never()).save(any(Usuario.class));
     }
 }

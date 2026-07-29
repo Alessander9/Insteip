@@ -48,8 +48,7 @@
       try {
         const themeKey = 'insteip-theme';
         const savedTheme = localStorage.getItem(themeKey);
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const shouldBeDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+        const shouldBeDark = savedTheme === 'dark';
 
         if (shouldBeDark) {
           document.documentElement.classList.add('dark');

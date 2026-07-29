@@ -43,6 +43,22 @@ export const routes: Routes = [
     loadComponent: () => import('./features/cursos/cursos.component').then(m => m.PublicCursosComponent)
   },
   {
+    path: 'cursos-presenciales',
+    loadComponent: () => import('./features/cursos-presenciales/cursos-presenciales.component').then(m => m.CursosPresencialesComponent)
+  },
+  {
+    path: 'cursos-presenciales.html',
+    loadComponent: () => import('./features/cursos-presenciales/cursos-presenciales.component').then(m => m.CursosPresencialesComponent)
+  },
+  {
+    path: 'cursos-online',
+    loadComponent: () => import('./features/cursos-online/cursos-online.component').then(m => m.CursosOnlineComponent)
+  },
+  {
+    path: 'cursos-online.html',
+    loadComponent: () => import('./features/cursos-online/cursos-online.component').then(m => m.CursosOnlineComponent)
+  },
+  {
     path: 'cursos/auriculoterapia',
     loadComponent: () => import('./features/formaciones/auriculoterapia/auriculoterapia.component').then(m => m.AuriculoterapiaComponent)
   },
@@ -87,6 +103,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/formaciones/online-workshop/online-workshop.component').then(m => m.OnlineWorkshopComponent)
   },
   {
+    path: 'cursos/seminario-reflexologia-online',
+    loadComponent: () => import('./features/formaciones/seminario-reflexologia-online/seminario-reflexologia-online.component').then(m => m.SeminarioReflexologiaOnlineComponent)
+  },
+  {
     path: 'cursos/digitopresion-presencial',
     loadComponent: () => import('./features/formaciones/digitopresion-presencial/digitopresion-presencial.component').then(m => m.DigitopresionPresencialComponent)
   },
@@ -109,6 +129,10 @@ export const routes: Routes = [
   {
     path: 'cursos/dietetica-presencial',
     loadComponent: () => import('./features/formaciones/dietetica-presencial/dietetica-presencial.component').then(m => m.DieteticaPresencialComponent)
+  },
+  {
+    path: 'cursos/fitoterapia-presencial',
+    loadComponent: () => import('./features/formaciones/fitoterapia-presencial/fitoterapia-presencial.component').then(m => m.FitoterapiaPresencialComponent)
   },
   {
     path: 'cursos/:id',

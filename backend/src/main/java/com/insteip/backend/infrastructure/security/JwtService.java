@@ -21,7 +21,7 @@ public class JwtService {
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
 
-    @Value("${application.security.jwt.expiration:900000}") // 15 minutos en milisegundos
+    @Value("${application.security.jwt.expiration:1800000}") // 30 minutos en milisegundos
     private long jwtExpiration;
 
     public String extractUsername(String token) {

@@ -1,7 +1,7 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, switchMap, throwError } from 'rxjs';
+import { catchError, filter, switchMap, take, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { ToastService } from '../services/toast.service';
 
@@ -49,20 +49,35 @@ export const securityInterceptor: HttpInterceptorFn = (req, next) => {
       const refreshToken = authService.getRefreshToken();
       if (!refreshToken) {
         authService.logout();
-        toastService.warning('Tu sesión ha expirado. Por favor ingresa tus credenciales nuevamente.', 'Sesión Expirada');
-        router.navigate(['/login']);
+        window.location.href = '/login?expired=true';
         return throwError(() => error);
       }
 
+      // Si ya hay un refresco de token en proceso, esperar el nuevo token
+      if (authService.isRefreshing) {
+        return authService.refreshTokenSubject.pipe(
+          filter(token => token !== null),
+          take(1),
+          switchMap(newToken => {
+            const retryReq = req.clone({
+              setHeaders: {
+                Authorization: `Bearer ${newToken}`
+              }
+            });
+            return next(retryReq);
+          })
+        );
+      }
+
+      // Si no hay un refresco en curso, iniciamos uno
+      authService.isRefreshing = true;
+      authService.refreshTokenSubject.next(null);
+
       return authService.refreshToken().pipe(
-        switchMap(() => {
-          const newToken = authService.getToken();
-          if (!newToken) {
-            authService.logout();
-            toastService.warning('Tu sesión ha expirado. Por favor ingresa tus credenciales nuevamente.', 'Sesión Expirada');
-            router.navigate(['/login']);
-            return throwError(() => error);
-          }
+        switchMap(tokenResponse => {
+          authService.isRefreshing = false;
+          const newToken = tokenResponse?.token || '';
+          authService.refreshTokenSubject.next(newToken);
 
           const retryReq = req.clone({
             setHeaders: {
@@ -72,9 +87,10 @@ export const securityInterceptor: HttpInterceptorFn = (req, next) => {
           return next(retryReq);
         }),
         catchError(refreshError => {
+          authService.isRefreshing = false;
+          authService.refreshTokenSubject.error(refreshError);
           authService.logout();
-          toastService.warning('Tu sesión ha expirado. Por favor ingresa tus credenciales nuevamente.', 'Sesión Expirada');
-          router.navigate(['/login']);
+          window.location.href = '/login?expired=true';
           return throwError(() => refreshError);
         })
       );

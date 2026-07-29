@@ -45,10 +45,10 @@
         <figure class="ac-visual__frame">
           <img [src]="course.heroImage" [alt]="course.heroAlt" fetchpriority="high">
           <div class="ac-visual__wash" aria-hidden="true"></div>
-          <figcaption>
+          <!--  <figcaption>
             <span class="material-symbols-outlined">verified</span>
             Seminario online INSTEIP
-          </figcaption>
+          </figcaption> -->
         </figure>
 
         <div class="ac-visual__card ac-visual__card--top">
@@ -56,10 +56,10 @@
           <div><strong>Certificación</strong><small>Certificado INSTEIP</small></div>
         </div>
 
-        <div class="ac-visual__card ac-visual__card--bottom">
+        <!--  <div class="ac-visual__card ac-visual__card--bottom">
           <span class="ac-live-dot"></span>
           <div><strong>Clases en vivo</strong><small>1 mes de duración</small></div>
-        </div>
+        </div> -->
       </div>
 
       <div class="ac-facts" aria-label="Información principal del curso">
@@ -104,7 +104,8 @@
               <h3>{{ course.benefits[0].title }}</h3>
               <p>{{ course.benefits[0].description }}</p>
               <ul>
-                <li *ngFor="let item of course.benefits[0].items"><span class="material-symbols-outlined">check</span>{{ item }}</li>
+                <li *ngFor="let item of course.benefits[0].items"><span class="material-symbols-outlined">check</span>{{
+                  item }}</li>
               </ul>
             </div>
 
@@ -114,7 +115,8 @@
               <h3>{{ course.benefits[1].title }}</h3>
               <p>{{ course.benefits[1].description }}</p>
               <ul>
-                <li *ngFor="let item of course.benefits[1].items"><span class="material-symbols-outlined">check</span>{{ item }}</li>
+                <li *ngFor="let item of course.benefits[1].items"><span class="material-symbols-outlined">check</span>{{
+                  item }}</li>
               </ul>
             </div>
 
@@ -124,7 +126,8 @@
               <h3>{{ course.benefits[2].title }}</h3>
               <p>{{ course.benefits[2].description }}</p>
               <ul>
-                <li *ngFor="let item of course.benefits[2].items"><span class="material-symbols-outlined">check</span>{{ item }}</li>
+                <li *ngFor="let item of course.benefits[2].items"><span class="material-symbols-outlined">check</span>{{
+                  item }}</li>
               </ul>
             </div>
           </ng-container>
@@ -135,8 +138,7 @@
             </button>
             <div class="ac-slider-dots">
               <button *ngFor="let index of [0, 1, 2]" type="button" (click)="setBenefit(index)"
-                [class.is-active]="activeBenefitIndex === index"
-                [attr.aria-label]="'Ir al beneficio ' + (index + 1)"
+                [class.is-active]="activeBenefitIndex === index" [attr.aria-label]="'Ir al beneficio ' + (index + 1)"
                 [attr.aria-current]="activeBenefitIndex === index ? 'true' : null"></button>
             </div>
             <button type="button" (click)="nextBenefit()" aria-label="Siguiente beneficio">
@@ -145,12 +147,20 @@
           </div>
         </div>
 
-        <div class="ac-benefit-media">
-          <img *ngIf="activeBenefitIndex === 0" class="animate-scale-up" [src]="course.sliderImages[0]" [alt]="course.benefits[0].title">
-          <img *ngIf="activeBenefitIndex === 1" class="animate-scale-up" [src]="course.sliderImages[1]" [alt]="course.benefits[1].title">
-          <img *ngIf="activeBenefitIndex === 2" class="animate-scale-up" [src]="course.sliderImages[2]" [alt]="course.benefits[2].title">
+        <div class="ac-benefit-media cursor-pointer" (click)="openBenefitLightbox()">
+          <img *ngIf="activeBenefitIndex === 0" class="animate-scale-up" [src]="course.sliderImages[0]"
+            [alt]="course.benefits[0].title">
+          <img *ngIf="activeBenefitIndex === 1" class="animate-scale-up" [src]="course.sliderImages[1]"
+            [alt]="course.benefits[1].title">
+          <img *ngIf="activeBenefitIndex === 2" class="animate-scale-up" [src]="course.sliderImages[2]"
+            [alt]="course.benefits[2].title">
           <div class="ac-benefit-media__overlay"></div>
           <span class="ac-benefit-media__badge">INSTEIP · Formación profesional</span>
+          
+          <button type="button" (click)="openBenefitLightbox(); $event.stopPropagation()" class="absolute bottom-4 right-4 z-30 flex items-center gap-1.5 px-3 py-1.5 bg-slate-950/75 hover:bg-slate-950 text-white rounded-md text-[9px] font-bold uppercase tracking-wider backdrop-blur-sm transition-all shadow-lg active:scale-95 border border-white/10">
+            <span class="material-symbols-outlined text-[12px] block">zoom_in</span>
+            Ampliar Imagen
+          </button>
         </div>
       </div>
     </div>
@@ -166,15 +176,15 @@
 
       <div class="ac-journey__content">
         <div class="ac-journey__tabs" role="tablist" aria-label="Etapas de formación">
-          <button *ngFor="let step of journeySteps; let i = index" type="button" role="tab"
-            (click)="setJourneyStep(i)" [class.is-active]="activeJourneyStep === i"
-            [attr.aria-selected]="activeJourneyStep === i">
+          <button *ngFor="let step of journeySteps; let i = index" type="button" role="tab" (click)="setJourneyStep(i)"
+            [class.is-active]="activeJourneyStep === i" [attr.aria-selected]="activeJourneyStep === i">
             <span>0{{ i + 1 }}</span>
             {{ step.shortTitle }}
           </button>
         </div>
 
-        <article class="ac-journey__panel animate-scale-up" [ngClass]="'ac-journey__panel--step-' + activeJourneyStep" *ngIf="journeySteps[activeJourneyStep] as step">
+        <article class="ac-journey__panel animate-scale-up" [ngClass]="'ac-journey__panel--step-' + activeJourneyStep"
+          *ngIf="journeySteps[activeJourneyStep] as step">
           <div class="ac-journey__icon"><span class="material-symbols-outlined">{{ step.icon }}</span></div>
           <div>
             <span class="ac-journey__period">{{ step.period }}</span>
@@ -182,7 +192,8 @@
             <p>{{ step.description }}</p>
           </div>
           <ul>
-            <li *ngFor="let outcome of step.outcomes"><span class="material-symbols-outlined">check_circle</span>{{ outcome }}</li>
+            <li *ngFor="let outcome of step.outcomes"><span class="material-symbols-outlined">check_circle</span>{{
+              outcome }}</li>
           </ul>
         </article>
       </div>
@@ -194,7 +205,8 @@
   <section class="ac-audience" data-reveal>
     <div class="ac-shell">
       <div class="ac-audience__intro">
-        <span class="ac-eyebrow"><span class="material-symbols-outlined">trending_up</span> Diseñado para avanzar contigo</span>
+        <span class="ac-eyebrow"><span class="material-symbols-outlined">trending_up</span> Diseñado para avanzar
+          contigo</span>
         <h2>Un curso para aplicar con <span>base clara.</span></h2>
         <p>{{ course.audienceIntro }}</p>
         <div class="ac-audience__checks">
@@ -236,3 +248,16 @@
 </main>
 
 <app-footer></app-footer>
+
+<!-- Lightbox Modal Overlay for Benefits Showcase -->
+<div *ngIf="showBenefitLightbox" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[9999] flex items-center justify-center p-4 transition-opacity duration-300" (click)="closeBenefitLightbox()">
+  <!-- Close Button -->
+  <button type="button" (click)="closeBenefitLightbox()" class="absolute top-6 right-6 text-white/75 hover:text-white transition-all p-2 rounded-full hover:bg-white/10 flex z-50">
+    <span class="material-symbols-outlined text-2xl">close</span>
+  </button>
+  
+  <!-- Image Container -->
+  <div class="max-w-4xl max-h-[85vh] w-full flex items-center justify-center relative" (click)="$event.stopPropagation()">
+    <img [src]="benefitLightboxImage" alt="Imagen de formación ampliada" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl border border-white/15 animate-[fadeIn_0.2s_ease-out]" />
+  </div>
+</div>

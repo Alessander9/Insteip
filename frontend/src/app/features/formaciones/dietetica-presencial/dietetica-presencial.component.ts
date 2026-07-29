@@ -31,6 +31,9 @@ export class DieteticaPresencialComponent implements OnInit, AfterViewInit, OnDe
   activeJourneyStep = 0;
   private autoplayInterval?: ReturnType<typeof setInterval>;
 
+  showBenefitLightbox = false;
+  benefitLightboxImage = '';
+
   readonly journeySteps = [
     {
       shortTitle: 'Principios',
@@ -143,6 +146,23 @@ export class DieteticaPresencialComponent implements OnInit, AfterViewInit, OnDe
   setBenefit(i: number): void { this.resetAutoplay(); this.activeBenefitIndex = i; }
 
   setJourneyStep(index: number): void { this.activeJourneyStep = index; }
+
+  openBenefitLightbox(): void {
+    const images = ['assets/dietetica_1.jpg', 'assets/dietetica_2.jpg', 'assets/dietetica_3.jpg'];
+    this.benefitLightboxImage = images[this.activeBenefitIndex];
+    this.showBenefitLightbox = true;
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  closeBenefitLightbox(): void {
+    this.showBenefitLightbox = false;
+    this.benefitLightboxImage = '';
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = '';
+    }
+  }
 
   ngAfterViewInit(): void {
     if (typeof window === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;

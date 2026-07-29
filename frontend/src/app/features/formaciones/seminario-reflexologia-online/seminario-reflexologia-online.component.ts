@@ -68,6 +68,9 @@ export class SeminarioReflexologiaOnlineComponent implements OnInit, AfterViewIn
   activeJourneyStep = 0;
   private autoplayInterval?: ReturnType<typeof setInterval>;
 
+  showBenefitLightbox = false;
+  benefitLightboxImage = '';
+
   readonly course: WorkshopCourse = {
     slug: 'seminario-reflexologia-online',
     title: 'Reflexología Podal',
@@ -275,6 +278,22 @@ export class SeminarioReflexologiaOnlineComponent implements OnInit, AfterViewIn
 
   setJourneyStep(index: number): void {
     this.activeJourneyStep = index;
+  }
+
+  openBenefitLightbox(): void {
+    this.benefitLightboxImage = this.course.sliderImages[this.activeBenefitIndex];
+    this.showBenefitLightbox = true;
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  closeBenefitLightbox(): void {
+    this.showBenefitLightbox = false;
+    this.benefitLightboxImage = '';
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = '';
+    }
   }
 
   ngAfterViewInit(): void {

@@ -24,6 +24,8 @@ export class ReflexologiaPodalPresencialComponent implements AfterViewInit, OnDe
   }
 
   activeBenefitIndex = 0;
+  showBenefitLightbox = false;
+  benefitLightboxImage = '';
   prevBenefit() {
     this.activeBenefitIndex = this.activeBenefitIndex === 0 ? 2 : this.activeBenefitIndex - 1;
   }
@@ -32,6 +34,27 @@ export class ReflexologiaPodalPresencialComponent implements AfterViewInit, OnDe
   }
   setBenefit(i: number) {
     this.activeBenefitIndex = i;
+  }
+
+    openBenefitLightbox(): void {
+    const images = [
+      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=70',
+      'https://images.unsplash.com/photo-1589330694653-ded6df53f7ee?auto=format&fit=crop&w=600&q=70',
+      'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=70'
+    ];
+    this.benefitLightboxImage = images[this.activeBenefitIndex];
+    this.showBenefitLightbox = true;
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  closeBenefitLightbox(): void {
+    this.showBenefitLightbox = false;
+    this.benefitLightboxImage = '';
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = '';
+    }
   }
 
   ngAfterViewInit() {

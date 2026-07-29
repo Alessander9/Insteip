@@ -328,6 +328,8 @@ Object.values(courses).forEach(course => {
 export class OnlineWorkshopComponent implements OnInit, AfterViewInit, OnDestroy {
   private animationContext?: gsap.Context;
   activeBenefitIndex = 0;
+  showBenefitLightbox = false;
+  benefitLightboxImage = '';
   activeJourneyStep = 0;
   private autoplayInterval?: ReturnType<typeof setInterval>;
 
@@ -454,6 +456,22 @@ export class OnlineWorkshopComponent implements OnInit, AfterViewInit, OnDestroy
 
   setJourneyStep(index: number): void {
     this.activeJourneyStep = index;
+  }
+
+    openBenefitLightbox(): void {
+    this.benefitLightboxImage = this.course.sliderImages[this.activeBenefitIndex];
+    this.showBenefitLightbox = true;
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  closeBenefitLightbox(): void {
+    this.showBenefitLightbox = false;
+    this.benefitLightboxImage = '';
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = '';
+    }
   }
 
   ngAfterViewInit(): void {

@@ -28,6 +28,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 export class AuriculoterapiaComponent implements OnInit, AfterViewInit, OnDestroy {
   private animationContext?: gsap.Context;
   activeBenefitIndex = 0;
+  showBenefitLightbox = false;
+  benefitLightboxImage = '';
   activeJourneyStep = 0;
   private autoplayInterval?: ReturnType<typeof setInterval>;
 
@@ -184,6 +186,27 @@ export class AuriculoterapiaComponent implements OnInit, AfterViewInit, OnDestro
 
   setJourneyStep(index: number): void {
     this.activeJourneyStep = index;
+  }
+
+    openBenefitLightbox(): void {
+    const images = [
+      'assets/AuriculoterapiaInsteip2.jpg',
+      'assets/AuriculoterapiaInsteip3.jpg',
+      'assets/AuriculoterapiaInsteip4.jpg'
+    ];
+    this.benefitLightboxImage = images[this.activeBenefitIndex];
+    this.showBenefitLightbox = true;
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  closeBenefitLightbox(): void {
+    this.showBenefitLightbox = false;
+    this.benefitLightboxImage = '';
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = '';
+    }
   }
 
   ngAfterViewInit(): void {

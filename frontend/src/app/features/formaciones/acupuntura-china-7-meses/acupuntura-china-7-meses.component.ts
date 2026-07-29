@@ -28,6 +28,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 export class AcupunturaChina7MesesComponent implements OnInit, AfterViewInit, OnDestroy {
   private animationContext?: gsap.Context;
   activeBenefitIndex = 0;
+  showBenefitLightbox = false;
+  benefitLightboxImage = '';
   activeJourneyStep = 0;
   private autoplayInterval?: ReturnType<typeof setInterval>;
   private hostElement: HTMLElement;
@@ -157,6 +159,27 @@ export class AcupunturaChina7MesesComponent implements OnInit, AfterViewInit, On
   setBenefit(i: number): void { this.resetAutoplay(); this.activeBenefitIndex = i; }
 
   setJourneyStep(index: number): void { this.activeJourneyStep = index; }
+
+    openBenefitLightbox(): void {
+    const images = [
+      'assets/acupuntura_7_meses_estudios_1.jpg',
+      'assets/acupuntura_7_meses_estudios_2.jpg',
+      'assets/acupuntura_7_meses_estudios_3.jpg'
+    ];
+    this.benefitLightboxImage = images[this.activeBenefitIndex];
+    this.showBenefitLightbox = true;
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  closeBenefitLightbox(): void {
+    this.showBenefitLightbox = false;
+    this.benefitLightboxImage = '';
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = '';
+    }
+  }
 
   ngAfterViewInit(): void {
     if (typeof window === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;

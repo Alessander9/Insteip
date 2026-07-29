@@ -28,6 +28,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 export class MasajeTerapeticoComponent implements OnInit, AfterViewInit, OnDestroy {
   private animationContext?: gsap.Context;
   activeBenefitIndex = 0;
+  showBenefitLightbox = false;
+  benefitLightboxImage = '';
   activeJourneyStep = 0;
   private autoplayInterval?: any;
 
@@ -204,6 +206,27 @@ export class MasajeTerapeticoComponent implements OnInit, AfterViewInit, OnDestr
 
   setJourneyStep(index: number): void {
     this.activeJourneyStep = index;
+  }
+
+    openBenefitLightbox(): void {
+    const images = [
+      'assets/MasajeDigitoPresionInsteip4.jpg',
+      'assets/MasajeDigitoPresionInsteip3.jpg',
+      'assets/MasajeDigitoPresionInsteip2.jpg'
+    ];
+    this.benefitLightboxImage = images[this.activeBenefitIndex];
+    this.showBenefitLightbox = true;
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  closeBenefitLightbox(): void {
+    this.showBenefitLightbox = false;
+    this.benefitLightboxImage = '';
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = '';
+    }
   }
 
   ngAfterViewInit(): void {

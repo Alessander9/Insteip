@@ -187,9 +187,13 @@
                 </p>
               </div>
             </div>
-            <div class="w-full md:w-[40%] relative shrink-0 aspect-[16/9] md:aspect-auto bg-slate-100 dark:bg-slate-900 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-800 overflow-hidden">
+            <div class="w-full md:w-[40%] relative shrink-0 aspect-[16/9] md:aspect-auto bg-slate-100 dark:bg-slate-900 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-800 overflow-hidden cursor-pointer" (click)="openBenefitLightbox()">
               <img src="https://images.unsplash.com/photo-1589330694653-ded6df53f7ee?auto=format&fit=crop&w=600&q=70" alt="Material de acupuntura" class="w-full h-full object-cover filter grayscale brightness-95 dark:brightness-90 hover:grayscale-0 hover:scale-105 transition-all duration-700" />
-              <div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-l from-slate-950/20 to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-l from-slate-950/20 to-transparent">  <button type="button" (click)="openBenefitLightbox(); $event.stopPropagation()" class="absolute bottom-3 right-3 z-30 flex items-center gap-1 px-2.5 py-1 bg-slate-950/75 hover:bg-slate-950 text-white rounded-md text-[8px] font-bold uppercase tracking-wider backdrop-blur-sm transition-all shadow-lg active:scale-95 border border-white/10">
+                <span class="material-symbols-outlined text-[10px] block">zoom_in</span>
+                Ampliar
+              </button>
+            </div>
             </div>
           </div>
 
@@ -211,9 +215,13 @@
                 </p>
               </div>
             </div>
-            <div class="w-full md:w-[40%] relative shrink-0 aspect-[16/9] md:aspect-auto bg-slate-100 dark:bg-slate-900 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-800 overflow-hidden">
+            <div class="w-full md:w-[40%] relative shrink-0 aspect-[16/9] md:aspect-auto bg-slate-100 dark:bg-slate-900 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-800 overflow-hidden cursor-pointer" (click)="openBenefitLightbox()">
               <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=70" alt="Práctica clínica" class="w-full h-full object-cover filter grayscale brightness-95 dark:brightness-90 hover:grayscale-0 hover:scale-105 transition-all duration-700" />
-              <div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-l from-slate-950/20 to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-l from-slate-950/20 to-transparent">  <button type="button" (click)="openBenefitLightbox(); $event.stopPropagation()" class="absolute bottom-3 right-3 z-30 flex items-center gap-1 px-2.5 py-1 bg-slate-950/75 hover:bg-slate-950 text-white rounded-md text-[8px] font-bold uppercase tracking-wider backdrop-blur-sm transition-all shadow-lg active:scale-95 border border-white/10">
+                <span class="material-symbols-outlined text-[10px] block">zoom_in</span>
+                Ampliar
+              </button>
+            </div>
             </div>
           </div>
 
@@ -235,9 +243,13 @@
                 </p>
               </div>
             </div>
-            <div class="w-full md:w-[40%] relative shrink-0 aspect-[16/9] md:aspect-auto bg-slate-100 dark:bg-slate-900 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-800 overflow-hidden">
+            <div class="w-full md:w-[40%] relative shrink-0 aspect-[16/9] md:aspect-auto bg-slate-100 dark:bg-slate-900 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-800 overflow-hidden cursor-pointer" (click)="openBenefitLightbox()">
               <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=70" alt="Certificado" class="w-full h-full object-cover filter grayscale brightness-95 dark:brightness-90 hover:grayscale-0 hover:scale-105 transition-all duration-700" />
-              <div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-l from-slate-950/20 to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-l from-slate-950/20 to-transparent">  <button type="button" (click)="openBenefitLightbox(); $event.stopPropagation()" class="absolute bottom-3 right-3 z-30 flex items-center gap-1 px-2.5 py-1 bg-slate-950/75 hover:bg-slate-950 text-white rounded-md text-[8px] font-bold uppercase tracking-wider backdrop-blur-sm transition-all shadow-lg active:scale-95 border border-white/10">
+                <span class="material-symbols-outlined text-[10px] block">zoom_in</span>
+                Ampliar
+              </button>
+            </div>
             </div>
           </div>
 
@@ -540,3 +552,16 @@
 </main>
 
 <app-footer></app-footer>
+<!-- Lightbox Modal Overlay for Benefits Showcase -->
+<div *ngIf="showBenefitLightbox" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[9999] flex items-center justify-center p-4 transition-opacity duration-300" (click)="closeBenefitLightbox()">
+  <!-- Close Button -->
+  <button type="button" (click)="closeBenefitLightbox()" class="absolute top-6 right-6 text-white/75 hover:text-white transition-all p-2 rounded-full hover:bg-white/10 flex z-50">
+    <span class="material-symbols-outlined text-2xl">close</span>
+  </button>
+  
+  <!-- Image Container -->
+  <div class="max-w-4xl max-h-[85vh] w-full flex items-center justify-center relative" (click)="$event.stopPropagation()">
+    <img [src]="benefitLightboxImage" alt="Imagen de formación ampliada" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl border border-white/15 animate-[fadeIn_0.2s_ease-out]" />
+  </div>
+</div>
+

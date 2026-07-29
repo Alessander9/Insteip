@@ -136,6 +136,8 @@ const COURSES: Record<string, PresencialCourse> = {
 export class PresencialCourseComponent implements OnInit, AfterViewInit, OnDestroy {
   course: PresencialCourse;
   activeBenefitIndex = 0;
+  showBenefitLightbox = false;
+  benefitLightboxImage = '';
   activeJourneyStep = 0;
   private autoplayInterval?: ReturnType<typeof setInterval>;
   private animationContext?: gsap.Context;
@@ -184,6 +186,27 @@ export class PresencialCourseComponent implements OnInit, AfterViewInit, OnDestr
 
   setJourneyStep(index: number): void {
     this.activeJourneyStep = index;
+  }
+
+    openBenefitLightbox(): void {
+    const images = [
+      'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=85',
+      this.course.image,
+      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=1200&q=85'
+    ];
+    this.benefitLightboxImage = images[this.activeBenefitIndex];
+    this.showBenefitLightbox = true;
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  closeBenefitLightbox(): void {
+    this.showBenefitLightbox = false;
+    this.benefitLightboxImage = '';
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = '';
+    }
   }
 
   ngAfterViewInit(): void {

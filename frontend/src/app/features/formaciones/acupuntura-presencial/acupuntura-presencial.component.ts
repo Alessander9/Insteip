@@ -28,6 +28,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 export class AcupunturaPresencialComponent implements OnInit, AfterViewInit, OnDestroy {
   private animationContext?: gsap.Context;
   activeBenefitIndex = 0;
+  showBenefitLightbox = false;
+  benefitLightboxImage = '';
   activeJourneyStep = 0;
   private autoplayInterval?: ReturnType<typeof setInterval>;
 
@@ -153,6 +155,27 @@ export class AcupunturaPresencialComponent implements OnInit, AfterViewInit, OnD
   setBenefit(i: number): void { this.resetAutoplay(); this.activeBenefitIndex = i; }
 
   setJourneyStep(index: number): void { this.activeJourneyStep = index; }
+
+    openBenefitLightbox(): void {
+    const images = [
+      'assets/formacion_acupuntura_presencial1.jpg',
+      'assets/formacion_acupuntura_presencial2.jpg',
+      'assets/formacion_acupuntura_presencial3.jpg'
+    ];
+    this.benefitLightboxImage = images[this.activeBenefitIndex];
+    this.showBenefitLightbox = true;
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  closeBenefitLightbox(): void {
+    this.showBenefitLightbox = false;
+    this.benefitLightboxImage = '';
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = '';
+    }
+  }
 
   ngAfterViewInit(): void {
     if (typeof window === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;

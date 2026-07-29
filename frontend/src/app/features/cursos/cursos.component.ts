@@ -242,7 +242,7 @@ export class PublicCursosComponent {
       description: 'Aprende el uso terapéutico de las plantas medicinales de forma segura, práctica y basada en la evidencia científica.',
       students: '+180',
       price: 'S/ 250/mes',
-      image: 'assets/fitoterapia_insteip.jpeg',
+      image: 'assets/fitoterapia_insteip.jpg',
       customLink: '/cursos/fitoterapia-presencial'
     }
   ];

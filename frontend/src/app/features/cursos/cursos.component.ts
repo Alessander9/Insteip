@@ -200,7 +200,7 @@ export class PublicCursosComponent {
       description: 'Formación profesional intensiva para dominar los principios de la Medicina Tradicional China y aprender la práctica clínica de la acupuntura.',
       students: '+150',
       price: 'S/ 150/mes',
-      image: 'assets/acupuntura_7_meses_curso.jpg',
+      image: 'assets/acupuntura_7meses.jpg',
       customLink: '/cursos/acupuntura-china-7-meses'
     },
     {

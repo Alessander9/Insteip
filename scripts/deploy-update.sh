@@ -159,12 +159,12 @@ if [ "$SKIP_FRONTEND" = false ]; then
 
         npm run build -- --configuration production --no-progress 2>&1 | tail -3
 
-        if [ ! -d "dist/frontend/browser" ]; then
+        if [ ! -d "dist/frontend" ]; then
             print_err "La compilación del frontend falló. Verifica errores arriba."
             exit 1
         fi
 
-        print_ok "Frontend compilado en dist/frontend/browser/"
+        print_ok "Frontend compilado en dist/frontend/"
     else
         print_step 3 "Compilar frontend (SKIP — usando build existente)"
     fi
@@ -190,7 +190,7 @@ fi
 if [ "$SKIP_FRONTEND" = false ]; then
     echo "  Subiendo frontend..."
     $SSH_CMD "$SERVER" "mkdir -p /opt/insteip/frontend"
-    $SCP_CMD -r "frontend/dist/frontend/browser/"* "${SERVER}:/opt/insteip/frontend/"
+    $SCP_CMD -r "frontend/dist/frontend/"* "${SERVER}:/opt/insteip/frontend/"
     print_ok "Frontend subido correctamente"
 fi
 

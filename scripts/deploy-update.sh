@@ -189,8 +189,8 @@ fi
 # Subir frontend
 if [ "$SKIP_FRONTEND" = false ]; then
     echo "  Subiendo frontend..."
-    $SSH_CMD "$SERVER" "mkdir -p /opt/insteip/frontend"
-    $SCP_CMD -r "frontend/dist/frontend/"* "${SERVER}:/opt/insteip/frontend/"
+    $SSH_CMD "$SERVER" "mkdir -p /var/www/insteip"
+    $SCP_CMD -r "frontend/dist/frontend/"* "${SERVER}:/var/www/insteip/"
     print_ok "Frontend subido correctamente"
 fi
 
@@ -246,7 +246,7 @@ else
 fi
 
 # Verificar frontend
-FRONTEND_FILES=$($SSH_CMD "$SERVER" "ls /opt/insteip/frontend/index.html 2>/dev/null && echo 'OK' || echo 'NO'")
+FRONTEND_FILES=$($SSH_CMD "$SERVER" "ls /var/www/insteip/index.html 2>/dev/null && echo 'OK' || echo 'NO'")
 if [ "$FRONTEND_FILES" = "OK" ]; then
     print_ok "Frontend desplegado correctamente"
 fi

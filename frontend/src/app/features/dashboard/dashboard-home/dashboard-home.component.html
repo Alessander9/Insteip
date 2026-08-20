@@ -499,7 +499,7 @@
             <div>
               <span class="text-[9px] font-black tracking-widest text-indigo-300 uppercase">Panel del Estudiante</span>
               <h1 class="text-lg sm:text-2xl font-black tracking-tight uppercase mt-0.5">¡Hola de nuevo, {{ profile.nombres }}!</h1>
-              <p class="text-slate-300 text-[11px] sm:text-xs mt-1">Tu espacio académico personalizado. Sigue tu avance y descarga certificados.</p>
+              <p class="text-slate-300 text-[11px] sm:text-xs mt-1">Tu espacio académico personalizado. Sigue tu avance y gestiona tus tareas.</p>
             </div>
           </div>
           <div class="flex items-center gap-2" *ngIf="profile.nivelSuscripcion">
@@ -579,17 +579,22 @@
           </div>
         </div>
 
-        <!-- Metric 3: Logros Alcanzados -->
-        <div class="metric-card border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-none shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-between sm:col-span-2 md:col-span-1">
+        <!-- Metric 3: Mis Tareas y Evaluaciones -->
+        <a 
+          routerLink="/dashboard/mis-tareas"
+          class="metric-card border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-none shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-between sm:col-span-2 md:col-span-1 group select-none">
           <div>
-            <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Logros Alcanzados</span>
-            <h3 class="metric-number text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1.5 tracking-tight">{{ studentCertificados }}</h3>
-            <p class="text-[9px] text-slate-500 dark:text-slate-400 font-semibold mt-1">Reconocimientos obtenidos</p>
+            <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Evaluaciones</span>
+            <h3 class="metric-number text-lg sm:text-xl font-black text-slate-900 dark:text-white mt-1.5 tracking-tight group-hover:text-primary transition-colors uppercase">Mis Tareas</h3>
+            <p class="text-[9px] text-indigo-600 dark:text-indigo-400 font-bold mt-1 flex items-center gap-1">
+              <span>Ver entregas y notas</span>
+              <span class="material-symbols-outlined text-[10px]">arrow_forward</span>
+            </p>
           </div>
-          <div class="metric-icon w-10 h-10 sm:w-12 sm:h-12 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500 rounded-none shrink-0">
-            <span class="material-symbols-outlined text-xl sm:text-2xl text-amber-500">emoji_events</span>
+          <div class="metric-icon w-10 h-10 sm:w-12 sm:h-12 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500 rounded-none shrink-0 group-hover:bg-primary group-hover:text-white transition-colors">
+            <span class="material-symbols-outlined text-xl sm:text-2xl text-amber-500 group-hover:text-white">assignment</span>
           </div>
-        </div>
+        </a>
       </div>
 
       <!-- Split Layout: Enrolled Courses & Quick Guide -->
@@ -678,10 +683,10 @@
 
             <div class="border-l-2 border-amber-500 pl-3.5 space-y-1.5">
               <h4 class="font-bold text-slate-900 dark:text-slate-200 uppercase tracking-wide text-[11px] flex items-center gap-2">
-                <span class="material-symbols-outlined text-amber-500 text-sm">emoji_events</span>
-                <span>3. Reconocimiento Especial</span>
+                <span class="material-symbols-outlined text-amber-500 text-sm">assignment</span>
+                <span>3. Tareas y Evaluaciones</span>
               </h4>
-              <p class="text-slate-500 dark:text-slate-400 text-[11px]">Al completar todas las clases, recibirás un reconocimiento especial de parte de la familia INSTEIP por tu dedicación y esfuerzo.</p>
+              <p class="text-slate-500 dark:text-slate-400 text-[11px]">Revisa las tareas asignadas en cada módulo, sube tus respuestas en PDF/Word y consulta tus notas en tiempo real.</p>
             </div>
           </div>
         </div>

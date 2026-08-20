@@ -29,6 +29,7 @@ public class VideoServiceImpl implements VideoService {
     private final ModuloRepository moduloRepository;
 
     private final com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
+    private final com.insteip.backend.service.interfaces.NotificacionService notificacionService;
 
     private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
     private static final Pattern DURATION_PATTERN = Pattern.compile("PT(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+)S)?");
@@ -76,6 +77,19 @@ public class VideoServiceImpl implements VideoService {
 
         Video saved = videoRepository.save(video);
         auditoriaService.registrarEvento("VIDEO", "CREAR", "Creado video: " + saved.getTitulo() + " (ID: " + saved.getId() + ")");
+
+        if (modulo.getCurso() != null) {
+            Long cursoId = modulo.getCurso().getId();
+            notificacionService.notificarAlumnosDeCurso(
+                    cursoId,
+                    "🎬 Nueva clase disponible",
+                    "Se ha publicado la clase '" + saved.getTitulo() + "' en el Módulo " + modulo.getOrden() + " (" + (modulo.getCurso().getNombre() != null ? modulo.getCurso().getNombre() : "") + ")",
+                    "VIDEO_NUEVO",
+                    "/dashboard/cursos-play/" + cursoId,
+                    "smart_display"
+            );
+        }
+
         return convertToResponseDto(saved);
     }
 

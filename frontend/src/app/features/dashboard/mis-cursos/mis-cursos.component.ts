@@ -88,6 +88,19 @@ export class MisCursosComponent implements OnInit {
     this.expandedModuloId = null;
     this.studentService.getPlayCourse(cursoId).subscribe({
       next: (data) => {
+        if (data && data.modulos) {
+          data.modulos.sort((a, b) => (a.orden || 0) - (b.orden || 0));
+          data.modulos.forEach(mod => {
+            if (mod.videos) {
+              mod.videos.sort((a, b) => {
+                if (a.orden !== b.orden) {
+                  return (a.orden || 0) - (b.orden || 0);
+                }
+                return a.titulo.localeCompare(b.titulo, undefined, { numeric: true, sensitivity: 'base' });
+              });
+            }
+          });
+        }
         this.selectedCursoPlay = data;
         this.isLoadingCursoDetalle = false;
       },

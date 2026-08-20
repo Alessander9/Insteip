@@ -11,5 +11,7 @@ public record AlumnoCursoResponse(
     String nivelSuscripcion,
     BigDecimal avancePorcentaje,
     Boolean completado,
-    LocalDateTime fechaMatricula
+    LocalDateTime fechaMatricula,
+    LocalDateTime fechaExpiracion
 ) {}
+

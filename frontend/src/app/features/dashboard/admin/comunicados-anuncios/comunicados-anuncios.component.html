@@ -1,0 +1,369 @@
+<div class="space-y-8 animate-fade-in">
+  <!-- Header con título y selector de pestañas -->
+  <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-800">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-3">
+          <span class="p-3 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
+            <span class="material-symbols-outlined text-2xl">campaign</span>
+          </span>
+          <div>
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Centro de Comunicados y Campañas</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Envía notificaciones masivas segmentadas o publica anuncios emergentes para promociones.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pestañas de Navegación -->
+      <div class="flex items-center gap-2 p-1.5 bg-slate-100 dark:bg-slate-800 rounded-xl">
+        <button 
+          (click)="activeTab = 'comunicado'"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all"
+          [ngClass]="activeTab === 'comunicado' ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'">
+          <span class="material-symbols-outlined text-lg">notifications_active</span>
+          <span>Enviar Notificación / Comunicado</span>
+        </button>
+        <button 
+          (click)="activeTab = 'anuncios'"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all"
+          [ngClass]="activeTab === 'anuncios' ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'">
+          <span class="material-symbols-outlined text-lg">ad</span>
+          <span>Anuncios en Modal (Pop-up)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- PESTAÑA 1: ENVIAR COMUNICADO / NOTIFICACIÓN -->
+  <!-- ========================================== -->
+  <div *ngIf="activeTab === 'comunicado'" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Formulario de Envío -->
+    <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100 dark:border-slate-800 space-y-6">
+      
+      <div>
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">send</span>
+          Redactar Comunicado
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">El comunicado aparecerá en la campanita 🔔 de los destinatarios elegidos.</p>
+      </div>
+
+      <!-- Alertas de Éxito y Error -->
+      <div *ngIf="mensajeExitoComunicado" class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 text-sm font-semibold flex items-center gap-2">
+        <span class="material-symbols-outlined">check_circle</span>
+        {{ mensajeExitoComunicado }}
+      </div>
+
+      <div *ngIf="mensajeErrorComunicado" class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 text-sm font-semibold flex items-center gap-2">
+        <span class="material-symbols-outlined">error</span>
+        {{ mensajeErrorComunicado }}
+      </div>
+
+      <div class="space-y-4">
+        <!-- Selector de Audiencia -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+            ¿Quiénes recibirán este comunicado? (Audiencia)
+          </label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            <label class="flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all"
+              [ngClass]="comunicado.audiencia === 'TODOS' ? 'border-primary bg-primary/5 text-primary font-bold' : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'">
+              <input type="radio" [(ngModel)]="comunicado.audiencia" value="TODOS" class="text-primary focus:ring-primary">
+              <span class="text-xs">🌍 Todos los Usuarios</span>
+            </label>
+
+            <label class="flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all"
+              [ngClass]="comunicado.audiencia === 'SOLO_ESTUDIANTES' ? 'border-primary bg-primary/5 text-primary font-bold' : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'">
+              <input type="radio" [(ngModel)]="comunicado.audiencia" value="SOLO_ESTUDIANTES" class="text-primary focus:ring-primary">
+              <span class="text-xs">🎓 Solo Estudiantes</span>
+            </label>
+
+            <label class="flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all"
+              [ngClass]="comunicado.audiencia === 'SOLO_DOCENTES' ? 'border-primary bg-primary/5 text-primary font-bold' : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'">
+              <input type="radio" [(ngModel)]="comunicado.audiencia" value="SOLO_DOCENTES" class="text-primary focus:ring-primary">
+              <span class="text-xs">👨‍🏫 Solo Docentes</span>
+            </label>
+
+            <label class="flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all"
+              [ngClass]="comunicado.audiencia === 'DOCENTES_Y_ESTUDIANTES' ? 'border-primary bg-primary/5 text-primary font-bold' : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'">
+              <input type="radio" [(ngModel)]="comunicado.audiencia" value="DOCENTES_Y_ESTUDIANTES" class="text-primary focus:ring-primary">
+              <span class="text-xs">👥 Docentes y Alumnos</span>
+            </label>
+
+            <label class="flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all"
+              [ngClass]="comunicado.audiencia === 'POR_CURSO' ? 'border-primary bg-primary/5 text-primary font-bold' : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'">
+              <input type="radio" [(ngModel)]="comunicado.audiencia" value="POR_CURSO" class="text-primary focus:ring-primary">
+              <span class="text-xs">📚 Alumnos por Curso</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Selector de Curso (si aplica) -->
+        <div *ngIf="comunicado.audiencia === 'POR_CURSO'" class="animate-fade-in">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            Selecciona el Curso:
+          </label>
+          <select [(ngModel)]="comunicado.cursoId" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm focus:ring-2 focus:ring-primary/20">
+            <option [ngValue]="undefined" disabled>-- Selecciona un curso --</option>
+            <option *ngFor="let c of cursos" [value]="c.id">{{ c.nombre }}</option>
+          </select>
+        </div>
+
+        <!-- Título -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            Título del Comunicado *
+          </label>
+          <input 
+            type="text" 
+            [(ngModel)]="comunicado.titulo" 
+            placeholder="Ej: Aviso importante sobre la jornada de talleres presenciales"
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm focus:ring-2 focus:ring-primary/20" />
+        </div>
+
+        <!-- Mensaje -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            Mensaje Completo *
+          </label>
+          <textarea 
+            [(ngModel)]="comunicado.mensaje" 
+            rows="4" 
+            placeholder="Escribe el contenido detallado del comunicado..."
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm focus:ring-2 focus:ring-primary/20 leading-relaxed"></textarea>
+        </div>
+
+        <!-- Enlace Opcional -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            Enlace de Destino (Opcional - al hacer clic)
+          </label>
+          <input 
+            type="text" 
+            [(ngModel)]="comunicado.urlDestino" 
+            placeholder="Ej: /dashboard/mis-cursos o https://insteip.com/eventos"
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm focus:ring-2 focus:ring-primary/20" />
+        </div>
+
+        <!-- Botón Enviar -->
+        <div class="pt-4">
+          <button 
+            (click)="enviarComunicado()" 
+            [disabled]="enviandoComunicado"
+            class="w-full sm:w-auto px-8 py-3 bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-bold text-sm rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 flex items-center justify-center gap-2 transition-all">
+            <span class="material-symbols-outlined" [class.animate-spin]="enviandoComunicado">
+              {{ enviandoComunicado ? 'progress_activity' : 'send' }}
+            </span>
+            <span>{{ enviandoComunicado ? 'Enviando comunicado...' : 'Enviar Comunicado Inmediato' }}</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Guía y Tips -->
+    <div class="bg-gradient-to-br from-primary/5 via-slate-50 to-primary/10 dark:from-slate-800/60 dark:to-slate-900 rounded-2xl p-6 border border-primary/10 dark:border-slate-800 space-y-4">
+      <div class="flex items-center gap-2 text-primary font-bold">
+        <span class="material-symbols-outlined">tips_and_updates</span>
+        <span>Recomendaciones de Comunicación</span>
+      </div>
+      <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+        <li class="flex items-start gap-2">
+          <span class="material-symbols-outlined text-primary text-sm flex-shrink-0 mt-0.5">check_circle</span>
+          <span><strong>Claridad y Brevedad:</strong> Los comunicados directos y con llamados a la acción claros tienen 80% más de tasa de lectura.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="material-symbols-outlined text-primary text-sm flex-shrink-0 mt-0.5">check_circle</span>
+          <span><strong>Segmentación Inteligente:</strong> Si un aviso es solo para docentes, utiliza "Solo Docentes" para no sobrecargar las notificaciones de los alumnos.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="material-symbols-outlined text-primary text-sm flex-shrink-0 mt-0.5">check_circle</span>
+          <span><strong>Enlaces Directos:</strong> Añade la URL para que el usuario sea redirigido con un solo clic al tocar la notificación.</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- PESTAÑA 2: GESTOR DE ANUNCIOS POP-UP (MODAL)-->
+  <!-- ========================================== -->
+  <div *ngIf="activeTab === 'anuncios'" class="space-y-8">
+    
+    <!-- Creador de Anuncio Modal -->
+    <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100 dark:border-slate-800 space-y-6">
+      <div>
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">add_photo_alternate</span>
+          Crear Nuevo Anuncio Promocional en Modal
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Este anuncio se mostrará como un modal emergente elegante cuando los usuarios entren a su Dashboard.</p>
+      </div>
+
+      <!-- Alertas -->
+      <div *ngIf="mensajeExitoAnuncio" class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 text-sm font-semibold flex items-center gap-2">
+        <span class="material-symbols-outlined">check_circle</span>
+        {{ mensajeExitoAnuncio }}
+      </div>
+
+      <div *ngIf="mensajeErrorAnuncio" class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 text-sm font-semibold flex items-center gap-2">
+        <span class="material-symbols-outlined">error</span>
+        {{ mensajeErrorAnuncio }}
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Campos Izquierda -->
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+              Título del Anuncio / Campaña *
+            </label>
+            <input 
+              type="text" 
+              [(ngModel)]="anuncioForm.titulo" 
+              placeholder="Ej: 🔥 ¡Nuevo Diplomado con 30% de Descuento Exclusivo!"
+              class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm focus:ring-2 focus:ring-primary/20" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+              Mensaje o Beneficios
+            </label>
+            <textarea 
+              [(ngModel)]="anuncioForm.mensaje" 
+              rows="3" 
+              placeholder="Inicia este mes de Septiembre. Cupos limitados para prácticas presenciales..."
+              class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm focus:ring-2 focus:ring-primary/20"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+              URL de Imagen / Flyer Promocional
+            </label>
+            <input 
+              type="text" 
+              [(ngModel)]="anuncioForm.imagenUrl" 
+              placeholder="Ej: assets/curso_aromaterapia_flores_bach.jpg o URL web"
+              class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm focus:ring-2 focus:ring-primary/20" />
+          </div>
+        </div>
+
+        <!-- Campos Derecha -->
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+              Texto del Botón de Acción (CTA)
+            </label>
+            <input 
+              type="text" 
+              [(ngModel)]="anuncioForm.botonTexto" 
+              placeholder="Ej: Inscribirme con Descuento"
+              class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm focus:ring-2 focus:ring-primary/20" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+              Enlace del Botón (Página de Curso o WhatsApp)
+            </label>
+            <input 
+              type="text" 
+              [(ngModel)]="anuncioForm.botonUrl" 
+              placeholder="Ej: /cursos o https://wa.me/51987654321?text=Hola"
+              class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm focus:ring-2 focus:ring-primary/20" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+              Audiencia del Modal
+            </label>
+            <select [(ngModel)]="anuncioForm.audiencia" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm focus:ring-2 focus:ring-primary/20">
+              <option value="TODOS">🌍 Todos los Usuarios</option>
+              <option value="SOLO_ESTUDIANTES">🎓 Solo Estudiantes</option>
+              <option value="SOLO_DOCENTES">👨‍🏫 Solo Docentes</option>
+              <option value="DOCENTES_Y_ESTUDIANTES">👥 Docentes y Estudiantes</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botón Guardar -->
+      <div class="pt-2 flex justify-end">
+        <button 
+          (click)="guardarAnuncio()" 
+          [disabled]="guardandoAnuncio"
+          class="px-8 py-3 bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-bold text-sm rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 flex items-center gap-2 transition-all">
+          <span class="material-symbols-outlined" [class.animate-spin]="guardandoAnuncio">
+            {{ guardandoAnuncio ? 'progress_activity' : 'campaign' }}
+          </span>
+          <span>{{ guardandoAnuncio ? 'Publicando...' : 'Publicar Anuncio Promocional' }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabla de Anuncios Existentes -->
+    <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-800 space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">view_list</span>
+          Campañas y Anuncios Registrados
+        </h2>
+        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+          {{ anuncios.length }} campañas
+        </span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+          <thead class="text-xs uppercase bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 border-b border-slate-100 dark:border-slate-800">
+            <tr>
+              <th class="px-4 py-3.5">Título / Mensaje</th>
+              <th class="px-4 py-3.5">Audiencia</th>
+              <th class="px-4 py-3.5">Botón Acción</th>
+              <th class="px-4 py-3.5 text-center">Estado</th>
+              <th class="px-4 py-3.5 text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+            <tr *ngFor="let item of anuncios" class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+              <td class="px-4 py-3.5">
+                <div class="font-bold text-slate-900 dark:text-white">{{ item.titulo }}</div>
+                <div class="text-xs text-slate-400 mt-0.5 line-clamp-1">{{ item.mensaje }}</div>
+              </td>
+              <td class="px-4 py-3.5">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                  {{ item.audiencia }}
+                </span>
+              </td>
+              <td class="px-4 py-3.5">
+                <span class="text-xs font-semibold text-primary">{{ item.botonTexto }}</span>
+              </td>
+              <td class="px-4 py-3.5 text-center">
+                <button 
+                  (click)="toggleEstadoAnuncio(item)"
+                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold transition-colors cursor-pointer"
+                  [ngClass]="item.activo ? 'bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20' : 'bg-slate-500/10 text-slate-400 hover:bg-slate-500/20'">
+                  <span class="w-1.5 h-1.5 rounded-full" [ngClass]="item.activo ? 'bg-emerald-500' : 'bg-slate-400'"></span>
+                  {{ item.activo ? 'Activo' : 'Pausado' }}
+                </button>
+              </td>
+              <td class="px-4 py-3.5 text-right">
+                <button 
+                  (click)="eliminarAnuncio(item.id)" 
+                  class="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition-colors"
+                  title="Eliminar campaña">
+                  <span class="material-symbols-outlined text-lg">delete</span>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="anuncios.length === 0">
+              <td colspan="5" class="px-4 py-8 text-center text-slate-400 text-sm">
+                No hay campañas de anuncios registradas todavía.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

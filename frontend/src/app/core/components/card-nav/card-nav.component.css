@@ -86,12 +86,12 @@
 .card-nav {
   position: relative;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1260px;
   height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1.5rem;
+  padding: 0 clamp(0.75rem, 1.5vw, 1.25rem);
   background: var(--nav-bg);
   backdrop-filter: blur(20px) saturate(1.4);
   -webkit-backdrop-filter: blur(20px) saturate(1.4);
@@ -127,13 +127,13 @@
 
 /* ── Nav Items ── */
 .nav-items {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: clamp(2px, 0.45vw, 6px);
   height: 100%;
+  flex: 1 1 auto;
+  margin: 0 clamp(0.4rem, 0.8vw, 1rem);
 }
 
 .nav-item-wrapper {
@@ -141,22 +141,23 @@
   height: 100%;
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .nav-item-btn {
   background: none;
   border: none;
   color: var(--nav-text-muted);
-  font-size: 0.9rem;
+  font-size: clamp(0.81rem, 0.85vw, 0.875rem);
   font-weight: 600;
-  padding: 0 16px;
+  padding: 0 clamp(6px, 0.7vw, 12px);
   height: 70%;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 4px;
-  border-radius: 12px;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  gap: 3px;
+  border-radius: 10px;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
   font-family: inherit;
 }
@@ -359,18 +360,19 @@
 .nav-login-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 20px;
+  gap: 6px;
+  padding: 8px clamp(12px, 1.2vw, 18px);
   background: var(--login-btn-bg);
   color: #fff;
   border: none;
   border-radius: 12px;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
   transition: all 0.25s ease;
   box-shadow: 0 4px 12px var(--login-btn-shadow);
+  white-space: nowrap;
 }
 
 .nav-login-btn:hover {
@@ -710,7 +712,7 @@
    MEDIA QUERIES (Responsiveness layout shifts)
    ==================================================================== */
 
-@media (max-width: 900px) {
+@media (max-width: 1040px) {
   /* Habilitar navegación colapsada */
   .nav-items {
     display: none;

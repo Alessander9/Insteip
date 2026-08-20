@@ -211,6 +211,12 @@ export const routes: Routes = [
         canActivate: [roleGuard],
         data: { roles: ['ADMINISTRADOR'] }
       },
+      {
+        path: 'comunicados',
+        loadComponent: () => import('./features/dashboard/admin/comunicados-anuncios/comunicados-anuncios.component').then(m => m.ComunicadosAnunciosComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['ADMINISTRADOR'] }
+      },
 
       // ── ADMINISTRADOR + DOCENTE ───────────────────────────────
       {
@@ -250,6 +256,12 @@ export const routes: Routes = [
       {
         path: 'mis-cursos',
         loadComponent: () => import('./features/dashboard/mis-cursos/mis-cursos.component').then(m => m.MisCursosComponent)
+      },
+      {
+        path: 'mis-tareas',
+        loadComponent: () => import('./features/dashboard/alumno/mis-tareas/mis-tareas.component').then(m => m.MisTareasComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['ALUMNO', 'ADMINISTRADOR'] }
       },
       {
         path: 'cursos-play/:id',

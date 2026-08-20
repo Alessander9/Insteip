@@ -182,8 +182,8 @@ cd "$PROJECT_DIR"
 # Subir backend
 if [ "$SKIP_BACKEND" = false ]; then
     echo "  Subiendo backend..."
-    $SCP_CMD "backend/${JAR_FILE}" "${SERVER}:/opt/insteip/backend.jar"
-    print_ok "Backend subido (backend.jar)"
+    $SCP_CMD "backend/${JAR_FILE}" "${SERVER}:/opt/insteip/app/backend.jar"
+    print_ok "Backend subido (app/backend.jar)"
 fi
 
 # Subir frontend

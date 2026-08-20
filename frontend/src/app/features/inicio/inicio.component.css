@@ -1,4 +1,110 @@
 /* ==============================================
+   MODAL DE VIDEO DE BIENVENIDA
+   ============================================== */
+.video-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.video-modal-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 90%;
+  max-width: 800px;
+  animation: modalSlideUp 0.35s ease-out;
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.video-modal-player {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.video-modal-player iframe,
+.video-modal-player img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  object-fit: cover;
+}
+
+.video-modal-close-btn {
+  display: inline-block;
+  padding: 14px 48px;
+  background: #003466;
+  color: #ffffff;
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.video-modal-close-btn:hover {
+  background: #004a8f;
+}
+
+.video-modal-close-btn:active {
+  background: #002244;
+}
+
+/* Responsive: modal más pequeño en móviles */
+@media (max-width: 600px) {
+  .video-modal-container {
+    width: 95%;
+    gap: 16px;
+  }
+
+  .video-modal-close-btn {
+    padding: 12px 36px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ==============================================
    SKIP LINK — Accesibilidad
    ============================================== */
 .skip-link {
@@ -1412,6 +1518,25 @@ button[class*="absolute right"]:hover {
   .timeline-item .timeline-left,
   .timeline-item .timeline-right {
     transform: translateY(30px);
+  }
+
+  /* Con relative en timeline-item, el nodo se posiciona relativo al step.
+     top:0 pone el BORDE SUPERIOR del círculo al tope del step.
+     La línea (continua, left:6) pasa por el CENTRO del círculo (h-12/2 = 24px).
+     Esto da el efecto visual correcto: la línea bisecta el círculo. */
+  .timeline-item .timeline-node {
+    top: 0 !important;
+    transform: translateX(-50%) scale(0.6) !important;
+    margin-top: 0;
+  }
+
+  /* Estado visible: mantener top:0, solo recuperar escala */
+  .timeline-item.is-visible .timeline-node {
+    transform: translateX(-50%) scale(1) !important;
+  }
+
+  .timeline-item:hover .timeline-node {
+    transform: translateX(-50%) scale(1.1) rotate(6deg) !important;
   }
 }
 

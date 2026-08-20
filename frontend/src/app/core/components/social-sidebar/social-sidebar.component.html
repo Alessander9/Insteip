@@ -1,20 +1,27 @@
-<!-- Floating Social Media Sidebar (INSTEIP) — siempre en el DOM -->
-<!-- La visibilidad se controla por JS directo (Renderer2 + addEventListener) -->
-<div class="sidebar-container fixed top-1/2 z-50 flex items-start"
-     style="left: -90px; opacity: 0; pointer-events: none; transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease-in-out;">
-  <div class="bg-[#091122]/85 backdrop-blur-md border border-l-0 border-white/10 rounded-r-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] p-2 md:p-2.5 flex flex-col gap-2.5 md:gap-3.5 transition-all duration-300 hover:pr-4">
+<!-- Floating Social Sidebar (INSTEIP) -->
+<!-- Desktop: sidebar vertical izquierda | Mobile: pill horizontal centrada abajo -->
+<!-- La visibilidad se controla por JS (updateSidebarVisibility) -->
+<div
+  class="sidebar-container"
+  style="opacity: 0; pointer-events: none;
+         transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), left 0.5s cubic-bezier(0.16, 1, 0.3, 1);">
 
-    <a *ngFor="let link of socialLinks"
-       [href]="link.url"
-       target="_blank"
-       rel="noopener noreferrer"
-       class="w-10 h-10 rounded-xl border flex items-center justify-center text-white/80 hover:text-white hover:scale-110 hover:translate-x-1 shadow-lg transition-all duration-300 ease-out"
-       [ngClass]="[link.iconClass, link.shadowClass]"
-       [title]="'Visitar ' + link.name + ' de INSTEIP'">
-      <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+  <!-- ── Inner card ── -->
+  <div class="sidebar-inner">
+    <a
+      *ngFor="let link of socialLinks"
+      [href]="link.url"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="sidebar-link"
+      [ngClass]="[link.iconClass, link.shadowClass]"
+      [title]="'Visitar ' + link.name + ' de INSTEIP'">
+      <svg class="sidebar-icon fill-current" viewBox="0 0 24 24" aria-hidden="true">
         <path [attr.d]="link.svgPath"/>
       </svg>
+      <!-- Label visible solo en mobile pill al hacer hover/focus -->
+      <span class="sidebar-label">{{ link.name }}</span>
     </a>
-
   </div>
+
 </div>

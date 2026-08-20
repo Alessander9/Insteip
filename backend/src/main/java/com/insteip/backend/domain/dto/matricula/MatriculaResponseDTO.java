@@ -11,5 +11,7 @@ public record MatriculaResponseDTO(
     Long cursoId,
     String cursoNombre,
     LocalDateTime fechaMatricula,
+    LocalDateTime fechaExpiracion,
     Boolean estado
 ) {}
+

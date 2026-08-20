@@ -18,3 +18,9 @@ export { ToastService, ToastMessage } from './toast.service';
 export { UsuarioService, DocenteOption } from './usuario.service';
 export { VideoService } from './video.service';
 export { SeoService, SeoData, ROUTE_SEO } from './seo.service';
+export { ChatbotService, ChatMessage, ChatRequest, ChatResponse } from './chatbot.service';
+export { TareaService } from './tarea.service';
+export { EntregaTareaService } from './entrega-tarea.service';
+export { NotificacionService } from './notificacion.service';
+export { AnuncioModalService } from './anuncio-modal.service';
+

@@ -7,17 +7,23 @@ import { CertificadoService } from '../../../core/services/';
 import { AuthService } from '../../../core/services/';
 import { ArchivoProtegidoService } from '../../../core/services/';
 import { VideoService } from '../../../core/services/';
+import { TareaService } from '../../../core/services/';
+import { EntregaTareaService } from '../../../core/services/';
+import { ToastService } from '../../../core/services/';
 import { UserProfile } from '../../../core/models/';
+import { AlumnoTareaItem } from '../../../core/models/';
 import { extraerIdYoutube } from '../../../core/utils/';
 import { formatBytes, getCleanFileType, getFileExtension } from '../../../core/utils/';
 import { environment } from '../../../../environments/environment';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { HttpEventType } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-play-curso',
   standalone: true,
-  imports: [CommonModule, RouterModule, SkeletonLoaderComponent],
+  imports: [CommonModule, RouterModule, SkeletonLoaderComponent, FormsModule],
   templateUrl: './play-curso.component.html',
   styleUrls: ['./play-curso.component.css']
 })
@@ -29,6 +35,9 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
   private authService = inject(AuthService);
   private archivoProtegidoService = inject(ArchivoProtegidoService);
   private videoService = inject(VideoService);
+  private tareaService = inject(TareaService);
+  private entregaTareaService = inject(EntregaTareaService);
+  private toastService = inject(ToastService);
   private ngZone = inject(NgZone);
 
   profile: UserProfile | null = null;
@@ -39,7 +48,16 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
 
   isLoading = true;
   isPlayerLoading = false;
-  activeTab: 'materiales' | 'info' | 'certificado' | '' = 'materiales';
+  activeTab: 'materiales' | 'tareas' | 'info' | 'certificado' | '' = 'materiales';
+  
+  // Tareas properties
+  tareas: AlumnoTareaItem[] = [];
+  loadingTareas = false;
+  uploadingTareaId: number | null = null;
+  uploadProgress = 0;
+  selectedFiles: { [tareaId: number]: File } = {};
+  comentariosEntrega: { [tareaId: number]: string } = {};
+  selectedFileNames: { [tareaId: number]: string } = {};
   isSavingProgress = false;
   courseCompleted = false;
   showCompletionModal = false;
@@ -53,10 +71,17 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
   completedVideos = 0;
   completionPercentage = 0;
 
+  // Touch & Hover Video Controls Overlay
+  showControlsOverlay = false;
+  seekFeedback: string | null = null;
+  seekFeedbackSide: 'left' | 'right' | null = null;
+  public isVideoPlaying = false;
+  private controlsTimeout: ReturnType<typeof setTimeout> | null = null;
+  private seekFeedbackTimeout: ReturnType<typeof setTimeout> | null = null;
+
   // Ticker tracking
   private tickerInterval: ReturnType<typeof setInterval> | null = null;
   private secondsWatched = 0;
-  private isVideoPlaying = false;
   private pendingAutoCompleteVideoId: number | null = null;
 
   // YouTube Player instance
@@ -135,6 +160,8 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     this.cancelRetryTimeout();
     this.clearCompletionModalTimers();
     this.clearNextChapterTimers();
+    this.clearControlsTimeout();
+    this.clearSeekFeedbackTimeout();
 
     // Stop ticker
     this.stopTicker();
@@ -201,6 +228,13 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     return videos[currentIndex + 1];
   }
 
+  private getPreviousVideoBefore(videoId: number): AlumnoPlayVideo | null {
+    const videos = this.flattenVideos();
+    const currentIndex = videos.findIndex(v => v.id === videoId);
+    if (currentIndex <= 0) return null;
+    return videos[currentIndex - 1];
+  }
+
   private syncVideoCompletionState(videoId: number, progress: Partial<AlumnoPlayVideo>): void {
     if (!this.curso) return;
 
@@ -250,10 +284,24 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
       takeUntil(this.destroy$)
     ).subscribe({
       next: (data) => {
+        if (data && data.modulos) {
+          data.modulos.sort((a, b) => (a.orden || 0) - (b.orden || 0));
+          data.modulos.forEach(mod => {
+            if (mod.videos) {
+              mod.videos.sort((a, b) => {
+                if (a.orden !== b.orden) {
+                  return (a.orden || 0) - (b.orden || 0);
+                }
+                return a.titulo.localeCompare(b.titulo, undefined, { numeric: true, sensitivity: 'base' });
+              });
+            }
+          });
+        }
         this.curso = data;
         this.isLoading = false;
         this.selectDefaultVideo(this.pendingVideoIdFromQuery);
         this.checkOverallCompletion(false);
+        this.loadTareas();
       },
       error: () => {
         this.router.navigate(['/dashboard/mis-cursos']);
@@ -851,6 +899,205 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  loadTareas(): void {
+    if (!this.cursoId) return;
+    this.loadingTareas = true;
+    this.tareaService.listarTareasPorCursoParaAlumno(this.cursoId).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (data) => {
+        this.tareas = data || [];
+        this.loadingTareas = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar tareas del curso:', err);
+        this.loadingTareas = false;
+      }
+    });
+  }
+
+  getTareasPorModulo(moduloId: number): AlumnoTareaItem[] {
+    return this.tareas.filter(t => t.moduloId === moduloId);
+  }
+
+  onFileSelected(tareaId: number, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      if (file.size > 100 * 1024 * 1024) {
+        this.toastService.error('El archivo no puede superar los 100MB');
+        input.value = '';
+        return;
+      }
+      this.selectedFiles[tareaId] = file;
+      this.selectedFileNames[tareaId] = file.name;
+    }
+  }
+
+  subirEntrega(tareaId: number): void {
+    const file = this.selectedFiles[tareaId];
+    if (!file) {
+      this.toastService.warning('Debes seleccionar un archivo para entregar');
+      return;
+    }
+
+    const comentario = this.comentariosEntrega[tareaId] || '';
+    this.uploadingTareaId = tareaId;
+    this.uploadProgress = 0;
+
+    this.entregaTareaService.entregarTareaConProgreso(tareaId, file, comentario).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (event) => {
+        if (event.type === HttpEventType.UploadProgress && event.total) {
+          this.uploadProgress = Math.round(100 * event.loaded / event.total);
+        } else if (event.type === HttpEventType.Response) {
+          this.uploadingTareaId = null;
+          this.uploadProgress = 0;
+          delete this.selectedFiles[tareaId];
+          delete this.selectedFileNames[tareaId];
+          delete this.comentariosEntrega[tareaId];
+          this.toastService.success('¡Tarea entregada exitosamente!');
+          this.loadTareas();
+        }
+      },
+      error: (err) => {
+        this.uploadingTareaId = null;
+        this.uploadProgress = 0;
+        const msg = err?.error?.message || 'Error al subir la entrega de la tarea';
+        this.toastService.error(msg);
+      }
+    });
+  }
+
+  descargarArchivoEntrega(entregaId?: number, nombreTarea?: string, tipoArchivo?: string): void {
+    if (!entregaId) return;
+    const url = `${environment.apiUrl}/entregas-tareas/${entregaId}/download`;
+    const extension = getFileExtension(tipoArchivo || '');
+    const filename = `Mi_Entrega_${(nombreTarea || 'Tarea').replace(/\s+/g, '_')}.${extension}`;
+    this.archivoProtegidoService.descargar(url, filename).subscribe({
+      error: (err) => {
+        console.error('Error al descargar archivo de entrega:', err);
+        this.toastService.error('No se pudo descargar el archivo de la entrega');
+      }
+    });
+  }
+
+  // --- Touch & Hover Video Controls Overlay Methods ---
+  triggerShowControls(keepOpen = false): void {
+    this.showControlsOverlay = true;
+    this.clearControlsTimeout();
+    if (!keepOpen && this.isVideoPlaying) {
+      this.controlsTimeout = setTimeout(() => {
+        if (this.isComponentAlive && this.isVideoPlaying) {
+          this.showControlsOverlay = false;
+        }
+      }, 2800);
+    }
+  }
+
+  hideControls(): void {
+    this.clearControlsTimeout();
+    if (this.isVideoPlaying) {
+      this.showControlsOverlay = false;
+    }
+  }
+
+  private clearControlsTimeout(): void {
+    if (this.controlsTimeout) {
+      clearTimeout(this.controlsTimeout);
+      this.controlsTimeout = null;
+    }
+  }
+
+  private clearSeekFeedbackTimeout(): void {
+    if (this.seekFeedbackTimeout) {
+      clearTimeout(this.seekFeedbackTimeout);
+      this.seekFeedbackTimeout = null;
+    }
+    this.seekFeedback = null;
+    this.seekFeedbackSide = null;
+  }
+
+  seekRelative(seconds: number, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (!this.player || typeof this.player.getCurrentTime !== 'function') return;
+
+    try {
+      const current = this.player.getCurrentTime() || 0;
+      const duration = this.getCurrentVideoDurationSeconds();
+      const target = Math.max(0, Math.min(duration, current + seconds));
+      this.player.seekTo(target, true);
+
+      // Feedback animation
+      this.clearSeekFeedbackTimeout();
+      this.seekFeedback = seconds > 0 ? `+${seconds}s` : `${seconds}s`;
+      this.seekFeedbackSide = seconds > 0 ? 'right' : 'left';
+
+      this.seekFeedbackTimeout = setTimeout(() => {
+        this.seekFeedback = null;
+        this.seekFeedbackSide = null;
+      }, 650);
+
+      this.triggerShowControls();
+    } catch (e) {
+      console.warn('Error seeking player:', e);
+    }
+  }
+
+  togglePlayPause(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (!this.player) return;
+
+    try {
+      if (this.isVideoPlaying) {
+        if (typeof this.player.pauseVideo === 'function') {
+          this.player.pauseVideo();
+        }
+        this.isVideoPlaying = false;
+        this.triggerShowControls(true);
+      } else {
+        if (typeof this.player.playVideo === 'function') {
+          this.player.playVideo();
+        }
+        this.isVideoPlaying = true;
+        this.triggerShowControls(false);
+      }
+    } catch (e) {
+      console.warn('Error toggling play/pause:', e);
+    }
+  }
+
+  hasPreviousVideo(): boolean {
+    if (!this.currentVideo) return false;
+    return this.getPreviousVideoBefore(this.currentVideo.id) !== null;
+  }
+
+  hasNextVideo(): boolean {
+    if (!this.currentVideo) return false;
+    return this.getNextVideoAfter(this.currentVideo.id) !== null;
+  }
+
+  goToPreviousVideo(): void {
+    if (!this.currentVideo) return;
+    const prev = this.getPreviousVideoBefore(this.currentVideo.id);
+    if (prev) {
+      this.playVideo(prev);
+    }
+  }
+
+  goToNextVideo(): void {
+    if (!this.currentVideo) return;
+    const next = this.getNextVideoAfter(this.currentVideo.id);
+    if (next) {
+      this.playVideo(next);
+    }
+  }
+
   private getCurrentVideoDurationSeconds(): number {
     return Math.max(1, this.currentVideo?.duracionSegundos || 600);
   }
@@ -865,3 +1112,5 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     return Math.min(watched, duration - 1);
   }
 }
+
+

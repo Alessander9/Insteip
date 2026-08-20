@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -115,7 +116,8 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
                     formatNivelesSuscripcion(curso.getNivelesSuscripcion()),
                     avance,
                     completado,
-                    matricula.getFechaMatricula()
+                    matricula.getFechaMatricula(),
+                    matricula.getFechaExpiracion()
             );
         }).collect(Collectors.toList());
     }
@@ -152,6 +154,15 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
         boolean isEnrolled = matriculaRepository.existsByUsuarioIdAndCursoIdAndEstadoTrue(usuario.getId(), cursoId);
         if (!isEnrolled) {
             throw new RuntimeException("No estás matriculado en este curso.");
+        }
+
+        // Validación en tiempo real: verificar si la matrícula ha expirado
+        Matricula matricula = matriculaRepository.findByUsuarioIdAndCursoId(usuario.getId(), cursoId)
+                .orElseThrow(() -> new RuntimeException("No estás matriculado en este curso."));
+        if (matricula.getFechaExpiracion() != null && LocalDateTime.now().isAfter(matricula.getFechaExpiracion())) {
+            matricula.setEstado(false);
+            matriculaRepository.save(matricula);
+            throw new RuntimeException("Tu matrícula en este curso ha expirado. Contacta con administración para renovarla.");
         }
 
         List<Modulo> modulos = moduloRepository.findByCursoIdOrderByOrdenAsc(cursoId);

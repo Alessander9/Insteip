@@ -8,7 +8,11 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "login_auditoria")
+@Table(name = "login_auditoria", indexes = {
+    @Index(name = "idx_login_auditoria_usuario_id", columnList = "usuario_id"),
+    @Index(name = "idx_login_auditoria_correo", columnList = "correo"),
+    @Index(name = "idx_login_auditoria_fecha", columnList = "fecha")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

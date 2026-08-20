@@ -33,4 +33,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
             org.springframework.data.domain.Pageable pageable);
 
     org.springframework.data.domain.Page<Usuario> findByRolNombre(String rolNombre, org.springframework.data.domain.Pageable pageable);
+
+    java.util.List<Usuario> findByRolNombreInAndEstadoTrue(java.util.List<String> rolNombres);
+
+    java.util.List<Usuario> findByEstadoTrue();
 }

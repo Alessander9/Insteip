@@ -4,6 +4,8 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/';
 import { UserProfile } from '../../core/models/';
 import { SkeletonLoaderComponent } from '../../core/components/skeleton-loader/skeleton-loader.component';
+import { NotificacionesMenuComponent } from '../../core/components/notificaciones-menu/notificaciones-menu.component';
+import { AnuncioModalDialogComponent } from '../../core/components/anuncio-modal-dialog/anuncio-modal-dialog.component';
 import { ThemeService } from '../../core/services/';
 
 @Component({
@@ -12,7 +14,9 @@ import { ThemeService } from '../../core/services/';
   imports: [
     CommonModule,
     RouterModule,
-    SkeletonLoaderComponent
+    SkeletonLoaderComponent,
+    NotificacionesMenuComponent,
+    AnuncioModalDialogComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']

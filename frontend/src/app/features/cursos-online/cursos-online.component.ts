@@ -147,6 +147,19 @@ export class CursosOnlineComponent {
       price: 'S/ 150',
       image: 'assets/seminario_reflexologia.jpg',
       customLink: '/cursos/seminario-reflexologia-online'
+    },
+    {
+      slug: 'aromaterapia-flores-bach-online',
+      title: 'Aromaterapia y Flores de Bach (Online)',
+      category: 'CORTOS',
+      icon: 'local_florist',
+      rating: 5.0,
+      duration: '1 mes / Clases en vivo',
+      description: 'Aprende a integrar el poder de los aceites esenciales y las Flores de Bach en el abordaje de las terapias integrales.',
+      students: '+180',
+      price: 'S/ 120',
+      image: 'assets/curso_aromaterapia_flores_bach.jpg',
+      customLink: '/cursos/aromaterapia-flores-bach'
     }
   ];
 

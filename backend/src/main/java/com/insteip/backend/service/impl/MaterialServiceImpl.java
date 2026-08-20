@@ -69,6 +69,7 @@ public class MaterialServiceImpl implements MaterialService {
     private final MatriculaRepository matriculaRepository;
 
     private final AuditoriaService auditoriaService;
+    private final com.insteip.backend.service.interfaces.NotificacionService notificacionService;
 
     @org.springframework.beans.factory.annotation.Value("${application.storage.path}")
     private String storagePathSetting;
@@ -136,6 +137,18 @@ public class MaterialServiceImpl implements MaterialService {
 
         // System Audit
         auditoriaService.registrarEvento("MATERIAL", "CREAR", "Subido material: " + saved.getNombre() + " (ID: " + saved.getId() + ")");
+
+        if (modulo.getCurso() != null) {
+            Long cursoId = modulo.getCurso().getId();
+            notificacionService.notificarAlumnosDeCurso(
+                    cursoId,
+                    "📄 Nuevo material de estudio",
+                    "Se ha añadido el material '" + saved.getNombre() + "' al Módulo " + modulo.getOrden() + " (" + (modulo.getCurso().getNombre() != null ? modulo.getCurso().getNombre() : "") + ")",
+                    "MATERIAL_NUEVO",
+                    "/dashboard/cursos-play/" + cursoId,
+                    "description"
+            );
+        }
 
         return convertToResponseDto(saved);
     }
@@ -260,6 +273,13 @@ public class MaterialServiceImpl implements MaterialService {
             if (matricula == null || matricula.getEstado() == null || !matricula.getEstado()) {
                 registrarDescargaDenegada(material, "Matrícula inactiva o inexistente");
                 throw new com.insteip.backend.domain.exception.ForbiddenException("No tiene permisos para acceder a este recurso.");
+            }
+            // Validación en tiempo real: verificar si la matrícula ha expirado
+            if (matricula.getFechaExpiracion() != null && java.time.LocalDateTime.now().isAfter(matricula.getFechaExpiracion())) {
+                matricula.setEstado(false);
+                matriculaRepository.save(matricula);
+                registrarDescargaDenegada(material, "Matrícula expirada");
+                throw new com.insteip.backend.domain.exception.ForbiddenException("Tu matrícula en este curso ha expirado. Contacta con administración para renovarla.");
             }
         }
 

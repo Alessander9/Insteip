@@ -9,6 +9,16 @@
             "projectName": "backend",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-BackendApplication<backend (2)>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.insteip.backend.BackendApplication",
+            "projectName": "backend (2)",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

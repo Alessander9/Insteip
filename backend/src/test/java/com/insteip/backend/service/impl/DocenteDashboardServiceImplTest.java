@@ -70,7 +70,7 @@ class DocenteDashboardServiceImplTest {
         List<CursoResponseDTO> result = docenteDashboardService.getCursosAsignados("admin@insteip.com");
 
         assertEquals(1, result.size());
-        assertEquals("Curso Test", result.getFirst().nombre());
+        assertEquals("Curso Test", result.get(0).nombre());
         verify(cursoRepository, times(1)).findAll();
         verify(cursoRepository, never()).findByDocenteId(any());
     }
@@ -83,8 +83,8 @@ class DocenteDashboardServiceImplTest {
         List<CursoResponseDTO> result = docenteDashboardService.getCursosAsignados("docente@insteip.com");
 
         assertEquals(1, result.size());
-        assertEquals("Curso Test", result.getFirst().nombre());
-        assertEquals(11L, result.getFirst().docenteId());
+        assertEquals("Curso Test", result.get(0).nombre());
+        assertEquals(11L, result.get(0).docenteId());
         verify(cursoRepository, never()).findAll();
         verify(cursoRepository, times(1)).findByDocenteId(11L);
     }
@@ -115,9 +115,9 @@ class DocenteDashboardServiceImplTest {
         List<DocenteEstudianteProgressResponse> result = docenteDashboardService.getAlumnosCurso("admin@insteip.com", 100L);
 
         assertEquals(1, result.size());
-        assertEquals("Alumno", result.getFirst().nombres());
-        assertEquals(75.5, result.getFirst().porcentajeAvance());
-        assertFalse(result.getFirst().completado());
+        assertEquals("Alumno", result.get(0).nombres());
+        assertEquals(75.5, result.get(0).porcentajeAvance());
+        assertFalse(result.get(0).completado());
     }
 
     @Test
@@ -132,7 +132,7 @@ class DocenteDashboardServiceImplTest {
         List<DocenteEstudianteProgressResponse> result = docenteDashboardService.getAlumnosCurso("docente@insteip.com", 100L);
 
         assertEquals(1, result.size());
-        assertEquals(0.0, result.getFirst().porcentajeAvance()); // Default to 0 when no progress record exists
+        assertEquals(0.0, result.get(0).porcentajeAvance()); // Default to 0 when no progress record exists
     }
 
     @Test

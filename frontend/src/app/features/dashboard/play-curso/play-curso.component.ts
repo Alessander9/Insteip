@@ -528,6 +528,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
           modestbranding: 1,
           rel: 0,
           iv_load_policy: 3,
+          cc_load_policy: 0,
           enablejsapi: 1,
           origin: window.location.origin
         },
@@ -539,8 +540,14 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
               this.isPlayerLoading = false;
               // Desactivar subtítulos por defecto
               try {
-                if (this.player && this.player.setOption) {
-                  this.player.setOption('captions', 'track', {});
+                if (this.player) {
+                  if (typeof this.player.unloadModule === 'function') {
+                    this.player.unloadModule('captions');
+                    this.player.unloadModule('cc');
+                  }
+                  if (typeof this.player.setOption === 'function') {
+                    this.player.setOption('captions', 'track', {});
+                  }
                 }
               } catch (_e) {}
               // Persistir duración real ni bien el player esté listo
@@ -1110,6 +1117,41 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     const duration = Math.max(1, video.duracionSegundos || 0);
     const watched = Math.max(0, video.ultimoSegundo || 0);
     return Math.min(watched, duration - 1);
+  }
+
+  subtitulosActivos = false;
+
+  toggleSubtitulos(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.subtitulosActivos = !this.subtitulosActivos;
+    if (this.player) {
+      try {
+        if (this.subtitulosActivos) {
+          if (typeof this.player.loadModule === 'function') {
+            this.player.loadModule('captions');
+            this.player.loadModule('cc');
+          }
+          if (typeof this.player.setOption === 'function') {
+            this.player.setOption('captions', 'track', { languageCode: 'es' });
+            this.player.setOption('cc', 'track', { languageCode: 'es' });
+          }
+          this.toastService.info('Subtítulos activados');
+        } else {
+          if (typeof this.player.unloadModule === 'function') {
+            this.player.unloadModule('captions');
+            this.player.unloadModule('cc');
+          }
+          if (typeof this.player.setOption === 'function') {
+            this.player.setOption('captions', 'track', {});
+          }
+          this.toastService.info('Subtítulos desactivados');
+        }
+      } catch (err) {
+        console.warn('Error alternando subtítulos:', err);
+      }
+    }
   }
 }
 

@@ -511,6 +511,45 @@
         </div>
       </div>
 
+      <!-- Accesos Rápidos Alumno -->
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 mt-3 sm:mt-4">
+        <a 
+          routerLink="/dashboard/mis-cursos" 
+          class="action-card border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2 sm:p-3 flex items-center gap-2 sm:gap-2.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 rounded-none group select-none">
+          <div class="action-icon w-8 h-8 sm:w-9 sm:h-9 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 rounded-none shrink-0 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+            <span class="material-symbols-outlined text-sm">auto_stories</span>
+          </div>
+          <div>
+            <span class="text-[8px] font-bold text-slate-400 dark:text-slate-500 uppercase block tracking-wider leading-none">Mis Cursos</span>
+            <span class="text-[11px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-tight leading-none">Estudiar</span>
+          </div>
+        </a>
+
+        <a 
+          routerLink="/dashboard/mis-tareas" 
+          class="action-card border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2 sm:p-3 flex items-center gap-2 sm:gap-2.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 rounded-none group select-none">
+          <div class="action-icon w-8 h-8 sm:w-9 sm:h-9 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 rounded-none shrink-0 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+            <span class="material-symbols-outlined text-sm">assignment</span>
+          </div>
+          <div>
+            <span class="text-[8px] font-bold text-slate-400 dark:text-slate-500 uppercase block tracking-wider leading-none">Evaluaciones</span>
+            <span class="text-[11px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-tight leading-none">Mis Tareas y Notas</span>
+          </div>
+        </a>
+
+        <a 
+          routerLink="/dashboard/perfil" 
+          class="action-card border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2 sm:p-3 flex items-center gap-2 sm:gap-2.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 rounded-none group select-none col-span-2 md:col-span-1">
+          <div class="action-icon w-8 h-8 sm:w-9 sm:h-9 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 rounded-none shrink-0 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+            <span class="material-symbols-outlined text-sm">person</span>
+          </div>
+          <div>
+            <span class="text-[8px] font-bold text-slate-400 dark:text-slate-500 uppercase block tracking-wider leading-none">Mi Cuenta</span>
+            <span class="text-[11px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-tight leading-none">Perfil</span>
+          </div>
+        </a>
+      </div>
+
       <!-- Dashboard Metrics Grid (with metric-card effects) -->
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mt-3 sm:mt-4">
         <!-- Metric 1: Cursos Inscritos -->
@@ -540,15 +579,15 @@
           </div>
         </div>
 
-        <!-- Metric 3: Certificados Habilitados -->
+        <!-- Metric 3: Logros Alcanzados -->
         <div class="metric-card border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-none shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-between sm:col-span-2 md:col-span-1">
           <div>
-            <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Certificados Logrados</span>
+            <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Logros Alcanzados</span>
             <h3 class="metric-number text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1.5 tracking-tight">{{ studentCertificados }}</h3>
-            <p class="text-[9px] text-slate-500 dark:text-slate-400 font-semibold mt-1">Descargables desde el panel</p>
+            <p class="text-[9px] text-slate-500 dark:text-slate-400 font-semibold mt-1">Reconocimientos obtenidos</p>
           </div>
           <div class="metric-icon w-10 h-10 sm:w-12 sm:h-12 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500 rounded-none shrink-0">
-            <span class="material-symbols-outlined text-xl sm:text-2xl text-amber-500">workspace_premium</span>
+            <span class="material-symbols-outlined text-xl sm:text-2xl text-amber-500">emoji_events</span>
           </div>
         </div>
       </div>
@@ -640,9 +679,9 @@
             <div class="border-l-2 border-amber-500 pl-3.5 space-y-1.5">
               <h4 class="font-bold text-slate-900 dark:text-slate-200 uppercase tracking-wide text-[11px] flex items-center gap-2">
                 <span class="material-symbols-outlined text-amber-500 text-sm">emoji_events</span>
-                <span>3. Generación de Diploma</span>
+                <span>3. Reconocimiento Especial</span>
               </h4>
-              <p class="text-slate-500 dark:text-slate-400 text-[11px]">Una vez terminado, dirígete a <strong>Certificados</strong> en la barra lateral o en la pestaña del curso para descargar tu PDF oficial.</p>
+              <p class="text-slate-500 dark:text-slate-400 text-[11px]">Al completar todas las clases, recibirás un reconocimiento especial de parte de la familia INSTEIP por tu dedicación y esfuerzo.</p>
             </div>
           </div>
         </div>

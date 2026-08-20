@@ -160,6 +160,15 @@
             <span>Mis Cursos</span>
           </a>
           <a
+            routerLink="/dashboard/mis-tareas"
+            routerLinkActive="bg-slate-800 text-white border-l-2 border-primary"
+            (click)="closeSidebar()"
+            class="flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all rounded-none">
+            <span class="material-symbols-outlined text-lg">assignment</span>
+            <span>Mis Tareas</span>
+          </a>
+          <!-- Certificados oculto temporalmente para alumnos
+          <a
             routerLink="/dashboard/certificados"
             routerLinkActive="bg-slate-800 text-white border-l-2 border-primary"
             (click)="closeSidebar()"
@@ -167,6 +176,7 @@
             <span class="material-symbols-outlined text-lg">workspace_premium</span>
             <span>Certificados</span>
           </a>
+          -->
           <a
             routerLink="/dashboard/perfil"
             routerLinkActive="bg-slate-800 text-white border-l-2 border-primary"
@@ -324,12 +334,21 @@
             <span>Mis Cursos</span>
           </a>
           <a
+            routerLink="/dashboard/mis-tareas"
+            routerLinkActive="bg-slate-800 text-white border-l-2 border-primary"
+            class="flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all rounded-none">
+            <span class="material-symbols-outlined text-lg">assignment</span>
+            <span>Mis Tareas</span>
+          </a>
+          <!-- Certificados oculto temporalmente para alumnos
+          <a
             routerLink="/dashboard/certificados"
             routerLinkActive="bg-slate-800 text-white border-l-2 border-primary"
             class="flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all rounded-none">
             <span class="material-symbols-outlined text-lg">workspace_premium</span>
             <span>Certificados</span>
           </a>
+          -->
           <a
             routerLink="/dashboard/perfil"
             routerLinkActive="bg-slate-800 text-white border-l-2 border-primary"
@@ -510,12 +529,21 @@
         <span class="text-[9px] font-bold uppercase tracking-wider leading-none">Mis Cursos</span>
       </a>
       <a
+        routerLink="/dashboard/mis-tareas"
+        routerLinkActive="text-primary border-t-2 border-primary"
+        class="flex-1 flex flex-col items-center justify-center gap-0.5 text-slate-400 hover:text-white transition-colors py-1">
+        <span class="material-symbols-outlined text-xl leading-none">assignment</span>
+        <span class="text-[9px] font-bold uppercase tracking-wider leading-none">Tareas</span>
+      </a>
+      <!-- Certificados oculto temporalmente para alumnos
+      <a
         routerLink="/dashboard/certificados"
         routerLinkActive="text-primary border-t-2 border-primary"
         class="flex-1 flex flex-col items-center justify-center gap-0.5 text-slate-400 hover:text-white transition-colors py-1">
         <span class="material-symbols-outlined text-xl leading-none">workspace_premium</span>
         <span class="text-[9px] font-bold uppercase tracking-wider leading-none">Certif.</span>
       </a>
+      -->
       <a
         routerLink="/dashboard/perfil"
         routerLinkActive="text-primary border-t-2 border-primary"

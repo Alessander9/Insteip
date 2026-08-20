@@ -27,12 +27,32 @@ export const routes: Routes = [
     loadComponent: () => import('./features/certificacion/certificacion.component').then(m => m.CertificacionComponent)
   },
   {
+    path: 'bolsa-de-trabajo',
+    loadComponent: () => import('./features/bolsa-de-trabajo/bolsa-de-trabajo.component').then(m => m.BolsaDeTrabajoComponent)
+  },
+  {
+    path: 'bolsa-de-trabajo.html',
+    loadComponent: () => import('./features/bolsa-de-trabajo/bolsa-de-trabajo.component').then(m => m.BolsaDeTrabajoComponent)
+  },
+  {
+    path: 'bolsa-trabajo',
+    loadComponent: () => import('./features/bolsa-de-trabajo/bolsa-de-trabajo.component').then(m => m.BolsaDeTrabajoComponent)
+  },
+  {
     path: 'por-que-elegirnos',
     loadComponent: () => import('./features/por-que-elegirnos/por-que-elegirnos.component').then(m => m.PorQueElegirnosComponent)
   },
   {
     path: 'como-aprenderas',
     loadComponent: () => import('./features/como-aprenderas/como-aprenderas.component').then(m => m.ComoAprenderasComponent)
+  },
+  {
+    path: 'sedes',
+    loadComponent: () => import('./features/sedes/sedes.component').then(m => m.SedesComponent)
+  },
+  {
+    path: 'sedesV2',
+    loadComponent: () => import('./features/sedes-v2/sedes-v2.component').then(m => m.SedesV2Component)
   },
   {
     path: 'cursos',
@@ -133,6 +153,22 @@ export const routes: Routes = [
   {
     path: 'cursos/fitoterapia-presencial',
     loadComponent: () => import('./features/formaciones/fitoterapia-presencial/fitoterapia-presencial.component').then(m => m.FitoterapiaPresencialComponent)
+  },
+  {
+    path: 'cursos/aromaterapia-flores-bach',
+    loadComponent: () => import('./features/formaciones/aromaterapia-flores-bach/aromaterapia-flores-bach.component').then(m => m.AromaterapiaFloresBachComponent)
+  },
+  {
+    path: 'cursos/aromaterapia-flores-bach.html',
+    loadComponent: () => import('./features/formaciones/aromaterapia-flores-bach/aromaterapia-flores-bach.component').then(m => m.AromaterapiaFloresBachComponent)
+  },
+  {
+    path: 'cursos/aromaterapia-flores-bach-presencial',
+    loadComponent: () => import('./features/formaciones/aromaterapia-flores-bach/aromaterapia-flores-bach.component').then(m => m.AromaterapiaFloresBachComponent)
+  },
+  {
+    path: 'cursos/aromaterapia-flores-bach-online',
+    loadComponent: () => import('./features/formaciones/aromaterapia-flores-bach/aromaterapia-flores-bach.component').then(m => m.AromaterapiaFloresBachComponent)
   },
   {
     path: 'cursos/:id',
@@ -250,6 +286,12 @@ export const routes: Routes = [
       {
         path: 'mis-cursos',
         loadComponent: () => import('./features/dashboard/mis-cursos/mis-cursos.component').then(m => m.MisCursosComponent)
+      },
+      {
+        path: 'mis-tareas',
+        loadComponent: () => import('./features/dashboard/alumno/mis-tareas/mis-tareas.component').then(m => m.MisTareasComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['ALUMNO', 'ADMINISTRADOR'] }
       },
       {
         path: 'cursos-play/:id',

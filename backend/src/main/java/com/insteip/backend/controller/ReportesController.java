@@ -71,7 +71,7 @@ public class ReportesController {
 
         PrintWriter writer = response.getWriter();
         writer.write('\ufeff');
-        writer.println("Alumno,Curso,Fecha Matrícula,Estado");
+        writer.println("Alumno,Curso,Fecha Matrícula,Fecha Expiración,Estado");
 
         List<Matricula> matriculas = matriculaRepository.findAll();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -80,10 +80,12 @@ public class ReportesController {
             String alumno = m.getUsuario().getNombres() + " " + m.getUsuario().getApellidos();
             String curso = m.getCurso().getNombre();
             String fechaMat = m.getFechaMatricula() != null ? m.getFechaMatricula().format(formatter) : "";
-            writer.println(String.format("%s,%s,%s,%s",
+            String fechaExp = m.getFechaExpiracion() != null ? m.getFechaExpiracion().format(formatter) : "";
+            writer.println(String.format("%s,%s,%s,%s,%s",
                     escapeCsv(alumno),
                     escapeCsv(curso),
                     fechaMat,
+                    fechaExp,
                     m.getEstado() ? "ACTIVO" : "INACTIVO"
             ));
         }

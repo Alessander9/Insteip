@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../core/components/navbar/navbar.component';
 import { FooterComponent } from '../../core/components/footer/footer.component';
@@ -25,6 +26,32 @@ interface Slide {
 export class InicioComponent implements OnInit, OnDestroy, AfterViewInit {
   currentSlide = 0;
   private intervalId: any;
+
+  // Modal de video de bienvenida
+  showVideoModal = true;
+  videoUrl: SafeResourceUrl;
+  private readonly YOUTUBE_VIDEO_ID = 'Jzg9ws_HzkE';
+  private sanitizer = inject(DomSanitizer);
+
+  constructor() {
+    this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+      `https://www.youtube.com/embed/${this.YOUTUBE_VIDEO_ID}?autoplay=1&rel=0&modestbranding=1`
+    );
+    if (typeof window !== 'undefined' && window.sessionStorage) {
+      const shown = sessionStorage.getItem('insteip-welcome-modal-shown');
+      if (shown) {
+        this.showVideoModal = false;
+      } else {
+        sessionStorage.setItem('insteip-welcome-modal-shown', 'true');
+      }
+    }
+  }
+
+  closeVideoModal(): void {
+    this.showVideoModal = false;
+    // Detener el video al cerrar limpiando la URL
+    this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl('');
+  }
 
   slides: Slide[] = [
     {

@@ -98,16 +98,16 @@
             </p>
           </div>
 
-          <!-- Metric 3: Certificados Obtenidos -->
+          <!-- Metric 3: Logros Obtenidos -->
           <div class="border border-slate-200 dark:border-slate-800 p-5 bg-slate-50/50 dark:bg-slate-800/30 flex flex-col justify-between">
-            <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Certificados Oficiales</span>
+            <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Logros Obtenidos</span>
             <div class="flex items-baseline gap-1.5 mt-3">
               <span class="text-3xl font-black text-slate-900 dark:text-slate-100 font-mono">{{ metrics.certificados }}</span>
-              <span class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold">emitidos</span>
+              <span class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold">reconocimientos</span>
             </div>
             <p class="text-[10px] text-amber-600 font-semibold mt-2 flex items-center gap-1">
-              <span class="material-symbols-outlined text-xs">workspace_premium</span>
-              Descargas habilitadas
+              <span class="material-symbols-outlined text-xs">emoji_events</span>
+              Metas cumplidas
             </p>
           </div>
         </div>
@@ -299,7 +299,7 @@
           <div>
             <label class="block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Contraseña Actual</label>
             <div class="relative">
-              <input [type]="hideCurrentPassword ? 'password' : 'text'" [(ngModel)]="currentPassword" name="currentPassword" placeholder="••••••••" class="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 font-semibold outline-none focus:border-slate-900 dark:focus:border-slate-100">
+              <input [type]="hideCurrentPassword ? 'password' : 'text'" [(ngModel)]="currentPassword" name="currentPassword" placeholder="••••••••" autocomplete="new-password" class="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 font-semibold outline-none focus:border-slate-900 dark:focus:border-slate-100">
               <button type="button" (click)="hideCurrentPassword = !hideCurrentPassword" class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
                 <span class="material-symbols-outlined text-[18px] select-none">
                   {{ hideCurrentPassword ? 'visibility' : 'visibility_off' }}
@@ -311,7 +311,7 @@
           <div>
             <label class="block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Nueva Contraseña</label>
             <div class="relative">
-              <input [type]="hideNewPassword ? 'password' : 'text'" [(ngModel)]="newPassword" name="newPassword" placeholder="••••••••" class="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 font-semibold outline-none focus:border-slate-900 dark:focus:border-slate-100">
+              <input [type]="hideNewPassword ? 'password' : 'text'" [(ngModel)]="newPassword" name="newPassword" placeholder="••••••••" autocomplete="new-password" class="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 font-semibold outline-none focus:border-slate-900 dark:focus:border-slate-100">
               <button type="button" (click)="hideNewPassword = !hideNewPassword" class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
                 <span class="material-symbols-outlined text-[18px] select-none">
                   {{ hideNewPassword ? 'visibility' : 'visibility_off' }}
@@ -323,7 +323,7 @@
           <div>
             <label class="block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Confirmar Nueva Contraseña</label>
             <div class="relative">
-              <input [type]="hideConfirmNewPassword ? 'password' : 'text'" [(ngModel)]="confirmNewPassword" name="confirmNewPassword" placeholder="••••••••" class="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 font-semibold outline-none focus:border-slate-900 dark:focus:border-slate-100">
+              <input [type]="hideConfirmNewPassword ? 'password' : 'text'" [(ngModel)]="confirmNewPassword" name="confirmNewPassword" placeholder="••••••••" autocomplete="new-password" class="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 font-semibold outline-none focus:border-slate-900 dark:focus:border-slate-100">
               <button type="button" (click)="hideConfirmNewPassword = !hideConfirmNewPassword" class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
                 <span class="material-symbols-outlined text-[18px] select-none">
                   {{ hideConfirmNewPassword ? 'visibility' : 'visibility_off' }}

@@ -108,6 +108,19 @@ export class CursosPresencialesComponent {
       price: 'S/ 250/mes',
       image: 'assets/fitoterapia_insteip.jpg',
       customLink: '/cursos/fitoterapia-presencial'
+    },
+    {
+      slug: 'aromaterapia-flores-bach-presencial',
+      title: 'Aromaterapia y Flores de Bach',
+      category: 'CORTOS',
+      icon: 'local_florist',
+      rating: 5.0,
+      duration: '1 mes / Presencial',
+      description: 'Aprende a integrar el poder de los aceites esenciales y las Flores de Bach en el abordaje clínico de las terapias integrales.',
+      students: '+160',
+      price: 'S/ 200',
+      image: 'assets/curso_aromaterapia_flores_bach.jpg',
+      customLink: '/cursos/aromaterapia-flores-bach'
     }
   ];
 

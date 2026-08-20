@@ -16,6 +16,7 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
                   LOWER(v.titulo) LIKE LOWER(CONCAT('%', :search, '%')) OR
                   LOWER(v.descripcion) LIKE LOWER(CONCAT('%', :search, '%'))
               )
+            ORDER BY v.orden ASC
             """)
     Page<Video> searchByModuloId(
             @org.springframework.data.repository.query.Param("moduloId") Long moduloId,

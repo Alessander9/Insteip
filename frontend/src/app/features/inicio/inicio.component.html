@@ -1,3 +1,19 @@
+<!-- =====================================================
+  MODAL DE IMAGEN DE BIENVENIDA
+====================================================== -->
+<div class="video-modal-overlay" *ngIf="showVideoModal" (click)="closeVideoModal()">
+  <div class="video-modal-container" (click)="$event.stopPropagation()">
+    <div class="video-modal-player">
+      <img
+        src="assets/insteip_huanuco 2.jpg"
+        alt="INSTEIP Huánuco">
+    </div>
+    <button class="video-modal-close-btn" (click)="closeVideoModal()">
+      Cerrar
+    </button>
+  </div>
+</div>
+
 <header role="banner">
   <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
   <app-navbar></app-navbar>
@@ -732,7 +748,7 @@
         <div class="space-y-20 md:space-y-32 relative z-10">
 
           <!-- Step 01: Left Text, Right Image -->
-          <div class="timeline-item flex flex-col md:flex-row items-center gap-8 md:gap-16 group">
+          <div class="timeline-item relative flex flex-col md:flex-row items-center gap-8 md:gap-16 group">
             <!-- Text column -->
             <div
               class="w-full md:w-1/2 text-left md:text-right flex flex-col md:items-end justify-center timeline-content timeline-left pl-10 md:pl-0">
@@ -748,7 +764,7 @@
             </div>
             <!-- Node in the center -->
             <div
-              class="absolute left-6 md:left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-white dark:bg-[#0a1628] border-2 border-slate-200 dark:border-slate-800 flex items-center justify-center font-mono font-bold text-base text-primary dark:text-secondary-fixed shadow-md group-hover:border-primary dark:group-hover:border-secondary-fixed transition-colors duration-300 timeline-node z-20">
+              class="absolute top-0 left-6 md:top-auto md:left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-white dark:bg-[#0a1628] border-2 border-slate-200 dark:border-slate-800 flex items-center justify-center font-mono font-bold text-base text-primary dark:text-secondary-fixed shadow-md group-hover:border-primary dark:group-hover:border-secondary-fixed transition-colors duration-300 timeline-node z-20">
               01
             </div>
             <!-- Image column -->
@@ -763,7 +779,7 @@
           </div>
 
           <!-- Step 02: Right Text, Left Image (Alternated on Desktop) -->
-          <div class="timeline-item flex flex-col md:flex-row items-center gap-8 md:gap-16 group">
+          <div class="timeline-item relative flex flex-col md:flex-row items-center gap-8 md:gap-16 group">
             <!-- Image column (appears first on desktop) -->
             <div class="w-full md:w-1/2 order-last md:order-first timeline-image pl-10 md:pl-0">
               <div
@@ -775,7 +791,7 @@
             </div>
             <!-- Node in the center -->
             <div
-              class="absolute left-6 md:left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-white dark:bg-[#0a1628] border-2 border-slate-200 dark:border-slate-800 flex items-center justify-center font-mono font-bold text-base text-primary dark:text-secondary-fixed shadow-md group-hover:border-primary dark:group-hover:border-secondary-fixed transition-colors duration-300 timeline-node z-20">
+              class="absolute top-0 left-6 md:top-auto md:left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-white dark:bg-[#0a1628] border-2 border-slate-200 dark:border-slate-800 flex items-center justify-center font-mono font-bold text-base text-primary dark:text-secondary-fixed shadow-md group-hover:border-primary dark:group-hover:border-secondary-fixed transition-colors duration-300 timeline-node z-20">
               02
             </div>
             <!-- Text column -->
@@ -794,7 +810,7 @@
           </div>
 
           <!-- Step 03: Left Text, Right Image -->
-          <div class="timeline-item flex flex-col md:flex-row items-center gap-8 md:gap-16 group">
+          <div class="timeline-item relative flex flex-col md:flex-row items-center gap-8 md:gap-16 group">
             <!-- Text column -->
             <div
               class="w-full md:w-1/2 text-left md:text-right flex flex-col md:items-end justify-center timeline-content timeline-left pl-10 md:pl-0">
@@ -810,7 +826,7 @@
             </div>
             <!-- Node in the center -->
             <div
-              class="absolute left-6 md:left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-white dark:bg-[#0a1628] border-2 border-slate-200 dark:border-slate-800 flex items-center justify-center font-mono font-bold text-base text-primary dark:text-secondary-fixed shadow-md group-hover:border-primary dark:group-hover:border-secondary-fixed transition-colors duration-300 timeline-node z-20">
+              class="absolute top-0 left-6 md:top-auto md:left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-white dark:bg-[#0a1628] border-2 border-slate-200 dark:border-slate-800 flex items-center justify-center font-mono font-bold text-base text-primary dark:text-secondary-fixed shadow-md group-hover:border-primary dark:group-hover:border-secondary-fixed transition-colors duration-300 timeline-node z-20">
               03
             </div>
             <!-- Image column -->

@@ -297,6 +297,20 @@ export const ROUTE_SEO: Record<string, SeoData> = {
     ogDescription: 'Material de estudio, guías y herramientas para tu formación.',
     keywords: 'recursos educativos, material estudio, guías, terapias complementarias'
   },
+  '/sedes': {
+    title: 'Sedes a Nivel Nacional — INSTEIP | Huánuco, Lima y Piura',
+    description: 'Encuentra tu sede más cercana de INSTEIP. Conoce nuestras sedes en Lima, Huánuco y Piura para estudiar terapias complementarias con certificación oficial.',
+    ogTitle: 'Sedes a Nivel Nacional — INSTEIP',
+    ogDescription: 'Nuestras sedes en Huánuco, Lima y Piura. Conoce a nuestros representantes e inscríbete a nuestras formaciones presenciales.',
+    keywords: 'sedes, sedes insteip, sedes lima, sede huanuco, sede piura, medicina complementaria peru'
+  },
+  '/sedesV2': {
+    title: 'Sedes V2 — INSTEIP | Rediseño Premium',
+    description: 'Conoce la versión mejorada de nuestras sedes a nivel nacional. Huánuco, Lima y Piura con interfaz premium y mapa interactivo.',
+    ogTitle: 'Sedes V2 — INSTEIP',
+    ogDescription: 'Rediseño premium de la red de sedes nacionales de INSTEIP.',
+    keywords: 'sedes v2, sedes insteip, acupuntura peru, sedes de estudio'
+  },
   '/login': {
     title: 'Iniciar Sesión — Aula Virtual INSTEIP',
     description: 'Accede al aula virtual de INSTEIP. Inicia sesión para ver tus cursos, materiales y certificados.',

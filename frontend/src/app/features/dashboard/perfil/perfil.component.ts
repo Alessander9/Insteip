@@ -43,14 +43,6 @@ export class PerfilComponent implements OnInit {
       next: (data) => {
         this.profile = data;
         
-        // Pre-fill current password based on role for local testing convenience
-        if (data.rol === 'ADMINISTRADOR') {
-          this.currentPassword = 'Admin123!';
-        } else if (data.rol === 'DOCENTE') {
-          this.currentPassword = 'Docente123!';
-        } else if (data.rol === 'ALUMNO') {
-          this.currentPassword = 'Alumno123!';
-        }
 
         if (data.rol === 'ALUMNO') {
           this.loadStudentMetrics();

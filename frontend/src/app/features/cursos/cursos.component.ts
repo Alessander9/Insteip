@@ -159,8 +159,22 @@ export class PublicCursosComponent {
       image: 'assets/seminario_reflexologia.jpg',
       customLink: '/cursos/seminario-reflexologia-online'
     },
+    {
+      slug: 'aromaterapia-flores-bach-online',
+      title: 'Aromaterapia y Flores de Bach (Online)',
+      category: 'CORTOS',
+      modality: 'ONLINE',
+      icon: 'local_florist',
+      rating: 5.0,
+      duration: '1 mes / Clases en vivo',
+      description: 'Aprende a integrar el poder de los aceites esenciales y las Flores de Bach en el abordaje de las terapias integrales.',
+      students: '+180',
+      price: 'S/ 120',
+      image: 'assets/curso_aromaterapia_flores_bach.jpg',
+      customLink: '/cursos/aromaterapia-flores-bach'
+    },
 
-    // 5 Cursos Presenciales
+    // Cursos Presenciales
     {
       slug: 'digitopresion-presencial',
       title: 'Digitopresión Mecánica',
@@ -244,6 +258,20 @@ export class PublicCursosComponent {
       price: 'S/ 250/mes',
       image: 'assets/fitoterapia_insteip.jpg',
       customLink: '/cursos/fitoterapia-presencial'
+    },
+    {
+      slug: 'aromaterapia-flores-bach-presencial',
+      title: 'Aromaterapia y Flores de Bach',
+      category: 'CORTOS',
+      modality: 'PRESENCIAL',
+      icon: 'local_florist',
+      rating: 5.0,
+      duration: '1 mes / Presencial',
+      description: 'Aprende a integrar el poder de los aceites esenciales y las Flores de Bach en el abordaje clínico de las terapias integrales.',
+      students: '+160',
+      price: 'S/ 200',
+      image: 'assets/curso_aromaterapia_flores_bach.jpg',
+      customLink: '/cursos/aromaterapia-flores-bach'
     }
   ];
 

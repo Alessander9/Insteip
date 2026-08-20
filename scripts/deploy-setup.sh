@@ -239,7 +239,8 @@ Requires=docker.service
 
 [Service]
 Type=simple
-User=root
+User=insteip
+Group=insteip
 WorkingDirectory=/opt/insteip
 Environment="DB_URL=jdbc:postgresql://localhost:5455/insteip_db"
 Environment="DB_USERNAME=insteip_user"
@@ -247,7 +248,7 @@ Environment="DB_PASSWORD=${DB_PASSWORD}"
 Environment="STORAGE_PATH=/opt/insteip/data"
 Environment="API_BASE_URL=https://${DOMAIN}"
 Environment="FRONTEND_BASE_URL=https://${DOMAIN}"
-ExecStart=/usr/bin/java -jar /opt/insteip/backend.jar
+ExecStart=/usr/bin/java -Xms256m -Xmx1024m -jar /opt/insteip/app/backend.jar
 Restart=always
 RestartSec=10
 
@@ -293,7 +294,7 @@ echo ""
 echo -e "  ${BOLD}URL del sitio:${NC}       https://${DOMAIN}"
 echo -e "  ${BOLD}Health check:${NC}        https://${DOMAIN}/actuator/health"
 echo -e "  ${BOLD}PostgreSQL:${NC}          puerto 5455, usuario: insteip_user"
-echo -e "  ${BOLD}Backend JAR:${NC}         /opt/insteip/backend.jar"
+echo -e "  ${BOLD}Backend JAR:${NC}         /opt/insteip/app/backend.jar"
 echo -e "  ${BOLD}Frontend:${NC}            /opt/insteip/frontend/"
 echo -e "  ${BOLD}Archivos subidos:${NC}    /opt/insteip/data/materiales/"
 echo -e "  ${BOLD}Backups:${NC}             /backups/insteip/ (diario 3 AM)"
@@ -305,7 +306,7 @@ echo "  1. Compila el backend en tu PC:"
 echo "     cd backend && ./mvnw clean package -DskipTests"
 echo ""
 echo "  2. Sube el JAR al servidor:"
-echo "     scp backend/target/backend-0.0.1-SNAPSHOT.jar root@<IP>:/opt/insteip/backend.jar"
+echo "     scp backend/target/backend-0.0.1-SNAPSHOT.jar root@<IP>:/opt/insteip/app/backend.jar"
 echo ""
 echo "  3. Compila el frontend en tu PC:"
 echo "     cd frontend && npm install && npm run build"

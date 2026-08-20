@@ -109,6 +109,14 @@
             <span class="material-symbols-outlined text-lg">settings_suggest</span>
             <span>Sistema</span>
           </a>
+          <a
+            routerLink="/dashboard/comunicados"
+            routerLinkActive="bg-slate-800 text-white border-l-2 border-primary"
+            (click)="closeSidebar()"
+            class="flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all rounded-none">
+            <span class="material-symbols-outlined text-lg">campaign</span>
+            <span>Comunicados</span>
+          </a>
         </ng-container>
 
         <!-- DOCENTE -->
@@ -288,6 +296,13 @@
             <span class="material-symbols-outlined text-lg">settings_suggest</span>
             <span>Sistema</span>
           </a>
+          <a
+            routerLink="/dashboard/comunicados"
+            routerLinkActive="bg-slate-800 text-white border-l-2 border-primary"
+            class="flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all rounded-none">
+            <span class="material-symbols-outlined text-lg">campaign</span>
+            <span>Comunicados</span>
+          </a>
         </ng-container>
 
         <!-- DOCENTE -->
@@ -414,8 +429,11 @@
         <span class="text-xs font-black tracking-wider uppercase text-slate-800 dark:text-slate-200">INSTEIP</span>
       </div>
 
-      <!-- RIGHT: Theme Switch + Role badge (sm+) + logout icon (mobile) -->
-      <div class="flex items-center gap-2 md:gap-4">
+      <!-- RIGHT: Notificaciones + Theme Switch + Role badge (sm+) + logout icon (mobile) -->
+      <div class="flex items-center gap-2 md:gap-3">
+        <!-- Menú de Notificaciones (Campanita) -->
+        <app-notificaciones-menu></app-notificaciones-menu>
+
         <!-- Theme conmutador -->
         <button (click)="themeService.toggleTheme()" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white p-2 rounded-full transition-colors focus:outline-none" aria-label="Cambiar tema">
           <span class="material-symbols-outlined text-2xl">
@@ -554,5 +572,8 @@
     </ng-container>
 
   </nav>
+
+  <!-- Modal Pop-up de Anuncios Promocionales -->
+  <app-anuncio-modal-dialog></app-anuncio-modal-dialog>
 
 </div>

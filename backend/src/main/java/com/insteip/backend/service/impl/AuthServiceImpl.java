@@ -171,8 +171,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         if (refreshTokenEntity.getExpiracion().isBefore(LocalDateTime.now())) {
-            Usuario usuario = refreshTokenEntity.getUsuario();
-            logLoginFailure(usuario, usuario != null ? usuario.getCorreo() : null, ip, userAgent, "Token expirado");
+            refreshTokenRepository.delete(refreshTokenEntity);
             throw new BadRequestException("Refresh token expirado. Por favor, inicie sesión nuevamente.");
         }
 
@@ -221,9 +220,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private void logLoginFailure(Usuario usuario, String correo, String ip, String userAgent, String motivo) {
-        if (usuario == null) {
-            usuario = usuarioRepository.findById(1L).orElse(null);
-        }
         LoginAuditoria audit = LoginAuditoria.builder()
                 .usuario(usuario)
                 .correo(correo)

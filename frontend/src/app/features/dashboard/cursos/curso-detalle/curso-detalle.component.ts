@@ -14,8 +14,11 @@ import { MatriculaRequest, MatriculaResponse } from '../../../../core/models/';
 import { AlumnoResponse } from '../../../../core/models/';
 import { VideoService } from '../../../../core/services/';
 import { MaterialService } from '../../../../core/services/';
+import { TareaService } from '../../../../core/services/';
+import { EntregaTareaService } from '../../../../core/services/';
 import { VideoResponse, VideoRequest } from '../../../../core/models/';
 import { MaterialResponse } from '../../../../core/models/';
+import { TareaRequest, TareaResponse, EntregaTareaResponse, CalificarEntregaRequest } from '../../../../core/models/';
 import { ReportesService } from '../../../../core/services/';
 import { ArchivoProtegidoService } from '../../../../core/services/';
 import { ToastService } from '../../../../core/services/';
@@ -23,6 +26,7 @@ import { ConfirmModalComponent } from '../../../../core/components/confirm-modal
 import { formatBytes, getFileIcon, getCleanFileType, getFileExtension } from '../../../../core/utils/';
 import { getSubscriptionClass, formatNiveles } from '../../../../core/utils/';
 import { UsuarioService, DocenteOption } from '../../../../core/services/';
+import { environment } from '../../../../../environments/environment';
 
 // Reset IDE language service cache
 @Component({
@@ -48,6 +52,8 @@ export class CursoDetalleComponent implements OnInit {
   private fb = inject(FormBuilder);
   private videoService = inject(VideoService);
   private materialService = inject(MaterialService);
+  private tareaService = inject(TareaService);
+  private entregaTareaService = inject(EntregaTareaService);
   private reportesService = inject(ReportesService);
   private archivoProtegidoService = inject(ArchivoProtegidoService);
   private toastService = inject(ToastService);
@@ -75,10 +81,12 @@ export class CursoDetalleComponent implements OnInit {
   expandedModuloId: number | null = null;
   videosMap: { [key: number]: VideoResponse[] } = {};
   materialesMap: { [key: number]: MaterialResponse[] } = {};
+  tareasMap: { [key: number]: TareaResponse[] } = {};
 
   // Inline forms toggles and inputs
   videoFormOpenMap: { [key: number]: boolean } = {};
   materialFormOpenMap: { [key: number]: boolean } = {};
+  tareaFormOpenMap: { [key: number]: boolean } = {};
 
   nuevoVideoTitulo = '';
   nuevoVideoUrl = '';
@@ -91,8 +99,42 @@ export class CursoDetalleComponent implements OnInit {
   isUploadingMaterial = false;
   uploadProgress = 0;
 
+  // Tareas Form & Submissions Modal
+  nuevaTareaTitulo = '';
+  nuevaTareaDesc = '';
+  nuevaTareaFechaLimite = '';
+  nuevaTareaPermitirReenvio = true;
+  isAddingTarea = false;
+
+  showEntregasModal = false;
+  selectedTarea: TareaResponse | null = null;
+  entregasTarea: EntregaTareaResponse[] = [];
+  loadingEntregas = false;
+
+  // Calificar Modal
+  showCalificarModal = false;
+  selectedEntrega: EntregaTareaResponse | null = null;
+  calificacionNota: number | null = null;
+  calificacionFeedback = '';
+  calificacionEstado = '';
+  isCalificando = false;
+
   // Matriculas
   matriculas: MatriculaResponse[] = [];
+  searchMatriculaQuery = '';
+
+  get matriculasFiltradas(): MatriculaResponse[] {
+    if (!this.searchMatriculaQuery || !this.searchMatriculaQuery.trim()) {
+      return this.matriculas;
+    }
+    const q = this.searchMatriculaQuery.trim().toLowerCase();
+    return this.matriculas.filter(m => {
+      const nombreCompleto = `${m.alumnoNombres || ''} ${m.alumnoApellidos || ''}`.toLowerCase();
+      const correo = (m.alumnoCorreo || '').toLowerCase();
+      return nombreCompleto.includes(q) || correo.includes(q);
+    });
+  }
+
   alumnos: AlumnoResponse[] = [];
   alumnosDisponibles: AlumnoResponse[] = [];
   alumnoSearchTerm = '';
@@ -666,6 +708,11 @@ export class CursoDetalleComponent implements OnInit {
       next: (data) => this.materialesMap[moduloId] = data.content || [],
       error: (err) => console.error('Error al cargar materiales del módulo', err)
     });
+
+    this.tareaService.listarPorModulo(moduloId).subscribe({
+      next: (data) => this.tareasMap[moduloId] = data || [],
+      error: (err) => console.error('Error al cargar tareas del módulo', err)
+    });
   }
 
   // Videos
@@ -822,6 +869,154 @@ export class CursoDetalleComponent implements OnInit {
     });
   }
 
+  // --- Tareas Management ---
+  agregarTareaInline(moduloId: number): void {
+    if (!this.nuevaTareaTitulo || !this.nuevaTareaTitulo.trim()) {
+      this.toastService.warning('Por favor ingrese el título de la tarea.');
+      return;
+    }
+    this.isAddingTarea = true;
+    const req: TareaRequest = {
+      moduloId,
+      titulo: this.nuevaTareaTitulo.trim(),
+      descripcion: this.nuevaTareaDesc ? this.nuevaTareaDesc.trim() : undefined,
+      fechaLimite: this.nuevaTareaFechaLimite ? this.nuevaTareaFechaLimite : undefined,
+      permitirReenvio: this.nuevaTareaPermitirReenvio,
+      estado: true
+    };
+
+    this.tareaService.crear(req).subscribe({
+      next: () => {
+        this.isAddingTarea = false;
+        this.nuevaTareaTitulo = '';
+        this.nuevaTareaDesc = '';
+        this.nuevaTareaFechaLimite = '';
+        this.nuevaTareaPermitirReenvio = true;
+        this.tareaFormOpenMap[moduloId] = false;
+        this.cargarContenidoModulo(moduloId);
+        this.toastService.success('Tarea creada exitosamente en el módulo.');
+      },
+      error: (err) => {
+        this.isAddingTarea = false;
+        this.toastService.error('Error al crear tarea: ' + (err.error?.message || err.message));
+      }
+    });
+  }
+
+  eliminarTareaInline(moduloId: number, tarea: TareaResponse): void {
+    this.confirmModalType = 'danger';
+    this.confirmModalTitle = '¿Eliminar Tarea?';
+    this.confirmModalMessage = `¿Estás seguro de que deseas ELIMINAR permanentemente la tarea "${tarea.titulo}" y todas las entregas asociadas? Esta acción no se puede deshacer.`;
+
+    this.pendingAction = () => {
+      this.tareaService.eliminar(tarea.id).subscribe({
+        next: () => {
+          this.toastService.success('Tarea eliminada permanentemente.');
+          this.cargarContenidoModulo(moduloId);
+          this.showConfirmModal = false;
+        },
+        error: (err) => {
+          this.toastService.error(err.error?.message || 'Error al eliminar la tarea.');
+          this.showConfirmModal = false;
+        }
+      });
+    };
+
+    this.showConfirmModal = true;
+  }
+
+  toggleTareaEstadoInline(moduloId: number, tarea: TareaResponse): void {
+    const nuevoEstado = !tarea.estado;
+    this.tareaService.cambiarEstado(tarea.id, nuevoEstado).subscribe({
+      next: () => {
+        tarea.estado = nuevoEstado;
+        this.toastService.success(`Tarea ${nuevoEstado ? 'activada' : 'desactivada'} exitosamente.`);
+      },
+      error: (err) => this.toastService.error('Error al cambiar estado de la tarea: ' + err.message)
+    });
+  }
+
+  abrirModalEntregas(tarea: TareaResponse): void {
+    this.selectedTarea = tarea;
+    this.showEntregasModal = true;
+    this.loadingEntregas = true;
+    this.entregaTareaService.listarEntregasPorTarea(tarea.id).subscribe({
+      next: (data) => {
+        this.entregasTarea = data || [];
+        this.loadingEntregas = false;
+      },
+      error: (err) => {
+        this.loadingEntregas = false;
+        this.toastService.error('Error al cargar entregas: ' + (err.error?.message || err.message));
+      }
+    });
+  }
+
+  cerrarModalEntregas(): void {
+    this.showEntregasModal = false;
+    this.selectedTarea = null;
+    this.entregasTarea = [];
+  }
+
+  descargarEntregaAlumno(entrega: EntregaTareaResponse): void {
+    const url = `${environment.apiUrl}/entregas-tareas/${entrega.id}/download`;
+    const extension = getFileExtension(entrega.tipoArchivo);
+    const alumnoClean = (entrega.alumnoNombre || 'Alumno').replace(/\s+/g, '_');
+    const tareaClean = (entrega.tareaTitulo || 'Tarea').replace(/\s+/g, '_');
+    const fileName = `Entrega_${tareaClean}_${alumnoClean}.${extension}`;
+
+    this.archivoProtegidoService.descargar(url, fileName).subscribe({
+      error: (err) => {
+        console.error('Error al descargar entrega de alumno:', err);
+        this.toastService.error('No se pudo descargar el archivo de la entrega');
+      }
+    });
+  }
+
+  prepararCalificar(entrega: EntregaTareaResponse): void {
+    this.selectedEntrega = entrega;
+    this.calificacionNota = entrega.calificacion !== undefined && entrega.calificacion !== null ? entrega.calificacion : null;
+    this.calificacionFeedback = entrega.feedbackDocente || '';
+    this.calificacionEstado = entrega.estado || 'APROBADO';
+    this.showCalificarModal = true;
+  }
+
+  cerrarCalificarModal(): void {
+    this.showCalificarModal = false;
+    this.selectedEntrega = null;
+  }
+
+  guardarCalificacion(): void {
+    if (!this.selectedEntrega) return;
+    if (this.calificacionNota === null || this.calificacionNota === undefined || this.calificacionNota < 0 || this.calificacionNota > 20) {
+      this.toastService.warning('La nota debe ser un número entre 0 y 20.');
+      return;
+    }
+
+    this.isCalificando = true;
+    const req: CalificarEntregaRequest = {
+      calificacion: this.calificacionNota,
+      feedbackDocente: this.calificacionFeedback ? this.calificacionFeedback.trim() : undefined,
+      estado: this.calificacionNota >= 14 ? 'APROBADO' : 'DESAPROBADO'
+    };
+
+    this.entregaTareaService.calificarEntrega(this.selectedEntrega.id, req).subscribe({
+      next: (actualizada) => {
+        this.isCalificando = false;
+        const index = this.entregasTarea.findIndex(e => e.id === actualizada.id);
+        if (index !== -1) {
+          this.entregasTarea[index] = actualizada;
+        }
+        this.toastService.success(`Entrega calificada (${actualizada.calificacion}/20 - ${actualizada.estado}).`);
+        this.cerrarCalificarModal();
+      },
+      error: (err) => {
+        this.isCalificando = false;
+        this.toastService.error('Error al calificar la entrega: ' + (err.error?.message || err.message));
+      }
+    });
+  }
+
   // Helpers
   getFileIcon = getFileIcon;
   getCleanFileType = getCleanFileType;
@@ -847,3 +1042,4 @@ export class CursoDetalleComponent implements OnInit {
     });
   }
 }
+

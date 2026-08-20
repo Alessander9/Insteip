@@ -38,6 +38,7 @@ public class TareaServiceImpl implements TareaService {
     private final UsuarioRepository usuarioRepository;
     private final MatriculaRepository matriculaRepository;
     private final AuditoriaService auditoriaService;
+    private final com.insteip.backend.service.interfaces.NotificacionService notificacionService;
 
     @Override
     @Transactional(readOnly = true)
@@ -153,6 +154,19 @@ public class TareaServiceImpl implements TareaService {
 
         Tarea guardada = tareaRepository.save(tarea);
         auditoriaService.registrarEvento("TAREA", "CREAR", "Creada tarea: " + guardada.getTitulo() + " (ID: " + guardada.getId() + ")");
+
+        if (modulo.getCurso() != null) {
+            Long cursoId = modulo.getCurso().getId();
+            notificacionService.notificarAlumnosDeCurso(
+                    cursoId,
+                    "📝 Nueva tarea asignada",
+                    "Se ha publicado la tarea '" + guardada.getTitulo() + "' en el Módulo " + modulo.getOrden() + " (" + (modulo.getCurso().getNombre() != null ? modulo.getCurso().getNombre() : "") + ")",
+                    "TAREA_NUEVA",
+                    "/dashboard/cursos-play/" + cursoId,
+                    "assignment"
+            );
+        }
+
         return convertToResponseDto(guardada);
     }
 

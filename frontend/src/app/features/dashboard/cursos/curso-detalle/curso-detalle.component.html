@@ -394,6 +394,146 @@
               </div>
             </div>
 
+            <!-- ================= TAREAS Y PRÁCTICAS SECTION ================= -->
+            <div class="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-800">
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                  <span class="material-symbols-outlined text-sm text-indigo-600 dark:text-indigo-400">assignment</span>
+                  <span>Tareas y Prácticas Asignadas ({{ (tareasMap[modulo.id] || []).length }})</span>
+                </h4>
+                <button 
+                  (click)="tareaFormOpenMap[modulo.id] = !tareaFormOpenMap[modulo.id]" 
+                  class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 font-bold text-[10px] uppercase tracking-wider hover:bg-indigo-100 dark:hover:bg-indigo-900 rounded-none transition-colors duration-200">
+                  <span class="material-symbols-outlined text-xs">{{ tareaFormOpenMap[modulo.id] ? 'close' : 'add' }}</span>
+                  <span>{{ tareaFormOpenMap[modulo.id] ? 'Cancelar' : 'Crear Tarea' }}</span>
+                </button>
+              </div>
+
+              <!-- Inline Create Tarea Form -->
+              <div *ngIf="tareaFormOpenMap[modulo.id]" class="bg-indigo-50/40 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-900/60 p-4 space-y-3 animate-fadeIn">
+                <h5 class="text-[10px] font-black text-indigo-800 dark:text-indigo-300 uppercase tracking-widest">
+                  Nueva Tarea para Módulo {{ modulo.orden }}
+                </h5>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div class="space-y-1">
+                    <label class="block text-[9px] font-bold text-slate-700 dark:text-slate-300 uppercase">Título de la Tarea *</label>
+                    <input 
+                      type="text" 
+                      [(ngModel)]="nuevaTareaTitulo"
+                      placeholder="Ej: Caso Clínico 1 - Diagnóstico de Auriculoterapia"
+                      class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs rounded-none focus:outline-none focus:border-indigo-600">
+                  </div>
+                  <div class="space-y-1">
+                    <label class="block text-[9px] font-bold text-slate-700 dark:text-slate-300 uppercase">Fecha y Hora Límite (Opcional)</label>
+                    <input 
+                      type="datetime-local" 
+                      [(ngModel)]="nuevaTareaFechaLimite"
+                      class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs rounded-none focus:outline-none focus:border-indigo-600">
+                  </div>
+                </div>
+
+                <div class="space-y-1">
+                  <label class="block text-[9px] font-bold text-slate-700 dark:text-slate-300 uppercase">Instrucciones / Descripción</label>
+                  <textarea 
+                    [(ngModel)]="nuevaTareaDesc"
+                    rows="2"
+                    placeholder="Detalla qué debe presentar el alumno, formato de entrega y criterios de evaluación..."
+                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs rounded-none focus:outline-none focus:border-indigo-600"></textarea>
+                </div>
+
+                <div class="flex items-center justify-between pt-1">
+                  <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-700 dark:text-slate-300">
+                    <input type="checkbox" [(ngModel)]="nuevaTareaPermitirReenvio" class="rounded-none text-indigo-600 focus:ring-0">
+                    <span class="text-[10px] font-bold uppercase">Permitir reenvíos antes de la fecha límite</span>
+                  </label>
+
+                  <div class="flex gap-2">
+                    <button 
+                      (click)="tareaFormOpenMap[modulo.id] = false"
+                      [disabled]="isAddingTarea"
+                      class="px-3 py-1 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[10px] uppercase tracking-wider hover:bg-slate-50 rounded-none">
+                      Cancelar
+                    </button>
+                    <button 
+                      (click)="agregarTareaInline(modulo.id)"
+                      [disabled]="isAddingTarea || !nuevaTareaTitulo.trim()"
+                      class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[10px] uppercase tracking-wider rounded-none disabled:opacity-50 flex items-center gap-1">
+                      <span *ngIf="isAddingTarea" class="animate-spin material-symbols-outlined text-xs">progress_activity</span>
+                      <span>{{ isAddingTarea ? 'Creando...' : 'Crear Tarea' }}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tareas List -->
+              <div class="space-y-2.5">
+                <div *ngIf="!tareasMap[modulo.id] || tareasMap[modulo.id].length === 0" class="text-center py-6 text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                  <span class="material-symbols-outlined text-3xl text-slate-300 dark:text-slate-700">task</span>
+                  <p class="text-[10px] mt-1 font-medium">No hay tareas asignadas en este módulo.</p>
+                </div>
+
+                <div 
+                  *ngFor="let tarea of tareasMap[modulo.id]"
+                  class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-300 dark:hover:border-slate-700 transition-colors">
+                  
+                  <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                      <h5 class="font-bold text-slate-900 dark:text-white text-xs uppercase">{{ tarea.titulo }}</h5>
+                      <span [ngClass]="tarea.estado ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400' : 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400'" class="px-1.5 py-0.2 text-[8px] font-black uppercase tracking-wider border">
+                        {{ tarea.estado ? 'ACTIVO' : 'INACTIVO' }}
+                      </span>
+                    </div>
+                    
+                    <p *ngIf="tarea.descripcion" class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">
+                      {{ tarea.descripcion }}
+                    </p>
+
+                    <div class="flex items-center gap-4 text-[10px] text-slate-400 dark:text-slate-500 font-mono pt-0.5">
+                      <span *ngIf="tarea.fechaLimite" class="flex items-center gap-1">
+                        <span class="material-symbols-outlined text-xs">event</span>
+                        Límite: {{ tarea.fechaLimite | date:'dd/MM/yyyy HH:mm' }}
+                      </span>
+                      <span class="flex items-center gap-1 font-bold text-indigo-600 dark:text-indigo-400">
+                        <span class="material-symbols-outlined text-xs">how_to_reg</span>
+                        {{ tarea.totalEntregas }} {{ tarea.totalEntregas === 1 ? 'entrega' : 'entregas' }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-2 shrink-0">
+                    <!-- Ver Entregas Button -->
+                    <button 
+                      (click)="abrirModalEntregas(tarea)"
+                      class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 text-xs font-bold flex items-center gap-1.5 rounded-none transition-colors">
+                      <span class="material-symbols-outlined text-sm">assignment_turned_in</span>
+                      <span>Ver Entregas ({{ tarea.totalEntregas }})</span>
+                    </button>
+
+                    <!-- Toggle Estado -->
+                    <button 
+                      (click)="toggleTareaEstadoInline(modulo.id, tarea)"
+                      [title]="tarea.estado ? 'Desactivar Tarea' : 'Activar Tarea'"
+                      [ngClass]="tarea.estado ? 'border-red-200 text-red-600 hover:bg-red-50' : 'border-emerald-200 text-emerald-600 hover:bg-emerald-50'"
+                      class="p-1.5 border rounded-none transition-colors">
+                      <span class="material-symbols-outlined text-xs block">
+                        {{ tarea.estado ? 'block' : 'check_circle' }}
+                      </span>
+                    </button>
+
+                    <!-- Eliminar Tarea -->
+                    <button 
+                      (click)="eliminarTareaInline(modulo.id, tarea)"
+                      title="Eliminar Tarea Permanentemente"
+                      class="p-1.5 border border-red-200 text-red-600 hover:bg-red-50 rounded-none transition-colors">
+                      <span class="material-symbols-outlined text-xs block">delete_forever</span>
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
           </div>
 
           <!-- Module Configuration Toolbar (Footer of the expanded panel) -->
@@ -428,7 +568,37 @@
   </div>
 
   <!-- ===================== TAB: MATRÍCULAS ===================== -->
-  <div *ngIf="activeTab === 'matriculas'" class="animate-fadeIn">
+  <div *ngIf="activeTab === 'matriculas'" class="animate-fadeIn space-y-4">
+    
+    <!-- Search Bar & Toolbar for Matriculados -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 shadow-sm">
+      <div class="relative flex-1 max-w-md">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none">
+          search
+        </span>
+        <input 
+          type="text" 
+          [(ngModel)]="searchMatriculaQuery"
+          placeholder="Buscar alumno por nombre, apellido o correo..." 
+          class="w-full pl-9 pr-8 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs rounded-none focus:outline-none focus:border-indigo-600 transition-colors">
+        <button 
+          *ngIf="searchMatriculaQuery" 
+          (click)="searchMatriculaQuery = ''"
+          class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+          <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+      </div>
+
+      <div class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 shrink-0">
+        <span *ngIf="searchMatriculaQuery" class="text-indigo-600 dark:text-indigo-400 font-mono font-bold">
+          {{ matriculasFiltradas.length }} de {{ matriculas.length }} encontrados
+        </span>
+        <span *ngIf="!searchMatriculaQuery" class="font-mono">
+          {{ matriculas.length }} alumnos en total
+        </span>
+      </div>
+    </div>
+
     <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-none shadow-[4px_4px_0px_0px_rgba(15,23,42,0.03)] overflow-hidden transition-colors duration-300">
       <!-- Table -->
       <div class="overflow-x-auto">
@@ -443,7 +613,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-            <!-- Empty State -->
+            <!-- Empty State (No matriculas at all) -->
             <tr *ngIf="matriculas.length === 0">
               <td colspan="5" class="p-12 text-center text-slate-400 dark:text-slate-500">
                 <span class="material-symbols-outlined text-4xl mb-2 text-slate-300 dark:text-slate-700">group_off</span>
@@ -451,8 +621,23 @@
                 <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1">Haz click en "Matricular Alumno" para agregar estudiantes.</p>
               </td>
             </tr>
+
+            <!-- Empty State (No search matches) -->
+            <tr *ngIf="matriculas.length > 0 && matriculasFiltradas.length === 0">
+              <td colspan="5" class="p-10 text-center text-slate-400 dark:text-slate-500">
+                <span class="material-symbols-outlined text-3xl mb-1 text-slate-300 dark:text-slate-600">search_off</span>
+                <p class="font-bold text-xs text-slate-700 dark:text-slate-300">Sin coincidencias para "{{ searchMatriculaQuery }}"</p>
+                <p class="text-[10px] text-slate-400 mt-1">Intenta con otro término o limpia el cuadro de búsqueda.</p>
+                <button 
+                  (click)="searchMatriculaQuery = ''" 
+                  class="mt-3 px-3 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] font-black uppercase tracking-wider rounded-none">
+                  Limpiar búsqueda
+                </button>
+              </td>
+            </tr>
+
             <!-- Rows -->
-            <tr *ngFor="let matricula of matriculas" class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors duration-200">
+            <tr *ngFor="let matricula of matriculasFiltradas" class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors duration-200">
               <td class="p-4">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 flex items-center justify-center font-black text-[10px] rounded-none">
@@ -498,7 +683,7 @@
       <!-- Footer -->
       <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-between transition-colors duration-300">
         <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-          Total: {{ matriculas.length }} alumnos inscritos
+          {{ searchMatriculaQuery ? 'Mostrando ' + matriculasFiltradas.length + ' de ' + matriculas.length + ' alumnos inscritos' : 'Total: ' + matriculas.length + ' alumnos inscritos' }}
         </span>
       </div>
     </div>
@@ -811,6 +996,202 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: VER ENTREGAS DE TAREA ===================== -->
+  <div *ngIf="showEntregasModal" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="w-full max-w-3xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 shadow-2xl rounded-none overflow-hidden relative max-h-[90vh] flex flex-col">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-between shrink-0">
+        <div>
+          <span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest block">Entregas de Alumnos</span>
+          <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight mt-0.5">
+            {{ selectedTarea?.titulo }}
+          </h3>
+        </div>
+        <button (click)="cerrarModalEntregas()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 overflow-y-auto space-y-4 grow">
+        
+        <!-- Loading -->
+        <div *ngIf="loadingEntregas" class="py-12 text-center text-slate-400">
+          <span class="animate-spin material-symbols-outlined text-3xl mb-2 text-indigo-600">progress_activity</span>
+          <p class="text-xs">Cargando entregas...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!loadingEntregas && entregasTarea.length === 0" class="py-12 text-center text-slate-400 border border-dashed border-slate-200 dark:border-slate-800">
+          <span class="material-symbols-outlined text-4xl mb-2 text-slate-300 dark:text-slate-600">inbox</span>
+          <p class="text-xs font-bold text-slate-600 dark:text-slate-400">Aún ningún alumno ha entregado esta tarea.</p>
+          <p class="text-[10px] text-slate-400 mt-1">Las entregas aparecerán aquí conforme los estudiantes suban sus archivos.</p>
+        </div>
+
+        <!-- Table of Submissions -->
+        <div *ngIf="!loadingEntregas && entregasTarea.length > 0" class="border border-slate-200 dark:border-slate-800 overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-[9px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                <th class="p-3">Alumno</th>
+                <th class="p-3">Fecha Entrega</th>
+                <th class="p-3">Archivo</th>
+                <th class="p-3">Nota / Estado</th>
+                <th class="p-3 text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+              <tr *ngFor="let entrega of entregasTarea" class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
+                
+                <td class="p-3">
+                  <div class="font-bold text-slate-900 dark:text-white">{{ entrega.alumnoNombre }}</div>
+                  <div class="text-[10px] text-slate-400 font-mono">{{ entrega.alumnoCorreo }}</div>
+                  <div *ngIf="entrega.comentarioAlumno" class="text-[10px] text-slate-500 italic mt-1 max-w-xs">
+                    "{{ entrega.comentarioAlumno }}"
+                  </div>
+                </td>
+
+                <td class="p-3 text-slate-600 dark:text-slate-400 font-mono text-[11px] whitespace-nowrap">
+                  {{ entrega.fechaEntrega | date:'dd/MM/yyyy HH:mm' }}
+                </td>
+
+                <td class="p-3">
+                  <button 
+                    (click)="descargarEntregaAlumno(entrega)"
+                    class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-none transition-colors">
+                    <span class="material-symbols-outlined text-sm text-indigo-600">download</span>
+                    <span>Descargar ({{ formatBytes(entrega.pesoBytes) }})</span>
+                  </button>
+                </td>
+
+                <td class="p-3">
+                  <div class="flex items-center gap-1.5">
+                    <span *ngIf="entrega.estado === 'APROBADO'" class="px-2 py-0.5 bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 font-mono text-[10px] font-bold">
+                      {{ entrega.calificacion }}/20 Aprobado
+                    </span>
+                    <span *ngIf="entrega.estado === 'DESAPROBADO'" class="px-2 py-0.5 bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-300 font-mono text-[10px] font-bold">
+                      {{ entrega.calificacion }}/20 Desaprobado
+                    </span>
+                    <span *ngIf="entrega.estado === 'ENTREGADO'" class="px-2 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300 font-mono text-[10px] font-bold">
+                      Sin calificar
+                    </span>
+                  </div>
+                  <p *ngIf="entrega.feedbackDocente" class="text-[10px] text-slate-500 mt-1 line-clamp-1">
+                    Feedback: {{ entrega.feedbackDocente }}
+                  </p>
+                </td>
+
+                <td class="p-3 text-right">
+                  <button 
+                    (click)="prepararCalificar(entrega)"
+                    class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-slate-200 text-white dark:text-slate-900 text-xs font-bold uppercase tracking-wider rounded-none transition-colors">
+                    {{ entrega.calificacion !== null && entrega.calificacion !== undefined ? 'Modificar Nota' : 'Calificar' }}
+                  </button>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex justify-between items-center shrink-0">
+        <span class="text-[10px] text-slate-400 font-mono">
+          Total de entregas: {{ entregasTarea.length }}
+        </span>
+        <button 
+          (click)="cerrarModalEntregas()"
+          class="px-4 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs uppercase tracking-wider hover:bg-slate-50">
+          Cerrar
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: CALIFICAR ENTREGA ===================== -->
+  <div *ngIf="showCalificarModal" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 shadow-2xl rounded-none overflow-hidden">
+      
+      <!-- Header -->
+      <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-between">
+        <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">
+          Calificar Entrega
+        </h3>
+        <button (click)="cerrarCalificarModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="p-6 space-y-4">
+        
+        <!-- Info alumno -->
+        <div class="p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <p class="text-xs font-bold text-slate-900 dark:text-white">{{ selectedEntrega?.alumnoNombre }}</p>
+          <p class="text-[10px] text-slate-400 font-mono">{{ selectedEntrega?.alumnoCorreo }}</p>
+          <p class="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold mt-1">Tarea: {{ selectedEntrega?.tareaTitulo }}</p>
+        </div>
+
+        <!-- Nota input (0 - 20) -->
+        <div class="space-y-1.5">
+          <label class="block text-[10px] font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">
+            Calificación (Escala 0 a 20) *
+          </label>
+          <div class="flex items-center gap-2">
+            <input 
+              type="number" 
+              [(ngModel)]="calificacionNota"
+              min="0" 
+              max="20" 
+              step="0.5"
+              placeholder="Ej: 18.5"
+              class="w-32 px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono font-bold text-sm rounded-none focus:outline-none focus:border-indigo-600">
+            
+            <span *ngIf="calificacionNota !== null && calificacionNota !== undefined" 
+                  [ngClass]="calificacionNota >= 14 ? 'text-emerald-600 bg-emerald-50 border-emerald-200' : 'text-red-600 bg-red-50 border-red-200'"
+                  class="px-2.5 py-1 text-xs font-bold border uppercase tracking-wider font-mono">
+              {{ calificacionNota >= 14 ? 'Aprobado (>= 14)' : 'Desaprobado (< 14)' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Feedback input -->
+        <div class="space-y-1.5">
+          <label class="block text-[10px] font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">
+            Retroalimentación / Comentarios para el Alumno
+          </label>
+          <textarea 
+            [(ngModel)]="calificacionFeedback"
+            rows="3"
+            placeholder="Escribe observaciones, puntos a mejorar o felicitaciones para el estudiante..."
+            class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs rounded-none focus:outline-none focus:border-indigo-600"></textarea>
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex justify-end gap-3">
+        <button 
+          (click)="cerrarCalificarModal()"
+          class="px-4 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs uppercase tracking-wider hover:bg-slate-50">
+          Cancelar
+        </button>
+        <button 
+          (click)="guardarCalificacion()"
+          [disabled]="isCalificando || calificacionNota === null || calificacionNota < 0 || calificacionNota > 20"
+          class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider rounded-none disabled:opacity-50 flex items-center gap-1.5 shadow-sm">
+          <span *ngIf="isCalificando" class="animate-spin material-symbols-outlined text-xs">progress_activity</span>
+          <span>{{ isCalificando ? 'Guardando...' : 'Guardar Calificación' }}</span>
+        </button>
+      </div>
+
     </div>
   </div>
 

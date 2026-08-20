@@ -247,6 +247,12 @@ export const routes: Routes = [
         canActivate: [roleGuard],
         data: { roles: ['ADMINISTRADOR'] }
       },
+      {
+        path: 'comunicados',
+        loadComponent: () => import('./features/dashboard/admin/comunicados-anuncios/comunicados-anuncios.component').then(m => m.ComunicadosAnunciosComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['ADMINISTRADOR'] }
+      },
 
       // ── ADMINISTRADOR + DOCENTE ───────────────────────────────
       {

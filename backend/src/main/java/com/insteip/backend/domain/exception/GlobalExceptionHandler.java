@@ -37,8 +37,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
+        org.springframework.security.core.Authentication auth = 
+                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
         Map<String, Object> body = new HashMap<>();
         body.put("success", false);
+        if (auth == null || auth instanceof org.springframework.security.authentication.AnonymousAuthenticationToken) {
+            body.put("message", "Sesión expirada. Por favor, inicie sesión nuevamente.");
+            return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
+        }
         body.put("message", "No tiene permisos para acceder a este recurso.");
         return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
     }

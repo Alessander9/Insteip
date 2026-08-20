@@ -92,7 +92,7 @@ class DashboardsControllerTest {
 
     @Test
     void getEnrolledCursos_shouldReturnCursos() throws Exception {
-        AlumnoCursoResponse response = new AlumnoCursoResponse(1L, "Curso", "Desc", "img", "BASICO", java.math.BigDecimal.valueOf(45.0), false, java.time.LocalDateTime.now());
+        AlumnoCursoResponse response = new AlumnoCursoResponse(1L, "Curso", "Desc", "img", "BASICO", java.math.BigDecimal.valueOf(45.0), false, java.time.LocalDateTime.now(), java.time.LocalDateTime.now());
         when(alumnoDashboardService.getEnrolledCursos("test@insteip.com")).thenReturn(List.of(response));
 
         org.springframework.security.authentication.UsernamePasswordAuthenticationToken auth = 

@@ -71,8 +71,8 @@ export class CardNavComponent implements OnInit, OnDestroy {
       ]
     },
     {
-      label: 'Todos los cursos',
-      route: '/TodosLosCursos.html',
+      label: 'Sedes',
+      route: '/sedes',
       bgColor: '#1e293b',
       textColor: '#fff',
       links: []
@@ -80,6 +80,13 @@ export class CardNavComponent implements OnInit, OnDestroy {
     {
       label: 'Certificación Internacional',
       route: '/certificacion',
+      bgColor: '#1e293b',
+      textColor: '#fff',
+      links: []
+    },
+    {
+      label: 'Bolsa de trabajo',
+      route: '/bolsa-de-trabajo',
       bgColor: '#1e293b',
       textColor: '#fff',
       links: []

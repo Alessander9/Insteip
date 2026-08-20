@@ -17,6 +17,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 
 @Configuration
 @EnableWebSecurity
@@ -37,11 +41,24 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider)
+            .exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "No autorizado - Token inválido o expirado");
+                })
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                    if (auth == null || auth instanceof AnonymousAuthenticationToken) {
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "No autorizado - Sesión expirada");
+                    } else {
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso denegado - Permisos insuficientes");
+                    }
+                })
+            )
             .authorizeHttpRequests(auth -> auth
                 // Permitir TODAS las peticiones OPTIONS (preflight CORS del navegador)
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // Rutas públicas de autenticación y validación de certificados
-                .requestMatchers("/api/auth/login", "/api/auth/refresh", "/api/auth/logout", "/api/auth/forgot-password", "/api/auth/reset-password", "/api/certificados/validar/**", "/actuator/**").permitAll()
+                .requestMatchers("/api/auth/login", "/api/auth/refresh", "/api/auth/logout", "/api/auth/forgot-password", "/api/auth/reset-password", "/api/certificados/validar/**", "/api/chatbot/**", "/api/anuncios-modal/activo", "/actuator/**").permitAll()
                 // Cualquier otra solicitud requiere estar autenticado
                 .anyRequest().authenticated()
             )

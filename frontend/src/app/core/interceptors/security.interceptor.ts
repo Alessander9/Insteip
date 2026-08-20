@@ -49,7 +49,7 @@ export const securityInterceptor: HttpInterceptorFn = (req, next) => {
       const refreshToken = authService.getRefreshToken();
       if (!refreshToken) {
         authService.logout();
-        window.location.href = '/login?expired=true';
+        router.navigate(['/login'], { queryParams: { expired: 'true' } });
         return throwError(() => error);
       }
 
@@ -90,7 +90,7 @@ export const securityInterceptor: HttpInterceptorFn = (req, next) => {
           authService.isRefreshing = false;
           authService.refreshTokenSubject.error(refreshError);
           authService.logout();
-          window.location.href = '/login?expired=true';
+          router.navigate(['/login'], { queryParams: { expired: 'true' } });
           return throwError(() => refreshError);
         })
       );

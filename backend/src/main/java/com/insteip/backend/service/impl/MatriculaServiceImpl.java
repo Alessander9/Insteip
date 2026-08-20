@@ -12,6 +12,9 @@ import com.insteip.backend.repository.CursoRepository;
 import com.insteip.backend.repository.MatriculaRepository;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.service.interfaces.MatriculaService;
+import com.insteip.backend.service.interfaces.AuditoriaService;
+import com.insteip.backend.service.interfaces.NotificacionService;
+import com.insteip.backend.domain.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +31,9 @@ public class MatriculaServiceImpl implements MatriculaService {
 
     private final CursoRepository cursoRepository;
 
-    private final com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
+    private final AuditoriaService auditoriaService;
+
+    private final NotificacionService notificacionService;
 
     @Override
     @Transactional
@@ -41,7 +46,7 @@ public class MatriculaServiceImpl implements MatriculaService {
 
         // Check if already enrolled
         if (matriculaRepository.existsByUsuarioIdAndCursoId(dto.usuarioId(), dto.cursoId())) {
-            throw new RuntimeException("El alumno ya está matriculado en este curso.");
+            throw new BadRequestException("El alumno ya se encuentra matriculado en este curso.");
         }
 
         // Check if user's subscription level is allowed for the course
@@ -58,6 +63,16 @@ public class MatriculaServiceImpl implements MatriculaService {
 
         Matricula saved = matriculaRepository.save(matricula);
         auditoriaService.registrarEvento("MATRICULA", "CREAR", "Matriculado alumno ID: " + saved.getUsuario().getId() + " (" + saved.getUsuario().getCorreo() + ") en curso ID: " + saved.getCurso().getId() + " (" + saved.getCurso().getNombre() + ")");
+
+        notificacionService.crearNotificacion(
+                usuario.getId(),
+                "🔑 Matrícula Habilitada",
+                "¡Bienvenido al curso '" + curso.getNombre() + "'! Ya tienes acceso completo a todos los módulos y clases.",
+                "MATRICULA_NUEVA",
+                "/dashboard/cursos-play/" + curso.getId(),
+                "auto_stories"
+        );
+
         return toResponse(saved);
     }
 
@@ -103,6 +118,7 @@ public class MatriculaServiceImpl implements MatriculaService {
                 m.getCurso().getId(),
                 m.getCurso().getNombre(),
                 m.getFechaMatricula(),
+                m.getFechaExpiracion(),
                 m.getEstado()
         );
     }

@@ -40,31 +40,29 @@ flowchart LR
 
 ## Funcionalidades
 
-- Login con JWT y refresh token.
-- CRUD de alumnos y docentes.
-- Asignación de docente a curso.
-- Gestión de cursos, módulos, videos y materiales.
-- Matrículas y progreso por video/curso.
-- Certificados PDF con validación pública.
-- Diseño premium de certificados con portada institucional, logo reforzado, tipografía más marcada y marca de agua sutil en el PDF.
-- Auditoría de login y eventos del sistema.
-- Reportes CSV.
-- Estado del sistema y backups.
+- **Autenticación y Seguridad**: Login con JWT y refresh token, control de sesiones, protección de rutas y perfiles por rol.
+- **Gestión Académica Completa**: CRUD de alumnos y docentes, asignación de docentes, cursos, módulos, videos de clases y materiales descargables en PDF.
+- **Sistema de Tareas y Evaluaciones**: Publicación de asignaciones por módulo con fecha límite, subida de entregas de alumnos (PDF/Word) y calificación docente sobre 20 con retroalimentación personalizada.
+- **Notificaciones en Tiempo Real**: Campanita 🔔 con conteo dinámico de avisos no leídos, triggers automáticos (nuevos videos, materiales, tareas publicadas, notas asignadas y matrículas) y redirección directa con 1 clic.
+- **Comunicados Segmentados**: Panel administrativo para redactar avisos dirigidos a toda la comunidad o segmentados por rol (`TODOS`, `SOLO_ESTUDIANTES`, `SOLO_DOCENTES`, `DOCENTES_Y_ESTUDIANTES` o `POR_CURSO`).
+- **Anuncios Promocionales en Pop-Up**: Banners/flyers emergentes en modal con botón CTA (WhatsApp o curso) y control de frecuencia diario en `localStorage`.
+- **Reproductor de Clases Avanzado**: Selector de clases, persistencia de tiempo visto, pantalla completa, avance/retroceso táctil y botón sutil para activar/desactivar subtítulos CC.
+- **Asistente Virtual con IA**: Chatbot flotante interactivo potenciado con modelos Llama 3 / Groq y contexto institucional de INSTEIP.
+- **Certificados Digitales**: Generación de diplomas en PDF con validación pública vía código QR y diseño institucional premium.
+- **Auditoría y Supervisión**: Registro detallado de logins, acciones del sistema, reportes exportables en CSV y métricas en vivo.
 
 ## Estructura del repositorio
 
 ```text
 📁 raíz
-├── backend/           ← API Spring Boot 3.4
-├── frontend/          ← App Angular 18
-├── database/          ← Scripts SQL
-├── docs/              ← Documentación, QA y assets
-├── scripts/           ← Tests E2E y utilidades
-│   └── downloads/     ← CSVs y PDFs generados por tests
-├── run-logs/          ← Logs de ejecución (backend/frontend)
+├── backend/           ← API Spring Boot 3.4 (Java 21)
+├── frontend/          ← Aplicación Angular 18 Standalone
+├── database/          ← Migraciones y scripts SQL
+├── docs/              ← Documentación técnica y QA
+├── scripts/           ← Tests E2E y utilidades de automatización
 ├── .gitignore
-├── docker-compose.yml ← PostgreSQL 15
-├── package.json       ← Dependencias para scripts (Selenium, Playwright)
+├── docker-compose.yml ← PostgreSQL 15 y servicios
+├── package.json       ← Scripts auxiliares
 └── README.md
 ```
 
@@ -72,201 +70,92 @@ flowchart LR
 
 ### Frontend
 
-- Angular 18
-- TypeScript
-- RxJS
-- Guards e interceptores HTTP
-- Componentes standalone
+- Angular 18 (Componentes Standalone)
+- TypeScript & RxJS (Polling reactivo y state management)
+- TailwindCSS & Diseño UI personalizado
+- Guards e Interceptores HTTP
 - **Path aliases**: `@core/*`, `@features/*`, `@env/*`
 
 ### Backend
 
-- Spring Boot 3.4
-- Java 21
-- Spring Security
-- Spring Data JPA
-- Hibernate
-- OpenPDF
+- Spring Boot 3.4 & Java 21 LTS
+- Spring Security (JWT Stateless)
+- Spring Data JPA & Hibernate 6
+- PostgreSQL 15
+- OpenPDF (Generación de certificados oficiales)
 
 ### Calidad
 
-- JUnit + Mockito (53 tests)
-- Playwright
-- Selenium (14 pasos E2E)
-- Scripts Node.js para integración
+- JUnit 5 + Mockito (Suite de pruebas unitarias y de integración WebMvc)
+- Playwright & Selenium E2E
+- Tests automatizados de endpoints y validación de seguridad
 
-## Rutas
+## Rutas del Sistema
 
 ### Públicas
 
-| Ruta | Componente |
-|---|---|
-| `/inicio` | InicioComponent |
-| `/programas` | ProgramasComponent |
-| `/recursos` | RecursosComponent |
-| `/certificacion` | CertificacionComponent |
-| `/por-que-elegirnos` | PorQueElegirnosComponent |
-| `/cursos` | PublicCursosComponent |
-| `/cursos/:id` | CursoDetallePublicoComponent |
-| `/login` | LoginComponent |
-| `/certificados/validar/:codigo` | ValidarCertificadoComponent |
-
-### Dashboard (requiere autenticación)
-
-| Ruta | Roles | Componente |
+| Ruta | Componente | Descripción |
 |---|---|---|
-| `/dashboard` | Todos | DashboardHomeComponent |
-| `/dashboard/perfil` | Todos | PerfilComponent |
-| `/dashboard/alumnos` | ADMIN | AlumnosComponent |
-| `/dashboard/docentes` | ADMIN | DocentesComponent |
-| `/dashboard/cursos` | ADMIN | CursosComponent |
-| `/dashboard/configuracion` | ADMIN | ConfiguracionComponent |
-| `/dashboard/auditoria` | ADMIN | AuditoriaComponent |
-| `/dashboard/sistema` | ADMIN | SistemaComponent |
-| `/dashboard/cursos/:id` | ADMIN+DOCENTE | CursoDetalleComponent |
-| `/dashboard/modulos/:id/videos` | ADMIN+DOCENTE | VideosComponent |
-| `/dashboard/modulos/:id/materiales` | ADMIN+DOCENTE | MaterialesComponent |
-| `/dashboard/mis-cursos-docente` | DOCENTE | MisCursosDocenteComponent |
-| `/dashboard/mis-alumnos-docente/:id` | DOCENTE | MisAlumnosDocenteComponent |
-| `/dashboard/mis-cursos` | ALUMNO | MisCursosComponent |
-| `/dashboard/cursos-play/:id` | ALUMNO | PlayCursoComponent |
-| `/dashboard/certificados` | ADMIN+ALUMNO | CertificadosComponent |
+| `/inicio` | InicioComponent | Página principal con catálogo y presentación |
+| `/programas` | ProgramasComponent | Programas académicos |
+| `/recursos` | RecursosComponent | Biblioteca y recursos libres |
+| `/certificacion` | CertificacionComponent | Información sobre certificaciones |
+| `/por-que-elegirnos` | PorQueElegirnosComponent | Beneficios y propuesta de valor |
+| `/cursos` | PublicCursosComponent | Listado público de cursos |
+| `/cursos/:id` | CursoDetallePublicoComponent | Ficha informativa de curso |
+| `/login` | LoginComponent | Acceso a la plataforma |
+| `/certificados/validar/:codigo` | ValidarCertificadoComponent | Validador público de autenticidad |
 
-## API Documentada
+### Dashboard (Privado)
 
-### Autenticación
+| Ruta | Roles Permitidos | Descripción |
+|---|---|---|
+| `/dashboard` | Todos | Consola principal adaptada por rol |
+| `/dashboard/perfil` | Todos | Datos de cuenta y cambio de contraseña |
+| `/dashboard/alumnos` | ADMINISTRADOR | Gestión y matrícula de estudiantes |
+| `/dashboard/docentes` | ADMINISTRADOR | Gestión de plana docente |
+| `/dashboard/cursos` | ADMINISTRADOR | Mantenimiento de cursos y contenidos |
+| `/dashboard/comunicados` | ADMINISTRADOR | Envío de comunicados y gestión de pop-ups |
+| `/dashboard/configuracion` | ADMINISTRADOR | Configuración general y logos |
+| `/dashboard/auditoria` | ADMINISTRADOR | Logs de accesos y eventos |
+| `/dashboard/sistema` | ADMINISTRADOR | Monitoreo del servidor y copias de seguridad |
+| `/dashboard/cursos/:id` | ADMIN / DOCENTE | Editor de módulos, videos y materiales |
+| `/dashboard/mis-cursos-docente` | DOCENTE | Panel docente de cursos asignados |
+| `/dashboard/mis-alumnos-docente/:id` | DOCENTE | Calificación y seguimiento de alumnos |
+| `/dashboard/mis-cursos` | ALUMNO | Mis cursos matriculados |
+| `/dashboard/mis-tareas` | ALUMNO | Mis evaluaciones, entregas y notas |
+| `/dashboard/cursos-play/:id` | ALUMNO | Reproductor de clases y contenidos |
 
-Base: `/api/auth`
+## Endpoints Principales de la API
 
-- `POST /login`
-- `POST /refresh`
-- `POST /logout`
-- `GET /me`
-- `POST /forgot-password`
-- `POST /reset-password`
+### Notificaciones y Comunicados (`/api/notificaciones`)
+- `GET /mis-notificaciones?limite=20`: Consulta de avisos personales y contador no leídas.
+- `PATCH /{id}/leer`: Marcar notificación individual como leída.
+- `PATCH /leer-todas`: Marcar todas las notificaciones como leídas.
+- `POST /comunicado`: Envío de comunicado administrativo con segmentación de audiencia.
 
-### Usuarios
+### Anuncios Pop-up (`/api/anuncios-modal`)
+- `GET /activo`: Consulta de anuncio promocional vigente según rol del usuario.
+- `GET /todos`: Listado completo de campañas para el administrador.
+- `POST /`: Creación de nuevo anuncio/flyer.
+- `PUT /{id}`: Modificación de anuncio.
+- `PATCH /{id}/estado`: Activar o pausar campaña.
+- `DELETE /{id}`: Eliminación de anuncio.
 
-Base: `/api/usuarios`
+### Tareas y Calificaciones (`/api/tareas` y `/api/entregas-tareas`)
+- `GET /api/tareas/modulo/{moduloId}`: Tareas asociadas a un módulo.
+- `POST /api/tareas`: Creación de tarea (Admin/Docente).
+- `GET /api/entregas-tareas/mis-entregas/curso/{cursoId}`: Entregas del estudiante.
+- `POST /api/entregas-tareas`: Subida de archivo de entrega.
+- `POST /api/entregas-tareas/{id}/calificar`: Calificación sobre 20 y feedback del docente.
 
-- `GET /`
-- `GET /{id}`
-- `POST /`
-- `PUT /{id}`
-- `PATCH /{id}/estado`
+### Asistente IA (`/api/chatbot`)
+- `POST /api/chatbot/preguntar`: Consulta contextual al asistente inteligente.
 
-### Docentes
-
-Base: `/api/usuarios/docentes`
-
-- `GET /`
-- `GET /{id}`
-- `POST /`
-- `PUT /{id}`
-- `PATCH /{id}/estado`
-
-### Cursos
-
-Base: `/api/cursos`
-
-- `GET /`
-- `GET /{id}`
-- `GET /{id}/modulos`
-- `POST /`
-- `PUT /{id}`
-- `PATCH /{id}/estado`
-
-### Módulos
-
-Base: `/api/modulos`
-
-- `GET /{id}`
-- `GET /{id}/videos`
-- `GET /{id}/materiales`
-- `POST /`
-- `PUT /{id}`
-- `PATCH /{id}/estado`
-
-### Videos
-
-Base: `/api/videos`
-
-- `GET /`
-- `POST /`
-- `PUT /{id}`
-- `PATCH /{id}/estado`
-
-### Materiales
-
-Base: `/api/materiales`
-
-- `POST /`
-- `PUT /{id}`
-- `PATCH /{id}/estado`
-- `GET /{id}/download`
-
-### Matrículas
-
-Base: `/api/matriculas`
-
-- `POST /`
-- `GET /curso/{cursoId}`
-- `PATCH /{id}/estado`
-
-### Avance
-
-Base: `/api/avance`
-
-- `POST /`
-- `GET /video/{id}`
-
-### Certificados
-
-Base: `/api/certificados`
-
-- `GET /`
-- `POST /generar/{cursoId}`
-- `GET /{id}/download`
-- `GET /validar/{codigo}`
-
-Notas:
-
-- La validación pública expone alumno, curso, fecha y código.
-- Los certificados se regeneran desde el backend cuando el PDF físico falta o debe repararse.
-- La plantilla activa del sistema controla la firma y el cargo institucional.
-
-### Auditoría
-
-Base: `/api/auditoria`
-
-- `GET /login`
-- `GET /login/usuario/{id}`
-- `GET /eventos`
-- `GET /eventos/modulo/{modulo}`
-- `GET /eventos/usuario/{id}`
-
-### Reportes
-
-Base: `/api/reportes`
-
-- `GET /alumnos`
-- `GET /matriculas`
-- `GET /cursos`
-- `GET /certificados`
-
-### Sistema
-
-Base: `/api/sistema`
-
-- `GET /status`
-- `POST /backup`
-
-### Configuración
-
-Base: `/api/configuracion`
-
-- `GET /`
-- `PUT /`
+### Autenticación y Cursos
+- `POST /api/auth/login`, `POST /api/auth/refresh`, `GET /api/auth/me`
+- `GET /api/cursos`, `GET /api/cursos/{id}/modulos`, `GET /api/modulos/{id}/videos`
+- `POST /api/avance`, `POST /api/matriculas`
 
 ## Inicio Rápido
 
@@ -283,7 +172,7 @@ cd backend
 ./mvnw spring-boot:run
 ```
 
-En Windows:
+En Windows (PowerShell):
 
 ```powershell
 cd backend
@@ -298,23 +187,8 @@ npm install
 npm start
 ```
 
-## Credenciales de prueba
+## Notas del Proyecto
 
-Las credenciales QA no se publican en el repositorio. Defínelas localmente mediante variables de entorno antes de ejecutar las pruebas:
-
-```env
-QA_ADMIN_EMAIL=
-QA_ADMIN_PASSWORD=
-QA_DOCENTE_EMAIL=
-QA_DOCENTE_PASSWORD=
-QA_ALUMNO_EMAIL=
-QA_ALUMNO_PASSWORD=
-```
-
-## Notas
-
-- Si cambias rutas, roles o DTOs, actualiza también `docs/contexto.md`.
-- La portada SVG se usa como banner de documentación y GitHub.
-- Los logs de ejecución se guardan en `run-logs/` (ignorados por git).
-- Los scripts de testing y sus descargas están en `scripts/`.
-- Documentación de QA completa en `docs/QA_UNIFICADO.md`.
+- Las migraciones de base de datos se organizan secuencialmente en `backend/src/main/resources/db/`.
+- Todos los componentes y servicios siguen una arquitectura limpia, aditiva y modular.
+- Documentación de control de calidad disponible en `docs/QA_UNIFICADO.md`.

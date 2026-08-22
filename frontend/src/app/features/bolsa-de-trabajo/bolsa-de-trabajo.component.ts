@@ -174,6 +174,49 @@ export class BolsaDeTrabajoComponent implements OnInit {
         whatsappNumero: '993 408 856',
         whatsapp: 'https://wa.me/51993408856?text=Hola%2C%20vengo%20de%20la%20bolsa%20de%20trabajo%20de%20INSTEIP%20para%20postular%20al%20puesto%20de%20Fisioterapeuta%20en%20Equilibrio%20Wellness%20Center'
       }
+    },
+    {
+      id: 'adelgazar-y-punto-lima',
+      empresa: 'Adelgazar y Punto',
+      puesto: 'Cosmiatra Masajista',
+      ubicacion: 'San Borja y Los Olivos (Lima)',
+      ubicacionCorta: 'LIMA',
+      tipoContrato: 'Part Time · S/ 1,200',
+      imagen: 'assets/oferta_Trabajo_3.png',
+      imagenAlt: 'Adelgazar y Punto - Convocatoria Cosmiatra Masajista',
+      tagline: 'Centro especializado en reducción corporal, aparatología y bienestar estético',
+      destacado: true,
+      informacionGeneral: {
+        hotel: 'Adelgazar y Punto',
+        puesto: 'Cosmiatra Masajista',
+        ubicacionDetalle: 'Lima (Sedes San Borja y Los Olivos)'
+      },
+      requisitos: [
+        'Experiencia en tratamientos de reducción corporal y masajes relajantes.',
+        'Experiencia en manejo de Aparatología estética.',
+        'Experiencia en técnicas de Drenaje linfático.',
+        'Experiencia en Masoterapia corporal.',
+        'Experiencia y dominio en Bambuterapia.'
+      ],
+      beneficios: [
+        'Remuneración mensual: S/ 1,200.',
+        'Modalidad Part Time de lunes a sábado.',
+        'Trabajo presencial en sedes céntricas (San Borja y Los Olivos).',
+        'Excelente ambiente de trabajo y crecimiento en estética corporal integral.'
+      ],
+      turnos: [
+        'Part Time: Lunes a Sábado (Presencial)'
+      ],
+      funciones: [
+        'Aplicación de tratamientos reductores, moldeadores y masajes relajantes.',
+        'Manejo y aplicación de aparatología estética corporal y facial.',
+        'Realización de sesiones de drenaje linfático, masoterapia y bambuterapia.',
+        'Brindar atención personalizada y asesoría a clientes en sus planes de reducción y bienestar.'
+      ],
+      contacto: {
+        whatsappNumero: '991 580 144',
+        whatsapp: 'https://wa.me/51991580144?text=Hola%2C%20vengo%20de%20la%20bolsa%20de%20trabajo%20de%20INSTEIP.%20Postulaci%C3%B3n%20Cosmiatra%20-%20Env%C3%ADo%20mi%20CV%20actualizado'
+      }
     }
   ];
 

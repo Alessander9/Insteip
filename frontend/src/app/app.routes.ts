@@ -23,6 +23,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/recursos/recursos.component').then(m => m.RecursosComponent)
   },
   {
+    path: 'bolsa-de-trabajo',
+    loadComponent: () => import('./features/bolsa-de-trabajo/bolsa-de-trabajo.component').then(m => m.BolsaDeTrabajoComponent)
+  },
+  {
+    path: 'bolsa-de-trabajo.html',
+    loadComponent: () => import('./features/bolsa-de-trabajo/bolsa-de-trabajo.component').then(m => m.BolsaDeTrabajoComponent)
+  },
+  {
     path: 'certificacion',
     loadComponent: () => import('./features/certificacion/certificacion.component').then(m => m.CertificacionComponent)
   },

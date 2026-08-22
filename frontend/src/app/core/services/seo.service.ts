@@ -297,6 +297,13 @@ export const ROUTE_SEO: Record<string, SeoData> = {
     ogDescription: 'Material de estudio, guías y herramientas para tu formación.',
     keywords: 'recursos educativos, material estudio, guías, terapias complementarias'
   },
+  '/bolsa-de-trabajo': {
+    title: 'Bolsa de Trabajo — INSTEIP | Oportunidades y Convenios Laborales',
+    description: 'Encuentra oportunidades de empleo en centros de salud, spas y cadenas hoteleras en Lima, Cusco y la Amazonía para terapeutas certificados por INSTEIP.',
+    ogTitle: 'Bolsa de Trabajo — INSTEIP',
+    ogDescription: 'Oportunidades laborales y convenios en hotelería, salud y bienestar para terapeutas de INSTEIP.',
+    keywords: 'bolsa de trabajo, empleo masajista, terapeuta de spa, trabajo fisioterapeuta, convenios INSTEIP, trabajo cusco, trabajo lima'
+  },
   '/sedes': {
     title: 'Sedes a Nivel Nacional — INSTEIP | Huánuco, Lima y Piura',
     description: 'Encuentra tu sede más cercana de INSTEIP. Conoce nuestras sedes en Lima, Huánuco y Piura para estudiar terapias complementarias con certificación oficial.',

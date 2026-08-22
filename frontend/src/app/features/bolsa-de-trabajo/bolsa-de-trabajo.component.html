@@ -22,7 +22,7 @@
         <div class="job-intro-box">
           <span class="material-symbols-outlined job-intro-box__icon">handshake</span>
           <p class="job-intro-box__text">
-            Agradecemos la confianza de las muchas empresas que nos tienen como referentes terapéuticos y que nos solicitan con frecuencia personal para diversos puestos de terapia. A continuación compartimos algunos de los puestos más solicitados en <strong>Lima (Miraflores)</strong>, <strong>Cusco</strong> y la <strong>Amazonía</strong>.
+            Agradecemos la confianza de las muchas empresas que nos tienen como referentes terapéuticos y que nos solicitan con frecuencia personal para diversos puestos de terapia. A continuación compartimos algunos de los puestos más solicitados en <strong>Lima (Miraflores, San Borja, Los Olivos)</strong>, <strong>Cusco</strong> y la <strong>Amazonía</strong>.
           </p>
         </div>
 
@@ -38,8 +38,8 @@
           <div class="job-stat-card">
             <span class="material-symbols-outlined">spa</span>
             <div>
-              <strong>Centros de Salud</strong>
-              <small>Clínicas y centros de terapia</small>
+              <strong>Centros de Salud & Estética</strong>
+              <small>Clínicas, centros de terapia y estética</small>
             </div>
           </div>
           <div class="job-stat-card">
@@ -73,7 +73,7 @@
           </button>
           <button type="button" (click)="setFiltro('LIMA')" [class.is-active]="filtroUbicacion === 'LIMA'">
             <span class="material-symbols-outlined">domain</span>
-            Lima / Miraflores
+            Lima / Sedes
           </button>
         </div>
 
@@ -134,8 +134,8 @@
           <div class="job-card__body-grid">
             <!-- Col 1: Visual Media -->
             <div class="job-card__visual">
-              <div class="job-card__image-wrap cursor-pointer" (click)="abrirLightbox(t.imagen)">
-                <img [src]="t.imagen" [alt]="t.imagenAlt" loading="lazy" />
+              <div class="job-card__image-wrap cursor-pointer w-full !h-auto" (click)="abrirLightbox(t.imagen)">
+                <img [src]="t.imagen" [alt]="t.imagenAlt" loading="lazy" class="w-full !h-auto block !object-contain" />
                 <div class="job-card__image-overlay"></div>
                 <button type="button" class="job-card__zoom-btn" (click)="abrirLightbox(t.imagen); $event.stopPropagation()">
                   <span class="material-symbols-outlined">zoom_in</span>

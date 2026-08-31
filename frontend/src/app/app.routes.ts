@@ -59,12 +59,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/sedes/sedes.component').then(m => m.SedesComponent)
   },
   {
-<<<<<<< Updated upstream
-    path: 'sedesV2',
-    loadComponent: () => import('./features/sedes-v2/sedes-v2.component').then(m => m.SedesV2Component)
-=======
     path: 'sedes.html',
     loadComponent: () => import('./features/sedes/sedes.component').then(m => m.SedesComponent)
+  },
+  {
+    path: 'sedesV2',
+    loadComponent: () => import('./features/sedes-v2/sedes-v2.component').then(m => m.SedesV2Component)
   },
   {
     path: 'bolsa-de-trabajo',
@@ -89,7 +89,6 @@ export const routes: Routes = [
   {
     path: 'Experiencia-Academica-Insteip',
     loadComponent: () => import('./features/experiencia-academica-insteip/experiencia-academica-insteip.component').then(m => m.ExperienciaAcademicaInsteipComponent)
->>>>>>> Stashed changes
   },
   {
     path: 'cursos',

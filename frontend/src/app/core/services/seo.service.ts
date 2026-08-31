@@ -290,6 +290,20 @@ export const ROUTE_SEO: Record<string, SeoData> = {
     ogDescription: 'Clases en vivo, campus virtual y prácticas presenciales supervisadas.',
     keywords: 'metodología aprendizaje, campus virtual, clases en vivo, prácticas presenciales'
   },
+  '/experiencia-academica-insteip': {
+    title: 'Experiencia Académica — INSTEIP | Formación Clínica y Terapias',
+    description: 'Descubre la experiencia académica INSTEIP: práctica clínica con pacientes reales, mentores especialistas, campus virtual 24/7 y certificación oficial verificable.',
+    ogTitle: 'Experiencia Académica INSTEIP — Formación de Alto Impacto',
+    ogDescription: 'Práctica clínica supervisada, docentes especialistas y certificación oficial verificable.',
+    keywords: 'experiencia academica insteip, metodologia clinica, terapeutas certificados, educacion en salud, campus virtual'
+  },
+  '/experiencia-academica': {
+    title: 'Experiencia Académica — INSTEIP | Formación Clínica y Terapias',
+    description: 'Descubre la experiencia académica INSTEIP: práctica clínica con pacientes reales, mentores especialistas, campus virtual 24/7 y certificación oficial verificable.',
+    ogTitle: 'Experiencia Académica INSTEIP — Formación de Alto Impacto',
+    ogDescription: 'Práctica clínica supervisada, docentes especialistas y certificación oficial verificable.',
+    keywords: 'experiencia academica insteip, metodologia clinica, terapeutas certificados, educacion en salud, campus virtual'
+  },
   '/recursos': {
     title: 'Recursos — INSTEIP | Material de Estudio',
     description: 'Accede a recursos educativos, guías de estudio, material descargable y herramientas para tu formación en terapias complementarias.',

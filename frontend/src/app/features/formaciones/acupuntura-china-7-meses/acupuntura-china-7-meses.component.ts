@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
 import { FooterComponent } from '../../../core/components/footer/footer.component';
 import { CourseSyllabusComponent, SyllabusPhase } from '../../../shared/components/course-syllabus/course-syllabus.component';
@@ -14,7 +13,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     NavbarComponent,
     FooterComponent,
     CourseSyllabusComponent,
@@ -52,166 +50,258 @@ export class AcupunturaChina7MesesComponent implements OnInit, AfterViewInit, On
       outcomes: ['Medición con Cun', 'Puntos Lieque, Hegu, Neiguan', 'Anatomía de los canales']
     },
     {
-      shortTitle: 'Práctica y Seguridad',
+      shortTitle: 'Punción Clínica',
       period: 'Meses 6 al 7',
       icon: 'workspace_premium',
-      title: 'Formación Clínica con Seguridad Profesional',
-      description: 'Aplica razonamiento clínico y protocolos de tratamiento presencial respetando estrictas medidas de seguridad y bioseguridad.',
-      outcomes: ['Prácticas con pacientes reales', 'Precauciones y contraindicaciones', 'Certificación oficial final']
+      title: 'Técnica de Inserción y Protocolos Terapéuticos',
+      description: 'Aprende los ángulos de inserción, profundidad adecuada y diseña protocolos de tratamiento para dolor musculoesquelético.',
+      outcomes: ['Punción perpendicular, oblicua y transversal', 'Sensación Deqi (llegada del Qi)', 'Protocolos para lumbalgias y cefaleas']
     }
   ];
 
-  syllabusData: SyllabusPhase[] = [
+  readonly sliderImages = [
+    'assets/acupuntura_7_meses_estudios_1.jpg',
+    'assets/acupuntura_7_meses_estudios_2.jpg',
+    'assets/acupuntura_7_meses_estudios_3.jpg'
+  ];
+
+  readonly benefits = [
+    {
+      icon: 'neurology',
+      label: 'Diagnóstico MTC',
+      title: 'Comprende la raíz energética de cada síntoma.',
+      description: 'Aprende a diferenciar síndromes por 8 principios, evaluando lengua, pulso y manifestaciones clínicas para tratar la causa y no solo el síntoma.',
+      items: [
+        'Diferenciación de síndromes Yin / Yang',
+        'Evaluación de deficiencia y exceso',
+        'Comprensión integral del paciente'
+      ]
+    },
+    {
+      icon: 'medical_services',
+      label: 'Punción Práctica',
+      title: 'Domina la aguja con seguridad y precisión.',
+      description: 'Aprende las 3 técnicas de inserción segura (perpendicular, oblicua y transversal), profundidad adecuada por zona y la búsqueda del Deqi.',
+      items: [
+        'Inserción indolora con tubo guía',
+        'Manipulación de tonificación y dispersión',
+        'Protocolos de bioseguridad clínica'
+      ]
+    },
+    {
+      icon: 'workspace_premium',
+      label: 'Protocolos de Tratamiento',
+      title: 'Aplica esquemas de puntos para patologías reales.',
+      description: 'Diseña y ejecuta protocolos para dolor lumbar, ciática, cefaleas tensionales, ansiedad, insomnio y parálisis facial desde los primeros meses.',
+      items: [
+        'Esquemas de puntos locales y distales',
+        'Combinación de canales Shu antiguos',
+        'Seguimiento y evolución del paciente'
+      ]
+    }
+  ];
+
+  readonly syllabusData: SyllabusPhase[] = [
     {
       id: 'fase1',
-      tabLabel: '01 · Fundamentos y Diagnóstico (Meses 1-4)',
-      title: 'Fase 1: Fundamentos teóricos y Patrones energéticos',
-      description: 'Aprende los principios de la MTC, la interpretación de desequilibrios y la diferenciación de patrones de exceso y deficiencia.',
+      tabLabel: '01 · Fundamentos y Diagnóstico',
+      title: 'Fundamentos de la MTC y Diagnóstico Energético',
+      description: 'Bases filosóficas, Yin-Yang, 5 elementos, sustancias fundamentales (Qi, Xue, Jinye) y los 4 métodos diagnósticos tradicionales.',
       image: 'assets/plan_estudios_acupuntura_7_meses_1.jpg',
-      imageAlt: 'Fundamentos de acupuntura',
-      specimenLabel: 'SPECIMEN // TEORÍA Y DIAGNÓSTICO EN MTC',
+      imageAlt: 'Plan de estudios - Fundamentos de acupuntura',
+      specimenLabel: 'SPECIMEN // MTC FUNDAMENTALS',
       items: [
-        { number: '01', title: 'Bases Filosóficas de la MTC', badge1: 'Teoría', badge2: 'Meses 1-2', description: 'El ser humano como microcosmos, la relación Cielo-Hombre-Tierra, armonía y equilibrio Yin-Yang.' },
-        { number: '02', title: 'El Verdadero Diagnóstico', badge1: 'Diagnóstico', badge2: 'Meses 2-3', description: 'Evaluación del estado energético, síntomas, antecedentes y circulación del Qi del paciente.' },
-        { number: '03', title: 'Patrones Energéticos', badge1: 'Patrones', badge2: 'Meses 3-4', description: 'Diferenciación clínica de deficiencias (Qi, Yin, Yang) y excesos (estancamiento, calor, humedad).' },
-        { number: '04', title: 'Fundamento del Yin-Yang', badge1: 'Filosofía', badge2: 'Meses 4', description: 'Restablecimiento funcional mediante la identificación de estados de exceso y deficiencia.' }
+        {
+          number: '01',
+          title: 'Filosofía y Teoría Básica',
+          badge1: 'Módulo 1',
+          badge2: 'Fundamentos',
+          description: 'Yin-Yang, Wu Xing (5 elementos), Zang-Fu (órganos y vísceras) y su aplicación clínica.'
+        },
+        {
+          number: '02',
+          title: 'Diagnóstico por los 4 Métodos',
+          badge1: 'Módulo 2',
+          badge2: 'Clínica',
+          description: 'Inspección (lengua), auscultación/olfacción, interrogatorio y palpación (pulsología china).'
+        },
+        {
+          number: '03',
+          title: 'Diferenciación de Síndromes',
+          badge1: 'Módulo 3',
+          badge2: 'Diagnóstico',
+          description: 'Los 8 principios (Ba Gang), síndromes de Qi, Xue y órganos Zang-Fu.'
+        }
       ]
     },
     {
       id: 'fase2',
-      tabLabel: '02 · Puntos y Práctica Clínica (Meses 5-7)',
-      title: 'Fase 2: Medición Cun, Puntos Clave y Seguridad Clínica',
-      description: 'Especialización práctica en localización de puntos terapéuticos, maniobras de acupuntura y protocolos seguros con pacientes.',
+      tabLabel: '02 · Canales, Puntos y Punción',
+      title: 'Canales Principales, Puntos Clave y Punción Práctica',
+      description: 'Estudio detallado de los 12 canales principales, canal Du Mai y Ren Mai, localización con Cun y técnica de punción segura.',
       image: 'assets/plan_estudios_acupuntura_7_meses_2.jpg',
-      imageAlt: 'Práctica clínica de acupuntura',
-      specimenLabel: 'SPECIMEN // PUNTOS Y SEGURIDAD CLÍNICA',
+      imageAlt: 'Plan de estudios - Canales y punción',
+      specimenLabel: 'SPECIMEN // CLINICAL PRACTICE',
       items: [
-        { number: '01', title: 'Localización Precisa (Cun)', badge1: 'Medición', badge2: 'Meses 5', description: 'Uso de las medidas tradicionales Cun y referencias anatómicas adaptadas a cada paciente.' },
-        { number: '02', title: 'Puntos Terapéuticos Principales', badge1: 'Práctica', badge2: 'Meses 5-6', description: 'Estudio y aplicación de puntos clave como P7, HE7, IG4, H3, MC6, R3, E36, GB34, IG11, BP6.' },
-        { number: '03', title: 'Efectos y Acción Terapéutica', badge1: 'Acupuntura', badge2: 'Meses 6-7', description: 'Regulación energética, mejora de la circulación de Qi y Sangre, y fortalecimiento orgánico.' },
-        { number: '04', title: 'Seguridad y Contraindicaciones', badge1: 'Clínica', badge2: 'Meses 7', description: 'Bioseguridad, contraindicaciones absolutas y precauciones anatómicas regionales en consulta.' }
+        {
+          number: '04',
+          title: 'Canales y Puntos Shu Antiguos',
+          badge1: 'Módulo 4',
+          badge2: 'Puntos',
+          description: 'Localización anatómica con medidas Cun de los puntos de mayor impacto terapéutico.'
+        },
+        {
+          number: '05',
+          title: 'Técnica de Punción y Deqi',
+          badge1: 'Módulo 5',
+          badge2: 'Práctica',
+          description: 'Ángulos, profundidad, manipulación de agujas, obtención del Deqi y bioseguridad.'
+        },
+        {
+          number: '06',
+          title: 'Protocolos Clínicos y Casos Reales',
+          badge1: 'Módulo 6-7',
+          badge2: 'Integración',
+          description: 'Tratamiento de dolor musculoesquelético, estrés, insomnio, cefaleas y alteraciones digestivas.'
+        }
       ]
     }
   ];
 
-  docenteData: DocenteData = {
-    nombre: 'Lic. Lázaro José Regalado Ponte',
-    cargo: 'Docente Especialista',
-    biografia: 'Licenciado en <span class="text-brand-blue font-semibold">Fisioterapia y Rehabilitación</span>, especialista en acupuntura clínica, moxibustión y digitopuntura con amplia trayectoria académica y docente universitaria en <span class="text-brand-blue font-semibold">Cuba y Perú</span>.',
-    fotoUrl: 'assets/Lic Lazaro.jpg',
-    kicker: 'DOCENCIA EXCLUSIVA',
+  readonly docenteData: DocenteData = {
+    nombre: 'Lic. Emanuel Cabanillas Bardales',
+    cargo: 'Docente principal de Acupuntura China',
+    biografia: 'Especialista en Medicina Tradicional China, Acupuntura y Terapias Manuales con más de 10 años de experiencia docente y clínica. Formador de cientos de terapeutas certificados en el Perú.',
+    fotoUrl: 'assets/Lic Emanuel.jpg',
+    kicker: 'DOCENCIA INSTEIP',
     especialidades: [
-      { icon: 'verified', label: 'Especialista Clínico' },
-      { icon: 'school', label: 'Ex-Docente U.' }
+      { icon: 'verified', label: 'Especialista en MTC' },
+      { icon: 'workspace_premium', label: '+10 años de experiencia' },
+      { icon: 'school', label: 'Docente INSTEIP' }
     ]
   };
 
-  ctaData: CourseCtaData = {
+  readonly ctaData: CourseCtaData = {
     precio: 150,
-    cuotasInfo: 'Matrícula: S/ 30 · Mensualidad: S/ 150',
-    plazasDisponibles: 8,
-    whatsappLink: 'https://wa.me/51939371250?text=Hola%2C%20deseo%20informaci%C3%B3n%20sobre%20el%20curso%20de%207%20meses%20de%20Acupuntura%20China',
+    tipoPago: '/ mes',
+    cuotasInfo: '7 mensualidades de S/ 150 · Matrícula regular',
+    plazasDisponibles: 15,
+    whatsappLink: 'https://wa.me/51939371250?text=Hola%2C%20deseo%20inscribirme%20en%20el%20curso%20de%20Acupuntura%20China%20(7%20meses)',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
-      '7 meses de clases presenciales intensivas en Lince, Lima',
-      'Práctica clínica supervisada con pacientes reales',
-      'Material didáctico digital oficial de por vida',
-      'Certificado profesional oficial emitido por Insteip'
+      'Materiales de práctica incluidos en cada clase',
+      'Acceso al Campus Virtual con clases de refuerzo 24/7',
+      'Práctica clínica desde el primer mes',
+      'Doble Certificación Oficial al egresar'
     ],
-    headlineHtml: 'Formación Intensiva de 7 Meses en<br><span class="text-secondary">Acupuntura China</span>.',
-    description: 'Aprende los principios de la Medicina Tradicional China y domina la práctica clínica de la acupuntura de forma segura.',
+    headlineHtml: 'Inscríbete hoy en Acupuntura China<br><span class="text-secondary">(7 meses)</span>.',
+    description: 'Aprende los fundamentos milenarios de la MTC y domina la punción clínica con práctica presencial intensiva.',
     faqs: [
-      { icon: 'payments', pregunta: '¿Cuál es el costo del curso?', respuesta: 'La matrícula es de S/ 30 soles y la mensualidad es de S/ 150 soles.' },
-      { icon: 'help', pregunta: '¿Sin experiencia previa?', respuesta: 'No se requieren conocimientos previos. El programa inicia desde las bases teóricas.' },
-      { icon: 'schedule', pregunta: '¿Cuál es el horario?', respuesta: 'Clases presenciales los fines de semana en Lince, coordinado con el grupo.' },
-      { icon: 'verified', pregunta: '¿El certificado es válido?', respuesta: 'Sí. Certificado oficial con respaldo institucional de Insteip.' },
-      { icon: 'location_on', pregunta: '¿Cómo son las prácticas?', respuesta: 'Prácticas supervisadas con pacientes reales en grupos pequeños de máximo 8 personas.' }
+      { icon: 'schedule', pregunta: '¿Cuáles son los horarios?', respuesta: 'Contamos con turnos de mañana, tarde y fines de semana. Consulta la sede más cercana.' },
+      { icon: 'verified', pregunta: '¿Necesito conocimientos previos?', respuesta: 'No. El curso inicia desde los fundamentos filosóficos y anatómicos básicos.' },
+      { icon: 'payments', pregunta: '¿Qué incluye la mensualidad?', respuesta: 'Incluye clases presenciales, uso de materiales, acceso al campus virtual y asesoría continua.' },
+      { icon: 'school', pregunta: '¿Qué certificado recibo?', respuesta: 'Recibes Certificado Oficial con valor institucional de INSTEIP respaldado por horas lectivas.' }
     ],
-    trustText: 'Reserva segura · Vacantes muy limitadas por grupo para garantizar la enseñanza práctica'
+    trustText: 'Garantía INSTEIP · Práctica clínica garantizada · Docentes especialistas'
   };
 
-  constructor(private readonly host: ElementRef<HTMLElement>) {
-    this.hostElement = host.nativeElement;
+  constructor(hostRef: ElementRef<HTMLElement>) {
+    this.hostElement = hostRef.nativeElement;
   }
 
-  ngOnInit(): void { this.startAutoplay(); }
+  ngOnInit(): void {
+    this.startAutoplay();
+  }
+
+  ngAfterViewInit(): void {
+    if (typeof window === 'undefined') return;
+
+    this.animationContext = gsap.context(() => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      gsap.from('.ac-hero__content > *', {
+        y: 24,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.08,
+        ease: 'power3.out'
+      });
+
+      gsap.from('.ac-visual__frame, .ac-visual__card', {
+        y: 30,
+        opacity: 0,
+        duration: 0.9,
+        stagger: 0.12,
+        ease: 'power3.out',
+        delay: 0.15
+      });
+
+      gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((section) => {
+        gsap.from(section, {
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 82%'
+          },
+          y: 28,
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power3.out'
+        });
+      });
+    }, this.hostElement);
+  }
+
+  ngOnDestroy(): void {
+    this.stopAutoplay();
+    this.animationContext?.revert();
+  }
 
   startAutoplay(): void {
-    this.autoplayInterval = setInterval(() => { this.nextBenefit(true); }, 4500);
+    this.autoplayInterval = setInterval(() => {
+      this.nextBenefit(true);
+    }, 4500);
   }
 
   stopAutoplay(): void {
-    if (this.autoplayInterval) { clearInterval(this.autoplayInterval); this.autoplayInterval = undefined; }
+    if (this.autoplayInterval) {
+      clearInterval(this.autoplayInterval);
+      this.autoplayInterval = undefined;
+    }
   }
 
-  resetAutoplay(): void { this.stopAutoplay(); this.startAutoplay(); }
+  resetAutoplay(): void {
+    this.stopAutoplay();
+    this.startAutoplay();
+  }
 
-  prevBenefit(): void {
+  setBenefit(index: number): void {
     this.resetAutoplay();
-    this.activeBenefitIndex = this.activeBenefitIndex === 0 ? 2 : this.activeBenefitIndex - 1;
+    this.activeBenefitIndex = index;
   }
 
   nextBenefit(isAuto = false): void {
-    if (!isAuto) { this.resetAutoplay(); }
-    this.activeBenefitIndex = this.activeBenefitIndex === 2 ? 0 : this.activeBenefitIndex + 1;
+    if (!isAuto) this.resetAutoplay();
+    this.activeBenefitIndex = (this.activeBenefitIndex + 1) % this.benefits.length;
   }
 
-  setBenefit(i: number): void { this.resetAutoplay(); this.activeBenefitIndex = i; }
+  prevBenefit(): void {
+    this.resetAutoplay();
+    this.activeBenefitIndex =
+      (this.activeBenefitIndex - 1 + this.benefits.length) % this.benefits.length;
+  }
 
-  setJourneyStep(index: number): void { this.activeJourneyStep = index; }
-
-    openBenefitLightbox(): void {
-    const images = [
-      'assets/acupuntura_7_meses_estudios_1.jpg',
-      'assets/acupuntura_7_meses_estudios_2.jpg',
-      'assets/acupuntura_7_meses_estudios_3.jpg'
-    ];
-    this.benefitLightboxImage = images[this.activeBenefitIndex];
+  openBenefitLightbox(index: number = this.activeBenefitIndex): void {
+    const images = this.sliderImages || [];
+    this.benefitLightboxImage = images[index] || images[0] || 'assets/acupuntura_7_meses_curso.jpg';
     this.showBenefitLightbox = true;
-    if (typeof window !== 'undefined') {
-      document.body.style.overflow = 'hidden';
-    }
   }
 
   closeBenefitLightbox(): void {
     this.showBenefitLightbox = false;
     this.benefitLightboxImage = '';
-    if (typeof window !== 'undefined') {
-      document.body.style.overflow = '';
-    }
   }
 
-  ngAfterViewInit(): void {
-    if (typeof window === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    gsap.registerPlugin(ScrollTrigger);
-    this.animationContext = gsap.context(() => {
-      const hero = gsap.timeline({ defaults: { ease: 'power3.out' } });
-      hero
-        .from('.ac-kicker', { opacity: 0, y: -12, duration: 0.45 })
-        .from('.ac-title', { opacity: 0, y: 28, duration: 0.8 }, '-=0.2')
-        .from('.ac-description, .ac-actions, .ac-proof', { opacity: 0, y: 14, stagger: 0.08, duration: 0.45 }, '-=0.45')
-        .from('.ac-hero__visual', { opacity: 0, scale: 0.95, duration: 0.8 }, '-=0.65')
-        .from('.ac-fact', { opacity: 0, y: 12, stagger: 0.07, duration: 0.4 }, '-=0.4');
-      gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((element) => {
-        gsap.set(element, { autoAlpha: 1, y: 0 });
-        ScrollTrigger.create({
-          trigger: element,
-          start: 'top 88%',
-          once: true,
-          onEnter: () => {
-            gsap.fromTo(element,
-              { autoAlpha: 0, y: 22 },
-              { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', overwrite: 'auto' }
-            );
-          }
-        });
-      });
-      window.setTimeout(() => {
-        gsap.set('[data-reveal]', { autoAlpha: 1, y: 0, clearProps: 'visibility,opacity,transform' });
-      }, 1200);
-    }, this.hostElement);
-    ScrollTrigger.refresh();
+  setJourneyStep(index: number): void {
+    this.activeJourneyStep = index;
   }
-
-  ngOnDestroy(): void { this.stopAutoplay(); this.animationContext?.revert(); }
 }

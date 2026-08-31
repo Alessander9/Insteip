@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
 import { FooterComponent } from '../../../core/components/footer/footer.component';
 import { CourseSyllabusComponent, SyllabusPhase } from '../../../shared/components/course-syllabus/course-syllabus.component';
@@ -14,7 +13,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     NavbarComponent,
     FooterComponent,
     CourseSyllabusComponent,
@@ -36,117 +34,209 @@ export class AuriculoterapiaComponent implements OnInit, AfterViewInit, OnDestro
   readonly journeySteps = [
     {
       shortTitle: 'Fundamentos',
-      period: 'Módulo 1',
+      period: 'Mes 1',
       icon: 'neurology',
-      title: 'Comprende la neurofisiología auricular',
-      description: 'Principios científicos e históricos de la tradición china y la reflexología francesa del Dr. Nogier.',
-      outcomes: ['Historia y aportes', 'Diferencias de enfoque', 'Neurofisiología auricular']
+      title: 'Mapea la oreja y sus zonas reflejas',
+      description: 'Aprende la anatomía del pabellón auricular y localiza los puntos reflejos correspondientes a cada sistema del cuerpo humano.',
+      outcomes: ['Somatotopía auricular', 'Puntos maestros de la oreja', 'Inspección visual']
     },
     {
-      shortTitle: 'Técnica',
-      period: 'Módulo 2',
-      icon: 'biotech',
-      title: 'Domina la somatotopía y los materiales',
-      description: 'Mapeo de la oreja, uso de insumos clínicos y aplicación segura de las técnicas auriculares.',
-      outcomes: ['Somatotopía auricular', 'Materiales e insumos', 'Masaje auricular exclusivo']
-    },
-    {
-      shortTitle: 'Clínica',
-      period: 'Módulo 3',
+      shortTitle: 'Diagnóstico',
+      period: 'Mes 2',
       icon: 'medical_services',
-      title: 'Aplica protocolos clínicos efectivos',
-      description: 'Tratamientos terapéuticos para dolor, estrés, peso y trastornos nerviosos con ética profesional.',
-      outcomes: ['Protocolos de regulación', 'Aplicación específica', 'Ética y bioseguridad']
+      title: 'Detecta desequilibrios con precisión',
+      description: 'Domina los métodos de evaluación táctil, palpación por presión y detección eléctrica para confirmar puntos reactivos.',
+      outcomes: ['Palpación y búsqueda de dolor', 'Instrumentos de detección', 'Diferenciación de reactividad']
+    },
+    {
+      shortTitle: 'Protocolos',
+      period: 'Mes 3',
+      icon: 'workspace_premium',
+      title: 'Aplica semillas, balines y protocolos clínicos',
+      description: 'Selecciona y coloca semillas, balines electromagnéticos y chinchetas según protocolos específicos para dolor, ansiedad y control de peso.',
+      outcomes: ['Semillas de vaccaria y balines', 'Protocolo para estrés y ansiedad', 'Práctica clínica supervisada']
     }
   ];
 
-  constructor(private readonly host: ElementRef<HTMLElement>) {}
+  readonly sliderImages = [
+    'assets/insteip auriculoterapia.jpg',
+    'assets/insteip auriculoterapia 2.jpg',
+    'assets/insteip auriculoterapia 3.jpg'
+  ];
 
-  // Syllabus configuration data
-  syllabusData: SyllabusPhase[] = [
+  readonly benefits = [
+    {
+      icon: 'neurology',
+      label: 'Mapeo somatotópico',
+      title: 'Comprende el mapa reflejo del pabellón auricular.',
+      description: 'Aprende a ubicar con exactitud los puntos de la oreja vinculados con órganos, articulaciones y sistema nervioso.',
+      items: [
+        'Anatomía del pabellón auricular',
+        'Correspondencias de órganos y vísceras',
+        'Puntos maestros y reactivos'
+      ]
+    },
+    {
+      icon: 'medical_services',
+      label: 'Técnicas de estímulo',
+      title: 'Domina semillas, balines y masaje auricular.',
+      description: 'Aprende a seleccionar y aplicar el método adecuado para cada paciente: semillas de vaccaria, balines magnéticos o chinchetas.',
+      items: [
+        'Semillas de vaccaria y balines magnéticos',
+        'Chinchetas y agujas semipermanentes',
+        'Masaje auricular y preparación previa'
+      ]
+    },
+    {
+      icon: 'workspace_premium',
+      label: 'Protocolos clínicos',
+      title: 'Trata dolor, ansiedad y control de peso.',
+      description: 'Aplica esquemas de puntos validados clínicamente para abordar las consultas más frecuentes con resultados comprobados.',
+      items: [
+        'Protocolos para dolor e inflamación',
+        'Manejo de estrés, ansiedad e insomnio',
+        'Soporte en control de peso y adicciones'
+      ]
+    }
+  ];
+
+  readonly syllabusData: SyllabusPhase[] = [
     {
       id: 'fase1',
-      tabLabel: '01 · Fundamentos y Neurofisiología',
-      title: 'Módulo 1: Fundamentos y Neurofisiología',
-      description: 'Principios científicos e históricos de la tradición china y la reflexología francesa.',
-      image: 'assets/insteip AURICULOTERAPIA temario 1.jpg',
-      imageAlt: 'Plan de estudios auriculoterapia - Módulo 1',
-      specimenLabel: 'SPECIMEN // TEORÍA Y NEUROFISIOLOGÍA',
+      tabLabel: '01 · Anatomía y Diagnóstico',
+      title: 'Bases y Diagnóstico Auricular',
+      description: 'Somatotopía auricular, correspondencias de órganos y métodos de evaluación.',
+      image: 'assets/insteip auriculoterapia temario 1.jpg',
+      imageAlt: 'Plan de estudios de Auriculoterapia Fase 1',
+      specimenLabel: 'SPECIMEN // SOMATOTOPÍA AURICULAR',
       items: [
-        { number: '01', title: 'Historia y Aportes', badge1: 'Origen', badge2: 'Dr. Nogier', description: 'Historia de la auriculoterapia tradicional y los aportes fundamentales de la escuela reflexológica francesa del Dr. Paul Nogier.' },
-        { number: '02', title: 'Diferencias de Enfoque', badge1: 'Modelos', badge2: 'Enfoques', description: 'Diferencias estructurales y metodológicas entre las cartografías auriculares tradicionales orientales y los mapas clínicos occidentales.' },
-        { number: '03', title: 'Neurofisiología Auricular', badge1: 'Neuro', badge2: 'Vago', description: 'Inervación del pabellón auricular, arcos reflejos y la función diagnóstica y terapéutica ligada al nervio vago.' }
+        {
+          number: '01',
+          title: 'Anatomía del Pabellón Auricular',
+          badge1: 'Teoría',
+          badge2: 'Fundamentos',
+          description: 'Hélix, antihélix, trago, concha y lóbulo; correspondencias de órganos y sistemas.'
+        },
+        {
+          number: '02',
+          title: 'Diagnóstico e Inspección',
+          badge1: 'Evaluación',
+          badge2: 'Clínica',
+          description: 'Inspección visual de cambios en la oreja y palpación por presión de puntos sensibles.'
+        }
       ]
     },
     {
       id: 'fase2',
-      tabLabel: '02 · Somatotopía y Materiales',
-      title: 'Módulo 2: Somatotopía y Materiales',
-      description: 'Mapeo de la oreja, uso de insumos clínicos y aplicación segura de la técnica.',
-      image: 'assets/insteip AURICULOTERAPIA temario 2.jpg',
-      imageAlt: 'Plan de estudios auriculoterapia - Módulo 2',
-      specimenLabel: 'SPECIMEN // SOMATOTOPÍA Y PRÁCTICA',
+      tabLabel: '02 · Tratamiento y Protocolos',
+      title: 'Técnicas de Estímulo y Protocolos',
+      description: 'Aplicación de semillas, balines y diseño de protocolos para patologías comunes.',
+      image: 'assets/insteip auriculoterapia temario 2.jpg',
+      imageAlt: 'Plan de estudios de Auriculoterapia Fase 2',
+      specimenLabel: 'SPECIMEN // TÉCNICAS Y PROTOCOLOS',
       items: [
-        { number: '01', title: 'Somatotopía Auricular', badge1: 'Mapeo', badge2: 'Feto Invertido', description: 'Estudio de las proyecciones reflejas orgánicas y la analogía clásica del feto invertido en la oreja.' },
-        { number: '02', title: 'Materiales e Insumos', badge1: 'Invasivo', badge2: 'Agujas', description: 'Uso clínico de chinchetas, balines magnéticos, semillas de vaccaria, agujas filiformes y aplicadores.' },
-        { number: '03', title: 'Masaje Auricular', badge1: 'Exclusivo', badge2: 'Técnica', description: 'Técnica exclusiva de manipulación y masaje del pabellón auricular desarrollada por Emanuel Cabanillas.' }
-      ]
-    },
-    {
-      id: 'fase3',
-      tabLabel: '03 · Puntos y Protocolos Clínicos',
-      title: 'Módulo 3: Puntos y Protocolos Clínicos',
-      description: 'Tratamientos terapéuticos para dolor, estrés, peso y trastornos nerviosos.',
-      image: 'assets/insteip AURICULOTERAPIA temario 3.jpg',
-      imageAlt: 'Plan de estudios auriculoterapia - Módulo 3',
-      specimenLabel: 'SPECIMEN // PROTOCOLOS CLÍNICOS AURICULARES',
-      items: [
-        { number: '01', title: 'Protocolo de Regulación Inicial', badge1: 'Básico', badge2: 'Shen Men', description: 'Localización y estimulación del triángulo de regulación sistémica primario: Shen Men, Riñón y Simpático.' },
-        { number: '02', title: 'Protocolos de Aplicación Específica', badge1: 'Tratamiento', badge2: 'Ansiedad', description: 'Tratamiento específico de patologías comunes: reducción de peso y apetito, ansiedad, insomnio y contracturas musculares.' },
-        { number: '03', title: 'Ética y Bioseguridad', badge1: 'Clínica', badge2: 'Normativa', description: 'Higiene, asepsia del pabellón, desecho de materiales clínicos y principios éticos indispensables en consultorio.' }
+        {
+          number: '01',
+          title: 'Materiales y Técnicas de Estímulo',
+          badge1: 'Práctica',
+          badge2: 'Técnica',
+          description: 'Colocación precisa de semillas de vaccaria, balines electromagnéticos y chinchetas.'
+        },
+        {
+          number: '02',
+          title: 'Protocolos de Tratamiento',
+          badge1: 'Clínica',
+          badge2: 'Aplicación',
+          description: 'Protocolos para ansiedad, insomnio, sobrepeso, dolor articular y migrañas.'
+        }
       ]
     }
   ];
 
-  // Teacher configuration data
-  docenteData: DocenteData = {
-    nombre: 'Emanuel Cabanillas Bardales',
-    cargo: 'Docente Especialista',
-    biografia: '<span class=\"text-brand-blue font-semibold\">Fisioterapeuta</span> con más de 12 años de experiencia clínica, instructor de Pilates clínico, especialista en terapias manuales y medicina tradicional china. <span class=\"text-brand-blue font-semibold\">Ponente de primer nivel</span> exclusivo en INSTEIP.',
+  readonly docenteData: DocenteData = {
+    nombre: 'Lic. Emanuel Cabanillas Bardales',
+    cargo: 'Docente principal de Auriculoterapia',
+    biografia: 'Especialista en Medicina Tradicional China, Auriculoterapia y Terapias Complementarias con más de 10 años de trayectoria clínica y formativa en el Perú.',
     fotoUrl: 'assets/Lic Emanuel.jpg',
-    kicker: 'DOCENCIA EXCLUSIVA',
+    kicker: 'DOCENCIA INSTEIP',
     especialidades: [
-      { icon: 'verified', label: '+12 años de Exp.' },
-      { icon: 'school', label: 'Ponente Exclusivo' }
+      { icon: 'verified', label: 'Especialista en Auriculoterapia' },
+      { icon: 'workspace_premium', label: '+10 años de experiencia' },
+      { icon: 'school', label: 'Docente INSTEIP' }
     ]
   };
 
-  // CTA configuration data
-  ctaData: CourseCtaData = {
-    precio: 260,
-    cuotasInfo: 'Matrícula S/ 30 + 1 mensualidad de S/ 260 · Sin intereses',
-    plazasDisponibles: 8,
-    whatsappLink: 'https://wa.me/51939371250',
+  readonly ctaData: CourseCtaData = {
+    precio: 150,
+    tipoPago: '/ mes',
+    cuotasInfo: 'Modalidad Online · Campus virtual 24/7',
+    plazasDisponibles: 20,
+    whatsappLink: 'https://wa.me/51939371250?text=Hola%2C%20deseo%20inscribirme%20en%20el%20curso%20Online%20de%20Auriculoterapia',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
-      'Kit clínico completo para las prácticas en clase',
-      'Manual impreso ilustrado y cartograma A4 plastificado',
-      'Certificado oficial emitido por INSTEIP',
-      'Acceso de por vida al grupo de soporte exclusivo con el docente'
+      'Acceso al Campus Virtual 24/7',
+      'Clases grabadas y en vivo con docentes especialistas',
+      'Material didáctico y guías de puntos descargables',
+      'Certificación Internacional con valor curricular'
     ],
-    headlineHtml: 'Domina la terapia<br><span class=\"text-secondary\">refleja auricular</span>',
-    description: 'Reserva tu cupo por S/ 30 y asegura tu vacante presencial en Lince. Materiales y kit clínico incluidos.',
+    headlineHtml: 'Inscríbete hoy en el Curso de<br><span class="text-secondary">Auriculoterapia Online</span>.',
+    description: 'Aprende a diagnosticar y tratar desequilibrios a través del microsistema auricular con la metodología comprobada de INSTEIP.',
     faqs: [
-      { icon: 'help', pregunta: '¿Sin experiencia previa?', respuesta: 'No se requieren conocimientos previos. El curso comienza desde los fundamentos.' },
-      { icon: 'schedule', pregunta: '¿Son clases teóricas o prácticas?', respuesta: 'Ambas. Teoría presencial con práctica supervisada desde la primera clase.' },
-      { icon: 'verified', pregunta: '¿El certificado es válido?', respuesta: 'Sí. Emitido por INSTEIP con respaldo institucional reconocido.' },
-      { icon: 'inventory', pregunta: '¿Qué incluye el kit?', respuesta: 'Semillas de vaccaria, balines de oro y plata, imanes y aplicadores.' }
+      { icon: 'schedule', pregunta: '¿Cuándo puedo comenzar?', respuesta: 'Tienes acceso inmediato al campus virtual desde el momento de tu matrícula.' },
+      { icon: 'devices', pregunta: '¿Cómo accedo a las clases?', respuesta: 'Desde cualquier dispositivo con conexión a internet, 24 horas al día, 7 días a la semana.' },
+      { icon: 'verified', pregunta: '¿La certificación es válida internacionalmente?', respuesta: 'Sí, emitimos certificación oficial respaldada por horas lectivas y apostillable.' },
+      { icon: 'support_agent', pregunta: '¿Tendré soporte de los docentes?', respuesta: 'Sí, dispondrás de foros de consulta y sesiones de tutoría en vivo.' }
     ],
-    trustText: 'Pago seguro · Materiales incluidos · Grupos reducidos · Asesoría antes de matricularte'
+    trustText: 'Garantía INSTEIP · Acceso 24/7 · Certificación internacional'
   };
+
+  constructor(private readonly host: ElementRef<HTMLElement>) { }
 
   ngOnInit(): void {
     this.startAutoplay();
+  }
+
+  ngAfterViewInit(): void {
+    if (typeof window === 'undefined') return;
+
+    this.animationContext = gsap.context(() => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      gsap.from('.ac-hero__content > *', {
+        y: 24,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.08,
+        ease: 'power3.out'
+      });
+
+      gsap.from('.ac-visual__frame, .ac-visual__card', {
+        y: 30,
+        opacity: 0,
+        duration: 0.9,
+        stagger: 0.12,
+        ease: 'power3.out',
+        delay: 0.15
+      });
+
+      gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((section) => {
+        gsap.from(section, {
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 82%'
+          },
+          y: 28,
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power3.out'
+        });
+      });
+    }, this.host.nativeElement);
+  }
+
+  ngOnDestroy(): void {
+    this.stopAutoplay();
+    this.animationContext?.revert();
   }
 
   startAutoplay(): void {
@@ -173,10 +263,8 @@ export class AuriculoterapiaComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   nextBenefit(isAuto = false): void {
-    if (!isAuto) {
-      this.resetAutoplay();
-    }
-    this.activeBenefitIndex = this.activeBenefitIndex === 2 ? 0 : this.activeBenefitIndex + 1;
+    if (!isAuto) this.resetAutoplay();
+    this.activeBenefitIndex = (this.activeBenefitIndex + 1) % 3;
   }
 
   setBenefit(i: number): void {
@@ -184,66 +272,18 @@ export class AuriculoterapiaComponent implements OnInit, AfterViewInit, OnDestro
     this.activeBenefitIndex = i;
   }
 
-  setJourneyStep(index: number): void {
-    this.activeJourneyStep = index;
-  }
-
-    openBenefitLightbox(): void {
-    const images = [
-      'assets/AuriculoterapiaInsteip2.jpg',
-      'assets/AuriculoterapiaInsteip3.jpg',
-      'assets/AuriculoterapiaInsteip4.jpg'
-    ];
-    this.benefitLightboxImage = images[this.activeBenefitIndex];
+  openBenefitLightbox(index: number = this.activeBenefitIndex): void {
+    const images = this.sliderImages || [];
+    this.benefitLightboxImage = images[index] || images[0] || 'assets/insteip auriculoterapia.jpg';
     this.showBenefitLightbox = true;
-    if (typeof window !== 'undefined') {
-      document.body.style.overflow = 'hidden';
-    }
   }
 
   closeBenefitLightbox(): void {
     this.showBenefitLightbox = false;
     this.benefitLightboxImage = '';
-    if (typeof window !== 'undefined') {
-      document.body.style.overflow = '';
-    }
   }
 
-  ngAfterViewInit(): void {
-    if (typeof window === 'undefined') return;
-
-    const revealSections = this.host.nativeElement.querySelectorAll<HTMLElement>('[data-reveal]');
-    revealSections.forEach((element) => {
-      gsap.set(element, { clearProps: 'opacity,visibility,transform' });
-    });
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    gsap.registerPlugin(ScrollTrigger);
-    this.animationContext = gsap.context(() => {
-      const hero = gsap.timeline({ defaults: { ease: 'power3.out' } });
-      hero
-        .from('.ac-kicker', { opacity: 0, y: -12, duration: 0.45 })
-        .from('.ac-title', { opacity: 0, y: 28, duration: 0.8 }, '-=0.2')
-        .from('.ac-description, .ac-actions, .ac-proof', { opacity: 0, y: 14, stagger: 0.08, duration: 0.45 }, '-=0.45')
-        .from('.ac-hero__visual', { opacity: 0, scale: 0.95, duration: 0.8 }, '-=0.65')
-        .from('.ac-fact', { opacity: 0, y: 12, stagger: 0.07, duration: 0.4 }, '-=0.4');
-
-      gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((element) => {
-        gsap.from(element, {
-          y: 18,
-          duration: 0.25,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: element, start: 'top 92%', once: true }
-        });
-      });
-    }, this.host.nativeElement);
-
-    requestAnimationFrame(() => ScrollTrigger.refresh());
-  }
-
-  ngOnDestroy(): void {
-    this.stopAutoplay();
-    this.animationContext?.revert();
+  setJourneyStep(i: number): void {
+    this.activeJourneyStep = i;
   }
 }

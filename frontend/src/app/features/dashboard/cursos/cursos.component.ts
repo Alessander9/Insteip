@@ -8,7 +8,6 @@ import { ReportesService } from '../../../core/services/';
 import { ToastService } from '../../../core/services/';
 import { UsuarioService, DocenteOption } from '../../../core/services/';
 import { ConfirmModalComponent } from '../../../core/components/confirm-modal/confirm-modal.component';
-import { SkeletonLoaderComponent } from '../../../core/components/skeleton-loader/skeleton-loader.component';
 import { getSubscriptionClass, formatNiveles } from '../../../core/utils/';
 
 @Component({
@@ -19,8 +18,7 @@ import { getSubscriptionClass, formatNiveles } from '../../../core/utils/';
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    ConfirmModalComponent,
-    SkeletonLoaderComponent
+    ConfirmModalComponent
   ],
   templateUrl: './cursos.component.html',
   styleUrls: ['./cursos.component.css']

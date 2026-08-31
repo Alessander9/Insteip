@@ -2,7 +2,6 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmModalComponent } from '../../../core/components/confirm-modal/confirm-modal.component';
-import { SkeletonLoaderComponent } from '../../../core/components/skeleton-loader/skeleton-loader.component';
 import { ToastService } from '../../../core/services/';
 import { getSubscriptionClass } from '../../../core/utils/';
 import { DocenteRequest, DocenteResponse } from '../../../core/models/';
@@ -11,8 +10,11 @@ import { DocenteService } from '../../../core/services/';
 @Component({
   selector: 'app-docentes',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule,    ConfirmModalComponent,
-    SkeletonLoaderComponent
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ConfirmModalComponent
   ],
   templateUrl: './docentes.component.html',
   styleUrls: ['./docentes.component.css']

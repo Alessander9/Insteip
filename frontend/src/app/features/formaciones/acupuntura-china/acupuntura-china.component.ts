@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
 import { FooterComponent } from '../../../core/components/footer/footer.component';
 import { CourseSyllabusComponent, SyllabusPhase } from '../../../shared/components/course-syllabus/course-syllabus.component';
@@ -14,7 +13,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     NavbarComponent,
     FooterComponent,
     CourseSyllabusComponent,
@@ -51,90 +49,194 @@ export class AcupunturaChinaComponent implements OnInit, AfterViewInit, OnDestro
       outcomes: ['Moxibustión y ventosas', 'Protocolos de tratamiento', 'Práctica supervisada']
     },
     {
-      shortTitle: 'Profesión',
+      shortTitle: 'Práctica',
       period: 'Meses 9 al 12',
       icon: 'workspace_premium',
-      title: 'Integra y presenta tu práctica profesional',
-      description: 'Consolida protocolos completos y adquiere herramientas para incorporar la acupuntura a tu servicio profesional.',
-      outcomes: ['Casos clínicos integrales', 'Microsistemas de acupuntura', 'Certificación institucional']
+      title: 'Atiende casos reales con criterio integral',
+      description: 'Integra evaluación, plan terapéutico y seguimiento para desempeñarte con seguridad y respaldo profesional.',
+      outcomes: ['Casos clínicos reales', 'Certificación internacional', 'Acompañamiento docente']
     }
   ];
 
-  // Syllabus configuration data
-  syllabusData: SyllabusPhase[] = [
+  readonly sliderImages = [
+    'assets/AcupunturaChinaInsteip.jpg',
+    'assets/AcupunturaInsteip2.jpg',
+    'assets/AcupunturaInsteip3.jpg'
+  ];
+
+  readonly benefits = [
+    {
+      icon: 'neurology',
+      label: 'Bases de la MTC',
+      title: 'Comprende el mapa energético del cuerpo.',
+      description: 'Identifica canales, puntos de acupuntura y desequilibrios energéticos para diseñar tratamientos personalizados.',
+      items: [
+        'Canales principales y puntos clave',
+        'Evaluación de lengua y pulso',
+        'Bases de la medicina tradicional china'
+      ]
+    },
+    {
+      icon: 'medical_services',
+      label: 'Técnicas integradas',
+      title: 'Domina más que solo agujas.',
+      description: 'Aprende moxibustión, ventosas y digitopuntura como herramientas complementarias para potenciar cada sesión.',
+      items: [
+        'Moxibustión directa e indirecta',
+        'Ventosas fijas y móviles',
+        'Protocolos para dolor e inflamación'
+      ]
+    },
+    {
+      icon: 'workspace_premium',
+      label: 'Práctica clínica',
+      title: 'Aprende atendiendo casos reales.',
+      description: 'Desarrolla criterio clínico desde los primeros módulos con supervisión docente en cada paso del proceso.',
+      items: [
+        'Práctica clínica supervisada',
+        'Protocolos para patologías comunes',
+        'Seguridad y bioseguridad del paciente'
+      ]
+    }
+  ];
+
+  readonly syllabusData: SyllabusPhase[] = [
     {
       id: 'fase1',
-      tabLabel: '01 · Acupuntura Clásica (Meses 1-6)',
-      title: 'Fase 1: Acupuntura Clásica',
-      description: 'Estudio profundo de los principios milenarios, anatomía de canales energéticos y puntos reflejos primarios.',
+      tabLabel: '01 · Fundamentos',
+      title: 'Bases de la Medicina Tradicional China',
+      description: 'Principios filosóficos, canales bioenergéticos y anatomía de puntos principales.',
       image: 'assets/insteip acupuntura temario 1.jpg',
-      imageAlt: 'Acupuntura Clásica',
-      specimenLabel: 'SPECIMEN // CANALES ENERGÉTICOS ACUPUNTURALES',
+      imageAlt: 'Plan de estudios de Acupuntura China Fase 1',
+      specimenLabel: 'SPECIMEN // CANALES BIOENERGÉTICOS',
       items: [
-        { number: '01', title: 'Canales y Meridianos', badge1: 'Teoría', badge2: 'Fase 1', description: 'Identificación y trazado de los 12 canales energéticos bilaterales y puntos de estimulación primarios en el cuerpo.' },
-        { number: '02', title: 'Teoría de los 5 Elementos', badge1: 'Teoría', badge2: 'Filosofía', description: 'Modelo cosmológico, fisiológico y patológico que constituye la base teórica tradicional china.' },
-        { number: '03', title: 'Moxibustión', badge1: 'Práctica', badge2: 'Calor', description: 'Aplicación de calor terapéutico mediante la combustión de la planta Artemisa en puntos acupunturales.' },
-        { number: '04', title: 'Ventosaterapia', badge1: 'Fascias', badge2: 'Técnica', description: 'Liberación miofascial profunda y desintoxicación celular mediante ventosas secas y móviles.' }
+        {
+          number: '01',
+          title: 'Filosofía y Principios de la MTC',
+          badge1: 'Teoría',
+          badge2: 'Fundamentos',
+          description: 'Yin-Yang, cinco elementos y sustancias vitales aplicadas a la salud.'
+        },
+        {
+          number: '02',
+          title: 'Canales y Meridianos',
+          badge1: 'Anatomía',
+          badge2: 'Puntos',
+          description: 'Recorrido de los 12 canales principales y puntos de mayor impacto terapéutico.'
+        }
       ]
     },
     {
       id: 'fase2',
-      tabLabel: '02 · Microsistemas (Meses 7-12)',
-      title: 'Fase 2: Microsistemas de Acupuntura',
-      description: 'Especialización en sistemas de estimulación refleja y técnicas avanzadas de estimulación eléctrica.',
+      tabLabel: '02 · Técnicas',
+      title: 'Técnicas Complementarias y Protocolos',
+      description: 'Moxibustión, ventosas y selección de puntos para abordar el dolor y el estrés.',
       image: 'assets/insteip acupuntura temario 2.jpg',
-      imageAlt: 'Microsistemas',
-      specimenLabel: 'SPECIMEN // ESTIMULACIÓN REFLEJA Y MICROSISTEMAS',
+      imageAlt: 'Plan de estudios de Acupuntura China Fase 2',
+      specimenLabel: 'SPECIMEN // MOXIBUSTIÓN Y VENTOSAS',
       items: [
-        { number: '01', title: 'Auriculoterapia', badge1: 'Reflejo', badge2: 'Fase 2', description: 'Diagnóstico reflejo y estimulación del pabellón auricular para control de desórdenes sistémicos.' },
-        { number: '02', title: 'Craneopuntura', badge1: 'Neuronal', badge2: 'Fase 2', description: 'Estimulación refleja de las zonas corticales y neurológicas craneales para patologías complejas.' },
-        { number: '03', title: 'Electroacupuntura', badge1: 'Tecno', badge2: 'Fase 2', description: 'Aplicación científica de frecuencias eléctricas a través de agujas de acupuntura para manejo analgésico.' },
-        { number: '04', title: 'Reflexología Integral', badge1: 'Integral', badge2: 'Fase 2', description: 'Estudio anatómico y aplicación refleja sobre zonas reflejas podales, manuales y faciales.' }
+        {
+          number: '01',
+          title: 'Moxibustión y Ventosas',
+          badge1: 'Práctica',
+          badge2: 'Técnica',
+          description: 'Aplicación de calor terapéutico y descompresión miofascial.'
+        },
+        {
+          number: '02',
+          title: 'Protocolos de Tratamiento',
+          badge1: 'Clínica',
+          badge2: 'Aplicación',
+          description: 'Diseño de sesiones para lumbalgias, cefaleas, insomnio y contracturas.'
+        }
       ]
     }
   ];
 
-  // Teacher configuration data
-  docenteData: DocenteData = {
-    nombre: 'Lic. Lázaro José Regalado Ponte',
-    cargo: 'Docente Especialista',
-    biografia: 'Licenciado en <span class="text-brand-blue font-semibold">Fisioterapia y Rehabilitación</span>, especialista en acupuntura clínica, moxibustión y digitopuntura con amplia trayectoria académica y docente universitaria internacional en <span class="text-brand-blue font-semibold">Cuba y Perú</span>.',
-    fotoUrl: 'assets/Lic Lazaro.jpg',
-    kicker: 'DOCENCIA EXCLUSIVA',
+  readonly docenteData: DocenteData = {
+    nombre: 'Lic. Emanuel Cabanillas Bardales',
+    cargo: 'Docente principal de Acupuntura China',
+    biografia: 'Especialista en Medicina Tradicional China, Acupuntura y Terapias Manuales con más de 10 años de experiencia docente y clínica. Formador de cientos de terapeutas certificados en el Perú.',
+    fotoUrl: 'assets/Lic Emanuel.jpg',
+    kicker: 'DOCENCIA INSTEIP',
     especialidades: [
-      { icon: 'verified', label: 'Especialista Clínico' },
-      { icon: 'school', label: 'Ex-Docente U.' }
+      { icon: 'verified', label: 'Especialista en MTC' },
+      { icon: 'workspace_premium', label: '+10 años de experiencia' },
+      { icon: 'school', label: 'Docente INSTEIP' }
     ]
   };
 
-  // CTA configuration data
-  ctaData: CourseCtaData = {
-    precio: 270,
-    cuotasInfo: '12 cuotas · Sin intereses · Matrícula incluida',
-    plazasDisponibles: 8,
-    whatsappLink: 'https://wa.me/51939371250',
+  readonly ctaData: CourseCtaData = {
+    precio: 180,
+    tipoPago: '/ mes',
+    cuotasInfo: 'Modalidad Online · Campus virtual 24/7',
+    plazasDisponibles: 20,
+    whatsappLink: 'https://wa.me/51939371250?text=Hola%2C%20deseo%20inscribirme%20en%20el%20curso%20Online%20de%20Acupuntura%20China',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
-      '12 meses de clases teóricas en vivo — acceso a grabaciones 24/7',
-      'Fases clínicas presenciales supervisadas con pacientes reales',
-      'Material didáctico digital oficial de por vida',
-      'Certificado profesional oficial emitido por Insteip'
+      'Acceso al Campus Virtual 24/7',
+      'Clases grabadas y en vivo con docentes especialistas',
+      'Material didáctico descargable',
+      'Certificación Internacional con valor curricular'
     ],
-    headlineHtml: 'El momento de iniciar tu<br><span class="text-secondary">carrera en acupuntura</span> es ahora.',
-    description: 'Cada año abrimos una <span class="text-brand-blue font-semibold">sola convocatoria</span>. Una vez llenas las plazas, la siguiente oportunidad es en 2027. No postergues una decisión que puede transformar tu carrera.',
+    headlineHtml: 'Inscríbete hoy en el Diplomado de<br><span class="text-secondary">Acupuntura China Online</span>.',
+    description: 'Transforma tu carrera profesional con la formación online más completa en Medicina Tradicional China de INSTEIP.',
     faqs: [
-      { icon: 'help', pregunta: '¿Sin experiencia previa?', respuesta: 'No se requieren conocimientos previos. El programa comienza desde los fundamentos.' },
-      { icon: 'schedule', pregunta: '¿Puedo estudiar trabajando?', respuesta: 'Sí. Las clases online en vivo son en horario nocturno y los sábados.' },
-      { icon: 'verified', pregunta: '¿El certificado es válido?', respuesta: 'Sí. Emitido por Insteip con respaldo institucional reconocido en Perú.' },
-      { icon: 'location_on', pregunta: '¿Dónde son las prácticas?', respuesta: 'En nuestro centro clínico en Lince, Lima — grupos reducidos de máximo 8 personas.' }
+      { icon: 'schedule', pregunta: '¿Cuándo puedo comenzar?', respuesta: 'Tienes acceso inmediato al campus virtual desde el momento de tu matrícula.' },
+      { icon: 'devices', pregunta: '¿Cómo accedo a las clases?', respuesta: 'Desde cualquier dispositivo con conexión a internet, 24 horas al día, 7 días a la semana.' },
+      { icon: 'verified', pregunta: '¿La certificación es válida internacionalmente?', respuesta: 'Sí, emitimos certificación oficial respaldada por horas lectivas y apostillable.' },
+      { icon: 'support_agent', pregunta: '¿Tendré soporte de los docentes?', respuesta: 'Sí, dispondrás de foros de consulta y sesiones de tutoría en vivo.' }
     ],
-    trustText: 'Pago seguro · Sin compromiso de permanencia · Asesoría personalizada antes de matricularte'
+    trustText: 'Garantía INSTEIP · Acceso 24/7 · Certificación internacional'
   };
 
   constructor(private readonly host: ElementRef<HTMLElement>) { }
 
   ngOnInit(): void {
     this.startAutoplay();
+  }
+
+  ngAfterViewInit(): void {
+    if (typeof window === 'undefined') return;
+
+    this.animationContext = gsap.context(() => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      gsap.from('.ac-hero__content > *', {
+        y: 24,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.08,
+        ease: 'power3.out'
+      });
+
+      gsap.from('.ac-visual__frame, .ac-visual__card', {
+        y: 30,
+        opacity: 0,
+        duration: 0.9,
+        stagger: 0.12,
+        ease: 'power3.out',
+        delay: 0.15
+      });
+
+      gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((section) => {
+        gsap.from(section, {
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 82%'
+          },
+          y: 28,
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power3.out'
+        });
+      });
+    }, this.host.nativeElement);
+  }
+
+  ngOnDestroy(): void {
+    this.stopAutoplay();
+    this.animationContext?.revert();
   }
 
   startAutoplay(): void {
@@ -161,10 +263,8 @@ export class AcupunturaChinaComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   nextBenefit(isAuto = false): void {
-    if (!isAuto) {
-      this.resetAutoplay();
-    }
-    this.activeBenefitIndex = this.activeBenefitIndex === 2 ? 0 : this.activeBenefitIndex + 1;
+    if (!isAuto) this.resetAutoplay();
+    this.activeBenefitIndex = (this.activeBenefitIndex + 1) % 3;
   }
 
   setBenefit(i: number): void {
@@ -172,68 +272,18 @@ export class AcupunturaChinaComponent implements OnInit, AfterViewInit, OnDestro
     this.activeBenefitIndex = i;
   }
 
-  setJourneyStep(index: number): void {
-    this.activeJourneyStep = index;
-  }
-
-    openBenefitLightbox(): void {
-    const images = [
-      'assets/AcupunturaInsteip2.jpg',
-      'assets/AcupunturaInsteip3.jpg',
-      'assets/AcupunturaInsteip4.jpg'
-    ];
-    this.benefitLightboxImage = images[this.activeBenefitIndex];
+  openBenefitLightbox(index: number = this.activeBenefitIndex): void {
+    const images = this.sliderImages || [];
+    this.benefitLightboxImage = images[index] || images[0] || 'assets/AcupunturaChinaInsteip.jpg';
     this.showBenefitLightbox = true;
-    if (typeof window !== 'undefined') {
-      document.body.style.overflow = 'hidden';
-    }
   }
 
   closeBenefitLightbox(): void {
     this.showBenefitLightbox = false;
     this.benefitLightboxImage = '';
-    if (typeof window !== 'undefined') {
-      document.body.style.overflow = '';
-    }
   }
 
-  ngAfterViewInit(): void {
-    if (typeof window === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    gsap.registerPlugin(ScrollTrigger);
-    this.animationContext = gsap.context(() => {
-      const hero = gsap.timeline({ defaults: { ease: 'power3.out' } });
-      hero
-        .from('.ac-kicker', { opacity: 0, y: -12, duration: 0.45 })
-        .from('.ac-title', { opacity: 0, y: 28, duration: 0.8 }, '-=0.2')
-        .from('.ac-description, .ac-actions, .ac-proof', { opacity: 0, y: 14, stagger: 0.08, duration: 0.45 }, '-=0.45')
-        .from('.ac-hero__visual', { opacity: 0, scale: 0.95, duration: 0.8 }, '-=0.65')
-        .from('.ac-fact', { opacity: 0, y: 12, stagger: 0.07, duration: 0.4 }, '-=0.4');
-
-      gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((element) => {
-        gsap.set(element, { autoAlpha: 1, y: 0 });
-        ScrollTrigger.create({
-          trigger: element,
-          start: 'top 88%',
-          once: true,
-          onEnter: () => {
-            gsap.fromTo(element,
-              { autoAlpha: 0, y: 22 },
-              { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', overwrite: 'auto' }
-            );
-          }
-        });
-      });
-      window.setTimeout(() => {
-        gsap.set('[data-reveal]', { autoAlpha: 1, y: 0, clearProps: 'visibility,opacity,transform' });
-      }, 1200);
-    }, this.host.nativeElement);
-
-    ScrollTrigger.refresh();
-  }
-
-  ngOnDestroy(): void {
-    this.stopAutoplay();
-    this.animationContext?.revert();
+  setJourneyStep(i: number): void {
+    this.activeJourneyStep = i;
   }
 }

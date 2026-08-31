@@ -42,24 +42,16 @@
 
       <div class="ac-hero__visual">
         <div class="ac-visual__halo" aria-hidden="true"></div>
-        <figure class="ac-visual__frame">
+        <figure class="ac-visual__frame cursor-pointer group" (click)="openFlyerLightbox()" title="Clic para ver afiche completo">
           <img [src]="course.heroImage" [alt]="course.heroAlt" fetchpriority="high">
           <div class="ac-visual__wash" aria-hidden="true"></div>
-          <figcaption>
-            <span class="material-symbols-outlined">verified</span>
-            Taller online INSTEIP
-          </figcaption>
+
+          <button type="button" (click)="openFlyerLightbox(); $event.stopPropagation()"
+            class="ac-visual__expand-btn" aria-label="Ver imagen más grande">
+            <span class="material-symbols-outlined">zoom_in</span>
+            <span>Ver más grande</span>
+          </button>
         </figure>
-
-        <div class="ac-visual__card ac-visual__card--top">
-          <span class="material-symbols-outlined">workspace_premium</span>
-          <div><strong>Certificación</strong><small>Constancia INSTEIP</small></div>
-        </div>
-
-        <div class="ac-visual__card ac-visual__card--bottom">
-          <span class="ac-live-dot"></span>
-          <div><strong>Acceso online</strong><small>Disponible de inmediato</small></div>
-        </div>
       </div>
 
       <div class="ac-facts" aria-label="Información principal del curso">
@@ -254,4 +246,24 @@
     <img [src]="benefitLightboxImage" alt="Imagen de formación ampliada" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl border border-white/15 animate-[fadeIn_0.2s_ease-out]" />
   </div>
 </div>
+
+<!-- Lightbox Modal Overlay for Hero Flyer -->
+<div *ngIf="showFlyerLightbox" role="dialog" aria-modal="true"
+  class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[9999] flex items-center justify-center p-4 transition-opacity duration-300"
+  (click)="closeFlyerLightbox()">
+  <!-- Close Button -->
+  <button type="button" (click)="closeFlyerLightbox()"
+    class="absolute top-6 right-6 text-white/75 hover:text-white transition-all p-2 rounded-full hover:bg-white/10 flex z-50"
+    aria-label="Cerrar modal">
+    <span class="material-symbols-outlined text-2xl">close</span>
+  </button>
+
+  <!-- Image Container -->
+  <div class="max-w-4xl max-h-[90vh] w-full flex items-center justify-center relative"
+    (click)="$event.stopPropagation()">
+    <img [src]="course.heroImage" [alt]="course.heroAlt + ' ampliado'"
+      class="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl border border-white/20 animate-[fadeIn_0.2s_ease-out]" />
+  </div>
+</div>
+
 

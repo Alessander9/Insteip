@@ -9,6 +9,7 @@ export interface CourseCtaFaq {
 
 export interface CourseCtaData {
   precio: number;
+  tipoPago?: string;
   cuotasInfo: string;
   plazasDisponibles: number;
   whatsappLink: string;

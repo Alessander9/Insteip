@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
 import { FooterComponent } from '../../../core/components/footer/footer.component';
 import { CourseSyllabusComponent, SyllabusPhase } from '../../../shared/components/course-syllabus/course-syllabus.component';
@@ -14,7 +13,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     NavbarComponent,
     FooterComponent,
     CourseSyllabusComponent,
@@ -107,6 +105,7 @@ export class AcupunturaPresencialComponent implements OnInit, AfterViewInit, OnD
 
   ctaData: CourseCtaData = {
     precio: 270,
+    tipoPago: '/ mes',
     cuotasInfo: '12 cuotas · Matrícula: S/ 30',
     plazasDisponibles: 8,
     whatsappLink: 'https://wa.me/51939371250',
@@ -156,7 +155,7 @@ export class AcupunturaPresencialComponent implements OnInit, AfterViewInit, OnD
 
   setJourneyStep(index: number): void { this.activeJourneyStep = index; }
 
-    openBenefitLightbox(): void {
+  openBenefitLightbox(): void {
     const images = [
       'assets/formacion_acupuntura_presencial1.jpg',
       'assets/formacion_acupuntura_presencial2.jpg',

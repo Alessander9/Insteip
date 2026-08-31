@@ -2,7 +2,6 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { SkeletonLoaderComponent } from '../../../core/components/skeleton-loader/skeleton-loader.component';
 import { AuditoriaService } from '../../../core/services/';
 import { AuthService } from '../../../core/services/';
 import { EventoSistemaResponse, LoginAuditoriaResponse } from '../../../core/models/';
@@ -10,7 +9,7 @@ import { EventoSistemaResponse, LoginAuditoriaResponse } from '../../../core/mod
 @Component({
   selector: 'app-auditoria',
   standalone: true,
-  imports: [CommonModule, FormsModule, SkeletonLoaderComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './auditoria.component.html',
   styleUrls: ['./auditoria.component.css']
 })

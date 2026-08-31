@@ -273,6 +273,156 @@ const courses: Record<string, WorkshopCourse> = {
       }
     ],
     journeySteps: []
+  },
+  'craneopuntura-online': {
+    slug: 'craneopuntura-online',
+    title: 'Craneopuntura',
+    fullName: 'Taller de Craneopuntura (100% Virtual)',
+    price: 180,
+    duration: '10 horas',
+    access: '12 meses',
+    teacher: 'Lic. Lázaro Regalado Ponte',
+    contact: '+51 939 371 250 / ecabanillasbardales@gmail.com',
+    heroDescription: 'Taller <strong>100% virtual con clases grabadas</strong> de craneopuntura clínica y neurofuncional. Aprende la estimulación de zonas corticales proyectadas en el cráneo para el tratamiento del dolor y patologías neurológicas.',
+    heroImage: 'assets/craneopuntura.jpg',
+    heroAlt: 'Taller de craneopuntura online INSTEIP',
+    accessText: '100% virtual con clases grabadas · Acceso inmediato durante 12 meses.',
+    benefitsTitle: 'Todo lo necesario para dominar',
+    benefitsHighlight: 'craneopuntura clínica.',
+    benefitsIntro: 'Una formación práctica y directa para dominar líneas corticales, técnicas de punción en cuero cabelludo y protocolos neurológicos.',
+    benefits: [
+      {
+        icon: 'neurology',
+        label: 'Mapeo Cortical',
+        title: 'Domina las áreas de proyección cerebral.',
+        description: 'Conoce con precisión la correspondencia entre las áreas motoras, sensitivas y del lenguaje en el cuero cabelludo.',
+        items: ['Zonas motoras y sensitivas', 'Áreas de lenguaje y equilibrio']
+      },
+      {
+        icon: 'medical_services',
+        label: 'Punción Segura',
+        title: 'Técnica de inserción y estimulación.',
+        description: 'Aprende el ángulo adecuado (15°-30°), profundidad en galea aponeurótica y frecuencia de rotación.',
+        items: ['Inserción tangencial y ángulo', 'Manipulación y estimulación']
+      },
+      {
+        icon: 'healing',
+        label: 'Protocolos Clínicos',
+        title: 'Abordaje en dolor y rehabilitación.',
+        description: 'Aplica protocolos paso a paso en secuelas de ACV, hemiplejías, parálisis, cefaleas y dolor crónico.',
+        items: ['Secuelas neurológicas y ACV', 'Cefaleas y dolor neuropático']
+      }
+    ],
+    sliderImages: [
+      'assets/craneo1.jpg',
+      'assets/craneo2.jpg',
+      'assets/craneo3.jpg'
+    ],
+    audienceIntro: 'Dirigido a terapeutas, acupuntores, fisioterapeutas, médicos y estudiantes que buscan especializarse en el abordaje neurofuncional.',
+    syllabusData: [
+      {
+        id: 'fase1',
+        tabLabel: '01 · Fundamentos y Mapeo',
+        title: 'Bases Neuroanatómicas y Mapeo Craneal',
+        description: 'Historia, principios neurofisiológicos y localización anatómica de las líneas y zonas de proyección cortical.',
+        image: 'assets/plan_estudios_acupuntura_presencial1.jpg',
+        imageAlt: 'Fundamentos y mapeo de craneopuntura',
+        specimenLabel: 'SPECIMEN // MAPEO CORTICAL',
+        items: [
+          { number: '01', title: 'Fundamentos de Craneopuntura', badge1: 'Teoría', badge2: 'Neurología', description: 'Principios neurofisiológicos, sistemas clásicos y enfoque contemporáneo de la craneopuntura.' },
+          { number: '02', title: 'Líneas y Zonas de Proyección', badge1: 'Mapeo', badge2: 'Anatomía', description: 'Localización de la zona motora, sensitiva, área de control del temblor, vértigo y áreas del lenguaje.' }
+        ]
+      },
+      {
+        id: 'fase2',
+        tabLabel: '02 · Punción y Protocolos',
+        title: 'Técnicas de Punción y Protocolos Clínicos',
+        description: 'Técnica de inserción rápida, estimulación adecuada y aplicación de protocolos clínicos para diversas patologías.',
+        image: 'assets/plan_estudios_acupuntura_presencial2.jpg',
+        imageAlt: 'Técnicas de punción y protocolos clínicos',
+        specimenLabel: 'SPECIMEN // PROTOCOLOS CLÍNICOS',
+        items: [
+          { number: '01', title: 'Inserción y Manipulación', badge1: 'Práctica', badge2: 'Técnica', description: 'Ángulo de punción tangencial (15°-30°), profundidad segura y técnicas de rotación de alta frecuencia.' },
+          { number: '02', title: 'Protocolos en Secuelas y Dolor', badge1: 'Clínica', badge2: 'Rehabilitación', description: 'Abordaje en secuelas de ACV, hemiplejías, dolor neuropático, cefaleas crónicas y parálisis.' }
+        ]
+      }
+    ],
+    journeySteps: []
+  },
+  'craneopuntura': {
+    slug: 'craneopuntura',
+    title: 'Craneopuntura',
+    fullName: 'Taller de Craneopuntura (100% Virtual)',
+    price: 180,
+    duration: '10 horas',
+    access: '12 meses',
+    teacher: 'Lic. Lázaro Regalado Ponte',
+    contact: '+51 939 371 250 / ecabanillasbardales@gmail.com',
+    heroDescription: 'Taller <strong>100% virtual con clases grabadas</strong> de craneopuntura clínica y neurofuncional. Aprende la estimulación de zonas corticales proyectadas en el cráneo para el tratamiento del dolor y patologías neurológicas.',
+    heroImage: 'assets/craneopuntura.jpg',
+    heroAlt: 'Taller de craneopuntura online INSTEIP',
+    accessText: '100% virtual con clases grabadas · Acceso inmediato durante 12 meses.',
+    benefitsTitle: 'Todo lo necesario para dominar',
+    benefitsHighlight: 'craneopuntura clínica.',
+    benefitsIntro: 'Una formación práctica y directa para dominar líneas corticales, técnicas de punción en cuero cabelludo y protocolos neurológicos.',
+    benefits: [
+      {
+        icon: 'neurology',
+        label: 'Mapeo Cortical',
+        title: 'Domina las áreas de proyección cerebral.',
+        description: 'Conoce con precisión la correspondencia entre las áreas motoras, sensitivas y del lenguaje en el cuero cabelludo.',
+        items: ['Zonas motoras y sensitivas', 'Áreas de lenguaje y equilibrio']
+      },
+      {
+        icon: 'medical_services',
+        label: 'Punción Segura',
+        title: 'Técnica de inserción y estimulación.',
+        description: 'Aprende el ángulo adecuado (15°-30°), profundidad en galea aponeurótica y frecuencia de rotación.',
+        items: ['Inserción tangencial y ángulo', 'Manipulación y estimulación']
+      },
+      {
+        icon: 'healing',
+        label: 'Protocolos Clínicos',
+        title: 'Abordaje en dolor y rehabilitación.',
+        description: 'Aplica protocolos paso a paso en secuelas de ACV, hemiplejías, parálisis, cefaleas y dolor crónico.',
+        items: ['Secuelas neurológicas y ACV', 'Cefaleas y dolor neuropático']
+      }
+    ],
+    sliderImages: [
+      'assets/craneo1.jpg',
+      'assets/craneo2.jpg',
+      'assets/craneo3.jpg'
+    ],
+    audienceIntro: 'Dirigido a terapeutas, acupuntores, fisioterapeutas, médicos y estudiantes que buscan especializarse en el abordaje neurofuncional.',
+    syllabusData: [
+      {
+        id: 'fase1',
+        tabLabel: '01 · Fundamentos y Mapeo',
+        title: 'Bases Neuroanatómicas y Mapeo Craneal',
+        description: 'Historia, principios neurofisiológicos y localización anatómica de las líneas y zonas de proyección cortical.',
+        image: 'assets/plan_estudios_acupuntura_presencial1.jpg',
+        imageAlt: 'Fundamentos y mapeo de craneopuntura',
+        specimenLabel: 'SPECIMEN // MAPEO CORTICAL',
+        items: [
+          { number: '01', title: 'Fundamentos de Craneopuntura', badge1: 'Teoría', badge2: 'Neurología', description: 'Principios neurofisiológicos, sistemas clásicos y enfoque contemporáneo de la craneopuntura.' },
+          { number: '02', title: 'Líneas y Zonas de Proyección', badge1: 'Mapeo', badge2: 'Anatomía', description: 'Localización de la zona motora, sensitiva, área de control del temblor, vértigo y áreas del lenguaje.' }
+        ]
+      },
+      {
+        id: 'fase2',
+        tabLabel: '02 · Punción y Protocolos',
+        title: 'Técnicas de Punción y Protocolos Clínicos',
+        description: 'Técnica de inserción rápida, estimulación adecuada y aplicación de protocolos clínicos para diversas patologías.',
+        image: 'assets/plan_estudios_acupuntura_presencial2.jpg',
+        imageAlt: 'Técnicas de punción y protocolos clínicos',
+        specimenLabel: 'SPECIMEN // PROTOCOLOS CLÍNICOS',
+        items: [
+          { number: '01', title: 'Inserción y Manipulación', badge1: 'Práctica', badge2: 'Técnica', description: 'Ángulo de punción tangencial (15°-30°), profundidad segura y técnicas de rotación de alta frecuencia.' },
+          { number: '02', title: 'Protocolos en Secuelas y Dolor', badge1: 'Clínica', badge2: 'Rehabilitación', description: 'Abordaje en secuelas de ACV, hemiplejías, dolor neuropático, cefaleas crónicas y parálisis.' }
+        ]
+      }
+    ],
+    journeySteps: []
   }
 };
 
@@ -314,7 +464,6 @@ Object.values(courses).forEach(course => {
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     NavbarComponent,
     FooterComponent,
     CourseSyllabusComponent,
@@ -330,10 +479,25 @@ export class OnlineWorkshopComponent implements OnInit, AfterViewInit, OnDestroy
   activeBenefitIndex = 0;
   showBenefitLightbox = false;
   benefitLightboxImage = '';
+  showFlyerLightbox = false;
   activeJourneyStep = 0;
   private autoplayInterval?: ReturnType<typeof setInterval>;
 
   course: WorkshopCourse = courses['reflexologia-online'];
+
+  openFlyerLightbox(): void {
+    this.showFlyerLightbox = true;
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  closeFlyerLightbox(): void {
+    this.showFlyerLightbox = false;
+    if (typeof window !== 'undefined') {
+      document.body.style.overflow = '';
+    }
+  }
 
   constructor(
     private readonly host: ElementRef<HTMLElement>,
@@ -358,16 +522,19 @@ export class OnlineWorkshopComponent implements OnInit, AfterViewInit, OnDestroy
       cargo: 'Docente del curso',
       biografia: this.course.slug === 'paralisis-facial-acupuntura-fisioterapia-online'
         ? 'Formacion a cargo de <span class="text-brand-blue font-semibold">Lazaro Regalado Ponte</span> y <span class="text-brand-blue font-semibold">Emanuel Cabanillas Bardales</span>, quienes integran acupuntura, fisioterapia y terapias manuales para brindar un curso practico, claro y aplicable desde la primera revision del contenido.'
-        : this.course.teacher === 'Consultar'
-          ? 'Docente asignado por <span class="text-brand-blue font-semibold">INSTEIP</span>. Solicita informacion para confirmar la disponibilidad academica y detalles del acompanamiento.'
-          : `Formacion a cargo de <span class="text-brand-blue font-semibold">${this.course.teacher}</span>, con enfoque practico, claro y aplicable desde la primera revision del contenido.`,
-      fotoUrl: ['acupuntura-estetica-online', 'control-peso-auriculoterapia-acupuntura-online', 'paralisis-facial-acupuntura-fisioterapia-online'].includes(this.course.slug)
+        : ['craneopuntura-online', 'craneopuntura'].includes(this.course.slug)
+          ? 'Formación a cargo del <span class="text-brand-blue font-semibold">Lic. Lázaro Regalado Ponte</span>, especialista en medicina tradicional china, acupuntura clínica y técnicas neurofuncionales avanzadas.'
+          : this.course.teacher === 'Consultar'
+            ? 'Docente asignado por <span class="text-brand-blue font-semibold">INSTEIP</span>. Solicita informacion para confirmar la disponibilidad academica y detalles del acompanamiento.'
+            : `Formacion a cargo de <span class="text-brand-blue font-semibold">${this.course.teacher}</span>, con enfoque practico, claro y aplicable desde la primera revision del contenido.`,
+      fotoUrl: ['acupuntura-estetica-online', 'control-peso-auriculoterapia-acupuntura-online', 'paralisis-facial-acupuntura-fisioterapia-online', 'craneopuntura-online', 'craneopuntura'].includes(this.course.slug)
         ? 'assets/Lic Lazaro.jpg'
         : 'assets/Lic Emanuel.jpg',
       kicker: 'DOCENCIA INSTEIP',
       especialidades: [
-        { icon: 'verified', label: 'Enfoque practico' },
-        { icon: 'school', label: 'Curso online' }
+        { icon: 'neurology', label: 'Craneopuntura' },
+        { icon: 'verified', label: 'Enfoque clínico' },
+        { icon: 'school', label: '100% Virtual' }
       ]
     };
   }
@@ -393,31 +560,33 @@ export class OnlineWorkshopComponent implements OnInit, AfterViewInit, OnDestroy
   get ctaData(): CourseCtaData {
     return {
       precio: this.course.price,
-      cuotasInfo: `${this.course.duration} · Online · Acceso ${this.course.access}`,
-      plazasDisponibles: 15,
-      whatsappLink: 'https://wa.me/51939371250',
+      tipoPago: '(Pago único)',
+      cuotasInfo: `${this.course.duration} · 100% Virtual (Clases Grabadas) · Acceso ${this.course.access}`,
+      plazasDisponibles: 20,
+      whatsappLink: this.whatsappLink,
       email: 'ecabanillasbardales@gmail.com',
       beneficios: [
         `${this.course.fullName} disponible de inmediato`,
-        `Duracion: ${this.course.duration}`,
-        `Acceso: ${this.course.access}`,
+        `Duración: ${this.course.duration} (Clases grabadas)`,
+        `Acceso inmediato por ${this.course.access}`,
+        `Docente: ${this.course.teacher}`,
         `Contacto: ${this.course.contact}`
       ],
-      headlineHtml: `Inscribete hoy en<br><span class="text-secondary">${this.course.title}</span>.`,
-      description: 'Accede a una formacion online breve, directa y pensada para aplicar con una base clara desde el primer dia.',
+      headlineHtml: `Inscríbete hoy en el Taller de<br><span class="text-secondary">${this.course.title}</span>.`,
+      description: `Accede de forma inmediata a todas las clases grabadas de ${this.course.title}, materiales de estudio y asesoría académica continua.`,
       faqs: [
-        { icon: 'schedule', pregunta: '¿Cuando puedo empezar?', respuesta: 'El curso esta disponible de inmediato despues de la inscripcion.' },
-        { icon: 'devices', pregunta: '¿La modalidad es online?', respuesta: 'Si. Puedes revisar el contenido desde el campus virtual.' },
-        { icon: 'verified', pregunta: '¿Recibo constancia?', respuesta: 'Si. INSTEIP emite constancia o certificado segun las condiciones del curso.' },
-        { icon: 'support_agent', pregunta: '¿Como consulto detalles?', respuesta: `Puedes escribir al ${this.course.contact}.` }
+        { icon: 'schedule', pregunta: '¿Cuándo puedo empezar?', respuesta: 'El taller es 100% virtual con clases grabadas y acceso inmediato tras tu inscripción.' },
+        { icon: 'devices', pregunta: '¿Cómo accedo a las clases grabadas?', respuesta: `Tendrás acceso ilimitado durante ${this.course.access} en el campus virtual para ver las clases cuantas veces desees.` },
+        { icon: 'verified', pregunta: '¿Recibo constancia o certificado?', respuesta: 'Sí. Al culminar el taller se emite la certificación/constancia institucional de INSTEIP.' },
+        { icon: 'support_agent', pregunta: '¿Cómo consulto dudas con el docente?', respuesta: `Puedes coordinar consultas y asesorías escribiendo al WhatsApp ${this.course.contact}.` }
       ],
-      trustText: 'Pago seguro · Acceso online · Asesoria personalizada antes de matricularte'
+      trustText: 'Pago seguro · Clases 100% Grabadas · Acceso inmediato al campus virtual'
     };
   }
 
   ngOnInit(): void {
-    const slug = this.route.snapshot.routeConfig?.path?.replace('cursos/', '') || 'reflexologia-online';
-    this.course = courses[slug] ?? courses['reflexologia-online'];
+    const slug = this.route.snapshot.routeConfig?.path?.replace('cursos/', '')?.replace('.html', '') || 'craneopuntura-online';
+    this.course = courses[slug] ?? courses['craneopuntura-online'] ?? courses['reflexologia-online'];
     this.startAutoplay();
   }
 
@@ -454,53 +623,52 @@ export class OnlineWorkshopComponent implements OnInit, AfterViewInit, OnDestroy
     this.activeBenefitIndex = i;
   }
 
-  setJourneyStep(index: number): void {
-    this.activeJourneyStep = index;
-  }
-
-    openBenefitLightbox(): void {
-    this.benefitLightboxImage = this.course.sliderImages[this.activeBenefitIndex];
+  openBenefitLightbox(index: number = this.activeBenefitIndex): void {
+    const images = this.course.sliderImages || [];
+    this.benefitLightboxImage = images[index] || images[0] || this.course.heroImage;
     this.showBenefitLightbox = true;
-    if (typeof window !== 'undefined') {
-      document.body.style.overflow = 'hidden';
-    }
   }
 
   closeBenefitLightbox(): void {
     this.showBenefitLightbox = false;
     this.benefitLightboxImage = '';
-    if (typeof window !== 'undefined') {
-      document.body.style.overflow = '';
-    }
   }
 
   ngAfterViewInit(): void {
-    gsap.registerPlugin(ScrollTrigger);
+    if (typeof window === 'undefined') return;
 
     this.animationContext = gsap.context(() => {
-      gsap.from('.ac-kicker', { opacity: 0, y: 14, duration: 0.45, ease: 'power3.out' });
-      gsap.from('.ac-title', { opacity: 0, y: 28, duration: 0.65, delay: 0.08, ease: 'power3.out' });
-      gsap.from('.ac-description, .ac-actions, .ac-proof', { opacity: 0, y: 18, duration: 0.55, delay: 0.18, stagger: 0.08, ease: 'power3.out' });
-      gsap.from('.ac-hero__visual', { opacity: 0, scale: 0.94, duration: 0.75, delay: 0.2, ease: 'power3.out' });
-      gsap.from('.ac-fact', { opacity: 0, y: 20, duration: 0.48, delay: 0.4, stagger: 0.06, ease: 'power3.out' });
+      gsap.registerPlugin(ScrollTrigger);
 
-      gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((element) => {
-        gsap.set(element, { autoAlpha: 1, y: 0 });
-        ScrollTrigger.create({
-          trigger: element,
-          start: 'top 88%',
-          once: true,
-          onEnter: () => {
-            gsap.fromTo(element,
-              { autoAlpha: 0, y: 22 },
-              { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', overwrite: 'auto' }
-            );
-          }
+      gsap.from('.ac-hero__content > *', {
+        y: 24,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.08,
+        ease: 'power3.out'
+      });
+
+      gsap.from('.ac-visual__frame, .ac-visual__card', {
+        y: 30,
+        opacity: 0,
+        duration: 0.9,
+        stagger: 0.12,
+        ease: 'power3.out',
+        delay: 0.15
+      });
+
+      gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((section) => {
+        gsap.from(section, {
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 82%'
+          },
+          y: 28,
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power3.out'
         });
       });
-      window.setTimeout(() => {
-        gsap.set('[data-reveal]', { autoAlpha: 1, y: 0, clearProps: 'visibility,opacity,transform' });
-      }, 1200);
     }, this.host.nativeElement);
   }
 

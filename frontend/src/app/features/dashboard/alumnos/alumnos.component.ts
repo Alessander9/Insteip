@@ -6,7 +6,6 @@ import { AlumnoRequest, AlumnoResponse } from '../../../core/models/';
 import { ReportesService } from '../../../core/services/';
 import { ToastService } from '../../../core/services/';
 import { ConfirmModalComponent } from '../../../core/components/confirm-modal/confirm-modal.component';
-import { SkeletonLoaderComponent } from '../../../core/components/skeleton-loader/skeleton-loader.component';
 import { getSubscriptionClass } from '../../../core/utils/';
 
 @Component({
@@ -16,8 +15,7 @@ import { getSubscriptionClass } from '../../../core/utils/';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    ConfirmModalComponent,
-    SkeletonLoaderComponent
+    ConfirmModalComponent
   ],
   templateUrl: './alumnos.component.html',
   styleUrls: ['./alumnos.component.css']

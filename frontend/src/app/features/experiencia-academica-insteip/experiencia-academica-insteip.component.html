@@ -1,0 +1,182 @@
+<app-navbar></app-navbar>
+
+<main class="min-h-screen bg-[#070d17] text-slate-100 pt-28 pb-20 px-4 sm:px-6 lg:px-8 flex flex-col justify-center items-center overflow-x-hidden">
+  
+  <!-- Encabezado / Kicker de la sección -->
+  <div class="text-center max-w-3xl mx-auto mb-8 md:mb-10">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-bold uppercase tracking-[0.2em] mb-4 shadow-sm">
+      <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
+      <span>Catálogo Académico INSTEIP</span>
+    </div>
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+      Explora Nuestras <span class="bg-gradient-to-r from-[#62B2FE] via-sky-400 to-indigo-300 bg-clip-text text-transparent">18 Formaciones</span>
+    </h1>
+    <p class="mt-3 text-slate-400 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+      Navega interactivamente entre nuestros 11 cursos virtuales y 7 formaciones presenciales con doble certificación y práctica clínica.
+    </p>
+
+    <!-- Filtros Rápidos por Modalidad -->
+    <div class="flex items-center justify-center gap-2 sm:gap-3 mt-6 flex-wrap">
+      <button
+        type="button"
+        (click)="setFilter('TODOS')"
+        class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 border cursor-pointer"
+        [ngClass]="filterMode === 'TODOS'
+          ? 'bg-[#62B2FE] text-white border-[#62B2FE] shadow-lg shadow-sky-500/25 scale-105'
+          : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-white'">
+        ⭐ Todos (18)
+      </button>
+
+      <button
+        type="button"
+        (click)="setFilter('ONLINE')"
+        class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 border cursor-pointer"
+        [ngClass]="filterMode === 'ONLINE'
+          ? 'bg-[#62B2FE] text-white border-[#62B2FE] shadow-lg shadow-sky-500/25 scale-105'
+          : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-white'">
+        💻 Cursos Online (11)
+      </button>
+
+      <button
+        type="button"
+        (click)="setFilter('PRESENCIAL')"
+        class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 border cursor-pointer"
+        [ngClass]="filterMode === 'PRESENCIAL'
+          ? 'bg-[#62B2FE] text-white border-[#62B2FE] shadow-lg shadow-sky-500/25 scale-105'
+          : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-white'">
+        🏛️ Cursos Presenciales (7)
+      </button>
+    </div>
+  </div>
+
+  <!-- Feature Carousel Container -->
+  <div class="w-full max-w-7xl mx-auto md:p-6 lg:p-8">
+    <div class="relative overflow-hidden rounded-[2.5rem] lg:rounded-[3.5rem] flex flex-col lg:flex-row min-h-[660px] lg:min-h-[620px] border border-slate-800/80 bg-slate-900/40 backdrop-blur-xl shadow-2xl shadow-black/60">
+      
+      <!-- Columna Izquierda: Panel Azul Interactivo con Chips Verticales -->
+      <div class="w-full lg:w-[40%] min-h-[380px] md:min-h-[480px] lg:h-auto relative z-30 flex flex-col items-start justify-center overflow-hidden px-6 md:px-10 lg:pl-12 bg-[#62B2FE] shadow-lg">
+        
+        <!-- Degradados superior e inferior de desvanecimiento -->
+        <div class="absolute inset-x-0 top-0 h-16 md:h-24 bg-gradient-to-b from-[#62B2FE] via-[#62B2FE]/85 to-transparent z-40 pointer-events-none"></div>
+        <div class="absolute inset-x-0 bottom-0 h-16 md:h-24 bg-gradient-to-t from-[#62B2FE] via-[#62B2FE]/85 to-transparent z-40 pointer-events-none"></div>
+        
+        <!-- Contenedor centralizado de Chips -->
+        <div class="relative w-full h-full flex items-center justify-center lg:justify-start z-20 min-h-[340px] lg:min-h-[500px]">
+          <div *ngFor="let course of currentCourses; let i = index"
+               class="absolute flex items-center justify-start chip-wrapper"
+               [style.transform]="getChipTransform(i)"
+               [style.opacity]="getChipOpacity(i)"
+               [style.z-index]="i === currentIndex ? 30 : 10">
+            
+            <button
+              type="button"
+              (click)="handleChipClick(i)"
+              (mouseenter)="setIsPaused(true)"
+              (mouseleave)="setIsPaused(false)"
+              class="relative flex items-center gap-3 px-5 md:px-7 lg:px-6 py-3 md:py-3.5 rounded-full transition-all duration-500 text-left group border select-none cursor-pointer"
+              [ngClass]="i === currentIndex
+                ? 'bg-white text-[#0f172a] border-white shadow-2xl scale-105 font-bold z-10 ring-4 ring-white/30'
+                : 'bg-transparent text-white/75 border-white/20 hover:border-white/50 hover:text-white hover:bg-white/10'">
+              
+              <!-- Ícono del Chip -->
+              <div class="flex items-center justify-center transition-colors duration-500"
+                   [ngClass]="i === currentIndex ? 'text-[#62B2FE]' : 'text-white/70 group-hover:text-white'">
+                <span class="material-symbols-outlined text-[18px] md:text-[20px]">{{ course.icon }}</span>
+              </div>
+
+              <!-- Texto del Chip -->
+              <div class="flex flex-col">
+                <span class="text-xs md:text-sm tracking-tight whitespace-nowrap font-semibold">
+                  {{ course.label }}
+                </span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Barra inferior de navegación rápida y controles -->
+        <div class="absolute bottom-4 left-6 right-6 z-40 flex items-center justify-between text-white/80 text-xs">
+          <div class="flex items-center gap-1.5 bg-black/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+            <button (click)="prevStep()" class="p-1 rounded-full hover:bg-white/20 transition-colors" title="Anterior curso">
+              <span class="material-symbols-outlined text-sm leading-none">arrow_upward</span>
+            </button>
+            <button (click)="setIsPaused(!isPaused)" class="p-1 rounded-full hover:bg-white/20 transition-colors" [title]="isPaused ? 'Reanudar auto-play' : 'Pausar auto-play'">
+              <span class="material-symbols-outlined text-sm leading-none">{{ isPaused ? 'play_arrow' : 'pause' }}</span>
+            </button>
+            <button (click)="nextStep()" class="p-1 rounded-full hover:bg-white/20 transition-colors" title="Siguiente curso">
+              <span class="material-symbols-outlined text-sm leading-none">arrow_downward</span>
+            </button>
+          </div>
+
+          <span class="font-mono text-[11px] bg-black/20 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
+            {{ currentIndex + 1 }} / {{ currentCourses.length }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Stack de Tarjetas con Proporción 3:2 Nativa -->
+      <div class="flex-1 min-h-[560px] md:min-h-[620px] lg:h-auto relative bg-slate-950/60 flex items-center justify-center py-8 md:py-12 px-4 sm:px-8 md:px-12 overflow-hidden border-t lg:border-t-0 lg:border-l border-slate-800/50"
+           (mouseenter)="setIsPaused(true)"
+           (mouseleave)="setIsPaused(false)">
+        
+        <div class="relative w-full max-w-[430px] md:max-w-[470px] h-[500px] sm:h-[530px] md:h-[550px] flex items-center justify-center">
+          
+          <div *ngFor="let course of currentCourses; let i = index"
+               class="absolute inset-0 rounded-[2rem] md:rounded-[2.4rem] overflow-hidden border-2 md:border-4 border-slate-700/80 bg-slate-900 origin-center transition-all duration-700 ease-out shadow-2xl flex flex-col justify-between"
+               [style.transform]="getCardTransform(i)"
+               [style.opacity]="getCardOpacity(i)"
+               [style.z-index]="getCardZIndex(i)">
+            
+            <!-- Visor de Imagen con Proporción 3:2 Nativa (1536x1024) -->
+            <div class="relative w-full aspect-[3/2] overflow-hidden bg-slate-950 shrink-0">
+              <img [src]="course.image"
+                   [alt]="course.label"
+                   class="w-full h-full object-cover object-center transition-all duration-700"
+                   [ngClass]="i === currentIndex ? 'grayscale-0 blur-0 scale-100' : 'grayscale blur-[2px] brightness-75 scale-105'">
+            </div>
+
+            <!-- Panel de Contenido: Título, Descripción y Botones -->
+            <div class="relative flex-1 p-5 md:p-6 bg-gradient-to-b from-slate-900 to-slate-950 flex flex-col justify-between border-t border-slate-800/80">
+              
+              <div>
+                <!-- Título del Curso -->
+                <h3 class="text-white font-bold text-lg sm:text-xl leading-tight mb-2 tracking-tight line-clamp-1">
+                  {{ course.label }}
+                </h3>
+                
+                <!-- Descripción -->
+                <p class="text-slate-300 text-xs sm:text-sm leading-relaxed line-clamp-3">
+                  {{ course.description }}
+                </p>
+              </div>
+
+              <!-- Botones de Acción Directa -->
+              <div class="flex items-center gap-2 pt-2">
+                <a [routerLink]="course.route"
+                   class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs sm:text-sm transition-all duration-300 shadow-lg shadow-sky-500/25 hover:scale-[1.02] cursor-pointer">
+                  <span class="material-symbols-outlined text-[17px] leading-none">menu_book</span>
+                  <span>Ver Temario</span>
+                </a>
+
+                <a [href]="'https://wa.me/51939371250?text=Hola%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n%20e%20inscribirme%20en%20' + course.label"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="inline-flex items-center justify-center p-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all duration-300 shadow-lg shadow-emerald-600/25 hover:scale-[1.02] cursor-pointer"
+                   title="Consultar por WhatsApp">
+                  <span class="material-symbols-outlined text-[20px] leading-none">chat</span>
+                </a>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<app-footer></app-footer>

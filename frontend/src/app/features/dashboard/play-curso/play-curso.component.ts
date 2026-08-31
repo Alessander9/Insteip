@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, inject, NgZone, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { SkeletonLoaderComponent } from '../../../core/components/skeleton-loader/skeleton-loader.component';
 import { AlumnoDashboardService, AlumnoPlayCourse, AlumnoPlayVideo } from '../../../core/services/';
 import { CertificadoService } from '../../../core/services/';
 import { AuthService } from '../../../core/services/';
@@ -23,7 +22,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-play-curso',
   standalone: true,
-  imports: [CommonModule, RouterModule, SkeletonLoaderComponent, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './play-curso.component.html',
   styleUrls: ['./play-curso.component.css']
 })

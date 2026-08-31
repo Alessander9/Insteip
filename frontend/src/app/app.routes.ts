@@ -59,8 +59,37 @@ export const routes: Routes = [
     loadComponent: () => import('./features/sedes/sedes.component').then(m => m.SedesComponent)
   },
   {
+<<<<<<< Updated upstream
     path: 'sedesV2',
     loadComponent: () => import('./features/sedes-v2/sedes-v2.component').then(m => m.SedesV2Component)
+=======
+    path: 'sedes.html',
+    loadComponent: () => import('./features/sedes/sedes.component').then(m => m.SedesComponent)
+  },
+  {
+    path: 'bolsa-de-trabajo',
+    loadComponent: () => import('./features/bolsa-de-trabajo/bolsa-de-trabajo.component').then(m => m.BolsaDeTrabajoComponent)
+  },
+  {
+    path: 'bolsa-de-trabajo.html',
+    loadComponent: () => import('./features/bolsa-de-trabajo/bolsa-de-trabajo.component').then(m => m.BolsaDeTrabajoComponent)
+  },
+  {
+    path: 'certificacion-internacional',
+    loadComponent: () => import('./features/certificacion/certificacion.component').then(m => m.CertificacionComponent)
+  },
+  {
+    path: 'experiencia-academica-insteip',
+    loadComponent: () => import('./features/experiencia-academica-insteip/experiencia-academica-insteip.component').then(m => m.ExperienciaAcademicaInsteipComponent)
+  },
+  {
+    path: 'experiencia-academica',
+    loadComponent: () => import('./features/experiencia-academica-insteip/experiencia-academica-insteip.component').then(m => m.ExperienciaAcademicaInsteipComponent)
+  },
+  {
+    path: 'Experiencia-Academica-Insteip',
+    loadComponent: () => import('./features/experiencia-academica-insteip/experiencia-academica-insteip.component').then(m => m.ExperienciaAcademicaInsteipComponent)
+>>>>>>> Stashed changes
   },
   {
     path: 'cursos',
@@ -131,6 +160,22 @@ export const routes: Routes = [
     loadComponent: () => import('./features/formaciones/online-workshop/online-workshop.component').then(m => m.OnlineWorkshopComponent)
   },
   {
+    path: 'cursos/craneopuntura-online',
+    loadComponent: () => import('./features/formaciones/online-workshop/online-workshop.component').then(m => m.OnlineWorkshopComponent)
+  },
+  {
+    path: 'cursos/craneopuntura-online.html',
+    loadComponent: () => import('./features/formaciones/online-workshop/online-workshop.component').then(m => m.OnlineWorkshopComponent)
+  },
+  {
+    path: 'cursos/craneopuntura',
+    loadComponent: () => import('./features/formaciones/online-workshop/online-workshop.component').then(m => m.OnlineWorkshopComponent)
+  },
+  {
+    path: 'cursos/craneopuntura.html',
+    loadComponent: () => import('./features/formaciones/online-workshop/online-workshop.component').then(m => m.OnlineWorkshopComponent)
+  },
+  {
     path: 'cursos/seminario-reflexologia-online',
     loadComponent: () => import('./features/formaciones/seminario-reflexologia-online/seminario-reflexologia-online.component').then(m => m.SeminarioReflexologiaOnlineComponent)
   },
@@ -176,6 +221,14 @@ export const routes: Routes = [
   },
   {
     path: 'cursos/aromaterapia-flores-bach-online',
+    loadComponent: () => import('./features/formaciones/aromaterapia-flores-bach/aromaterapia-flores-bach.component').then(m => m.AromaterapiaFloresBachComponent)
+  },
+  {
+    path: 'cursos/aromaterapia',
+    loadComponent: () => import('./features/formaciones/aromaterapia-flores-bach/aromaterapia-flores-bach.component').then(m => m.AromaterapiaFloresBachComponent)
+  },
+  {
+    path: 'cursos/aromaterapia.html',
     loadComponent: () => import('./features/formaciones/aromaterapia-flores-bach/aromaterapia-flores-bach.component').then(m => m.AromaterapiaFloresBachComponent)
   },
   {

@@ -22,10 +22,22 @@ interface WorkshopCourse {
   title: string;
   fullName: string;
   price: number;
+  priceDetail?: string;
   duration: string;
+  durationDetail?: string;
+  modalityLabel?: string;
+  modalityDetail?: string;
   access: string;
+  accessTitle?: string;
+  accessSubtext?: string;
+  accessHeading?: string;
   teacher: string;
   contact: string;
+  heroKicker?: string;
+  heroKickerTag?: string;
+  heroBadgeLabel?: string;
+  visualCardBottomTitle?: string;
+  visualCardBottomSub?: string;
   heroDescription: string;
   heroImage: string;
   heroAlt: string;
@@ -233,42 +245,86 @@ const courses: Record<string, WorkshopCourse> = {
   },
   'control-peso-auriculoterapia-acupuntura-online': {
     slug: 'control-peso-auriculoterapia-acupuntura-online',
-    title: 'Auriculoterapia y Acupuntura en Control de Peso',
-    fullName: 'Seminario de Auriculoterapia y Acupuntura en Control de Peso',
-    price: 180,
-    duration: '8 horas',
-    access: '12 meses',
-    teacher: 'Lic. Lazaro Regalado Ponte',
+    title: 'Seminario Internacional de Auriculoterapia',
+    fullName: 'Seminario Internacional de Auriculoterapia',
+    price: 280,
+    priceDetail: '+ S/ 30 inscripción · Incluye Kit',
+    duration: '4 sesiones Zoom + Prácticas presenciales',
+    durationDetail: 'Virtual: 7-9 p.m. | Prácticas: 10 a.m.-5 p.m.',
+    modalityLabel: 'Híbrido (Zoom + Presencial)',
+    modalityDetail: 'En vivo y prácticas guiadas',
+    access: 'Miércoles 2 de Septiembre',
+    accessTitle: 'Inicio',
+    accessSubtext: 'Prácticas: 27 y 28 Sep',
+    accessHeading: 'Fechas y horarios',
+    teacher: 'Lic. Lázaro Regalado Potente',
     contact: '+51 939 371 250 / ecabanillasbardales@gmail.com',
-    heroDescription: 'Seminario online de <strong>auriculoterapia y acupuntura</strong> aplicado al control de peso con enfoque practico y organizado.',
-    heroImage: 'assets/auriculoterapia_control_peso_img_curso.jpg',
-    heroAlt: 'Seminario de auriculoterapia y acupuntura en control de peso',
-    accessText: 'Disponible de inmediato con 8 horas de contenido.',
-    benefitsTitle: 'Todo lo necesario para abordar',
-    benefitsHighlight: 'control de peso.',
-    benefitsIntro: 'Un seminario mas amplio para integrar evaluacion, puntos, auriculoterapia y recomendaciones de seguimiento.',
+    heroKicker: 'Inicio: Miércoles 2 de Septiembre',
+    heroKickerTag: 'Seminario Internacional',
+    heroBadgeLabel: 'Seminario Internacional INSTEIP',
+    visualCardBottomTitle: 'Modalidad Híbrida',
+    visualCardBottomSub: 'Zoom + Prácticas Presenciales',
+    heroDescription: 'Seminario internacional de <strong>Auriculoterapia</strong> con modalidad virtual vía Zoom (4 sesiones en vivo) y prácticas presenciales intensivas. Con los ponentes <strong>Lic. Lázaro Regalado Potente (Cuba)</strong> y <strong>Emanuel Cabanillas Bardales (Perú)</strong>. Organizado por INSTEIP con el respaldo de <strong>Amazoni-k</strong>.',
+    heroImage: 'assets/curso_int_queda.jpg',
+    heroAlt: 'Seminario Internacional de Auriculoterapia - INSTEIP',
+    accessText: 'Virtual vía Zoom: Miércoles 2 de Septiembre (7:00 a 9:00 p.m.) · Prácticas presenciales: 27 y 28 de Septiembre (10:00 a.m. a 5:00 p.m.).',
+    benefitsTitle: 'Formación internacional con',
+    benefitsHighlight: 'práctica clínica y kit asegurado.',
+    benefitsIntro: 'Estructura integral que combina teoría en vivo por Zoom, entrenamiento práctico presencial intensivo y materiales profesionales asegurados.',
     benefits: [
-      { icon: 'monitor_weight', label: 'Evaluacion', title: 'Comprende objetivos de control de peso.', description: 'Ordena factores frecuentes y objetivos terapeuticos complementarios.', items: ['Lectura inicial', 'Objetivos de abordaje'] },
-      { icon: 'hearing', label: 'Auriculoterapia', title: 'Aplica mapas auriculares con criterio.', description: 'Revisa puntos auriculares y su integracion a protocolos de control de peso.', items: ['Puntos auriculares', 'Protocolos de estimulo'] },
-      { icon: 'adjust', label: 'Acupuntura', title: 'Integra puntos corporales y seguimiento.', description: 'Complementa con seleccion de puntos, recomendaciones y continuidad terapeutica.', items: ['Puntos corporales', 'Seguimiento practico'] }
+      {
+        icon: 'laptop_chromebook',
+        label: '01 · Clases Virtuales (Zoom)',
+        title: '4 sesiones en vivo (7:00 a 9:00 p.m.)',
+        description: 'Inicio el Miércoles 2 de septiembre vía Zoom. Anatomía del pabellón auricular, cartografía, puntos maestros y protocolos clínicos.',
+        items: ['4 sesiones interactivas en tiempo real', 'Horario: 7:00 p.m. a 9:00 p.m.', 'Acceso a grabaciones y material de consulta']
+      },
+      {
+        icon: 'pan_tool',
+        label: '02 · Prácticas Presenciales',
+        title: '27 y 28 de septiembre (10:00 a.m. a 5:00 p.m.)',
+        description: 'Jornadas completas de entrenamiento presencial para perfeccionar localización de puntos, palpación y técnicas de colocación.',
+        items: ['2 días intensivos de 10:00 a.m. a 5:00 p.m.', 'Entrenamiento clínico supervisado en vivo', 'Corrección de técnica y resolución de casos']
+      },
+      {
+        icon: 'card_giftcard',
+        label: '03 · Beneficio y Respaldo',
+        title: 'Kit de Auriculoterapia asegurado y certificación',
+        description: 'Te aseguras tu kit completo para comenzar a aplicar lo aprendido. Evento organizado por INSTEIP con el respaldo de Amazoni-k.',
+        items: ['Kit de auriculoterapia asegurado', 'Auspicio: Amazoni-k (agujasacupunturaperu.com)', 'Constancia / Certificación otorgada por INSTEIP']
+      }
     ],
     sliderImages: [
-      'assets/auriculoterapia_control_peso_img_temario_curso1.jpg',
-      'assets/auriculoterapia_control_peso_img_temario_curso2.jpg',
-      'assets/auriculoterapia_control_peso_img_temario_curso3.jpg'
+      'assets/formacion_1.jpg',
+      'assets/formacion_2.jpg',
+      'assets/formacion_3.jpg'
     ],
-    audienceIntro: 'Dirigido a profesionales y estudiantes que desean abordar control de peso desde terapias complementarias.',
+    audienceIntro: 'Dirigido a fisioterapeutas, acupuntores, terapeutas integrales, profesionales de la salud y alumnos que desean dominar la auriculoterapia con ponentes de Cuba y Perú.',
     syllabusData: [
       {
-        id: 'fase1', tabLabel: '01 · Fundamentos', title: 'Bases del Control de Peso', description: 'Criterios iniciales, objetivos y lectura complementaria del caso.', image: 'assets/auriculoterapia_control_peso_plan_estudios_1.jpg', imageAlt: 'Bases de control de peso', specimenLabel: 'SPECIMEN // CONTROL DE PESO', items: [
-          { number: '01', title: 'Evaluacion', badge1: 'Base', badge2: 'Criterio', description: 'Identificacion de objetivos y factores frecuentes.' },
-          { number: '02', title: 'Plan', badge1: 'Ruta', badge2: 'Objetivos', description: 'Estructura de intervencion complementaria.' }
+        id: 'fase1',
+        tabLabel: '01 · Clases Virtuales (Zoom)',
+        title: 'Fundamentos, Cartografía y Protocolos',
+        description: '4 sesiones en vivo (7:00 p.m. a 9:00 p.m.) iniciando el miércoles 2 de septiembre.',
+        image: 'assets/plan_1.jpg',
+        imageAlt: 'Clases virtuales de auriculoterapia en vivo',
+        specimenLabel: 'SPECIMEN // MÓDULO ZOOM EN VIVO',
+        items: [
+          { number: '01', title: 'Cartografía y Puntos Auriculares', badge1: 'Zoom', badge2: 'Teoría', description: 'Zonas reflejas del pabellón auricular, puntos maestros y vías reflejas.' },
+          { number: '02', title: 'Diagnóstico y Protocolos Clínicos', badge1: 'En vivo', badge2: 'Protocolos', description: 'Protocolos para dolor, ansiedad, estrés, control de peso y alteraciones funcionales.' }
         ]
       },
       {
-        id: 'fase2', tabLabel: '02 · Protocolos', title: 'Auriculoterapia y Acupuntura', description: 'Protocolos combinados para acompanar control de peso.', image: 'assets/auriculoterapia_control_peso_plan_estudios_2.jpg', imageAlt: 'Protocolos para control de peso', specimenLabel: 'SPECIMEN // PROTOCOLOS COMBINADOS', items: [
-          { number: '01', title: 'Auricular', badge1: 'Puntos', badge2: 'Oreja', description: 'Mapas y puntos auriculares frecuentes.' },
-          { number: '02', title: 'Corporal', badge1: 'Puntos', badge2: 'Acupuntura', description: 'Seleccion de puntos corporales y seguimiento.' }
+        id: 'fase2',
+        tabLabel: '02 · Prácticas Presenciales',
+        title: 'Taller Clínico Presencial Intensivo',
+        description: '27 y 28 de septiembre (10:00 a.m. a 5:00 p.m.) con práctica directa y supervisión en vivo.',
+        image: 'assets/plan_2.jpg',
+        imageAlt: 'Práctica presencial de auriculoterapia',
+        specimenLabel: 'SPECIMEN // PRÁCTICA PRESENCIAL',
+        items: [
+          { number: '01', title: 'Técnicas de Detección y Estimulación', badge1: 'Presencial', badge2: 'Práctica', description: 'Manejo del palpador, punción con agujas, semillas de vaccaria, balines y chinchetas.' },
+          { number: '02', title: 'Casos Reales y Evaluación Guiada', badge1: '10am-5pm', badge2: 'Taller', description: 'Aplicación en casos reales con retroalimentación inmediata de los ponentes.' }
         ]
       }
     ],
@@ -513,10 +569,25 @@ export class OnlineWorkshopComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   get whatsappLink(): string {
-    return `https://wa.me/51939371250?text=${encodeURIComponent(`Hola, deseo informacion sobre ${this.course.fullName}`)}`;
+    return `https://wa.me/51939371250?text=${encodeURIComponent(`Hola, deseo informacion sobre el ${this.course.fullName}`)}`;
   }
 
   get docenteData(): DocenteData {
+    if (this.course.slug === 'control-peso-auriculoterapia-acupuntura-online') {
+      return {
+        nombre: 'Lic. Lázaro Regalado Potente',
+        cargo: 'Ponente Internacional (Cuba)',
+        biografia: 'Ponente internacional procedente de <strong>Cuba</strong>, especialista en medicina tradicional china, acupuntura y auriculoterapia clínica, con amplia trayectoria internacional en docencia y atención terapéutica.',
+        fotoUrl: 'assets/Lic Lazaro.jpg',
+        kicker: 'PONENTE INTERNACIONAL · CUBA',
+        especialidades: [
+          { icon: 'public', label: '🇨🇺 Docente Internacional (Cuba)' },
+          { icon: 'school', label: 'Especialista en Auriculoterapia' },
+          { icon: 'verified', label: 'Medicina Tradicional China' }
+        ]
+      };
+    }
+
     return {
       nombre: this.course.teacher,
       cargo: 'Docente del curso',
@@ -540,6 +611,21 @@ export class OnlineWorkshopComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   get secondaryDocenteData(): DocenteData | undefined {
+    if (this.course.slug === 'control-peso-auriculoterapia-acupuntura-online') {
+      return {
+        nombre: 'Emanuel Cabanillas Bardales',
+        cargo: 'Fisioterapeuta & Acupuntor (Perú)',
+        biografia: 'Docente y terapeuta de <strong>Perú</strong>, Fisioterapeuta & Acupuntor, director en <strong>INSTEIP</strong> (Instituto de Terapias Integrales Perú). Especialista en abordaje integral del dolor y terapias complementarias.',
+        fotoUrl: 'assets/Lic Emanuel.jpg',
+        kicker: 'PONENTE · PERÚ',
+        especialidades: [
+          { icon: 'flag', label: '🇵🇪 Fisioterapeuta & Acupuntor (Perú)' },
+          { icon: 'apartment', label: 'Organiza: INSTEIP' },
+          { icon: 'handshake', label: 'Aliado: Amazoni-k' }
+        ]
+      };
+    }
+
     if (this.course.slug !== 'paralisis-facial-acupuntura-fisioterapia-online') {
       return undefined;
     }
@@ -558,6 +644,33 @@ export class OnlineWorkshopComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   get ctaData(): CourseCtaData {
+    if (this.course.slug === 'control-peso-auriculoterapia-acupuntura-online') {
+      return {
+        precio: 280,
+        cuotasInfo: 'Inversión: S/ 280 · Inscripción: S/ 30 · Incluye Kit',
+        plazasDisponibles: 12,
+        whatsappLink: 'https://wa.me/51939371250?text=' + encodeURIComponent('Hola, deseo inscribirme en el Seminario Internacional de Auriculoterapia'),
+        email: 'ecabanillasbardales@gmail.com',
+        beneficios: [
+          'Modalidad Virtual vía Zoom: 4 sesiones en vivo (7:00 p.m. a 9:00 p.m.)',
+          'Prácticas Presenciales: 27 y 28 de septiembre (10:00 a.m. a 5:00 p.m.)',
+          'Te aseguras un Kit de Auriculoterapia completo',
+          'Ponentes: Lic. Lázaro Regalado Potente (Cuba) y Emanuel Cabanillas Bardales (Perú)',
+          'Organiza INSTEIP con el respaldo de Amazoni-k (www.agujasacupunturaperu.com)'
+        ],
+        headlineHtml: `Inscríbete hoy en el<br><span class="text-secondary">${this.course.title}</span>.`,
+        description: 'Seminario Internacional con 4 sesiones virtuales en vivo por Zoom, prácticas presenciales intensivas y kit de auriculoterapia asegurado.',
+        faqs: [
+          { icon: 'calendar_month', pregunta: '¿Cuáles son las fechas y horarios?', respuesta: 'Inicio virtual vía Zoom el Miércoles 2 de septiembre (4 sesiones en vivo de 7:00 p.m. a 9:00 p.m.). Prácticas presenciales el 27 y 28 de septiembre de 10:00 a.m. a 5:00 p.m.' },
+          { icon: 'payments', pregunta: '¿Cuál es la inversión e inscripción?', respuesta: 'La inversión es de S/ 280 y la inscripción de S/ 30. Incluye todas las clases Zoom, prácticas presenciales y certificación.' },
+          { icon: 'card_giftcard', pregunta: '¿Qué incluye el beneficio del kit?', respuesta: 'Te aseguras un kit completo de Auriculoterapia con materiales de calidad garantizada para tus prácticas y aplicaciones terapéuticas.' },
+          { icon: 'public', pregunta: '¿Quiénes dictan el seminario?', respuesta: 'Ponente internacional: Lic. Lázaro Regalado Potente (Cuba) y Ponente nacional: Emanuel Cabanillas Bardales (Perú, Fisioterapeuta & Acupuntor).' },
+          { icon: 'handshake', pregunta: '¿Quiénes organizan y respaldan?', respuesta: 'Organiza INSTEIP (Instituto de Terapias Integrales Perú) junto a su aliado y marca oficial Amazoni-k (www.agujasacupunturaperu.com).' }
+        ],
+        trustText: 'Organiza INSTEIP · Aliado: Amazoni-k · Kit Asegurado · Cupos Limitados'
+      };
+    }
+
     return {
       precio: this.course.price,
       tipoPago: '(Pago único)',

@@ -9,9 +9,9 @@
       <div class="ac-hero__content">
         <div class="ac-kicker">
           <span class="ac-kicker__pulse"></span>
-          Disponible de inmediato
+          {{ course.heroKicker || 'Disponible de inmediato' }}
           <span class="ac-kicker__separator"></span>
-          Online
+          {{ course.heroKickerTag || 'Online' }}
         </div>
 
         <h1 class="ac-title">
@@ -36,7 +36,7 @@
           <div class="ac-proof__avatars" aria-hidden="true">
             <span>IN</span><span>ST</span><span>+</span>
           </div>
-          <p><strong>Acceso flexible</strong><br>{{ course.accessText }}</p>
+          <p><strong>{{ course.accessHeading || 'Acceso flexible' }}</strong><br>{{ course.accessText }}</p>
         </div>
       </div>
 
@@ -44,32 +44,25 @@
         <div class="ac-visual__halo" aria-hidden="true"></div>
         <figure class="ac-visual__frame cursor-pointer group" (click)="openFlyerLightbox()" title="Clic para ver afiche completo">
           <img [src]="course.heroImage" [alt]="course.heroAlt" fetchpriority="high">
-          <div class="ac-visual__wash" aria-hidden="true"></div>
-
-          <button type="button" (click)="openFlyerLightbox(); $event.stopPropagation()"
-            class="ac-visual__expand-btn" aria-label="Ver imagen más grande">
-            <span class="material-symbols-outlined">zoom_in</span>
-            <span>Ver más grande</span>
-          </button>
         </figure>
       </div>
 
       <div class="ac-facts" aria-label="Información principal del curso">
         <div class="ac-fact">
           <span class="material-symbols-outlined">schedule</span>
-          <div><small>Duración</small><strong>{{ course.duration }}</strong><em>Contenido puntual</em></div>
+          <div><small>Duración</small><strong>{{ course.duration }}</strong><em>{{ course.durationDetail || 'Contenido puntual' }}</em></div>
         </div>
         <div class="ac-fact">
           <span class="material-symbols-outlined">devices</span>
-          <div><small>Modalidad</small><strong>Online</strong><em>Disponible ya</em></div>
+          <div><small>Modalidad</small><strong>{{ course.modalityLabel || 'Online' }}</strong><em>{{ course.modalityDetail || 'Disponible ya' }}</em></div>
         </div>
         <div class="ac-fact">
-          <span class="material-symbols-outlined">lock_open</span>
-          <div><small>Acceso</small><strong>{{ course.access }}</strong><em>Campus virtual</em></div>
+          <span class="material-symbols-outlined">event</span>
+          <div><small>{{ course.accessTitle || 'Acceso' }}</small><strong>{{ course.access }}</strong><em>{{ course.accessSubtext || 'Campus virtual' }}</em></div>
         </div>
         <div class="ac-fact">
           <span class="material-symbols-outlined">payments</span>
-          <div><small>Inversión</small><strong>S/ {{ course.price }}</strong><em>Pago único</em></div>
+          <div><small>Inversión</small><strong>S/ {{ course.price }}</strong><em>{{ course.priceDetail || 'Pago único' }}</em></div>
         </div>
       </div>
     </div>

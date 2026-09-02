@@ -111,18 +111,18 @@ export class ExperienciaAcademicaInsteipComponent implements OnInit, OnDestroy {
       students: '+180'
     },
     {
-      id: 'control-peso-online',
-      label: 'Acupuntura en Control de Peso',
+      id: 'control-peso-auriculoterapia-acupuntura-online',
+      label: 'Seminario Internacional de Auriculoterapia',
       category: 'ONLINE',
-      categoryLabel: 'Online · Seminario',
-      duration: '8 Horas de Especialización',
-      price: 'S/ 180 (Único)',
-      icon: 'scale',
-      image: 'assets/control_peso_online.jpg',
-      description: 'Protocolos clínicos de auriculoterapia y acupuntura corporal para regular el apetito, metabolismo, sistema endocrino y ansiedad.',
+      categoryLabel: 'Seminario Internacional · Zoom + Presencial',
+      duration: '4 Sesiones Zoom + Prácticas Presenciales',
+      price: 'S/ 280 (Único)',
+      icon: 'hearing',
+      image: 'assets/ficha_curso.jpg',
+      description: 'Seminario internacional con Lic. Lázaro Regalado (Cuba) y Emanuel Cabanillas (Perú). Clases Zoom y prácticas presenciales. Incluye kit.',
       route: '/cursos/control-peso-auriculoterapia-acupuntura-online',
-      rating: 4.9,
-      students: '+240'
+      rating: 5.0,
+      students: '+280'
     },
     {
       id: 'acupuntura-estetica-online',

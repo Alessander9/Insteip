@@ -62,7 +62,7 @@ export class ChatbotWidgetComponent implements OnInit, OnDestroy {
     { emoji: '💆‍♀️', name: 'Acupuntura Estética', route: '/cursos/acupuntura-estetica-online' },
     { emoji: '🧘', name: 'Stretching Terapéutico', route: '/cursos/stretching-terapeutico-online' },
     { emoji: '🩹', name: 'Parálisis Facial', route: '/cursos/paralisis-facial-acupuntura-fisioterapia-online' },
-    { emoji: '🍏', name: 'Control de Peso', route: '/cursos/control-peso-auriculoterapia-acupuntura-online' },
+    { emoji: '👂', name: 'Seminario Auriculoterapia', route: '/cursos/control-peso-auriculoterapia-acupuntura-online' },
     { emoji: '🧠', name: 'Craneopuntura', route: '/cursos/craneopuntura-online' },
   ];
 

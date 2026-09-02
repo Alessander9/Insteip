@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
 import { FooterComponent } from '../../../core/components/footer/footer.component';
 import { CourseSyllabusComponent, SyllabusPhase } from '../../../shared/components/course-syllabus/course-syllabus.component';
@@ -48,6 +48,8 @@ interface WorkshopCourse {
   benefits: WorkshopBenefit[];
   sliderImages: string[];
   audienceIntro: string;
+  audienceCheck1?: string;
+  audienceCheck2?: string;
   syllabusData: SyllabusPhase[];
   journeySteps: Array<{
     shortTitle: string;
@@ -300,6 +302,8 @@ const courses: Record<string, WorkshopCourse> = {
       'assets/formacion_3.jpg'
     ],
     audienceIntro: 'Dirigido a fisioterapeutas, acupuntores, terapeutas integrales, profesionales de la salud y alumnos que desean dominar la auriculoterapia con ponentes de Cuba y Perú.',
+    audienceCheck1: '4 Sesiones Zoom en vivo',
+    audienceCheck2: 'Prácticas Presenciales + Kit',
     syllabusData: [
       {
         id: 'fase1',

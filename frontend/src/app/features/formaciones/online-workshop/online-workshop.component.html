@@ -189,8 +189,8 @@
         <h2>Un curso para aplicar con <span>base clara.</span></h2>
         <p>{{ course.audienceIntro }}</p>
         <div class="ac-audience__checks">
-          <span><span class="material-symbols-outlined">verified</span> Acceso inmediato</span>
-          <span><span class="material-symbols-outlined">groups</span> Enfoque práctico</span>
+          <span><span class="material-symbols-outlined">verified</span> {{ course.audienceCheck1 || 'Acceso inmediato' }}</span>
+          <span><span class="material-symbols-outlined">groups</span> {{ course.audienceCheck2 || 'Enfoque práctico' }}</span>
         </div>
       </div>
 

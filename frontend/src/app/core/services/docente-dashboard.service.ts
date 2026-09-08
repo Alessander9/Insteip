@@ -23,6 +23,7 @@ export interface DocenteEstudianteProgress {
   porcentajeAvance: number;
   completado: boolean;
   fechaActualizacion: string;
+  matriculaId?: number;
 }
 
 @Injectable({

@@ -59,10 +59,14 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
         List<Matricula> matriculas = matriculaRepository.findByUsuarioIdAndEstadoTrue(usuario.getId());
         long totalCursos = matriculas.size();
 
+        List<AvanceCurso> allAvances = avanceCursoRepository.findByUsuarioId(usuario.getId());
+        java.util.Map<Long, AvanceCurso> avanceMap = allAvances.stream()
+                .filter(a -> a.getCurso() != null)
+                .collect(Collectors.toMap(a -> a.getCurso().getId(), a -> a, (a1, a2) -> a1));
+
         long completados = 0;
         for (Matricula matricula : matriculas) {
-            AvanceCurso avance = avanceCursoRepository.findByUsuarioIdAndCursoId(usuario.getId(), matricula.getCurso().getId())
-                    .orElse(null);
+            AvanceCurso avance = avanceMap.get(matricula.getCurso().getId());
             avance = normalizeAvanceCursoIfNeeded(usuario, matricula.getCurso(), avance);
             if (avance != null) {
                 if (avance.getCompletado() || isCursoCompletado(usuario.getId(), matricula.getCurso())) {
@@ -86,11 +90,14 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
         List<Matricula> matriculas = matriculaRepository.findByUsuarioIdAndEstadoTrue(usuario.getId());
+        List<AvanceCurso> allAvances = avanceCursoRepository.findByUsuarioId(usuario.getId());
+        java.util.Map<Long, AvanceCurso> avanceMap = allAvances.stream()
+                .filter(a -> a.getCurso() != null)
+                .collect(Collectors.toMap(a -> a.getCurso().getId(), a -> a, (a1, a2) -> a1));
 
         return matriculas.stream().map(matricula -> {
             Curso curso = matricula.getCurso();
-            AvanceCurso avanceRecord = avanceCursoRepository.findByUsuarioIdAndCursoId(usuario.getId(), curso.getId())
-                    .orElse(null);
+            AvanceCurso avanceRecord = avanceMap.get(curso.getId());
             avanceRecord = normalizeAvanceCursoIfNeeded(usuario, curso, avanceRecord);
             
             BigDecimal avance;
@@ -108,6 +115,19 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
                 completado = isCursoCompletado(usuario.getId(), curso);
             }
 
+            LocalDateTime fMatricula = matricula.getFechaMatricula() != null ? matricula.getFechaMatricula() : LocalDateTime.now();
+            LocalDateTime fExpiracion = matricula.getFechaExpiracion() != null ? matricula.getFechaExpiracion() : fMatricula.plusMonths(12);
+
+            long diasRestantes = java.time.temporal.ChronoUnit.DAYS.between(LocalDateTime.now(), fExpiracion);
+            String alerta = "OK";
+            if (diasRestantes <= 0) {
+                alerta = "EXPIRADO";
+            } else if (diasRestantes <= 7) {
+                alerta = "URGENTE_7_DIAS";
+            } else if (diasRestantes <= 30) {
+                alerta = "PROXIMO_30_DIAS";
+            }
+
             return new AlumnoCursoResponse(
                     curso.getId(),
                     curso.getNombre(),
@@ -116,8 +136,10 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
                     formatNivelesSuscripcion(curso.getNivelesSuscripcion()),
                     avance,
                     completado,
-                    matricula.getFechaMatricula(),
-                    matricula.getFechaExpiracion()
+                    fMatricula,
+                    fExpiracion,
+                    diasRestantes,
+                    alerta
             );
         }).collect(Collectors.toList());
     }
@@ -168,6 +190,11 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
         List<Modulo> modulos = moduloRepository.findByCursoIdOrderByOrdenAsc(cursoId);
         List<AlumnoPlayModulo> playModulos = new ArrayList<>();
 
+        List<AvanceVideo> allAvancesVideo = avanceVideoRepository.findByUsuarioId(usuario.getId());
+        java.util.Map<Long, AvanceVideo> avanceVideoMap = allAvancesVideo.stream()
+                .filter(av -> av.getVideo() != null)
+                .collect(Collectors.toMap(av -> av.getVideo().getId(), av -> av, (v1, v2) -> v1));
+
         for (Modulo modulo : modulos) {
             if (!modulo.getEstado()) continue;
 
@@ -177,8 +204,7 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
             for (Video video : videos) {
                 if (!video.getEstado()) continue;
 
-                AvanceVideo avance = avanceVideoRepository.findByUsuarioIdAndVideoId(usuario.getId(), video.getId())
-                        .orElse(null);
+                AvanceVideo avance = avanceVideoMap.get(video.getId());
                 avance = normalizeAvanceVideoIfNeeded(avance, video);
 
                 int ultimoSegundo = avance != null ? avance.getUltimoSegundo() : 0;

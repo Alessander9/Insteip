@@ -19,6 +19,9 @@ export interface AlumnoCurso {
   avancePorcentaje: number;
   completado: boolean;
   fechaMatricula: string;
+  fechaExpiracion?: string;
+  diasRestantes?: number;
+  alertaExpiracion?: 'OK' | 'PROXIMO_30_DIAS' | 'URGENTE_7_DIAS' | 'EXPIRADO';
 }
 
 export interface AlumnoCertificado {

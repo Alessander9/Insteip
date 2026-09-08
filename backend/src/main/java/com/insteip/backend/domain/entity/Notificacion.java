@@ -48,6 +48,23 @@ public class Notificacion {
     @Builder.Default
     private Boolean leido = false;
 
+    @Column(length = 20)
+    @Builder.Default
+    private String prioridad = "INFO"; // 'INFO', 'AVISO', 'URGENTE', 'PROMO'
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean fijado = false;
+
+    @Column(name = "adjunto_url", columnDefinition = "TEXT")
+    private String adjuntoUrl;
+
+    @Column(name = "adjunto_nombre", length = 200)
+    private String adjuntoNombre;
+
+    @Column(name = "adjunto_tamano", length = 50)
+    private String adjuntoTamano;
+
     @CreationTimestamp
     @Column(name = "fecha_creacion", updatable = false)
     private LocalDateTime fechaCreacion;

@@ -101,16 +101,11 @@ class DocenteDashboardServiceImplTest {
     void getAlumnosCurso_shouldReturnStudentProgressForAdmin() {
         Matricula matricula = Matricula.builder().id(1L).usuario(alumno).curso(curso).fechaMatricula(LocalDateTime.now()).estado(true).build();
         AvanceCurso avance = AvanceCurso.builder().id(1L).usuario(alumno).curso(curso).porcentajeAvance(BigDecimal.valueOf(75.5)).completado(false).fechaActualizacion(LocalDateTime.now()).build();
-        Modulo modulo = Modulo.builder().id(1L).curso(curso).nombre("Modulo 1").orden(1).estado(true).build();
-        Video video = Video.builder().id(1L).modulo(modulo).titulo("Video 1").orden(1).estado(true).build();
 
         when(usuarioRepository.findByCorreo("admin@insteip.com")).thenReturn(Optional.of(admin));
         when(cursoRepository.findById(100L)).thenReturn(Optional.of(curso));
         when(matriculaRepository.findByCursoId(100L)).thenReturn(List.of(matricula));
-        when(avanceCursoRepository.findByUsuarioIdAndCursoId(12L, 100L)).thenReturn(Optional.of(avance));
-        when(moduloRepository.findByCursoIdOrderByOrdenAsc(100L)).thenReturn(List.of(modulo));
-        when(videoRepository.findByModuloIdOrderByOrdenAsc(1L)).thenReturn(List.of(video));
-        when(avanceVideoRepository.findByUsuarioIdAndVideoId(12L, 1L)).thenReturn(Optional.empty());
+        when(avanceCursoRepository.findByCursoId(100L)).thenReturn(List.of(avance));
 
         List<DocenteEstudianteProgressResponse> result = docenteDashboardService.getAlumnosCurso("admin@insteip.com", 100L);
 
@@ -127,7 +122,7 @@ class DocenteDashboardServiceImplTest {
         when(usuarioRepository.findByCorreo("docente@insteip.com")).thenReturn(Optional.of(docente));
         when(cursoRepository.findById(100L)).thenReturn(Optional.of(curso));
         when(matriculaRepository.findByCursoId(100L)).thenReturn(List.of(matricula));
-        when(avanceCursoRepository.findByUsuarioIdAndCursoId(12L, 100L)).thenReturn(Optional.empty());
+        when(avanceCursoRepository.findByCursoId(100L)).thenReturn(List.of());
 
         List<DocenteEstudianteProgressResponse> result = docenteDashboardService.getAlumnosCurso("docente@insteip.com", 100L);
 

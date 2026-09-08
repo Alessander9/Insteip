@@ -63,6 +63,7 @@ class AdministracionControllerTest {
 
     @MockitoBean private UsuarioService usuarioService;
     @MockitoBean private MatriculaService matriculaService;
+    @MockitoBean private com.insteip.backend.service.interfaces.MatriculaPdfService matriculaPdfService;
     @MockitoBean private CertificadoService certificadoService;
     @MockitoBean private AuditoriaService auditoriaService;
     @MockitoBean private ConfiguracionService configuracionService;

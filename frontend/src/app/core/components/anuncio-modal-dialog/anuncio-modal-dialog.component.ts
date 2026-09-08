@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AnuncioModalService } from '../../services/anuncio-modal.service';
 import { AnuncioModalItem } from '../../models/anuncio-modal.model';
 
@@ -12,13 +13,24 @@ import { AnuncioModalItem } from '../../models/anuncio-modal.model';
   styleUrls: ['./anuncio-modal-dialog.component.css']
 })
 export class AnuncioModalDialogComponent implements OnInit {
+  private anuncioModalService = inject(AnuncioModalService);
+  private router = inject(Router);
+  private sanitizer = inject(DomSanitizer);
+
   anuncio: AnuncioModalItem | null = null;
   isVisible = false;
+  isLightboxOpen = false;
 
-  constructor(
-    private anuncioModalService: AnuncioModalService,
-    private router: Router
-  ) {}
+  @HostListener('window:keydown', ['$event'])
+  handleKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      if (this.isLightboxOpen) {
+        this.cerrarLightbox();
+      } else if (this.isVisible) {
+        this.cerrar();
+      }
+    }
+  }
 
   ngOnInit(): void {
     this.verificarAnuncio();
@@ -51,8 +63,23 @@ export class AnuncioModalDialogComponent implements OnInit {
     });
   }
 
+  abrirLightbox(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.isLightboxOpen = true;
+  }
+
+  cerrarLightbox(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.isLightboxOpen = false;
+  }
+
   cerrar(): void {
     this.marcarComoVistoHoy();
+    this.isLightboxOpen = false;
     this.isVisible = false;
   }
 
@@ -60,6 +87,7 @@ export class AnuncioModalDialogComponent implements OnInit {
     if (!this.anuncio) return;
 
     this.marcarComoVistoHoy();
+    this.isLightboxOpen = false;
     this.isVisible = false;
 
     if (this.anuncio.botonUrl && this.anuncio.botonUrl.trim() !== '') {
@@ -70,6 +98,15 @@ export class AnuncioModalDialogComponent implements OnInit {
         this.router.navigateByUrl(url);
       }
     }
+  }
+
+  getFormattedHtml(rawText?: string): SafeHtml {
+    if (!rawText) return '';
+    const formatted = rawText
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900 dark:text-white">$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+      .replace(/\n/g, '<br/>');
+    return this.sanitizer.bypassSecurityTrustHtml(formatted);
   }
 
   private marcarComoVistoHoy(): void {

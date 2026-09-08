@@ -189,27 +189,70 @@ export class MaterialesComponent implements OnInit {
     this.selectedFile = null;
   }
 
+  isDraggingFile = false;
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDraggingFile = true;
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDraggingFile = false;
+  }
+
+  onDropFile(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDraggingFile = false;
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      this.validateAndSetFile(files[0]);
+    }
+  }
+
   onFileSelected(event: any): void {
     const file = event.target.files?.[0];
     if (file) {
-      // Validate file extension
-      const fileExt = file.name.split('.').pop()?.toLowerCase();
-      const dangerousExts = ['exe', 'bat', 'sh', 'cmd', 'js', 'com', 'scr', 'msi', 'vbs'];
-      if (fileExt && dangerousExts.includes(fileExt)) {
-        this.modalErrorMsg = 'No se permiten archivos ejecutables o potencialmente peligrosos (.exe, .bat, .js, etc.).';
-        this.selectedFile = null;
-        return;
-      }
-
-      // Validate file size (100MB limit)
-      if (file.size > 100 * 1024 * 1024) {
-        this.modalErrorMsg = 'El archivo supera el límite de tamaño permitido (100MB).';
-        this.selectedFile = null;
-        return;
-      }
-      this.modalErrorMsg = '';
-      this.selectedFile = file;
+      this.validateAndSetFile(file);
     }
+  }
+
+  validateAndSetFile(file: File): void {
+    const fileExt = file.name.split('.').pop()?.toLowerCase();
+    const dangerousExts = ['exe', 'bat', 'sh', 'cmd', 'js', 'com', 'scr', 'msi', 'vbs'];
+    if (fileExt && dangerousExts.includes(fileExt)) {
+      this.modalErrorMsg = 'No se permiten archivos ejecutables o potencialmente peligrosos (.exe, .bat, .js, etc.).';
+      this.selectedFile = null;
+      return;
+    }
+
+    if (file.size > 100 * 1024 * 1024) {
+      this.modalErrorMsg = 'El archivo supera el límite de tamaño permitido (100MB).';
+      this.selectedFile = null;
+      return;
+    }
+    this.modalErrorMsg = '';
+    this.selectedFile = file;
+    if (!this.materialForm.get('nombre')?.value) {
+      const nameWithoutExt = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+      this.materialForm.patchValue({ nombre: nameWithoutExt });
+    }
+  }
+
+  removeSelectedFile(): void {
+    this.selectedFile = null;
+    this.modalErrorMsg = '';
+  }
+
+  setEstado(estado: boolean): void {
+    this.materialForm.patchValue({ estado });
+  }
+
+  get isEstadoActivo(): boolean {
+    return this.materialForm.get('estado')?.value === true;
   }
 
   eliminarMaterial(material: MaterialResponse): void {

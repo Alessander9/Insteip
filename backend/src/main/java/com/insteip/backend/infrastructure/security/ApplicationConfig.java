@@ -27,6 +27,7 @@ public class ApplicationConfig {
                     .map(u -> org.springframework.security.core.userdetails.User.builder()
                             .username(u.getCorreo())
                             .password(u.getPasswordHash())
+                            .disabled(u.getEstado() != null && !u.getEstado())
                             .authorities("ROLE_" + u.getRol().getNombre()) // Convierte ADMINISTRADOR a ROLE_ADMINISTRADOR, etc.
                             .build())
                     .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con correo: " + cleanUsername));

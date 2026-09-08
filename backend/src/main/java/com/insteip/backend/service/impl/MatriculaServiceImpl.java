@@ -18,6 +18,7 @@ import com.insteip.backend.domain.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -85,6 +86,14 @@ public class MatriculaServiceImpl implements MatriculaService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<MatriculaResponseDTO> listarMatriculadosPorUsuario(Long usuarioId) {
+        return matriculaRepository.findByUsuarioId(usuarioId).stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional
     public void cambiarEstado(Long matriculaId, Boolean estado) {
         Matricula matricula = matriculaRepository.findById(matriculaId)
@@ -109,16 +118,38 @@ public class MatriculaServiceImpl implements MatriculaService {
     }
 
     private MatriculaResponseDTO toResponse(Matricula m) {
+        LocalDateTime fMatricula = m.getFechaMatricula() != null ? m.getFechaMatricula() : LocalDateTime.now();
+        LocalDateTime fExpiracion = m.getFechaExpiracion() != null ? m.getFechaExpiracion() : fMatricula.plusMonths(12);
+        
+        long diasRestantes = java.time.temporal.ChronoUnit.DAYS.between(LocalDateTime.now(), fExpiracion);
+        String alerta = "OK";
+        if (diasRestantes <= 0) {
+            alerta = "EXPIRADO";
+        } else if (diasRestantes <= 7) {
+            alerta = "URGENTE_7_DIAS";
+        } else if (diasRestantes <= 30) {
+            alerta = "PROXIMO_30_DIAS";
+        }
+
+        String docenteNombre = null;
+        if (m.getCurso() != null && m.getCurso().getDocente() != null) {
+            docenteNombre = m.getCurso().getDocente().getNombres() + " " + m.getCurso().getDocente().getApellidos();
+        }
+
         return new MatriculaResponseDTO(
                 m.getId(),
                 m.getUsuario().getId(),
                 m.getUsuario().getNombres(),
                 m.getUsuario().getApellidos(),
                 m.getUsuario().getCorreo(),
+                m.getUsuario().getTelefono(),
                 m.getCurso().getId(),
                 m.getCurso().getNombre(),
-                m.getFechaMatricula(),
-                m.getFechaExpiracion(),
+                docenteNombre,
+                fMatricula,
+                fExpiracion,
+                diasRestantes,
+                alerta,
                 m.getEstado()
         );
     }

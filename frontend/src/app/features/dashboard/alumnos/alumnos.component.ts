@@ -34,14 +34,61 @@ export class AlumnosComponent implements OnInit {
     });
   }
 
+  viewMode: 'table' | 'grid' = (localStorage.getItem('alumnos_view_mode') as 'table' | 'grid') || 'table';
+
+  setViewMode(mode: 'table' | 'grid'): void {
+    this.viewMode = mode;
+    try {
+      localStorage.setItem('alumnos_view_mode', mode);
+    } catch (e) {
+      console.warn('Could not save view mode preference', e);
+    }
+  }
+
   alumnos: AlumnoResponse[] = [];
+  allAlumnos: AlumnoResponse[] = [];
   filteredAlumnos: AlumnoResponse[] = [];
   searchQuery = '';
   dateSortOrder: 'desc' | 'asc' = 'desc';
+  nameSortOrder: 'asc' | 'desc' | '' = '';
+  selectedSort: 'fecha_desc' | 'fecha_asc' | 'nombre_asc' | 'nombre_desc' = 'fecha_desc';
+  
+  filtroNivel: 'TODOS' | 'BASICO' | 'INTERMEDIO' | 'PREMIUM' = 'TODOS';
+  filtroEstado: 'TODOS' | 'ACTIVO' | 'INACTIVO' = 'TODOS';
+
   currentPage = 1;
   readonly pageSize = 10;
   totalElements = 0;
   totalPagesCount = 1;
+  isLoading = false;
+
+  get totalAlumnosCount(): number {
+    return this.allAlumnos.length || this.totalElements;
+  }
+
+  get activosCount(): number {
+    return this.allAlumnos.filter(a => a.estado).length;
+  }
+
+  get inactivosCount(): number {
+    return this.allAlumnos.filter(a => !a.estado).length;
+  }
+
+  get premiumCount(): number {
+    return this.allAlumnos.filter(a => (a.nivelSuscripcion || '').toUpperCase() === 'PREMIUM').length;
+  }
+
+  get intermedioCount(): number {
+    return this.allAlumnos.filter(a => (a.nivelSuscripcion || '').toUpperCase() === 'INTERMEDIO').length;
+  }
+
+  get basicoCount(): number {
+    return this.allAlumnos.filter(a => (a.nivelSuscripcion || '').toUpperCase() === 'BASICO').length;
+  }
+
+  get hayFiltrosActivos(): boolean {
+    return this.searchQuery.trim() !== '' || this.filtroNivel !== 'TODOS' || this.filtroEstado !== 'TODOS';
+  }
 
   // Modal controls
   showCreateEditModal = false;
@@ -71,42 +118,118 @@ export class AlumnosComponent implements OnInit {
     estado: [true]
   });
 
+  setNivel(id: number): void {
+    this.alumnoForm.patchValue({ nivelSuscripcionId: id });
+  }
+
+  get nivelSeleccionado(): number {
+    return Number(this.alumnoForm.get('nivelSuscripcionId')?.value) || 1;
+  }
+
+  setEstado(estado: boolean): void {
+    this.alumnoForm.patchValue({ estado });
+  }
+
+  get isEstadoActivo(): boolean {
+    return this.alumnoForm.get('estado')?.value === true;
+  }
+
   ngOnInit(): void {
     this.loadAlumnos();
   }
 
   loadAlumnos(): void {
+    this.isLoading = true;
+    // Load all without restrictive pagination to enable client-side multi-dimensional filtering & counters
     this.alumnoService.listarAlumnos(
-      this.currentPage - 1,
-      this.pageSize,
-      this.searchQuery,
+      0,
+      1000,
+      '',
       `fechaRegistro,${this.dateSortOrder}`,
       true
     ).subscribe({
       next: (data) => {
-        this.alumnos = data.content ?? [];
-        this.filteredAlumnos = this.alumnos;
-        this.totalElements = data.totalElements ?? this.alumnos.length;
-        this.totalPagesCount = data.totalPages ?? Math.max(1, Math.ceil(this.totalElements / this.pageSize));
-        if (this.currentPage > this.totalPagesCount) {
-          this.currentPage = this.totalPagesCount;
-        }
+        this.isLoading = false;
+        this.allAlumnos = data.content ?? [];
+        this.alumnos = this.allAlumnos;
+        this.applyFilter();
       },
       error: (err) => {
+        this.isLoading = false;
         console.error('Error al listar alumnos', err);
       }
     });
   }
 
   applyFilter(): void {
-    this.currentPage = 1;
-    this.loadAlumnos();
+    let result = [...this.allAlumnos];
+
+    // Search text filter
+    if (this.searchQuery && this.searchQuery.trim()) {
+      const q = this.searchQuery.toLowerCase().trim();
+      result = result.filter(a => 
+        (a.nombres || '').toLowerCase().includes(q) ||
+        (a.apellidos || '').toLowerCase().includes(q) ||
+        (a.correo || '').toLowerCase().includes(q) ||
+        (a.telefono || '').toLowerCase().includes(q)
+      );
+    }
+
+    // Subscription level filter
+    if (this.filtroNivel !== 'TODOS') {
+      result = result.filter(a => (a.nivelSuscripcion || '').toUpperCase() === this.filtroNivel);
+    }
+
+    // Status filter
+    if (this.filtroEstado === 'ACTIVO') {
+      result = result.filter(a => a.estado === true);
+    } else if (this.filtroEstado === 'INACTIVO') {
+      result = result.filter(a => a.estado === false);
+    }
+
+    // Sorting
+    if (this.selectedSort === 'fecha_desc') {
+      result.sort((a, b) => new Date(b.fechaRegistro || 0).getTime() - new Date(a.fechaRegistro || 0).getTime());
+    } else if (this.selectedSort === 'fecha_asc') {
+      result.sort((a, b) => new Date(a.fechaRegistro || 0).getTime() - new Date(b.fechaRegistro || 0).getTime());
+    } else if (this.selectedSort === 'nombre_asc') {
+      result.sort((a, b) => (a.nombres || '').localeCompare(b.nombres || ''));
+    } else if (this.selectedSort === 'nombre_desc') {
+      result.sort((a, b) => (b.nombres || '').localeCompare(a.nombres || ''));
+    }
+
+    this.filteredAlumnos = result;
+    this.totalElements = result.length;
+    this.totalPagesCount = Math.max(1, Math.ceil(this.totalElements / this.pageSize));
+    if (this.currentPage > this.totalPagesCount) {
+      this.currentPage = 1;
+    }
   }
 
-  onDateSortChange(order: string): void {
-    this.dateSortOrder = order === 'asc' ? 'asc' : 'desc';
+  setFiltroNivel(nivel: 'TODOS' | 'BASICO' | 'INTERMEDIO' | 'PREMIUM'): void {
+    this.filtroNivel = nivel;
     this.currentPage = 1;
-    this.loadAlumnos();
+    this.applyFilter();
+  }
+
+  setFiltroEstado(estado: 'TODOS' | 'ACTIVO' | 'INACTIVO'): void {
+    this.filtroEstado = estado;
+    this.currentPage = 1;
+    this.applyFilter();
+  }
+
+  onSortChange(sort: 'fecha_desc' | 'fecha_asc' | 'nombre_asc' | 'nombre_desc'): void {
+    this.selectedSort = sort;
+    this.applyFilter();
+  }
+
+  limpiarFiltros(): void {
+    this.searchQuery = '';
+    this.filtroNivel = 'TODOS';
+    this.filtroEstado = 'TODOS';
+    this.selectedSort = 'fecha_desc';
+    this.currentPage = 1;
+    this.applyFilter();
   }
 
   get totalPages(): number {
@@ -114,21 +237,65 @@ export class AlumnosComponent implements OnInit {
   }
 
   get paginatedAlumnos(): AlumnoResponse[] {
-    return this.filteredAlumnos;
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredAlumnos.slice(start, start + this.pageSize);
+  }
+
+  get pageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxVisible = 5;
+    let start = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
+    let end = Math.min(this.totalPagesCount, start + maxVisible - 1);
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  getInitials(nombres: string, apellidos?: string): string {
+    const n = (nombres || '').trim().charAt(0).toUpperCase();
+    const a = (apellidos || '').trim().charAt(0).toUpperCase();
+    return (n + a) || 'AL';
+  }
+
+  getAvatarColorClass(nivel?: string): string {
+    const n = (nivel || '').toUpperCase();
+    if (n === 'PREMIUM') {
+      return 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700/60';
+    }
+    if (n === 'INTERMEDIO') {
+      return 'bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-700/60';
+    }
+    return 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700';
+  }
+
+  copiarCorreo(correo: string): void {
+    if (!correo) return;
+    navigator.clipboard.writeText(correo).then(() => {
+      this.toastService.info('Correo copiado al portapapeles: ' + correo);
+    }).catch(() => {
+      this.toastService.info(correo);
+    });
   }
 
   goToPage(page: number): void {
     if (page < 1 || page > this.totalPages) return;
     this.currentPage = page;
-    this.loadAlumnos();
   }
 
   nextPage(): void {
-    this.goToPage(this.currentPage + 1);
+    if (this.currentPage < this.totalPages) {
+      this.goToPage(this.currentPage + 1);
+    }
   }
 
   previousPage(): void {
-    this.goToPage(this.currentPage - 1);
+    if (this.currentPage > 1) {
+      this.goToPage(this.currentPage - 1);
+    }
   }
 
   trackByAlumnoId(_: number, alumno: AlumnoResponse): number {

@@ -6,6 +6,9 @@ import { AlumnoDashboardService, AlumnoCurso, AlumnoPlayCourse, AlumnoPlayModulo
 import { FormsModule } from '@angular/forms';
 import { matchesQuery, paginate, sortByDate, totalPages, SortOrder } from '../../../core/utils/';
 
+import { MatriculaService } from '../../../core/services/';
+import { ToastService } from '../../../core/services/';
+
 @Component({
   selector: 'app-mis-cursos',
   standalone: true,
@@ -15,6 +18,8 @@ import { matchesQuery, paginate, sortByDate, totalPages, SortOrder } from '../..
 })
 export class MisCursosComponent implements OnInit {
   private studentService = inject(AlumnoDashboardService);
+  private matriculaService = inject(MatriculaService);
+  private toastService = inject(ToastService);
   private router = inject(Router);
 
   cursos: AlumnoCurso[] = [];
@@ -131,6 +136,26 @@ export class MisCursosComponent implements OnInit {
       queryParams: videoId ? { videoId } : {}
     });
     this.cerrarModal();
+  }
+
+  descargarMiFicha(curso: { id: number; nombre: string }, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    const cleanName = curso.nombre.replace(/[^a-zA-Z0-9_-]/g, '_');
+    const filename = `ficha-matricula-${cleanName}.pdf`;
+    this.toastService.info('Generando tu Ficha Consolidada de Matrícula...');
+    
+    this.matriculaService.descargarMiFichaPorCurso(curso.id).subscribe({
+      next: (blob) => {
+        this.matriculaService.guardarArchivoPdf(blob, filename);
+        this.toastService.success('Ficha de matrícula descargada con éxito.');
+      },
+      error: (err) => {
+        console.error('Error al descargar ficha de matrícula:', err);
+        this.toastService.error('Error al descargar la ficha: ' + (err.error?.message || err.message || 'Error en el servidor'));
+      }
+    });
   }
 
   protected readonly Object = Object;

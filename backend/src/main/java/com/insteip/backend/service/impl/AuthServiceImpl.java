@@ -238,7 +238,7 @@ public class AuthServiceImpl implements AuthService {
         Usuario usuario = usuarioRepository.findByCorreo(cleanCorreo)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con correo: " + cleanCorreo));
 
-        String token = String.format("%06d", new java.util.Random().nextInt(1000000));
+        String token = String.format("%06d", new java.security.SecureRandom().nextInt(1000000));
         usuario.setPasswordResetToken(token);
         usuario.setPasswordResetTokenExpira(LocalDateTime.now().plusMinutes(15));
         usuarioRepository.save(usuario);

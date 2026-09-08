@@ -15,4 +15,12 @@ export { ChangePasswordRequest } from './change-password-request.model';
 export { TareaRequest, TareaResponse, EntregaTareaResponse, CalificarEntregaRequest, AlumnoTareaItem } from './tarea.model';
 export { NotificacionItem, NotificacionResumen, ComunicadoRequest } from './notificacion.model';
 export { AnuncioModalItem, AnuncioModalRequest } from './anuncio-modal.model';
-
+export {
+  MensajeRequest,
+  RespuestaMensajeRequest,
+  MensajeItem,
+  ConversacionItem,
+  DestinatarioItem,
+  BuzonResumen,
+  CarpetaBuzon
+} from './mensajeria.model';

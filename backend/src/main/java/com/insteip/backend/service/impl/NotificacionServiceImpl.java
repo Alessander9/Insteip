@@ -43,7 +43,7 @@ public class NotificacionServiceImpl implements NotificacionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
         int max = limite > 0 ? Math.min(limite, 50) : 20;
-        List<Notificacion> list = notificacionRepository.findByUsuarioIdOrderByFechaCreacionDesc(
+        List<Notificacion> list = notificacionRepository.findByUsuarioIdOrderByFijadoDescFechaCreacionDesc(
                 usuario.getId(), PageRequest.of(0, max));
 
         long totalNoLeidas = notificacionRepository.countByUsuarioIdAndLeidoFalse(usuario.getId());
@@ -191,6 +191,8 @@ public class NotificacionServiceImpl implements NotificacionService {
         }
 
         String icono = request.getIcono() != null && !request.getIcono().isBlank() ? request.getIcono() : "campaign";
+        String prioridad = request.getPrioridad() != null && !request.getPrioridad().isBlank() ? request.getPrioridad() : "INFO";
+        Boolean fijado = Boolean.TRUE.equals(request.getFijado());
         List<Notificacion> notificaciones = new ArrayList<>();
 
         for (Usuario u : destinatarios) {
@@ -201,6 +203,11 @@ public class NotificacionServiceImpl implements NotificacionService {
                     .tipo("COMUNICADO_GLOBAL")
                     .urlDestino(request.getUrlDestino())
                     .icono(icono)
+                    .prioridad(prioridad)
+                    .fijado(fijado)
+                    .adjuntoUrl(request.getAdjuntoUrl())
+                    .adjuntoNombre(request.getAdjuntoNombre())
+                    .adjuntoTamano(request.getAdjuntoTamano())
                     .leido(false)
                     .build();
             notificaciones.add(n);
@@ -221,6 +228,11 @@ public class NotificacionServiceImpl implements NotificacionService {
                 .urlDestino(n.getUrlDestino())
                 .icono(n.getIcono())
                 .leido(n.getLeido())
+                .prioridad(n.getPrioridad() != null ? n.getPrioridad() : "INFO")
+                .fijado(Boolean.TRUE.equals(n.getFijado()))
+                .adjuntoUrl(n.getAdjuntoUrl())
+                .adjuntoNombre(n.getAdjuntoNombre())
+                .adjuntoTamano(n.getAdjuntoTamano())
                 .fechaCreacion(n.getFechaCreacion())
                 .build();
     }

@@ -225,6 +225,16 @@ export class VideosComponent implements OnInit {
     this.showConfirmModal = true;
   }
 
+  extraerIdYoutube = extraerIdYoutube;
+
+  setEstado(estado: boolean): void {
+    this.videoForm.patchValue({ estado });
+  }
+
+  get isEstadoActivo(): boolean {
+    return this.videoForm.get('estado')?.value === true;
+  }
+
   toggleEstado(video: VideoResponse): void {
     const nuevoEstado = !video.estado;
     const accion = nuevoEstado ? 'Activar' : 'Desactivar';
@@ -306,8 +316,6 @@ export class VideosComponent implements OnInit {
       });
     }
   }
-
-  extraerIdYoutube = extraerIdYoutube;
 
   private handleError(err: any): void {
     this.isFormSubmitting = false;

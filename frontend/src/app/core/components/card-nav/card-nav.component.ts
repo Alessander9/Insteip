@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { gsap } from 'gsap';
 import { ThemeService } from '../../services/theme.service';
 
@@ -24,7 +24,7 @@ interface NavItem {
 @Component({
   selector: 'app-card-nav',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink],
   templateUrl: './card-nav.component.html',
   styleUrls: ['./card-nav.component.css']
 })

@@ -370,7 +370,6 @@ Object.values(courses).forEach(course => {
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     NavbarComponent,
     FooterComponent,
     CourseSyllabusComponent,

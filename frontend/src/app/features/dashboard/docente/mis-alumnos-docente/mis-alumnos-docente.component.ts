@@ -8,6 +8,9 @@ import { CursoResponse } from '../../../../core/models/';
 import { FormsModule } from '@angular/forms';
 import { matchesQuery, paginate, sortByDate, totalPages, SortOrder } from '../../../../core/utils/';
 
+import { MatriculaService } from '../../../../core/services/';
+import { ToastService } from '../../../../core/services/';
+
 @Component({
   selector: 'app-mis-alumnos-docente',
   standalone: true,
@@ -19,6 +22,8 @@ export class MisAlumnosDocenteComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private docenteService = inject(DocenteDashboardService);
   private cursoService = inject(CursoService);
+  private matriculaService = inject(MatriculaService);
+  private toastService = inject(ToastService);
   private router = inject(Router);
 
   cursoId = 0;
@@ -100,6 +105,27 @@ export class MisAlumnosDocenteComponent implements OnInit {
 
   nextPage(): void {
     if (this.currentPage < this.totalPages) this.currentPage++;
+  }
+
+  descargarFichaDocente(estudiante: DocenteEstudianteProgress): void {
+    if (!estudiante.matriculaId) {
+      this.toastService.warning('No se encontró el identificador de matrícula para este estudiante.');
+      return;
+    }
+    const cleanName = `${estudiante.nombres}_${estudiante.apellidos}`.replace(/[^a-zA-Z0-9_-]/g, '_');
+    const filename = `ficha-matricula-${cleanName}.pdf`;
+    this.toastService.info('Generando ficha consolidada en PDF...');
+    
+    this.matriculaService.descargarPdfMatricula(estudiante.matriculaId).subscribe({
+      next: (blob) => {
+        this.matriculaService.guardarArchivoPdf(blob, filename);
+        this.toastService.success('Ficha de matrícula descargada con éxito.');
+      },
+      error: (err) => {
+        console.error('Error al descargar ficha de matrícula:', err);
+        this.toastService.error('Error al descargar la ficha: ' + (err.error?.message || err.message || 'Error del servidor'));
+      }
+    });
   }
 
   goBack(): void {

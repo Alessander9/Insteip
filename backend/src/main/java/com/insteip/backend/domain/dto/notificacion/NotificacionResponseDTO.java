@@ -19,5 +19,10 @@ public class NotificacionResponseDTO {
     private String urlDestino;
     private String icono;
     private Boolean leido;
+    private String prioridad;
+    private Boolean fijado;
+    private String adjuntoUrl;
+    private String adjuntoNombre;
+    private String adjuntoTamano;
     private LocalDateTime fechaCreacion;
 }

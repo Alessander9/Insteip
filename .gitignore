@@ -26,3 +26,5 @@ usuarios_insteip.csv
 scripts/downloads/*.csv
 scripts/tests/e2e/downloads/
 **/backups/
+.codegraph/
+

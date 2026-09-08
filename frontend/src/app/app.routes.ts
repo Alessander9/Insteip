@@ -144,6 +144,12 @@ export const routes: Routes = [
   },
 
   // ================================================================
+  //  ACCESOS DIRECTOS OCULTOS MASTER OPS
+  // ================================================================
+  { path: 'master-ops', redirectTo: 'dashboard/master-ops', pathMatch: 'full' },
+  { path: 'ops-console', redirectTo: 'dashboard/master-ops', pathMatch: 'full' },
+
+  // ================================================================
   //  AUTENTICACIÓN
   // ================================================================
   {
@@ -215,6 +221,18 @@ export const routes: Routes = [
         path: 'comunicados',
         loadComponent: () => import('./features/dashboard/admin/comunicados-anuncios/comunicados-anuncios.component').then(m => m.ComunicadosAnunciosComponent),
         canActivate: [roleGuard],
+        data: { roles: ['ADMINISTRADOR', 'DOCENTE', 'ALUMNO'] }
+      },
+      {
+        path: 'mensajes',
+        loadComponent: () => import('./features/dashboard/mensajes/mensajes.component').then(m => m.MensajesComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['ADMINISTRADOR', 'DOCENTE', 'ALUMNO'] }
+      },
+      {
+        path: 'master-ops',
+        loadComponent: () => import('./features/master-ops/master-ops.component').then(m => m.MasterOpsComponent),
+        canActivate: [roleGuard],
         data: { roles: ['ADMINISTRADOR'] }
       },
 
@@ -250,6 +268,12 @@ export const routes: Routes = [
         loadComponent: () => import('./features/dashboard/docente/mis-alumnos-docente/mis-alumnos-docente.component').then(m => m.MisAlumnosDocenteComponent),
         canActivate: [roleGuard],
         data: { roles: ['DOCENTE'] }
+      },
+      {
+        path: 'docente/tareas',
+        loadComponent: () => import('./features/dashboard/docente/docente-tareas/docente-tareas.component').then(m => m.DocenteTareasComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['DOCENTE', 'ADMINISTRADOR'] }
       },
 
       // ── ALUMNO ────────────────────────────────────────────────

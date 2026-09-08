@@ -298,18 +298,69 @@ body {
 }
 
 /* ====================================================================
-   SCROLLBAR (Dark Mode)
+   GLOBAL SCROLLBAR (Ultra-modern custom styling for all elements)
    ==================================================================== */
-.dark ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
 }
-.dark ::-webkit-scrollbar-track { background: #0f172a; }
+
+html.dark *,
+.dark * {
+  scrollbar-color: #334155 transparent;
+}
+
+/* Chrome, Edge, Safari, WebKit */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+  border: 1.5px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #64748b;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Dark Mode WebKit */
+html.dark ::-webkit-scrollbar-thumb,
 .dark ::-webkit-scrollbar-thumb {
   background: #334155;
-  border-radius: 9999px;
+  border: 1.5px solid transparent;
+  background-clip: padding-box;
 }
-.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+html.dark ::-webkit-scrollbar-thumb:hover,
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+  background-clip: padding-box;
+}
+
+html.dark ::-webkit-scrollbar-thumb:active,
+.dark ::-webkit-scrollbar-thumb:active {
+  background: #64748b;
+  background-clip: padding-box;
+}
 
 /* ====================================================================
    DASHBOARD — Hover en filas de tablas

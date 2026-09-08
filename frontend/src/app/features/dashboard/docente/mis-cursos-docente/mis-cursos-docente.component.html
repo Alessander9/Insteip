@@ -44,17 +44,21 @@
           </div>
         </div>
       </div>
-      <div class="p-6 pt-0 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
-        <div class="grid grid-cols-2 gap-3 mt-4">
-          <button (click)="manageContent(curso.id)" class="py-2 px-3 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5">
+      <div class="p-6 pt-0 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 space-y-2">
+        <div class="grid grid-cols-2 gap-2 mt-4">
+          <button (click)="manageContent(curso.id)" class="py-2 px-3 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
             <span class="material-symbols-outlined text-xs">edit</span>
             <span>Temario</span>
           </button>
-          <button (click)="viewStudents(curso.id)" class="py-2 px-3 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[10px] uppercase tracking-wider border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-1.5">
+          <button (click)="viewStudents(curso.id)" class="py-2 px-3 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[10px] uppercase tracking-wider border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-1.5 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
             <span class="material-symbols-outlined text-xs">group</span>
             <span>Estudiantes</span>
           </button>
         </div>
+        <a [routerLink]="['/dashboard/docente/tareas']" [queryParams]="{ cursoId: curso.id }" class="w-full py-2 px-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/80 font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition-colors">
+          <span class="material-symbols-outlined text-xs">assignment</span>
+          <span>Historial de Tareas</span>
+        </a>
       </div>
     </div>
   </div>

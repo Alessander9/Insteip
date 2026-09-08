@@ -510,6 +510,18 @@
         
         <div *ngIf="activeTab === 'tareas'" class="p-4 sm:p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 animate-in fade-in slide-in-from-top-1 duration-200">
           
+          <!-- Direct Link to Task History -->
+          <div class="mb-4 flex items-center justify-between p-3 border border-indigo-200 dark:border-indigo-900 bg-indigo-50/60 dark:bg-indigo-950/40">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-indigo-600 dark:text-indigo-400 text-sm">history_edu</span>
+              <span class="text-xs font-bold text-slate-800 dark:text-white">Historial y entregas de este curso</span>
+            </div>
+            <a [routerLink]="['/dashboard/mis-tareas']" [queryParams]="{ cursoId: curso.id }" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[10px] uppercase tracking-wider transition-colors shadow-sm">
+              <span>Ver Historial Completo</span>
+              <span class="material-symbols-outlined text-xs">arrow_forward</span>
+            </a>
+          </div>
+
           <!-- Loading skeleton -->
           <div *ngIf="loadingTareas" class="space-y-4">
             <div class="h-20 bg-slate-100 dark:bg-slate-800 animate-pulse"></div>

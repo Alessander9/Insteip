@@ -63,12 +63,15 @@ public class DocenteDashboardServiceImpl implements DocenteDashboardService {
         }
 
         List<Matricula> matriculas = matriculaRepository.findByCursoId(cursoId);
+        List<AvanceCurso> avancesList = avanceCursoRepository.findByCursoId(cursoId);
+        java.util.Map<Long, AvanceCurso> avancesMap = avancesList.stream()
+                .filter(a -> a.getUsuario() != null)
+                .collect(Collectors.toMap(a -> a.getUsuario().getId(), a -> a, (a1, a2) -> a1));
 
         return matriculas.stream()
                 .map(m -> {
                     Usuario estudiante = m.getUsuario();
-                    AvanceCurso avance = avanceCursoRepository.findByUsuarioIdAndCursoId(estudiante.getId(), cursoId).orElse(null);
-                    avance = normalizeAvanceCursoIfNeeded(estudiante, curso, avance);
+                    AvanceCurso avance = avancesMap.get(estudiante.getId());
                     
                     Double porcentaje = avance != null && avance.getPorcentajeAvance() != null 
                             ? avance.getPorcentajeAvance().doubleValue() 
@@ -85,7 +88,8 @@ public class DocenteDashboardServiceImpl implements DocenteDashboardService {
                             estudiante.getCorreo(),
                             porcentaje,
                             completado,
-                            fecha
+                            fecha,
+                            m.getId()
                     );
                 })
                 .collect(Collectors.toList());

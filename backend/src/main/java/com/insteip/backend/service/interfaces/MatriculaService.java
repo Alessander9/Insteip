@@ -7,6 +7,7 @@ import java.util.List;
 public interface MatriculaService {
     MatriculaResponseDTO matricularAlumno(MatriculaRequestDTO dto);
     List<MatriculaResponseDTO> listarMatriculadosPorCurso(Long cursoId);
+    List<MatriculaResponseDTO> listarMatriculadosPorUsuario(Long usuarioId);
     void cambiarEstado(Long matriculaId, Boolean estado);
 
     void eliminar(Long id);

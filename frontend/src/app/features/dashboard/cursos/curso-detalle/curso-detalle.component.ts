@@ -105,6 +105,13 @@ export class CursoDetalleComponent implements OnInit {
   nuevaTareaFechaLimite = '';
   nuevaTareaPermitirReenvio = true;
   isAddingTarea = false;
+  recursosAdjuntosTarea: { tipo: 'link' | 'archivo' | 'imagen'; titulo: string; url: string }[] = [];
+
+  // Formulario rápido para adjuntar recursos a la tarea
+  nuevoRecursoTipo: 'link' | 'archivo' | 'imagen' = 'link';
+  nuevoRecursoTitulo = '';
+  nuevoRecursoUrl = '';
+  isUploadingLocalFile = false;
 
   showEntregasModal = false;
   selectedTarea: TareaResponse | null = null;
@@ -388,15 +395,33 @@ export class CursoDetalleComponent implements OnInit {
     };
 
     this.matriculaService.matricularAlumno(req).subscribe({
-      next: () => {
+      next: (resp) => {
         this.loadMatriculas();
-        this.toastService.success('Alumno matriculado exitosamente en el curso.');
+        this.toastService.success('Alumno matriculado exitosamente. Descargando Ficha Consolidada...');
         this.closeMatriculaModal();
+        if (resp && resp.id) {
+          this.descargarFichaMatricula(resp.id, `${resp.alumnoNombres}_${resp.alumnoApellidos}`);
+        }
       },
       error: (err) => {
         this.isMatriculaSubmitting = false;
         this.matriculaErrorMsg = err.error?.message || 'Error al matricular al alumno.';
         this.toastService.error(this.matriculaErrorMsg);
+      }
+    });
+  }
+
+  descargarFichaMatricula(matriculaId: number, nombreAlumno?: string): void {
+    const filename = `ficha-matricula-${nombreAlumno ? nombreAlumno.replace(/\s+/g, '_') : matriculaId}.pdf`;
+    this.toastService.info('Generando ficha consolidada en PDF...');
+    this.matriculaService.descargarPdfMatricula(matriculaId).subscribe({
+      next: (blob) => {
+        this.matriculaService.guardarArchivoPdf(blob, filename);
+        this.toastService.success('Ficha de matrícula descargada exitosamente.');
+      },
+      error: (err) => {
+        console.error('Error al descargar ficha de matrícula:', err);
+        this.toastService.error('Error al descargar la ficha de matrícula: ' + (err.error?.message || err.message || 'Error del servidor'));
       }
     });
   }
@@ -606,6 +631,75 @@ export class CursoDetalleComponent implements OnInit {
       estado: this.curso.estado
     });
     this.showEditCourseModal = true;
+  }
+
+  setModuloEstado(estado: boolean): void {
+    this.moduloForm.patchValue({ estado });
+  }
+
+  get isModuloEstadoActivo(): boolean {
+    return this.moduloForm.get('estado')?.value === true;
+  }
+
+  setCourseEstado(estado: boolean): void {
+    this.courseForm.patchValue({ estado });
+  }
+
+  get isCourseEstadoActivo(): boolean {
+    return this.courseForm.get('estado')?.value === true;
+  }
+
+  isDraggingCourseCover = false;
+
+  onCourseCoverDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDraggingCourseCover = true;
+  }
+
+  onCourseCoverDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDraggingCourseCover = false;
+  }
+
+  onCourseCoverDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDraggingCourseCover = false;
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      this.processCourseCoverFile(files[0]);
+    }
+  }
+
+  onCourseCoverFileSelected(event: any): void {
+    const file = event.target.files?.[0];
+    if (file) {
+      this.processCourseCoverFile(file);
+    }
+  }
+
+  private processCourseCoverFile(file: File): void {
+    if (!file.type.startsWith('image/')) {
+      this.toastService.warning('Por favor seleccione un archivo de imagen válido (JPG, PNG, WEBP).');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      this.toastService.warning('La imagen no debe superar los 5 MB.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      this.courseForm.patchValue({ imagenPortada: base64 });
+      this.toastService.success('Imagen de portada cargada.');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  clearCourseCoverImage(): void {
+    this.courseForm.patchValue({ imagenPortada: '' });
   }
 
   toggleNivel(id: number): void {
@@ -869,17 +963,100 @@ export class CursoDetalleComponent implements OnInit {
     });
   }
 
-  // --- Tareas Management ---
+  // --- Tareas Management & Attachments ---
+  agregarRecursoManual(): void {
+    if (!this.nuevoRecursoTitulo.trim() || !this.nuevoRecursoUrl.trim()) {
+      this.toastService.warning('Ingresa un título y URL/enlace válido.');
+      return;
+    }
+    this.recursosAdjuntosTarea.push({
+      tipo: this.nuevoRecursoTipo,
+      titulo: this.nuevoRecursoTitulo.trim(),
+      url: this.nuevoRecursoUrl.trim()
+    });
+    this.nuevoRecursoTitulo = '';
+    this.nuevoRecursoUrl = '';
+    this.toastService.info('Recurso adjuntado a la tarea.');
+  }
+
+  onLocalFileSelectedParaTarea(moduloId: number, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    this.isUploadingLocalFile = true;
+
+    this.materialService.subirMaterial(moduloId, `[Adjunto Tarea] ${file.name}`, file).subscribe({
+      next: (mat) => {
+        const isImg = file.type.startsWith('image/');
+        this.recursosAdjuntosTarea.push({
+          tipo: isImg ? 'imagen' : 'archivo',
+          titulo: file.name,
+          url: mat.archivoUrl
+        });
+        this.isUploadingLocalFile = false;
+        this.toastService.success(`Archivo "${file.name}" subido y adjuntado.`);
+        input.value = '';
+      },
+      error: () => {
+        this.toastService.error('Error al subir el archivo local.');
+        this.isUploadingLocalFile = false;
+      }
+    });
+  }
+
+  eliminarRecursoAdjunto(index: number): void {
+    this.recursosAdjuntosTarea.splice(index, 1);
+  }
+
+  private serializarDescripcionTarea(instrucciones: string, recursos: { tipo: 'link' | 'archivo' | 'imagen'; titulo: string; url: string }[]): string {
+    if (recursos.length === 0) return instrucciones;
+    const payload = {
+      instrucciones: instrucciones.trim(),
+      recursos: recursos
+    };
+    return JSON.stringify(payload);
+  }
+
+  parsearDescripcionTarea(rawDesc?: string): { instrucciones: string; recursos: { tipo: 'link' | 'archivo' | 'imagen'; titulo: string; url: string }[] } {
+    if (!rawDesc || !rawDesc.trim()) {
+      return { instrucciones: '', recursos: [] };
+    }
+
+    try {
+      if (rawDesc.trim().startsWith('{') && rawDesc.includes('"recursos"')) {
+        const parsed = JSON.parse(rawDesc);
+        return {
+          instrucciones: parsed.instrucciones || '',
+          recursos: parsed.recursos || []
+        };
+      }
+    } catch {}
+
+    return { instrucciones: rawDesc, recursos: [] };
+  }
+
+  abrirRecursoTarea(recurso: { tipo: string; titulo: string; url: string }): void {
+    if (!recurso.url) return;
+    if (recurso.url.startsWith('http://') || recurso.url.startsWith('https://')) {
+      window.open(recurso.url, '_blank');
+    } else {
+      const fullUrl = `${environment.apiUrl}${recurso.url.startsWith('/') ? '' : '/'}${recurso.url}`;
+      this.archivoProtegidoService.descargar(fullUrl, recurso.titulo);
+    }
+  }
+
   agregarTareaInline(moduloId: number): void {
     if (!this.nuevaTareaTitulo || !this.nuevaTareaTitulo.trim()) {
       this.toastService.warning('Por favor ingrese el título de la tarea.');
       return;
     }
     this.isAddingTarea = true;
+    const descFinal = this.serializarDescripcionTarea(this.nuevaTareaDesc || '', this.recursosAdjuntosTarea);
     const req: TareaRequest = {
       moduloId,
       titulo: this.nuevaTareaTitulo.trim(),
-      descripcion: this.nuevaTareaDesc ? this.nuevaTareaDesc.trim() : undefined,
+      descripcion: descFinal || undefined,
       fechaLimite: this.nuevaTareaFechaLimite ? this.nuevaTareaFechaLimite : undefined,
       permitirReenvio: this.nuevaTareaPermitirReenvio,
       estado: true
@@ -892,6 +1069,9 @@ export class CursoDetalleComponent implements OnInit {
         this.nuevaTareaDesc = '';
         this.nuevaTareaFechaLimite = '';
         this.nuevaTareaPermitirReenvio = true;
+        this.recursosAdjuntosTarea = [];
+        this.nuevoRecursoTitulo = '';
+        this.nuevoRecursoUrl = '';
         this.tareaFormOpenMap[moduloId] = false;
         this.cargarContenidoModulo(moduloId);
         this.toastService.success('Tarea creada exitosamente en el módulo.');

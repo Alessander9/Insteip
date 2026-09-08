@@ -19,6 +19,8 @@ export const securityInterceptor: HttpInterceptorFn = (req, next) => {
     req.url.includes('/api/auth/forgot-password') ||
     req.url.includes('/api/auth/reset-password') ||
     req.url.includes('/api/certificados/validar/') ||
+    req.url.includes('/api/chatbot/') ||
+    req.url.includes('/api/anuncios-modal/activo') ||
     req.url.includes('/actuator/');
 
   // /api/auth/me y cualquier otra ruta SÍ necesitan el token

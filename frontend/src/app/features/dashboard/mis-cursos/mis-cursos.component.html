@@ -29,14 +29,40 @@
   <div *ngIf="!isLoading && pagedCursos.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
     <div *ngFor="let curso of pagedCursos" class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col justify-between overflow-hidden shadow-[4px_4px_0px_0px_rgba(15,23,42,0.04)]">
       <div>
+        <!-- Preventative Expiration Alert Banners (30 and 7 days) -->
+        <div *ngIf="curso.alertaExpiracion === 'URGENTE_7_DIAS'" class="bg-red-600 text-white px-3 py-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider animate-pulse">
+          <span class="material-symbols-outlined text-sm shrink-0">notification_important</span>
+          <span class="truncate">¡Urgente! Vence en {{ curso.diasRestantes }} días ({{ curso.fechaExpiracion | date:'dd/MM/yyyy' }})</span>
+        </div>
+        <div *ngIf="curso.alertaExpiracion === 'PROXIMO_30_DIAS'" class="bg-amber-500 text-white px-3 py-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider">
+          <span class="material-symbols-outlined text-sm shrink-0">hourglass_top</span>
+          <span class="truncate">Aviso: Vence en {{ curso.diasRestantes }} días ({{ curso.fechaExpiracion | date:'dd/MM/yyyy' }})</span>
+        </div>
+        <div *ngIf="curso.alertaExpiracion === 'EXPIRADO'" class="bg-slate-800 text-white px-3 py-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider">
+          <span class="material-symbols-outlined text-sm shrink-0">block</span>
+          <span class="truncate">Matrícula expirada el {{ curso.fechaExpiracion | date:'dd/MM/yyyy' }}</span>
+        </div>
+
         <div class="relative h-36 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-800 overflow-hidden">
           <img [src]="curso.imagenPortada || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3'" class="w-full h-full object-cover" alt="Portada Curso">
           <span class="absolute top-3 right-3 text-[9px] font-black uppercase tracking-widest border px-2 py-0.5 bg-white/90 dark:bg-slate-900/90">{{ curso.nivelSuscripcion }}</span>
         </div>
         <div class="p-4">
-          <div class="flex items-center gap-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2">
-            <span class="material-symbols-outlined text-xs">event</span>
-            <span>{{ curso.fechaMatricula | date:'dd/MM/yyyy HH:mm' }}</span>
+          <div class="flex items-center justify-between text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+            <div class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-xs">event</span>
+              <span>{{ curso.fechaMatricula | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <div *ngIf="curso.diasRestantes !== undefined" class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-xs">timer</span>
+              <span [ngClass]="{
+                'text-red-600 dark:text-red-400 font-black': curso.alertaExpiracion === 'URGENTE_7_DIAS' || curso.alertaExpiracion === 'EXPIRADO',
+                'text-amber-600 dark:text-amber-400 font-black': curso.alertaExpiracion === 'PROXIMO_30_DIAS',
+                'text-slate-500': curso.alertaExpiracion === 'OK'
+              }">
+                {{ curso.alertaExpiracion === 'EXPIRADO' ? 'Expirado' : (curso.diasRestantes + 'd vigencia') }}
+              </span>
+            </div>
           </div>
           <h2 class="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight leading-snug line-clamp-1">{{ curso.nombre }}</h2>
           <p class="text-slate-500 dark:text-slate-400 text-xs mt-2 line-clamp-3 leading-relaxed">{{ curso.descripcion }}</p>
@@ -65,15 +91,30 @@
             </div>
           </div>
         </div>
-        <div class="mt-4 grid grid-cols-2 gap-3">
-          <button (click)="continueCourse(curso.id)" class="w-full py-2.5 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
-            <span class="material-symbols-outlined text-sm">play_circle</span>
-            <span>{{ curso.avancePorcentaje > 0 ? 'Continuar' : 'Iniciar' }}</span>
-          </button>
-          <button (click)="verCurso(curso.id)" class="w-full py-2.5 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-            <span class="material-symbols-outlined text-sm">menu_book</span>
-            <span>Ver Curso</span>
-          </button>
+        <div class="mt-4 space-y-2">
+          <div class="grid grid-cols-2 gap-2">
+            <button (click)="continueCourse(curso.id)" class="w-full py-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
+              <span class="material-symbols-outlined text-sm">play_circle</span>
+              <span>{{ curso.avancePorcentaje > 0 ? 'Continuar' : 'Iniciar' }}</span>
+            </button>
+            <button (click)="verCurso(curso.id)" class="w-full py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+              <span class="material-symbols-outlined text-sm">menu_book</span>
+              <span>Ver Curso</span>
+            </button>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button 
+              (click)="descargarMiFicha(curso, $event)" 
+              title="Descargar Ficha Consolidada en PDF"
+              class="w-full py-2 border border-emerald-300 dark:border-emerald-800/80 bg-emerald-50/50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300 font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 hover:bg-emerald-100/70 dark:hover:bg-emerald-900/50 transition-colors">
+              <span class="material-symbols-outlined text-sm text-emerald-600 dark:text-emerald-400">picture_as_pdf</span>
+              <span>Ficha Matrícula</span>
+            </button>
+            <a [routerLink]="['/dashboard/mis-tareas']" [queryParams]="{ cursoId: curso.id }" class="w-full py-2 border border-indigo-200 dark:border-indigo-800/80 bg-indigo-50/50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300 font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 hover:bg-indigo-100/70 dark:hover:bg-indigo-900/50 transition-colors">
+              <span class="material-symbols-outlined text-sm">assignment</span>
+              <span>Mis Tareas</span>
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -191,10 +232,19 @@
         <button (click)="cerrarModal()" class="px-4 py-2 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs uppercase tracking-wider hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
           Cerrar
         </button>
-        <button (click)="irAlCurso(selectedCursoPlay?.id || 0)" class="px-4 py-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs uppercase tracking-wider hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors flex items-center gap-2">
-          <span class="material-symbols-outlined text-sm">play_circle</span>
-          Ir al Curso
-        </button>
+        <div class="flex items-center gap-2">
+          <button 
+            *ngIf="selectedCursoPlay"
+            (click)="descargarMiFicha(selectedCursoPlay)"
+            class="px-4 py-2 border border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 font-bold text-xs uppercase tracking-wider hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm text-emerald-600 dark:text-emerald-400">picture_as_pdf</span>
+            <span>Descargar Ficha PDF</span>
+          </button>
+          <button (click)="irAlCurso(selectedCursoPlay?.id || 0)" class="px-4 py-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs uppercase tracking-wider hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm">play_circle</span>
+            Ir al Curso
+          </button>
+        </div>
       </div>
     </div>
   </div>

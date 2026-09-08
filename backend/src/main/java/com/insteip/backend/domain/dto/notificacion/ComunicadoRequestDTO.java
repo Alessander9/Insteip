@@ -19,6 +19,11 @@ public class ComunicadoRequestDTO {
 
     private String urlDestino;
     private String icono;
+    private String prioridad; // 'INFO', 'AVISO', 'URGENTE', 'PROMO'
+    private Boolean fijado;
+    private String adjuntoUrl;
+    private String adjuntoNombre;
+    private String adjuntoTamano;
 
     // Audiencia: 'TODOS', 'SOLO_ESTUDIANTES', 'SOLO_DOCENTES', 'DOCENTES_Y_ESTUDIANTES', 'POR_CURSO'
     @NotBlank(message = "La audiencia es obligatoria")

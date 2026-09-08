@@ -40,6 +40,7 @@
             <th class="py-4 px-6">Progreso</th>
             <th class="py-4 px-6">Estado</th>
             <th class="py-4 px-6">Última Actividad</th>
+            <th class="py-4 px-6 text-right">Ficha</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
@@ -63,6 +64,15 @@
               </span>
             </td>
             <td class="py-4 px-6 text-slate-400 dark:text-slate-500">{{ estudiante.fechaActualizacion | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="py-4 px-6 text-right">
+              <button 
+                *ngIf="estudiante.matriculaId"
+                (click)="descargarFichaDocente(estudiante)"
+                title="Descargar Ficha Consolidada en PDF"
+                class="p-1.5 border border-indigo-200 dark:border-indigo-900/60 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 rounded-none transition-all shadow-[1px_1px_0px_0px_rgba(0,0,0,0.03)] inline-flex items-center justify-center">
+                <span class="material-symbols-outlined text-base block">picture_as_pdf</span>
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>

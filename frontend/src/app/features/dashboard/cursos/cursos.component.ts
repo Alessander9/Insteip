@@ -8,7 +8,6 @@ import { ReportesService } from '../../../core/services/';
 import { ToastService } from '../../../core/services/';
 import { UsuarioService, DocenteOption } from '../../../core/services/';
 import { ConfirmModalComponent } from '../../../core/components/confirm-modal/confirm-modal.component';
-import { SkeletonLoaderComponent } from '../../../core/components/skeleton-loader/skeleton-loader.component';
 import { getSubscriptionClass, formatNiveles } from '../../../core/utils/';
 
 @Component({
@@ -19,8 +18,7 @@ import { getSubscriptionClass, formatNiveles } from '../../../core/utils/';
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    ConfirmModalComponent,
-    SkeletonLoaderComponent
+    ConfirmModalComponent
   ],
   templateUrl: './cursos.component.html',
   styleUrls: ['./cursos.component.css']
@@ -57,12 +55,23 @@ export class CursosComponent implements OnInit {
     });
   }
 
+  viewMode: 'table' | 'grid' = (localStorage.getItem('cursos_view_mode') as 'table' | 'grid') || 'table';
+
+  setViewMode(mode: 'table' | 'grid'): void {
+    this.viewMode = mode;
+    try {
+      localStorage.setItem('cursos_view_mode', mode);
+    } catch (e) {
+      console.warn('Could not save view mode preference', e);
+    }
+  }
+
   cursos: CursoResponse[] = [];
   filteredCursos: CursoResponse[] = [];
   searchQuery = '';
   dateSortOrder: 'desc' | 'asc' = 'desc';
   currentPage = 1;
-  readonly pageSize = 5;
+  readonly pageSize = 6;
   totalElements = 0;
   totalPagesCount = 1;
   summaryCursos: CursoResponse[] = [];
@@ -101,10 +110,81 @@ export class CursosComponent implements OnInit {
   selectedDocenteId: number | null = null;
   showDocenteDropdown = false;
 
+  // Image upload state
+  imageSourceType: 'file' | 'url' = 'file';
+  selectedFileName = '';
+  selectedFileSize = '';
+  isDraggingFile = false;
+
+  setImageSourceType(type: 'file' | 'url'): void {
+    this.imageSourceType = type;
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      this.processFile(input.files[0]);
+    }
+  }
+
+  onFileDropped(event: DragEvent): void {
+    event.preventDefault();
+    this.isDraggingFile = false;
+    if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
+      this.processFile(event.dataTransfer.files[0]);
+    }
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    this.isDraggingFile = true;
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    this.isDraggingFile = false;
+  }
+
+  private processFile(file: File): void {
+    if (!file.type.startsWith('image/')) {
+      this.toastService.error('Solo se permiten archivos de imagen (.jpg, .png, .webp, .svg, etc.).');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      this.toastService.error('La imagen no debe superar los 5 MB.');
+      return;
+    }
+
+    this.selectedFileName = file.name;
+    this.selectedFileSize = (file.size / 1024).toFixed(1) + ' KB';
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64String = reader.result as string;
+      this.cursoForm.patchValue({ imagenPortada: base64String });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeSelectedImage(): void {
+    this.selectedFileName = '';
+    this.selectedFileSize = '';
+    this.cursoForm.patchValue({ imagenPortada: '' });
+  }
+
+  setEstado(estado: boolean): void {
+    this.cursoForm.patchValue({ estado });
+  }
+
+  get isEstadoActivo(): boolean {
+    return this.cursoForm.get('estado')?.value === true;
+  }
+
   cursoForm: FormGroup = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
     descripcion: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(2000)]],
-    imagenPortada: ['', [Validators.pattern('^https?:\\/\\/.+$')]],
+    imagenPortada: [''],
     docenteId: [null],
     estado: [true]
   });
@@ -234,6 +314,9 @@ export class CursosComponent implements OnInit {
     this.selectedDocenteId = null;
     this.docenteSearch = '';
     this.showDocenteDropdown = false;
+    this.imageSourceType = 'file';
+    this.selectedFileName = '';
+    this.selectedFileSize = '';
     this.cursoForm.reset({
       nombre: '',
       descripcion: '',
@@ -259,6 +342,18 @@ export class CursosComponent implements OnInit {
     this.selectedDocenteId = curso.docenteId || null;
     const docente = this.docentes.find(d => d.id === curso.docenteId);
     this.docenteSearch = docente ? `${docente.nombres} ${docente.apellidos} — ${docente.correo}` : '';
+    
+    this.selectedFileName = '';
+    this.selectedFileSize = '';
+    if (curso.imagenPortada && curso.imagenPortada.startsWith('data:image')) {
+      this.imageSourceType = 'file';
+      this.selectedFileName = 'Imagen cargada en el curso';
+    } else if (curso.imagenPortada && curso.imagenPortada.startsWith('http')) {
+      this.imageSourceType = 'url';
+    } else {
+      this.imageSourceType = 'file';
+    }
+
     this.cursoForm.patchValue({
       nombre: curso.nombre,
       descripcion: curso.descripcion,

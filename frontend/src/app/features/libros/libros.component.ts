@@ -287,6 +287,35 @@ export class LibrosComponent implements OnInit, AfterViewInit, OnDestroy {
         nombre: 'Seminario de Reflexología Online',
         ruta: '/cursos/seminario-reflexologia-online'
       }
+    },
+    {
+      id: 'acupuntura-estetica-facial',
+      titulo: 'Acupuntura Estética Facial y Protocolos Rejuvenecedores',
+      subtitulo: 'Bases, técnicas y aplicaciones para una práctica terapéutica segura y efectiva. Microagujas, tonificación y rejuvenecimiento.',
+      autor: 'Cuerpo Docente en Estética Integral INSTEIP',
+      categoria: 'Acupuntura & MTC',
+      categoriaSlug: 'acupuntura',
+      precioSoles: 55,
+      paginas: 210,
+      anio: 'Edición 2026',
+      formato: 'PDF Digital HD + Fichas Clínicas',
+      portada: 'assets/libroPortada_Acu_Estetica/libro1_1.png',
+      destacado: true,
+      nuevo: true,
+      resumen: 'Obra especializada en protocolos de acupuntura cosmética, dermocosmética china y rejuvenecimiento facial no invasivo. Aborda la inserción de microagujas intradérmicas, lifting facial bioenergético, tratamiento de líneas de expresión, flacidez cutánea, melasma y drenaje linfático con guasha de jade.',
+      capitulos: [
+        'Capítulo I: Anatomía Funcional y Biofísica de la Piel y Fascia Facial',
+        'Capítulo II: Cartografía de Puntos Motores y Puntos de Belleza en el Rostro',
+        'Capítulo III: Protocolo Antienvejecimiento y Lifting con Microagujas Intradérmicas',
+        'Capítulo IV: Manejo de Manchas, Melasma y Ojeras según los Órganos Zang-Fu',
+        'Capítulo V: Sinergia con Guasha de Jade, Rodillos Térmicos y Aceites Esenciales',
+        'Capítulo VI: Normas de Asepsia, Bioseguridad y Consentimiento Informado'
+      ],
+      etiquetas: ['Acupuntura Estética', 'Lifting Facial', 'Rejuvenecimiento', 'Guasha'],
+      cursoRelacionado: {
+        nombre: 'Diplomado en Acupuntura China',
+        ruta: '/cursos/acupuntura-china'
+      }
     }
   ];
 

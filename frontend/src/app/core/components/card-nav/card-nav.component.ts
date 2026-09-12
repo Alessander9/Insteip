@@ -77,13 +77,6 @@ export class CardNavComponent implements OnInit, OnDestroy {
       ]
     },
     {
-      label: 'Libros',
-      route: '/libros',
-      bgColor: '#1e293b',
-      textColor: '#fff',
-      links: []
-    },
-    {
       label: 'Sedes',
       route: '/sedes',
       bgColor: '#1e293b',

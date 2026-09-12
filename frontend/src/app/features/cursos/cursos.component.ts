@@ -205,7 +205,7 @@ export class PublicCursosComponent {
     },
     {
       slug: 'auriculoterapia-presencial',
-      title: 'Auriculoterapia',
+      title: 'Auriculoterapia Presencial',
       category: 'CORTOS',
       modality: 'PRESENCIAL',
       icon: 'hearing',
@@ -247,7 +247,7 @@ export class PublicCursosComponent {
     },
     {
       slug: 'dietetica-presencial',
-      title: 'Dietética',
+      title: 'Dietética y Nutrición Energética',
       category: 'CORTOS',
       modality: 'PRESENCIAL',
       icon: 'nutrition',
@@ -261,7 +261,7 @@ export class PublicCursosComponent {
     },
     {
       slug: 'fitoterapia-presencial',
-      title: 'Fitoterapia',
+      title: 'Fitoterapia y Plantas Medicinales',
       category: 'CORTOS',
       modality: 'PRESENCIAL',
       icon: 'local_pharmacy',
@@ -274,7 +274,7 @@ export class PublicCursosComponent {
       customLink: '/cursos/fitoterapia-presencial'
     },
     {
-      slug: 'aromaterapia-flores-bach-presencial',
+      slug: 'aromaterapia-flores-bach',
       title: 'Aromaterapia y Flores de Bach',
       category: 'CORTOS',
       modality: 'PRESENCIAL',
@@ -286,6 +286,90 @@ export class PublicCursosComponent {
       price: 'S/ 200',
       image: 'assets/curso_aromaterapia_flores_bach.jpg',
       customLink: '/cursos/aromaterapia-flores-bach'
+    },
+    {
+      slug: 'acupuntura-estetica-presencial',
+      title: 'Acupuntura Estética Facial',
+      category: 'CORTOS',
+      modality: 'PRESENCIAL',
+      icon: 'face_retouching_natural',
+      rating: 4.9,
+      duration: '1 mes / Presencial',
+      description: 'Técnicas presenciales de lifting facial bioenergético, microagujas intradérmicas y rejuvenecimiento cutáneo.',
+      students: '+190',
+      price: 'S/ 260/mes',
+      image: 'assets/acupuntura_estetica_virtual.jpg',
+      customLink: '/cursos/acupuntura-estetica-presencial'
+    },
+    {
+      slug: 'moxibustion-ventosas-presencial',
+      title: 'Moxibustión y Ventosaterapia',
+      category: 'CORTOS',
+      modality: 'PRESENCIAL',
+      icon: 'local_fire_department',
+      rating: 4.9,
+      duration: 'Full Day / Presencial',
+      description: 'Taller presencial intensivo de moxibustión directa/indirecta y ventosas de cristal y neumáticas.',
+      students: '+240',
+      price: 'S/ 220',
+      image: 'assets/curso_moxi_index.jpg',
+      customLink: '/cursos/moxibustion-ventosas-presencial'
+    },
+    {
+      slug: 'paralisis-facial-presencial',
+      title: 'Tratamiento de Parálisis Facial',
+      category: 'CORTOS',
+      modality: 'PRESENCIAL',
+      icon: 'neurology',
+      rating: 4.9,
+      duration: '1 mes / Presencial',
+      description: 'Abordaje clínico de la parálisis facial periférica combinando acupuntura, electroestimulación y masaje neuromuscular.',
+      students: '+170',
+      price: 'S/ 240',
+      image: 'assets/paralisis_virtual.jpg',
+      customLink: '/cursos/paralisis-facial-presencial'
+    },
+    {
+      slug: 'reflexologia-podal-presencial',
+      title: 'Reflexología Podal Clínica',
+      category: 'CORTOS',
+      modality: 'PRESENCIAL',
+      icon: 'footprint',
+      rating: 4.8,
+      duration: '1 mes / Presencial',
+      description: 'Cartografía podal completa, maniobras neuroreflejas de presión y secuencias para regulación del estrés.',
+      students: '+210',
+      price: 'S/ 230',
+      image: 'assets/reflexologia_img_curso.jpg',
+      customLink: '/cursos/reflexologia-podal-presencial'
+    },
+    {
+      slug: 'stretching-terapeutico-presencial',
+      title: 'Stretching Terapéutico y Movilidad',
+      category: 'CORTOS',
+      modality: 'PRESENCIAL',
+      icon: 'self_improvement',
+      rating: 4.8,
+      duration: '1 mes / Presencial',
+      description: 'Elongación asistida, descompresión articular y reeducación postural aplicadas a fisioterapia y masaje.',
+      students: '+180',
+      price: 'S/ 200',
+      image: 'assets/stretching_online.jpg',
+      customLink: '/cursos/stretching-terapeutico-presencial'
+    },
+    {
+      slug: 'masaje-terapeutico',
+      title: 'Masaje Terapéutico Integral',
+      category: 'CORTOS',
+      modality: 'PRESENCIAL',
+      icon: 'physical_therapy',
+      rating: 4.9,
+      duration: '2 meses / Presencial',
+      description: 'Técnicas profundas de masaje descontracturante, drenaje y liberación miofascial en camilla clínica.',
+      students: '+350',
+      price: 'S/ 260/mes',
+      image: 'assets/curso_masaje_digitopresion.jpg',
+      customLink: '/cursos/masaje-terapeutico'
     }
   ];
 

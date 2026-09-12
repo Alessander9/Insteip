@@ -164,7 +164,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                     .descripcion("Curso completo de Excel avanzado, macros, tablas dinámicas y análisis de datos.")
                     .imagenPortada("https://images.unsplash.com/photo-1551288049-bebda4e38f71")
                     .nivelesSuscripcion(todos)
-                    .estado(true)
+                    .estado(false)
                     .fechaCreacion(LocalDateTime.now())
                     .build();
             excel = cursoRepository.save(excel);

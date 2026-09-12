@@ -36,7 +36,7 @@ export class MisCursosComponent implements OnInit {
   ngOnInit(): void {
     this.studentService.getEnrolledCursos().subscribe({
       next: (data) => {
-        this.cursos = data;
+        this.cursos = (data || []).filter(c => !c.nombre?.toLowerCase().includes('excel'));
         this.isLoading = false;
       },
       error: (err) => {

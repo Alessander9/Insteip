@@ -50,7 +50,9 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
         Usuario usuario = usuarioRepository.findByCorreo(correo)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
-        List<Matricula> matriculas = matriculaRepository.findByUsuarioIdAndEstadoTrue(usuario.getId());
+        List<Matricula> matriculas = matriculaRepository.findByUsuarioIdAndEstadoTrue(usuario.getId()).stream()
+                .filter(m -> m.getCurso() != null && Boolean.TRUE.equals(m.getCurso().getEstado()) && (m.getCurso().getNombre() == null || !m.getCurso().getNombre().toLowerCase().contains("excel")))
+                .collect(Collectors.toList());
         long totalCursos = matriculas.size();
 
         List<AvanceCurso> allAvances = avanceCursoRepository.findByUsuarioId(usuario.getId());
@@ -83,7 +85,9 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
         Usuario usuario = usuarioRepository.findByCorreo(correo)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
-        List<Matricula> matriculas = matriculaRepository.findByUsuarioIdAndEstadoTrue(usuario.getId());
+        List<Matricula> matriculas = matriculaRepository.findByUsuarioIdAndEstadoTrue(usuario.getId()).stream()
+                .filter(m -> m.getCurso() != null && Boolean.TRUE.equals(m.getCurso().getEstado()) && (m.getCurso().getNombre() == null || !m.getCurso().getNombre().toLowerCase().contains("excel")))
+                .collect(Collectors.toList());
         List<AvanceCurso> allAvances = avanceCursoRepository.findByUsuarioId(usuario.getId());
         java.util.Map<Long, AvanceCurso> avanceMap = allAvances.stream()
                 .filter(a -> a.getCurso() != null)

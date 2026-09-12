@@ -102,10 +102,20 @@ public class AuthServiceImpl implements AuthService {
             }
         }
 
-        // Matricular en lote al usuario EXP en todos los cursos activos que aún no tenga asignados
+        // Matricular en lote al usuario EXP en todos los cursos holísticos activos que aún no tenga asignados
         try {
             List<com.insteip.backend.domain.entity.Matricula> matriculasActuales = matriculaRepository.findByUsuarioId(usuario.getId());
-            java.util.Set<Long> cursoIdsMatriculados = matriculasActuales.stream()
+
+            // Eliminar matrículas no holísticas/de prueba (como Excel Avanzado) si existieran
+            matriculasActuales.stream()
+                    .filter(m -> m.getCurso() != null && m.getCurso().getNombre() != null && m.getCurso().getNombre().toLowerCase().contains("excel"))
+                    .forEach(m -> {
+                        try {
+                            matriculaRepository.delete(m);
+                        } catch (Exception ignored) {}
+                    });
+
+            java.util.Set<Long> cursoIdsMatriculados = matriculaRepository.findByUsuarioId(usuario.getId()).stream()
                     .map(m -> m.getCurso().getId())
                     .collect(java.util.stream.Collectors.toSet());
 
@@ -113,7 +123,10 @@ public class AuthServiceImpl implements AuthService {
             List<com.insteip.backend.domain.entity.Matricula> nuevasMatriculas = new java.util.ArrayList<>();
 
             for (com.insteip.backend.domain.entity.Curso c : cursosActivos) {
-                if (Boolean.TRUE.equals(c.getEstado()) && !cursoIdsMatriculados.contains(c.getId())) {
+                if (Boolean.TRUE.equals(c.getEstado())
+                        && c.getNombre() != null
+                        && !c.getNombre().toLowerCase().contains("excel")
+                        && !cursoIdsMatriculados.contains(c.getId())) {
                     nuevasMatriculas.add(com.insteip.backend.domain.entity.Matricula.builder()
                             .usuario(usuario)
                             .curso(c)

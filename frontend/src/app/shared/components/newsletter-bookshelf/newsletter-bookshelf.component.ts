@@ -27,6 +27,10 @@ export interface NewsletterBookshelfItem {
   author?: string;
   price?: number;
   category?: string;
+  customTextures?: {
+    spread?: string;
+    insideSpread?: string;
+  };
 }
 
 interface BookLayout extends NewsletterBookshelfItem {
@@ -41,16 +45,19 @@ interface BookLayout extends NewsletterBookshelfItem {
 
 interface BookMeshObject {
   group: THREE.Group;
-  mesh: THREE.Mesh;
+  bodyMesh: THREE.Mesh;
+  coverPivotGroup: THREE.Group;
+  coverMesh: THREE.Mesh;
   book: BookLayout;
   index: number;
   textures: {
     cover: THREE.CanvasTexture | null;
     spine: THREE.CanvasTexture | null;
     back: THREE.CanvasTexture | null;
+    insideCover: THREE.CanvasTexture | null;
+    innerPage: THREE.CanvasTexture | null;
     paper: THREE.CanvasTexture | null;
   };
-  geometry: RoundedBoxGeometry;
   focusFlight: {
     startedAt: number;
     position: THREE.Vector3;
@@ -208,12 +215,16 @@ const DEFAULT_INSTEIP_BOOKS: NewsletterBookshelfItem[] = [
     id: 'ed-12',
     title: 'Acupuntura Estética Facial y Protocolos Rejuvenecedores',
     date: 'ESTÉTICA',
-    subtitle: 'Microagujas intradérmicas, mini ventosas y tonificación tisular.',
-    author: 'Docencia Especializada',
-    price: 48,
+    subtitle: 'Bases, técnicas y aplicaciones para una práctica terapéutica segura y efectiva. Microagujas, tonificación y rejuvenecimiento.',
+    author: 'Cuerpo Docente en Estética INSTEIP',
+    price: 55,
     category: 'Estética Integral',
-    color: '#0066aa',
-    foil: '#f2ead8'
+    color: '#0a3d74',
+    foil: '#dfb76c',
+    customTextures: {
+      spread: 'assets/libroPortada_Acu_Estetica/libro1_4.png',
+      insideSpread: 'assets/libroPortada_Acu_Estetica/libro1_3.png'
+    }
   }
 ];
 
@@ -475,130 +486,344 @@ function paperTexture(book: BookLayout) {
   return texture;
 }
 
-function coverTexture(book: BookLayout, brand: string, face: 'cover' | 'spine' | 'back') {
+function createCroppedTexture(
+  imageSrc: string,
+  targetWidth: number,
+  targetHeight: number,
+  cropRatio: { sx: number; sy: number; sw: number; sh: number },
+  fallbackDraw: (ctx: CanvasRenderingContext2D) => void
+): THREE.CanvasTexture | null {
   if (typeof document === 'undefined') return null;
   const canvas = document.createElement('canvas');
-  canvas.width = (face === 'cover' || face === 'back') ? 512 : 112;
-  canvas.height = 768;
+  canvas.width = targetWidth;
+  canvas.height = targetHeight;
   const context = canvas.getContext('2d');
   if (!context) return null;
 
-  context.fillStyle = book.color;
-  context.fillRect(0, 0, canvas.width, canvas.height);
-  addTexture(context, canvas.width, canvas.height, hash(`${book.id}-${face}-noise`));
-  drawClothWeave(context, canvas.width, canvas.height, hash(`${book.id}-${face}-weave`));
+  // Draw procedural fallback immediately so 3D model is never blank
+  fallbackDraw(context);
 
-  context.fillStyle = book.foil;
-  context.strokeStyle = book.foil;
-  context.textBaseline = 'top';
-  context.shadowColor = 'rgba(0, 0, 0, .3)';
-  context.shadowBlur = 1.4;
-  context.shadowOffsetX = 0.8;
-  context.shadowOffsetY = 1.1;
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 8;
+  texture.needsUpdate = true;
 
-  if (face === 'cover') {
-    const margin = 52;
-    context.font = '600 20px ui-monospace, SFMono-Regular, monospace';
-    context.fillText(book.date, margin, 54);
+  // Load custom image and replace texture once loaded
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    const sx = Math.floor(img.naturalWidth * cropRatio.sx);
+    const sy = Math.floor(img.naturalHeight * cropRatio.sy);
+    const sw = Math.floor(img.naturalWidth * cropRatio.sw);
+    const sh = Math.floor(img.naturalHeight * cropRatio.sh);
 
-    context.font = '700 48px Georgia, serif';
-    const words = book.title.split(/\s+/);
-    const lines: string[] = [];
-    let line = '';
-    for (const word of words) {
-      const next = line ? `${line} ${word}` : word;
-      if (context.measureText(next).width < canvas.width - margin * 2 || !line) {
-        line = next;
-      } else {
-        lines.push(line);
-        line = word;
+    context.clearRect(0, 0, targetWidth, targetHeight);
+    context.drawImage(img, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
+    texture.needsUpdate = true;
+  };
+  img.src = imageSrc;
+
+  return texture;
+}
+
+function coverTexture(book: BookLayout, brand: string, face: 'cover' | 'spine' | 'back') {
+  if (typeof document === 'undefined') return null;
+
+  const targetWidth = (face === 'cover' || face === 'back') ? 512 : 112;
+  const targetHeight = 768;
+
+  const drawProcedural = (context: CanvasRenderingContext2D) => {
+    context.fillStyle = book.color;
+    context.fillRect(0, 0, targetWidth, targetHeight);
+    addTexture(context, targetWidth, targetHeight, hash(`${book.id}-${face}-noise`));
+    drawClothWeave(context, targetWidth, targetHeight, hash(`${book.id}-${face}-weave`));
+
+    context.fillStyle = book.foil;
+    context.strokeStyle = book.foil;
+    context.textBaseline = 'top';
+    context.shadowColor = 'rgba(0, 0, 0, .3)';
+    context.shadowBlur = 1.4;
+    context.shadowOffsetX = 0.8;
+    context.shadowOffsetY = 1.1;
+
+    if (face === 'cover') {
+      const margin = 52;
+      context.font = '600 20px ui-monospace, SFMono-Regular, monospace';
+      context.fillText(book.date, margin, 54);
+
+      context.font = '700 48px Georgia, serif';
+      const words = book.title.split(/\s+/);
+      const lines: string[] = [];
+      let line = '';
+      for (const word of words) {
+        const next = line ? `${line} ${word}` : word;
+        if (context.measureText(next).width < targetWidth - margin * 2 || !line) {
+          line = next;
+        } else {
+          lines.push(line);
+          line = word;
+        }
       }
+      if (line) lines.push(line);
+
+      lines.slice(0, 5).forEach((text, index) => context.fillText(text, margin, 150 + index * 56));
+      context.fillRect(margin, 150 + Math.min(lines.length, 5) * 56 + 18, 80, 4);
+
+      drawMotif(context, book.motif, 310, 490, 130, book.foil);
+
+      context.font = '700 18px ui-monospace, SFMono-Regular, monospace';
+      context.fillText(brand.toUpperCase(), margin, 680);
+    } else if (face === 'back') {
+      const margin = 48;
+      context.strokeStyle = book.foil;
+      context.lineWidth = 2;
+      context.strokeRect(28, 28, targetWidth - 56, targetHeight - 56);
+      context.lineWidth = 1;
+      context.strokeRect(34, 34, targetWidth - 68, targetHeight - 68);
+
+      drawMotif(context, book.motif, targetWidth / 2 - 35, 55, 70, book.foil);
+
+      context.font = '700 20px Georgia, serif';
+      context.fillText('INSTEIP · EDICIÓN OFICIAL', margin, 150);
+      context.fillRect(margin, 178, 55, 2.5);
+
+      context.font = '500 15px Georgia, serif';
+      const summary = book.subtitle || 'Guía y manual formativo desarrollado por el cuerpo docente del Instituto Superior de Terapias Integrales INSTEIP.';
+      const words = summary.split(/\s+/);
+      const lines: string[] = [];
+      let line = '';
+      for (const word of words) {
+        const next = line ? `${line} ${word}` : word;
+        if (context.measureText(next).width < targetWidth - margin * 2 || !line) {
+          line = next;
+        } else {
+          lines.push(line);
+          line = word;
+        }
+      }
+      if (line) lines.push(line);
+      lines.slice(0, 5).forEach((text, index) => context.fillText(text, margin, 205 + index * 28));
+
+      context.font = '700 13px ui-monospace, SFMono-Regular, monospace';
+      context.fillText('FONDO EDITORIAL INSTEIP', margin, 420);
+      context.font = '500 11px ui-monospace, SFMono-Regular, monospace';
+      context.fillText(`ISBN: 978-612-48${Math.abs(hash(book.id)).toString().slice(0, 5)}-01`, margin, 442);
+      context.fillText('LIMA, PERÚ · DERECHOS RESERVADOS', margin, 460);
+
+      context.fillStyle = book.foil;
+      for (let bx = margin; bx < targetWidth - margin; bx += 4) {
+        if ((hash(`${bx}-${book.id}`) % 6) !== 0) {
+          context.fillRect(bx, 500, (bx % 3 === 0 ? 2.5 : 1.5), 44);
+        }
+      }
+      context.font = '600 11px ui-monospace, SFMono-Regular, monospace';
+      context.fillText('9 786124 802611', margin + 80, 558);
+
+      context.font = '700 13px ui-monospace, SFMono-Regular, monospace';
+      context.fillText(brand.toUpperCase(), margin, 675);
+    } else {
+      const gradient = context.createLinearGradient(0, 0, targetWidth, 0);
+      gradient.addColorStop(0, 'rgba(0,0,0,.28)');
+      gradient.addColorStop(0.18, 'rgba(0,0,0,0)');
+      gradient.addColorStop(0.82, 'rgba(0,0,0,0)');
+      gradient.addColorStop(1, 'rgba(0,0,0,.28)');
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, targetWidth, targetHeight);
+
+      context.fillStyle = book.foil;
+      context.fillRect(20, 24, targetWidth - 40, 3);
+      context.fillRect(20, 706, targetWidth - 40, 3);
+
+      context.save();
+      context.translate(targetWidth / 2, 54);
+      context.rotate(Math.PI / 2);
+      context.font = '700 34px Georgia, serif';
+      const title = book.title.length > 34 ? `${book.title.slice(0, 32)}…` : book.title;
+      context.fillText(title, 0, 12);
+      context.restore();
+
+      drawMotif(context, book.motif, 28, 626, 56, book.foil);
     }
-    if (line) lines.push(line);
+  };
 
-    lines.slice(0, 5).forEach((text, index) => context.fillText(text, margin, 150 + index * 56));
-    context.fillRect(margin, 150 + Math.min(lines.length, 5) * 56 + 18, 80, 4);
+  if (book.customTextures?.spread) {
+    let cropRatio = { sx: 0.56315, sy: 0.03711, sw: 0.40365, sh: 0.92969 }; // Front cover
+    if (face === 'back') {
+      cropRatio = { sx: 0.03581, sy: 0.04102, sw: 0.39714, sh: 0.92578 }; // Back cover
+    } else if (face === 'spine') {
+      cropRatio = { sx: 0.42969, sy: 0.04102, sw: 0.13542, sh: 0.92578 }; // Spine
+    }
+    return createCroppedTexture(book.customTextures.spread, targetWidth, targetHeight, cropRatio, drawProcedural);
+  }
 
-    drawMotif(context, book.motif, 310, 490, 130, book.foil);
+  const canvas = document.createElement('canvas');
+  canvas.width = targetWidth;
+  canvas.height = targetHeight;
+  const context = canvas.getContext('2d');
+  if (!context) return null;
 
-    context.font = '700 18px ui-monospace, SFMono-Regular, monospace';
-    context.fillText(brand.toUpperCase(), margin, 680);
-  } else if (face === 'back') {
-    const margin = 48;
-    // Decorative gold foil double border
+  drawProcedural(context);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 8;
+  texture.needsUpdate = true;
+  return texture;
+}
+
+function insideCoverTexture(book: BookLayout, brand: string): THREE.CanvasTexture {
+  const targetWidth = 512;
+  const targetHeight = 768;
+
+  const drawProcedural = (context: CanvasRenderingContext2D) => {
+    context.fillStyle = book.color;
+    context.fillRect(0, 0, targetWidth, targetHeight);
+
+    const vignette = context.createRadialGradient(
+      targetWidth / 2, targetHeight / 2, 80,
+      targetWidth / 2, targetHeight / 2, 380
+    );
+    vignette.addColorStop(0, 'rgba(0,0,0,0.15)');
+    vignette.addColorStop(1, 'rgba(0,0,0,0.65)');
+    context.fillStyle = vignette;
+    context.fillRect(0, 0, targetWidth, targetHeight);
+
     context.strokeStyle = book.foil;
     context.lineWidth = 2;
-    context.strokeRect(28, 28, canvas.width - 56, canvas.height - 56);
+    context.strokeRect(30, 30, targetWidth - 60, targetHeight - 60);
     context.lineWidth = 1;
-    context.strokeRect(34, 34, canvas.width - 68, canvas.height - 68);
+    context.strokeRect(36, 36, targetWidth - 72, targetHeight - 72);
 
-    // Decorative top motif
-    drawMotif(context, book.motif, canvas.width / 2 - 35, 55, 70, book.foil);
+    drawMotif(context, book.motif, targetWidth / 2 - 40, targetHeight / 2 - 80, 80, book.foil);
 
-    // Back summary & author credits
-    context.font = '700 20px Georgia, serif';
-    context.fillText('INSTEIP · EDICIÓN OFICIAL', margin, 150);
-    context.fillRect(margin, 178, 55, 2.5);
+    context.fillStyle = book.foil;
+    context.textAlign = 'center';
+    context.font = '700 13px ui-monospace, monospace';
+    context.fillText('FONDO EDITORIAL INSTEIP', targetWidth / 2, targetHeight / 2 + 35);
+    context.font = '500 11px ui-monospace, monospace';
+    context.fillText('BIBLIOTECA DIGITAL DE TERAPIAS INTEGRALES', targetWidth / 2, targetHeight / 2 + 55);
+  };
 
-    context.font = '500 15px Georgia, serif';
-    const summary = book.subtitle || 'Guía y manual formativo desarrollado por el cuerpo docente del Instituto Superior de Terapias Integrales INSTEIP.';
-    const words = summary.split(/\s+/);
-    const lines: string[] = [];
+  if (book.customTextures?.insideSpread) {
+    const cropRatio = { sx: 0.07812, sy: 0.02734, sw: 0.41341, sh: 0.92969 }; // Inside flap clean
+    const customTex = createCroppedTexture(book.customTextures.insideSpread, targetWidth, targetHeight, cropRatio, drawProcedural);
+    if (customTex) return customTex;
+  }
+
+  const canvas = document.createElement('canvas');
+  canvas.width = targetWidth;
+  canvas.height = targetHeight;
+  const context = canvas.getContext('2d');
+  if (!context) return new THREE.CanvasTexture(canvas);
+
+  drawProcedural(context);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 8;
+  texture.needsUpdate = true;
+  return texture;
+}
+
+function innerPageTexture(book: BookLayout, brand: string): THREE.CanvasTexture {
+  const targetWidth = 512;
+  const targetHeight = 768;
+
+  const drawProcedural = (context: CanvasRenderingContext2D) => {
+    context.fillStyle = '#f8f4ec';
+    context.fillRect(0, 0, targetWidth, targetHeight);
+
+    const paperGrad = context.createLinearGradient(0, 0, targetWidth, 0);
+    paperGrad.addColorStop(0, 'rgba(0,0,0,0.14)');
+    paperGrad.addColorStop(0.08, 'rgba(0,0,0,0.03)');
+    paperGrad.addColorStop(0.95, 'rgba(0,0,0,0.01)');
+    paperGrad.addColorStop(1, 'rgba(0,0,0,0.08)');
+    context.fillStyle = paperGrad;
+    context.fillRect(0, 0, targetWidth, targetHeight);
+
+    const margin = 48;
+    context.fillStyle = '#0f2744';
+    context.textAlign = 'left';
+
+    context.font = '700 10px ui-monospace, monospace';
+    context.fillText('INSTEIP · EDICIÓN ACADÉMICA CLÍNICA', margin, 60);
+
+    context.strokeStyle = '#005299';
+    context.lineWidth = 1.5;
+    context.beginPath();
+    context.moveTo(margin, 70);
+    context.lineTo(targetWidth - margin, 70);
+    context.stroke();
+
+    context.font = '700 24px Georgia, serif';
+    const words = book.title.split(/\s+/);
     let line = '';
-    for (const word of words) {
-      const next = line ? `${line} ${word}` : word;
-      if (context.measureText(next).width < canvas.width - margin * 2 || !line) {
+    let y = 115;
+    for (const w of words) {
+      const next = line ? `${line} ${w}` : w;
+      if (context.measureText(next).width < targetWidth - margin * 2) {
         line = next;
       } else {
-        lines.push(line);
-        line = word;
+        context.fillText(line, margin, y);
+        y += 30;
+        line = w;
       }
     }
-    if (line) lines.push(line);
-    lines.slice(0, 5).forEach((text, index) => context.fillText(text, margin, 205 + index * 28));
-
-    // Editorial details
-    context.font = '700 13px ui-monospace, SFMono-Regular, monospace';
-    context.fillText('FONDO EDITORIAL INSTEIP', margin, 420);
-    context.font = '500 11px ui-monospace, SFMono-Regular, monospace';
-    context.fillText(`ISBN: 978-612-48${Math.abs(hash(book.id)).toString().slice(0, 5)}-01`, margin, 442);
-    context.fillText('LIMA, PERÚ · DERECHOS RESERVADOS', margin, 460);
-
-    // Barcode Simulation
-    context.fillStyle = book.foil;
-    for (let bx = margin; bx < canvas.width - margin; bx += 4) {
-      if ((hash(`${bx}-${book.id}`) % 6) !== 0) {
-        context.fillRect(bx, 500, (bx % 3 === 0 ? 2.5 : 1.5), 44);
-      }
+    if (line) {
+      context.fillText(line, margin, y);
+      y += 30;
     }
-    context.font = '600 11px ui-monospace, SFMono-Regular, monospace';
-    context.fillText('9 786124 802611', margin + 80, 558);
 
-    context.font = '700 13px ui-monospace, SFMono-Regular, monospace';
-    context.fillText(brand.toUpperCase(), margin, 675);
-  } else {
-    const gradient = context.createLinearGradient(0, 0, canvas.width, 0);
-    gradient.addColorStop(0, 'rgba(0,0,0,.28)');
-    gradient.addColorStop(0.18, 'rgba(0,0,0,0)');
-    gradient.addColorStop(0.82, 'rgba(0,0,0,0)');
-    gradient.addColorStop(1, 'rgba(0,0,0,.28)');
-    context.fillStyle = gradient;
-    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.font = '600 12px Georgia, serif';
+    context.fillStyle = '#005299';
+    context.fillText(`Autor: ${book.author || 'Cuerpo Docente INSTEIP'}`, margin, y + 10);
+    y += 35;
 
-    context.fillStyle = book.foil;
-    context.fillRect(20, 24, canvas.width - 40, 3);
-    context.fillRect(20, 706, canvas.width - 40, 3);
+    context.fillStyle = '#0f2744';
+    context.font = '700 11px ui-monospace, monospace';
+    context.fillText('ÍNDICE GENERAL & PROTOCOLOS', margin, y + 10);
+    y += 24;
 
-    context.save();
-    context.translate(canvas.width / 2, 54);
-    context.rotate(Math.PI / 2);
-    context.font = '700 34px Georgia, serif';
-    const title = book.title.length > 34 ? `${book.title.slice(0, 32)}…` : book.title;
-    context.fillText(title, 0, 12);
-    context.restore();
+    context.font = '500 11.5px Georgia, serif';
+    context.fillStyle = '#334155';
+    const sampleCaps = [
+      '• Cap. I: Fundamentos y Bases Epistemológicas',
+      '• Cap. II: Cartografía y Topografía Anatómica',
+      '• Cap. III: Protocolos de Consulta y Casos Clínicos',
+      '• Cap. IV: Dosificación, Frecuencias y Seguridad',
+      '• Cap. V: Fichas de Evaluación Práctica'
+    ];
+    sampleCaps.forEach((cap, i) => {
+      context.fillText(cap, margin, y + 10 + i * 22);
+    });
 
-    drawMotif(context, book.motif, 28, 626, 56, book.foil);
+    context.strokeStyle = '#cbd5e1';
+    context.lineWidth = 1;
+    context.beginPath();
+    context.moveTo(margin, 650);
+    context.lineTo(targetWidth - margin, 650);
+    context.stroke();
+
+    context.font = '600 9px ui-monospace, monospace';
+    context.fillStyle = '#64748b';
+    context.fillText('FONDO EDITORIAL INSTEIP · LIMA, PERÚ', margin, 668);
+    context.textAlign = 'right';
+    context.fillText('Pág. 1', targetWidth - margin, 668);
+  };
+
+  if (book.customTextures?.insideSpread) {
+    const cropRatio = { sx: 0.52734, sy: 0.06641, sw: 0.40690, sh: 0.85938 }; // Inner page pure parchment
+    const customTex = createCroppedTexture(book.customTextures.insideSpread, targetWidth, targetHeight, cropRatio, drawProcedural);
+    if (customTex) return customTex;
   }
+
+  const canvas = document.createElement('canvas');
+  canvas.width = targetWidth;
+  canvas.height = targetHeight;
+  const context = canvas.getContext('2d');
+  if (!context) return new THREE.CanvasTexture(canvas);
+
+  drawProcedural(context);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -741,12 +966,26 @@ function easeInOutCubic(progress: number) {
             </button>
           </div>
 
+          <!-- Open / Close 3D Cover Toggle Button -->
+          <button
+            type="button"
+            (click)="toggleCover()"
+            class="px-3 py-1.5 rounded-xl font-mono text-xs font-bold uppercase tracking-wider shadow-lg flex items-center gap-1.5 transition-all"
+            [ngClass]="isCoverOpen
+              ? 'bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-amber-500/20'
+              : 'bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-cyan-500/25'"
+            title="Abrir o cerrar la portada del libro en 3D">
+            <span class="material-symbols-outlined text-sm">{{ isCoverOpen ? 'menu_book' : 'auto_stories' }}</span>
+            <span>{{ isCoverOpen ? 'Cerrar Portada' : 'Abrir Portada' }}</span>
+          </button>
+
           <button
             type="button"
             (click)="openBook(selectedIndex!)"
-            class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-mono text-xs font-bold uppercase tracking-wider shadow-lg flex items-center gap-1.5 transition-all">
+            class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all"
+            title="Abrir ficha detallada completa">
             <span class="material-symbols-outlined text-sm">visibility</span>
-            <span>Ver Ficha</span>
+            <span class="hidden sm:inline">Ver Ficha</span>
           </button>
           <button
             type="button"
@@ -755,6 +994,100 @@ function easeInOutCubic(progress: number) {
             title="Cerrar vista 3D">
             <span class="material-symbols-outlined text-base block">close</span>
           </button>
+        </div>
+
+      </div>
+
+      <!-- Side Sheet / Ficha Técnica Panel (Synchronized with 3D Cover Opening) -->
+      <div
+        *ngIf="isCoverOpen && selectedBook"
+        class="absolute right-3 sm:right-6 top-14 bottom-16 w-[310px] sm:w-[370px] bg-slate-950/95 backdrop-blur-xl border border-cyan-500/40 rounded-3xl p-5 shadow-2xl shadow-cyan-950/30 overflow-y-auto flex flex-col justify-between space-y-3.5 z-20 animate-slide-in-right pointer-events-auto">
+        
+        <div class="space-y-3">
+          <!-- Header badge & Close Button -->
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 font-mono text-[9px] font-bold uppercase tracking-wider">
+              <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+              PORTADA ABIERTA · FICHA TÉCNICA
+            </span>
+            <button
+              type="button"
+              (click)="toggleCover()"
+              class="w-7 h-7 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition-colors"
+              title="Cerrar Portada">
+              <span class="material-symbols-outlined text-sm">close</span>
+            </button>
+          </div>
+
+          <!-- Title & Author -->
+          <div class="space-y-1">
+            <span class="text-[9px] font-mono text-cyan-400 uppercase tracking-wider font-bold">
+              {{ selectedBook.category || 'Medicina Tradicional China' }}
+            </span>
+            <h3 class="text-base font-extrabold text-white leading-snug">
+              {{ selectedBook.title }}
+            </h3>
+            <p class="text-xs text-slate-400 font-medium">
+              Autor: <strong class="text-slate-200">{{ selectedBook.author || 'Equipo de Especialistas INSTEIP' }}</strong>
+            </p>
+          </div>
+
+          <!-- Synopsis -->
+          <div class="space-y-1">
+            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider font-bold">📖 Sinopsis</span>
+            <p class="text-[11px] text-slate-300 leading-relaxed max-h-24 overflow-y-auto pr-1">
+              {{ selectedBook.subtitle || 'Obra clínica de referencia formativa para terapeutas y alumnos, con protocolos prácticos, esquemas y tablas de aplicación inmediata.' }}
+            </p>
+          </div>
+
+          <!-- Quick Specs -->
+          <div class="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-[10px] font-mono text-slate-300">
+            <div>
+              <span class="text-slate-500 block">FORMATO:</span>
+              <strong class="text-cyan-300">PDF Digital HD</strong>
+            </div>
+            <div>
+              <span class="text-slate-500 block">EDITORIAL:</span>
+              <strong class="text-cyan-300">INSTEIP Perú</strong>
+            </div>
+          </div>
+
+          <!-- Table of Contents Preview -->
+          <div class="space-y-1">
+            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider font-bold">📑 Contenido & Índice</span>
+            <div class="space-y-1 text-[10.5px] text-slate-300 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80">
+              <div class="flex items-start gap-1.5"><span class="text-cyan-400">✓</span> Cap. I: Fundamentos y Bases Teóricas</div>
+              <div class="flex items-start gap-1.5"><span class="text-cyan-400">✓</span> Cap. II: Topografía y Puntos Clínicos</div>
+              <div class="flex items-start gap-1.5"><span class="text-cyan-400">✓</span> Cap. III: Protocolos Terapéuticos y Fichas</div>
+              <div class="flex items-start gap-1.5"><span class="text-cyan-400">✓</span> Cap. IV: Casos Clínicos y Dosificación</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Pricing & CTAs -->
+        <div class="pt-2 border-t border-slate-800 space-y-2">
+          <div class="flex items-baseline justify-between">
+            <span class="text-[10px] font-mono text-slate-400 uppercase">Inversión:</span>
+            <span class="text-xl font-black text-cyan-300 font-mono">S/ {{ selectedBook.price || 50 }}</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <a
+              [href]="getWhatsAppLink(selectedBook)"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-mono text-xs font-bold uppercase tracking-wider text-center flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-950/20 transition-all">
+              <span class="material-symbols-outlined text-sm">chat</span>
+              <span>Comprar WhatsApp</span>
+            </a>
+            <button
+              type="button"
+              (click)="openBook(selectedIndex!)"
+              class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-mono text-xs font-bold uppercase tracking-wider transition-colors"
+              title="Abrir ficha completa en modal">
+              <span class="material-symbols-outlined text-sm block">open_in_new</span>
+            </button>
+          </div>
         </div>
 
       </div>
@@ -775,6 +1108,13 @@ function easeInOutCubic(progress: number) {
     }
     .animate-fade-in {
       animation: fadeIn 0.25s ease forwards;
+    }
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(35px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .animate-slide-in-right {
+      animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
   `]
 })
@@ -857,7 +1197,8 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
     this.resizeObserver?.disconnect();
 
     this.bookObjects.forEach((b) => {
-      b.geometry.dispose();
+      b.bodyMesh.geometry.dispose();
+      b.coverMesh.geometry.dispose();
       Object.values(b.textures).forEach((t) => t?.dispose());
     });
 
@@ -942,17 +1283,25 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 
     // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.6);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.9);
     this.scene.add(ambientLight);
 
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0xd7dce8, 1.3);
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0xd0dae8, 1.5);
     this.scene.add(hemiLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 2.4);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 2.5);
     dirLight.position.set(5, 8, 7);
     this.scene.add(dirLight);
 
-    // Build 3D Books
+    const dirLightBack = new THREE.DirectionalLight(0xffffff, 1.4);
+    dirLightBack.position.set(-6, 4, -7);
+    this.scene.add(dirLightBack);
+
+    const topLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    topLight.position.set(0, 10, 0);
+    this.scene.add(topLight);
+
+    // Build 3D Books with Hinged Cover Structure
     this.books.forEach((book, index) => {
       const group = new THREE.Group();
       group.position.set(book.x, book.bookHeight / 2, 0);
@@ -961,26 +1310,30 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
         cover: coverTexture(book, this.brand, 'cover'),
         spine: coverTexture(book, this.brand, 'spine'),
         back: coverTexture(book, this.brand, 'back'),
+        insideCover: insideCoverTexture(book, this.brand),
+        innerPage: innerPageTexture(book, this.brand),
         paper: paperTexture(book)
       };
 
-      const geometry = new RoundedBoxGeometry(
-        book.width,
+      const coverThickness = 0.038;
+      const bodyWidth = Math.max(0.08, book.width - coverThickness);
+
+      // Body Geometry: block of pages + back cover + spine + inner page
+      const bodyGeometry = new RoundedBoxGeometry(
+        bodyWidth,
         book.bookHeight,
         book.depth,
         2,
-        Math.min(book.width, 0.09)
+        0.006
       );
 
-      const materials: THREE.Material[] = [
+      const bodyMaterials: THREE.Material[] = [
         new THREE.MeshStandardMaterial({
-          map: textures.cover ?? undefined,
-          color: textures.cover ? 0xffffff : book.color,
-          roughness: 0.8,
-          metalness: 0.015,
-          bumpMap: textures.cover ?? undefined,
-          bumpScale: 0.007
-        }),
+          map: textures.innerPage ?? undefined,
+          roughness: 0.92,
+          bumpMap: textures.innerPage ?? undefined,
+          bumpScale: 0.005
+        }), // +X: First inner page revealed when cover opens!
         new THREE.MeshStandardMaterial({
           map: textures.back ?? undefined,
           color: textures.back ? 0xffffff : book.color,
@@ -988,21 +1341,21 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
           metalness: 0.015,
           bumpMap: textures.back ?? undefined,
           bumpScale: 0.007
-        }),
+        }), // -X: Back Cover
         new THREE.MeshStandardMaterial({
           map: textures.paper ?? undefined,
           color: textures.paper ? 0xf1eadc : 0xe9e4d8,
           roughness: 0.93,
           bumpMap: textures.paper ?? undefined,
           bumpScale: 0.008
-        }),
+        }), // +Y: Top Paper
         new THREE.MeshStandardMaterial({
           map: textures.paper ?? undefined,
           color: textures.paper ? 0xece3d3 : 0xddd7ca,
           roughness: 0.96,
           bumpMap: textures.paper ?? undefined,
           bumpScale: 0.006
-        }),
+        }), // -Y: Bottom Paper
         new THREE.MeshStandardMaterial({
           map: textures.spine ?? undefined,
           color: textures.spine ? 0xffffff : book.color,
@@ -1010,28 +1363,77 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
           metalness: 0.015,
           bumpMap: textures.spine ?? undefined,
           bumpScale: 0.007
-        }),
+        }), // +Z: Spine
         new THREE.MeshStandardMaterial({
           map: textures.paper ?? undefined,
           color: textures.paper ? 0xf3eadc : 0xe6e0d4,
           roughness: 0.94,
           bumpMap: textures.paper ?? undefined,
           bumpScale: 0.007
-        })
+        }) // -Z: Fore-edge Paper
       ];
 
-      const mesh = new THREE.Mesh(geometry, materials);
-      mesh.userData = { bookIndex: index };
-      group.add(mesh);
+      const bodyMesh = new THREE.Mesh(bodyGeometry, bodyMaterials);
+      bodyMesh.position.set(-coverThickness / 2, 0, 0);
+      bodyMesh.userData = { bookIndex: index };
+      group.add(bodyMesh);
+
+      // Hinged Front Cover Pivot Group (pivot on spine edge: X = +book.width/2 - coverThickness/2, Z = +book.depth/2)
+      const coverPivotGroup = new THREE.Group();
+      coverPivotGroup.position.set(book.width / 2 - coverThickness / 2, 0, book.depth / 2);
+
+      const coverGeometry = new RoundedBoxGeometry(
+        coverThickness,
+        book.bookHeight,
+        book.depth,
+        2,
+        0.006
+      );
+
+      const coverEdgeColor = book.customTextures ? '#083c74' : book.color;
+      const clothMat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(coverEdgeColor),
+        roughness: 0.5,
+        metalness: 0.05
+      });
+
+      const coverMaterials: THREE.Material[] = [
+        new THREE.MeshStandardMaterial({
+          map: textures.cover ?? undefined,
+          color: textures.cover ? 0xffffff : book.color,
+          roughness: 0.8,
+          metalness: 0.015,
+          bumpMap: textures.cover ?? undefined,
+          bumpScale: 0.007
+        }), // +X: Front Cover Outside
+        new THREE.MeshStandardMaterial({
+          map: textures.insideCover ?? undefined,
+          roughness: 0.82,
+          bumpMap: textures.insideCover ?? undefined,
+          bumpScale: 0.006
+        }), // -X: Inside Cover Flap
+        clothMat, // +Y
+        clothMat, // -Y
+        clothMat, // +Z
+        clothMat  // -Z
+      ];
+
+      const coverMesh = new THREE.Mesh(coverGeometry, coverMaterials);
+      coverMesh.position.set(0, 0, -book.depth / 2);
+      coverMesh.userData = { bookIndex: index };
+      coverPivotGroup.add(coverMesh);
+      group.add(coverPivotGroup);
+
       this.scene!.add(group);
 
       this.bookObjects.push({
         group,
-        mesh,
+        bodyMesh,
+        coverPivotGroup,
+        coverMesh,
         book,
         index,
         textures,
-        geometry,
         focusFlight: null,
         exitFlight: null,
         selectedAt: 0,
@@ -1101,9 +1503,14 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
       }
       obj.wasSelected = isSelected;
 
+      // Cover opening rotation
+      const isCoverOpenTarget = (isSelected && this.isCoverOpen);
+      const targetCoverAngle = isCoverOpenTarget ? -Math.PI * 0.76 : 0;
+      obj.coverPivotGroup.rotation.y = damp(obj.coverPivotGroup.rotation.y, targetCoverAngle, 8, delta);
+
       const motion = this.reducedMotion ? 1000 : isSelected ? 7 : 11;
       const selectedFor = (now - obj.selectedAt) / 1000;
-      const autoYaw = isSelected && !this.reducedMotion ? Math.sin(selectedFor * 0.85) * 0.28 : 0;
+      const autoYaw = isSelected && !this.reducedMotion && !this.isCoverOpen ? Math.sin(selectedFor * 0.85) * 0.28 : 0;
       const autoPitch = isSelected && !this.reducedMotion ? Math.sin(selectedFor * 0.55) * 0.04 : 0;
 
       let targetX = obj.book.x;
@@ -1112,19 +1519,21 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
       let targetScale = 1;
 
       if (isSelected) {
-        targetX = this.cameraX.current;
+        const openShift = this.isCoverOpen ? -1.15 : 0;
+        targetX = this.cameraX.current + openShift;
         targetY = 1.95;
-        targetZ = 2.4; // Well clear of shelf, beautifully framed with zoom out
-        targetScale = 0.92;
+        targetZ = this.isCoverOpen ? 2.55 : 2.4; // Well clear of shelf, beautifully framed with zoom out
+        targetScale = this.isCoverOpen ? 0.88 : 0.92;
       } else if (this.selectedIndex !== null) {
         // Part neighboring books away from the inspected book
-        const offset = obj.index < this.selectedIndex ? -1.1 : 1.1;
+        const offset = obj.index < this.selectedIndex ? (this.isCoverOpen ? -1.45 : -1.1) : (this.isCoverOpen ? 1.45 : 1.1);
         targetX = obj.book.x + offset;
         targetScale = 0.88;
         targetZ = 0;
       }
 
-      obj.mesh.renderOrder = isSelected ? 100 : 0;
+      obj.bodyMesh.renderOrder = isSelected ? 100 : 0;
+      obj.coverMesh.renderOrder = isSelected ? 101 : 1;
 
       const targetRotationY = isSelected ? -Math.PI / 2 + this.orbit.yaw + autoYaw : 0;
       const targetRotationX = isSelected ? this.orbit.pitch + autoPitch : 0;
@@ -1171,17 +1580,20 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
         obj.group.position.x = damp(obj.group.position.x, targetX, motion, delta);
         obj.group.position.y = damp(obj.group.position.y, targetY, motion, delta);
         obj.group.position.z = damp(obj.group.position.z, targetZ, motion, delta);
-        obj.group.rotation.y = damp(obj.group.rotation.y, targetRotationY, motion, delta);
         obj.group.rotation.x = damp(obj.group.rotation.x, targetRotationX, motion, delta);
-        const nextScale = damp(obj.group.scale.x, targetScale, motion, delta);
-        obj.group.scale.setScalar(nextScale);
+        obj.group.rotation.y = damp(obj.group.rotation.y, targetRotationY, motion, delta);
+        obj.group.rotation.z = damp(obj.group.rotation.z, 0, motion, delta);
+        const scale = damp(obj.group.scale.x, targetScale, motion, delta);
+        obj.group.scale.setScalar(scale);
       }
     });
   }
 
   // Pointer & Raycasting Events
   onPointerDown(event: PointerEvent): void {
-    if ((event.target as HTMLElement).closest('button, a')) return;
+    const stage = this.stageRef.nativeElement;
+    stage.setPointerCapture(event.pointerId);
+
     this.gesture = {
       mode: 'pending',
       x: event.clientX,
@@ -1189,6 +1601,7 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
       startX: event.clientX,
       startedAt: performance.now()
     };
+    this.suppressClick = false;
   }
 
   onPointerMove(event: PointerEvent): void {
@@ -1206,19 +1619,18 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
       const dx = event.clientX - active.x;
       const dy = event.clientY - active.y;
 
-      if (active.mode === 'pending' && Math.hypot(event.clientX - active.startX, dy) > 6) {
-        active.mode = this.selectedIndex === null ? 'drag' : 'orbit';
-        this.suppressClick = true;
-        stage.setPointerCapture(event.pointerId);
-        this.setHoveredIndex(null);
+      if (active.mode === 'pending') {
+        if (Math.hypot(event.clientX - active.startX, event.clientY - active.y) > 6) {
+          active.mode = this.selectedIndex !== null ? 'orbit' : 'drag';
+          this.suppressClick = true;
+        }
       }
 
-      if (active.mode === 'drag') {
-        this.moveCamera(this.cameraX.current - dx * 0.0085);
-      } else if (active.mode === 'orbit') {
-        // Free 360 degree rotation on Yaw, wide range on Pitch
+      if (active.mode === 'orbit') {
         this.orbit.yaw += dx * 0.012;
         this.orbit.pitch = THREE.MathUtils.clamp(this.orbit.pitch + dy * 0.008, -Math.PI / 2.3, Math.PI / 2.3);
+      } else if (active.mode === 'drag') {
+        this.moveCamera(this.cameraX.current - dx * 0.0085);
       }
 
       active.x = event.clientX;
@@ -1232,7 +1644,7 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
       this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
       this.raycaster.setFromCamera(this.mouse, this.camera);
-      const meshes = this.bookObjects.map((b) => b.mesh);
+      const meshes = this.bookObjects.flatMap((b) => [b.bodyMesh, b.coverMesh]);
       const intersects = this.raycaster.intersectObjects(meshes, false);
 
       if (intersects.length > 0 && this.selectedIndex === null) {
@@ -1267,7 +1679,7 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
         this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
         this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
         this.raycaster.setFromCamera(this.mouse, this.camera);
-        const meshes = this.bookObjects.map((b) => b.mesh);
+        const meshes = this.bookObjects.flatMap((b) => [b.bodyMesh, b.coverMesh]);
         const intersects = this.raycaster.intersectObjects(meshes, false);
 
         if (intersects.length > 0) {
@@ -1310,7 +1722,7 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
     } else if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       if (this.selectedIndex === null) this.selectBookIndex(this.currentIndex);
-      else this.openBook(this.selectedIndex);
+      else this.toggleCover();
     }
   }
 
@@ -1319,6 +1731,20 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
       this.hoveredIndex = index;
       this.cdr.markForCheck();
     }
+  }
+
+  isCoverOpen = false;
+
+  toggleCover(): void {
+    if (this.selectedIndex === null) return;
+    this.isCoverOpen = !this.isCoverOpen;
+    this.cdr.markForCheck();
+  }
+
+  getWhatsAppLink(book: BookLayout | null): string {
+    if (!book) return 'https://wa.me/51939371250';
+    const text = `Hola INSTEIP, deseo adquirir el libro digital "${book.title}" (S/ ${book.price || 50}).`;
+    return `https://wa.me/51939371250?text=${encodeURIComponent(text)}`;
   }
 
   selectBookIndex(index: number): void {
@@ -1332,6 +1758,7 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
       this.moveCamera(this.books[index].x);
       this.setHoveredIndex(null);
       this.selectedIndex = null;
+      this.isCoverOpen = false;
       this.orbit = { yaw: 0, pitch: 0 };
       if (this.switchTimer !== null) clearTimeout(this.switchTimer);
       this.switchTimer = setTimeout(() => {
@@ -1357,6 +1784,7 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
     this.orbit = { yaw: 0, pitch: 0 };
     this.setHoveredIndex(null);
     this.selectedIndex = index;
+    this.isCoverOpen = false;
     this.selectBook.emit({ item: this.books[index], index });
     this.cdr.markForCheck();
   }
@@ -1369,6 +1797,7 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
 
   closeInspection(): void {
     this.selectedIndex = null;
+    this.isCoverOpen = false;
     this.orbit = { yaw: 0, pitch: 0 };
     this.cdr.markForCheck();
   }

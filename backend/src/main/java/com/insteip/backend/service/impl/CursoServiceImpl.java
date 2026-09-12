@@ -1,6 +1,5 @@
 package com.insteip.backend.service.impl;
 
-
 import lombok.RequiredArgsConstructor;
 import com.insteip.backend.domain.dto.curso.CursoRequestDTO;
 import com.insteip.backend.domain.dto.curso.CursoResponseDTO;
@@ -12,6 +11,8 @@ import com.insteip.backend.repository.NivelSuscripcionRepository;
 import com.insteip.backend.domain.entity.Usuario;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.service.interfaces.CursoService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,16 +22,13 @@ import java.util.stream.Collectors;
 public class CursoServiceImpl implements CursoService {
 
     private final CursoRepository cursoRepository;
-
     private final NivelSuscripcionRepository suscripcionRepository;
-
     private final UsuarioRepository usuarioRepository;
-
     private final com.insteip.backend.service.interfaces.AuditoriaService auditoriaService;
-
     private final com.insteip.backend.repository.CertificadoRepository certificadoRepository;
 
     @Override
+    @Cacheable(value = "cursos_catalogo", key = "#search != null ? #search + '_' + #pageable.pageNumber + '_' + #pageable.pageSize : 'all_' + #pageable.pageNumber + '_' + #pageable.pageSize")
     public org.springframework.data.domain.Page<CursoResponseDTO> listarCursos(org.springframework.data.domain.Pageable pageable, String search) {
         org.springframework.data.domain.Page<Curso> cursosPage;
         if (search != null && !search.trim().isEmpty()) {
@@ -42,6 +40,7 @@ public class CursoServiceImpl implements CursoService {
     }
 
     @Override
+    @Cacheable(value = "curso_detalle", key = "#id")
     public CursoResponseDTO obtenerDetalle(Long id) {
         Curso curso = cursoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado con id: " + id));
@@ -49,6 +48,7 @@ public class CursoServiceImpl implements CursoService {
     }
 
     @Override
+    @CacheEvict(value = {"cursos_catalogo", "curso_detalle"}, allEntries = true)
     public CursoResponseDTO crearCurso(CursoRequestDTO dto) {
         List<NivelSuscripcion> subs = dto.nivelesSuscripcionIds().stream()
                 .map(subId -> suscripcionRepository.findById(subId)
@@ -79,6 +79,7 @@ public class CursoServiceImpl implements CursoService {
     }
 
     @Override
+    @CacheEvict(value = {"cursos_catalogo", "curso_detalle"}, allEntries = true)
     public CursoResponseDTO editarCurso(Long id, CursoRequestDTO dto) {
         Curso curso = cursoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado con id: " + id));
@@ -109,6 +110,7 @@ public class CursoServiceImpl implements CursoService {
     }
 
     @Override
+    @CacheEvict(value = {"cursos_catalogo", "curso_detalle"}, allEntries = true)
     public void cambiarEstado(Long id, Boolean estado) {
         Curso curso = cursoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado con id: " + id));
@@ -120,6 +122,7 @@ public class CursoServiceImpl implements CursoService {
 
     @Override
     @org.springframework.transaction.annotation.Transactional
+    @CacheEvict(value = {"cursos_catalogo", "curso_detalle"}, allEntries = true)
     public void eliminar(Long id) {
         Curso curso = cursoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado con id: " + id));

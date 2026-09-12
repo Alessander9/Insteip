@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, shareReplay, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 
@@ -81,16 +81,57 @@ export class AlumnoDashboardService {
   private http = inject(HttpClient);
   private baseApiUrl = environment.apiUrl;
 
-  getMetrics(): Observable<AlumnoMetrics> {
-    return this.http.get<AlumnoMetrics>(`${this.baseApiUrl}/alumno/dashboard`);
+  private metricsCache$: Observable<AlumnoMetrics> | null = null;
+  private enrolledCursosCache$: Observable<AlumnoCurso[]> | null = null;
+  private certificadosCache$: Observable<AlumnoCertificado[]> | null = null;
+  private lastMetricsFetch = 0;
+  private lastCursosFetch = 0;
+  private lastCertificadosFetch = 0;
+  private readonly CACHE_TTL_MS = 60000; // 60 segundos de caché en memoria
+
+  getMetrics(forceRefresh = false): Observable<AlumnoMetrics> {
+    const now = Date.now();
+    if (!forceRefresh && this.metricsCache$ && (now - this.lastMetricsFetch < this.CACHE_TTL_MS)) {
+      return this.metricsCache$;
+    }
+    this.lastMetricsFetch = now;
+    this.metricsCache$ = this.http.get<AlumnoMetrics>(`${this.baseApiUrl}/alumno/dashboard`).pipe(
+      shareReplay({ bufferSize: 1, refCount: false })
+    );
+    return this.metricsCache$;
   }
 
-  getEnrolledCursos(): Observable<AlumnoCurso[]> {
-    return this.http.get<AlumnoCurso[]>(`${this.baseApiUrl}/alumno/cursos`);
+  getEnrolledCursos(forceRefresh = false): Observable<AlumnoCurso[]> {
+    const now = Date.now();
+    if (!forceRefresh && this.enrolledCursosCache$ && (now - this.lastCursosFetch < this.CACHE_TTL_MS)) {
+      return this.enrolledCursosCache$;
+    }
+    this.lastCursosFetch = now;
+    this.enrolledCursosCache$ = this.http.get<AlumnoCurso[]>(`${this.baseApiUrl}/alumno/cursos`).pipe(
+      shareReplay({ bufferSize: 1, refCount: false })
+    );
+    return this.enrolledCursosCache$;
   }
 
-  getCertificados(): Observable<AlumnoCertificado[]> {
-    return this.http.get<AlumnoCertificado[]>(`${this.baseApiUrl}/alumno/certificados`);
+  getCertificados(forceRefresh = false): Observable<AlumnoCertificado[]> {
+    const now = Date.now();
+    if (!forceRefresh && this.certificadosCache$ && (now - this.lastCertificadosFetch < this.CACHE_TTL_MS)) {
+      return this.certificadosCache$;
+    }
+    this.lastCertificadosFetch = now;
+    this.certificadosCache$ = this.http.get<AlumnoCertificado[]>(`${this.baseApiUrl}/alumno/certificados`).pipe(
+      shareReplay({ bufferSize: 1, refCount: false })
+    );
+    return this.certificadosCache$;
+  }
+
+  invalidateCache(): void {
+    this.metricsCache$ = null;
+    this.enrolledCursosCache$ = null;
+    this.certificadosCache$ = null;
+    this.lastMetricsFetch = 0;
+    this.lastCursosFetch = 0;
+    this.lastCertificadosFetch = 0;
   }
 
   getPlayCourse(cursoId: number): Observable<AlumnoPlayCourse> {
@@ -98,7 +139,9 @@ export class AlumnoDashboardService {
   }
 
   guardarProgreso(videoId: number, ultimoSegundo: number, duracionSegundos?: number): Observable<any> {
-    return this.http.post<any>(`${this.baseApiUrl}/avance`, { videoId, ultimoSegundo, duracionSegundos });
+    return this.http.post<any>(`${this.baseApiUrl}/avance`, { videoId, ultimoSegundo, duracionSegundos }).pipe(
+      tap(() => this.invalidateCache())
+    );
   }
 
   obtenerProgreso(videoId: number): Observable<any> {

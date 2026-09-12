@@ -129,6 +129,8 @@ export class CursoDetalleComponent implements OnInit {
   // Matriculas
   matriculas: MatriculaResponse[] = [];
   searchMatriculaQuery = '';
+  matriculaCurrentPage = 1;
+  readonly matriculaPageSize = 10;
 
   get matriculasFiltradas(): MatriculaResponse[] {
     if (!this.searchMatriculaQuery || !this.searchMatriculaQuery.trim()) {
@@ -140,6 +142,31 @@ export class CursoDetalleComponent implements OnInit {
       const correo = (m.alumnoCorreo || '').toLowerCase();
       return nombreCompleto.includes(q) || correo.includes(q);
     });
+  }
+
+  get matriculaTotalPages(): number {
+    return Math.ceil(this.matriculasFiltradas.length / this.matriculaPageSize) || 1;
+  }
+
+  get pagedMatriculas(): MatriculaResponse[] {
+    const start = (this.matriculaCurrentPage - 1) * this.matriculaPageSize;
+    return this.matriculasFiltradas.slice(start, start + this.matriculaPageSize);
+  }
+
+  matriculaPreviousPage(): void {
+    if (this.matriculaCurrentPage > 1) {
+      this.matriculaCurrentPage--;
+    }
+  }
+
+  matriculaNextPage(): void {
+    if (this.matriculaCurrentPage < this.matriculaTotalPages) {
+      this.matriculaCurrentPage++;
+    }
+  }
+
+  onSearchMatriculaChange(): void {
+    this.matriculaCurrentPage = 1;
   }
 
   alumnos: AlumnoResponse[] = [];

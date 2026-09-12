@@ -701,11 +701,12 @@
         <input 
           type="text" 
           [(ngModel)]="searchMatriculaQuery"
+          (ngModelChange)="onSearchMatriculaChange()"
           placeholder="Buscar alumno por nombre, apellido o correo..." 
           class="w-full pl-9 pr-8 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs rounded-none focus:outline-none focus:border-indigo-600 transition-colors">
         <button 
           *ngIf="searchMatriculaQuery" 
-          (click)="searchMatriculaQuery = ''"
+          (click)="searchMatriculaQuery = ''; onSearchMatriculaChange()"
           class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
           <span class="material-symbols-outlined text-sm">close</span>
         </button>
@@ -752,15 +753,15 @@
                 <p class="font-bold text-xs text-slate-700 dark:text-slate-300">Sin coincidencias para "{{ searchMatriculaQuery }}"</p>
                 <p class="text-[10px] text-slate-400 mt-1">Intenta con otro término o limpia el cuadro de búsqueda.</p>
                 <button 
-                  (click)="searchMatriculaQuery = ''" 
+                  (click)="searchMatriculaQuery = ''; onSearchMatriculaChange()" 
                   class="mt-3 px-3 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] font-black uppercase tracking-wider rounded-none">
                   Limpiar búsqueda
                 </button>
               </td>
             </tr>
 
-            <!-- Rows -->
-            <tr *ngFor="let matricula of matriculasFiltradas" class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors duration-200">
+            <!-- Rows (Paged) -->
+            <tr *ngFor="let matricula of pagedMatriculas" class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors duration-200">
               <td class="p-4">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 flex items-center justify-center font-black text-[10px] rounded-none">
@@ -826,11 +827,32 @@
           </tbody>
         </table>
       </div>
-      <!-- Footer -->
-      <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-between transition-colors duration-300">
+
+      <!-- Pagination & Stats Bar -->
+      <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 transition-colors duration-300">
         <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">
           {{ searchMatriculaQuery ? 'Mostrando ' + matriculasFiltradas.length + ' de ' + matriculas.length + ' alumnos inscritos' : 'Total: ' + matriculas.length + ' alumnos inscritos' }}
         </span>
+
+        <div *ngIf="matriculaTotalPages > 1" class="flex items-center gap-3">
+          <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+            Página {{ matriculaCurrentPage }} de {{ matriculaTotalPages }}
+          </span>
+          <div class="flex items-center gap-1.5">
+            <button 
+              (click)="matriculaPreviousPage()" 
+              [disabled]="matriculaCurrentPage === 1" 
+              class="px-3 py-1.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-[10px] font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 disabled:opacity-30 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+              Anterior
+            </button>
+            <button 
+              (click)="matriculaNextPage()" 
+              [disabled]="matriculaCurrentPage === matriculaTotalPages" 
+              class="px-3 py-1.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-[10px] font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 disabled:opacity-30 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+              Siguiente
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

@@ -76,6 +76,12 @@ public class CertificadoController {
     public ResponseEntity<CertificadoResponseDTO> generarCertificado(
             Authentication authentication,
             @PathVariable Long cursoId) {
+        if (authentication != null) {
+            String correoAuth = authentication.getName();
+            if (correoAuth != null && (correoAuth.equalsIgnoreCase("ExperianciaInsteip@insteip.com") || correoAuth.equalsIgnoreCase("ExperienciaInsteip@insteip.com"))) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        }
         Long usuarioId = getUsuarioId(authentication);
         Certificado cert = certificadoService.generarCertificado(usuarioId, cursoId);
         CertificadoResponseDTO response = new CertificadoResponseDTO(
@@ -100,7 +106,13 @@ public class CertificadoController {
 
     @GetMapping("/{id}/download")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ALUMNO')")
-    public ResponseEntity<byte[]> descargarCertificado(@PathVariable Long id) {
+    public ResponseEntity<byte[]> descargarCertificado(@PathVariable Long id, Authentication authentication) {
+        if (authentication != null) {
+            String correoAuth = authentication.getName();
+            if (correoAuth != null && (correoAuth.equalsIgnoreCase("ExperianciaInsteip@insteip.com") || correoAuth.equalsIgnoreCase("ExperienciaInsteip@insteip.com"))) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        }
         Certificado cert = certificadoService.obtenerCertificado(id);
 
         Path basePath = Paths.get(storagePathSetting).toAbsolutePath().normalize().resolve("certificados");

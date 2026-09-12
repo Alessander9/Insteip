@@ -498,7 +498,7 @@ INSERT INTO plantilla_certificado (nombre, imagen_fondo, firma_director, cargo_d
 -- =========================================================================
 INSERT INTO configuracion_institucion (nombre_institucion, logo_url, correo_contacto, telefono, qr_yape, qr_plin, paypal_url) VALUES
 (
-  'INSTEIP - Instituto de Tecnología e Innovación Profesional',
+  'INSTEIP - Instituto de Terapias Integrales',
   'http://localhost:4200/assets/insteip-logo.png',
   'contacto@insteip.com',
   '+51 999 888 777',
@@ -506,3 +506,18 @@ INSERT INTO configuracion_institucion (nombre_institucion, logo_url, correo_cont
   '',
   'https://paypal.me/insteip'
 );
+
+-- =========================================================================
+-- 16. SEED: tareas
+-- =========================================================================
+INSERT INTO tareas (modulo_id, titulo, descripcion, fecha_limite, permitir_reenvio, estado, fecha_creacion) VALUES
+(
+  (SELECT id FROM modulos WHERE nombre = 'Módulo 1' AND curso_id = (SELECT id FROM cursos WHERE nombre = 'Curso de Auriculoterapia') LIMIT 1),
+  'Práctica Evaluativa: Cartografía Auricular y Protocolo de Relajación (Shen Men)',
+  'Realiza la identificación y marcado de los puntos de la zona auricular correspondientes a la Fosa Escafoidea y Concha Cava. Describe el procedimiento de desinfección, aplicación de semillas o microesferas de acupuntura y la pauta de estimulación para el tratamiento del estrés y ansiedad. Sube tu ficha de práctica o registro fotográfico del procedimiento en formato PDF o Word.',
+  CURRENT_TIMESTAMP + INTERVAL '30 days',
+  TRUE,
+  TRUE,
+  CURRENT_TIMESTAMP
+);
+

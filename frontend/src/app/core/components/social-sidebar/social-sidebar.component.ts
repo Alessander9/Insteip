@@ -1,5 +1,6 @@
-import { Component, AfterViewInit, OnDestroy, ElementRef, Renderer2 } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ElementRef, Renderer2, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-social-sidebar',
@@ -48,7 +49,7 @@ export class SocialSidebarComponent implements AfterViewInit, OnDestroy {
     }
   ];
 
-  private readonly HIDDEN_ROUTES = ['/login', '/dashboard'];
+  private readonly HIDDEN_ROUTES = ['/login', '/dashboard', '/exp-final'];
   /** Píxeles mínimos de scroll para considerar mobile (breakpoint ≤767px) */
   private readonly MOBILE_BREAKPOINT = 767;
   /** Umbral mínimo de px scrolleados antes de ejecutar auto-hide en mobile */
@@ -57,6 +58,7 @@ export class SocialSidebarComponent implements AfterViewInit, OnDestroy {
   private sidebarEl: HTMLElement | null = null;
   private listenerAttached = false;
   private resizeListenerAttached = false;
+  private routerSubscription?: import('rxjs').Subscription;
 
   /** true si el viewport actual es mobile */
   private isMobile = false;
@@ -74,17 +76,37 @@ export class SocialSidebarComponent implements AfterViewInit, OnDestroy {
    */
   private wasVisible = false;
 
+  private router = inject(Router);
+
   constructor(
     private elRef: ElementRef,
     private renderer: Renderer2
-  ) {}
+  ) {
+    this.routerSubscription = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.checkRouteAndInit();
+      }
+    });
+  }
 
   ngAfterViewInit(): void {
-    const path = window.location.pathname;
-    if (this.HIDDEN_ROUTES.some(route => path.startsWith(route))) return;
+    this.checkRouteAndInit();
+  }
 
+  private checkRouteAndInit(): void {
+    const path = window.location.pathname;
     this.sidebarEl = this.elRef.nativeElement.querySelector('.sidebar-container');
+    if (this.HIDDEN_ROUTES.some(route => path.startsWith(route))) {
+      if (this.sidebarEl) {
+        this.sidebarEl.style.display = 'none';
+        this.sidebarEl.style.opacity = '0';
+        this.sidebarEl.style.pointerEvents = 'none';
+      }
+      return;
+    }
+
     if (!this.sidebarEl) return;
+    this.sidebarEl.style.display = '';
 
     this.isMobile = window.innerWidth <= this.MOBILE_BREAKPOINT;
     this.lastScrollY = window.scrollY;
@@ -96,6 +118,7 @@ export class SocialSidebarComponent implements AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.listenerAttached = false;
     this.resizeListenerAttached = false;
+    this.routerSubscription?.unsubscribe();
   }
 
   // ─── Listeners ────────────────────────────────────────────────────────────

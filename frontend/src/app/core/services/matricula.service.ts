@@ -2,7 +2,7 @@ import { environment } from '../../../environments/environment';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { MatriculaRequest, MatriculaResponse } from '../models/matricula.model';
+import { MatriculaRequest, MatriculaResponse, ModuloAccesoItem } from '../models/matricula.model';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +29,27 @@ export class MatriculaService {
 
   eliminarMatricula(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  /**
+   * Obtiene la lista de módulos y su estado de acceso para una matrícula
+   */
+  obtenerModulosAcceso(matriculaId: number): Observable<ModuloAccesoItem[]> {
+    return this.http.get<ModuloAccesoItem[]>(`${this.apiUrl}/${matriculaId}/modulos-acceso`);
+  }
+
+  /**
+   * Habilita o bloquea el acceso de un módulo individual para una matrícula
+   */
+  cambiarAccesoModulo(matriculaId: number, moduloId: number, habilitado: boolean): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/${matriculaId}/modulos/${moduloId}/acceso`, { habilitado });
+  }
+
+  /**
+   * Actualiza en masa los módulos habilitados para una matrícula
+   */
+  guardarModulosAccesoMasivo(matriculaId: number, modulosHabilitadosIds: number[]): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${matriculaId}/modulos-acceso`, modulosHabilitadosIds);
   }
 
   /**

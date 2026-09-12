@@ -172,15 +172,34 @@ const COURSE_JSONLD: Record<string, object> = {
       'priceValidUntil': '2026-12-31'
     },
     'educationalCredentialAwarded': 'Certificado en Stretching Terapéutico'
+  },
+  'electroacupuntura': {
+    'name': 'Seminario Virtual de Electroacupuntura Clínica',
+    'description': 'Seminario de 8 horas grabado con teoría aplicada a la práctica con casos reales. Docente: Lic. Lázaro Regalado Ponte.',
+    'duration': 'PT8H',
+    'timeRequired': 'PT8H',
+    'offers': {
+      '@type': 'Offer',
+      'price': '180',
+      'priceCurrency': 'PEN',
+      'availability': 'https://schema.org/InStock',
+      'priceValidUntil': '2026-12-31'
+    },
+    'educationalCredentialAwarded': 'Certificado Oficial en Electroacupuntura Clínica',
+    'audience': {
+      '@type': 'Audience',
+      'audienceType': 'Profesionales de la salud, acupuntores y terapeutas'
+    }
   }
 };
 
-/** Cursos presenciales conocidos para normalización de rutas */
+/** Cursos conocidos para normalización de rutas */
 const KNOWN_COURSES = [
   'acupuntura-china', 'auriculoterapia', 'masaje-terapeutico',
   'reflexologia-podal-presencial', 'paralisis-facial-presencial',
   'moxibustion-ventosas-presencial', 'acupuntura-estetica-presencial',
-  'stretching-terapeutico-presencial', 'acupuntura-china-7-meses'
+  'stretching-terapeutico-presencial', 'acupuntura-china-7-meses',
+  'electroacupuntura', 'electroacupuntura-online'
 ];
 
 /**
@@ -264,6 +283,20 @@ export const ROUTE_SEO: Record<string, SeoData> = {
     ogDescription: 'Técnicas de estiramiento asistido y rehabilitación funcional.',
     keywords: 'stretching terapéutico, estiramiento, rehabilitación, curso presencial'
   },
+  '/cursos/electroacupuntura': {
+    title: 'Electroacupuntura — Curso Virtual | INSTEIP',
+    description: 'Curso virtual de Electroacupuntura Clínica. Aprende parámetros bioeléctricos (Hz), selección de ondas y protocolos de tratamiento en dolor, parálisis facial y rehabilitación motora.',
+    ogTitle: 'Curso Virtual de Electroacupuntura — INSTEIP',
+    ogDescription: 'Domina la electroacupuntura clínica y la neuromodulación del dolor en el aula virtual de INSTEIP.',
+    keywords: 'electroacupuntura, curso virtual, electroacupuntura online, neuromodulación, medicina tradicional china, INSTEIP'
+  },
+  '/cursos/electroacupuntura-online': {
+    title: 'Electroacupuntura Online — Curso Virtual | INSTEIP',
+    description: 'Curso online de Electroacupuntura Clínica. Formación audiovisual con casos clínicos reales, parámetros y certificación oficial con código QR.',
+    ogTitle: 'Curso Online de Electroacupuntura — INSTEIP',
+    ogDescription: 'Formación 100% online en Electroacupuntura Clínica con respaldo de INSTEIP.',
+    keywords: 'electroacupuntura online, curso online electroacupuntura, dolor cronico, paralisis facial'
+  },
   '/cursos/detalle-curso': {
     title: 'Curso — INSTEIP | Formación Profesional',
     description: 'Explora este curso de formación profesional en terapias complementarias. Certificación internacional con respaldo INSTEIP.',
@@ -290,20 +323,6 @@ export const ROUTE_SEO: Record<string, SeoData> = {
     ogDescription: 'Clases en vivo, campus virtual y prácticas presenciales supervisadas.',
     keywords: 'metodología aprendizaje, campus virtual, clases en vivo, prácticas presenciales'
   },
-  '/experiencia-academica-insteip': {
-    title: 'Experiencia Académica — INSTEIP | Formación Clínica y Terapias',
-    description: 'Descubre la experiencia académica INSTEIP: práctica clínica con pacientes reales, mentores especialistas, campus virtual 24/7 y certificación oficial verificable.',
-    ogTitle: 'Experiencia Académica INSTEIP — Formación de Alto Impacto',
-    ogDescription: 'Práctica clínica supervisada, docentes especialistas y certificación oficial verificable.',
-    keywords: 'experiencia academica insteip, metodologia clinica, terapeutas certificados, educacion en salud, campus virtual'
-  },
-  '/experiencia-academica': {
-    title: 'Experiencia Académica — INSTEIP | Formación Clínica y Terapias',
-    description: 'Descubre la experiencia académica INSTEIP: práctica clínica con pacientes reales, mentores especialistas, campus virtual 24/7 y certificación oficial verificable.',
-    ogTitle: 'Experiencia Académica INSTEIP — Formación de Alto Impacto',
-    ogDescription: 'Práctica clínica supervisada, docentes especialistas y certificación oficial verificable.',
-    keywords: 'experiencia academica insteip, metodologia clinica, terapeutas certificados, educacion en salud, campus virtual'
-  },
   '/recursos': {
     title: 'Recursos — INSTEIP | Material de Estudio',
     description: 'Accede a recursos educativos, guías de estudio, material descargable y herramientas para tu formación en terapias complementarias.',
@@ -311,12 +330,12 @@ export const ROUTE_SEO: Record<string, SeoData> = {
     ogDescription: 'Material de estudio, guías y herramientas para tu formación.',
     keywords: 'recursos educativos, material estudio, guías, terapias complementarias'
   },
-  '/bolsa-de-trabajo': {
-    title: 'Bolsa de Trabajo — INSTEIP | Oportunidades y Convenios Laborales',
-    description: 'Encuentra oportunidades de empleo en centros de salud, spas y cadenas hoteleras en Lima, Cusco y la Amazonía para terapeutas certificados por INSTEIP.',
-    ogTitle: 'Bolsa de Trabajo — INSTEIP',
-    ogDescription: 'Oportunidades laborales y convenios en hotelería, salud y bienestar para terapeutas de INSTEIP.',
-    keywords: 'bolsa de trabajo, empleo masajista, terapeuta de spa, trabajo fisioterapeuta, convenios INSTEIP, trabajo cusco, trabajo lima'
+  '/libros': {
+    title: 'Libros y Manuales de Medicina Tradicional China | INSTEIP',
+    description: 'Biblioteca y publicaciones oficiales de INSTEIP. Adquiere libros clínicos, atlas de acupuntura, manuales de electroacupuntura, auriculoterapia, fitoterapia y masaje.',
+    ogTitle: 'Libros y Manuales Clínicos — INSTEIP',
+    ogDescription: 'Biblioteca digital oficial con manuales, atlas y tratados de MTC y terapias integrales.',
+    keywords: 'libros acupuntura, manual electroacupuntura, atlas medicina tradicional china, libros auriculoterapia, INSTEIP'
   },
   '/sedes': {
     title: 'Sedes a Nivel Nacional — INSTEIP | Huánuco, Lima y Piura',

@@ -162,17 +162,17 @@ export class CursosOnlineComponent {
       customLink: '/cursos/aromaterapia-flores-bach'
     },
     {
-      slug: 'craneopuntura-online',
-      title: 'Craneopuntura (100% Virtual)',
+      slug: 'electroacupuntura-online',
+      title: 'Electroacupuntura Clínica (Online)',
       category: 'CORTOS',
-      icon: 'neurology',
+      icon: 'bolt',
       rating: 4.9,
-      duration: '10 horas / Clases grabadas',
-      description: 'Taller 100% virtual con clases grabadas. Dictado por el Lic. Lázaro Regalado Ponte. Estimulación cortical y protocolos neurológicos.',
-      students: '+140',
+      duration: '8 horas (Grabado / Inmediato)',
+      description: 'Teoría aplicada a la práctica con casos reales durante la formación. Docente: Lic. Lázaro Regalado Ponte.',
+      students: '+240',
       price: 'S/ 180',
-      image: 'assets/CRANEO_CURSO.jpg',
-      customLink: '/cursos/craneopuntura-online'
+      image: 'assets/electroAcupuntura_IMG/foto_electro.jpg',
+      customLink: '/cursos/electroacupuntura'
     }
   ];
 

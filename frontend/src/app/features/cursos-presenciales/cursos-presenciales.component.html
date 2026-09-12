@@ -106,7 +106,7 @@
           <article class="course-card"
                    [class.course-card--featured]="curso.rating >= 5.0"
                    *ngFor="let curso of filteredCursos(); let i = index">
-            <a [routerLink]="curso.customLink ? [curso.customLink] : ['/cursos', curso.slug]"
+            <a [routerLink]="curso.customLink || ('/cursos/' + curso.slug)"
                class="course-card__media"
                [attr.aria-label]="'Ver ' + curso.title">
               <img [src]="curso.image" [alt]="curso.title" loading="lazy" decoding="async" />
@@ -122,7 +122,7 @@
               </div>
               <h3>
                 <span class="course-card__title-icon material-symbols-outlined">{{ curso.icon }}</span>
-                <a [routerLink]="curso.customLink ? [curso.customLink] : ['/cursos', curso.slug]">{{ curso.title }}</a>
+                <a [routerLink]="curso.customLink || ('/cursos/' + curso.slug)">{{ curso.title }}</a>
               </h3>
               <p>{{ curso.description }}</p>
               <div class="course-card__rating">
@@ -133,7 +133,7 @@
               <footer>
                 <span><span class="material-symbols-outlined">groups</span>{{ curso.students }} estudiantes</span>
                 <strong>{{ curso.price }}</strong>
-                <a [routerLink]="curso.customLink ? [curso.customLink] : ['/cursos', curso.slug]" aria-label="Ver detalles">
+                <a [routerLink]="curso.customLink || ('/cursos/' + curso.slug)" aria-label="Ver detalles">
                   <span class="course-card__cta-text">Ver curso</span>
                   <span class="material-symbols-outlined">arrow_outward</span>
                 </a>

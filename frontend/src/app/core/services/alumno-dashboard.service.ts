@@ -61,6 +61,8 @@ export interface AlumnoPlayModulo {
   orden: number;
   videos: AlumnoPlayVideo[];
   materiales: AlumnoPlayMaterial[];
+  bloqueado?: boolean;
+  mensajeBloqueo?: string;
 }
 
 export interface AlumnoPlayCourse {

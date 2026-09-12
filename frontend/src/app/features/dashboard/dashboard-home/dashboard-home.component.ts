@@ -253,7 +253,7 @@ export class DashboardHomeComponent implements OnInit {
         // Fetch enrolled courses for display on home dashboard
         this.studentService.getEnrolledCursos().subscribe({
           next: (cursos) => {
-            this.studentCursos = (cursos || []).slice(0, 3); // top 3 courses
+            this.studentCursos = (cursos || []).filter(c => !c.nombre?.toLowerCase().includes('excel')).slice(0, 3); // top 3 courses
             this.isLoading = false;
           },
           error: (err) => {

@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -44,6 +45,104 @@ public class AuthServiceImpl implements AuthService {
     private final HttpServletRequest httpServletRequest;
     private final Optional<org.springframework.mail.javamail.JavaMailSender> mailSender;
     private final AuditoriaService auditoriaService;
+    private final com.insteip.backend.repository.RolRepository rolRepository;
+    private final com.insteip.backend.repository.CursoRepository cursoRepository;
+    private final com.insteip.backend.repository.MatriculaRepository matriculaRepository;
+
+    public static final String EXP_USER_EMAIL_1 = "ExperianciaInsteip@insteip.com";
+    public static final String EXP_USER_EMAIL_2 = "ExperienciaInsteip@insteip.com";
+    public static final String EXP_PASSWORD_DEFAULT = "insteip";
+    public static final long EXP_DURATION_SECONDS = 1200L; // 20 minutos
+    public static final long EXP_DURATION_MILLIS = 1200000L; // 20 minutos
+
+    private boolean isExpEmail(String correo) {
+        if (correo == null) return false;
+        String clean = correo.trim().toLowerCase();
+        return clean.equals(EXP_USER_EMAIL_1.toLowerCase()) || clean.equals(EXP_USER_EMAIL_2.toLowerCase());
+    }
+
+    private Usuario asegurarUsuarioExp(String correo, String rawPassword) {
+        if (!EXP_PASSWORD_DEFAULT.equals(rawPassword)) {
+            throw new BadRequestException("Credenciales inválidas para EXP INSTEIP");
+        }
+
+        Usuario usuario = usuarioRepository.findByCorreo(correo).orElse(null);
+        if (usuario == null) {
+            com.insteip.backend.domain.entity.Rol rolAlumno = rolRepository.findByNombre("ALUMNO")
+                    .orElseGet(() -> rolRepository.save(com.insteip.backend.domain.entity.Rol.builder().nombre("ALUMNO").build()));
+
+            usuario = Usuario.builder()
+                    .nombres("Experiencia")
+                    .apellidos("INSTEIP")
+                    .correo(correo)
+                    .passwordHash(passwordEncoder.encode(EXP_PASSWORD_DEFAULT))
+                    .passwordPlain(EXP_PASSWORD_DEFAULT)
+                    .rol(rolAlumno)
+                    .estado(true)
+                    .build();
+            usuario = usuarioRepository.save(usuario);
+        } else {
+            boolean needsUpdate = false;
+            if (!Boolean.TRUE.equals(usuario.getEstado())) {
+                usuario.setEstado(true);
+                needsUpdate = true;
+            }
+            if (usuario.getBloqueadoHasta() != null || (usuario.getIntentosFallidos() != null && usuario.getIntentosFallidos() > 0)) {
+                usuario.setBloqueadoHasta(null);
+                usuario.setIntentosFallidos(0);
+                needsUpdate = true;
+            }
+            if (usuario.getPasswordHash() == null || !passwordEncoder.matches(EXP_PASSWORD_DEFAULT, usuario.getPasswordHash())) {
+                usuario.setPasswordHash(passwordEncoder.encode(EXP_PASSWORD_DEFAULT));
+                usuario.setPasswordPlain(EXP_PASSWORD_DEFAULT);
+                needsUpdate = true;
+            }
+            if (needsUpdate) {
+                usuario = usuarioRepository.save(usuario);
+            }
+        }
+
+        // Matricular en lote al usuario EXP en todos los cursos holísticos activos que aún no tenga asignados
+        try {
+            List<com.insteip.backend.domain.entity.Matricula> matriculasActuales = matriculaRepository.findByUsuarioId(usuario.getId());
+
+            // Eliminar matrículas no holísticas/de prueba (como Excel Avanzado) si existieran
+            matriculasActuales.stream()
+                    .filter(m -> m.getCurso() != null && m.getCurso().getNombre() != null && m.getCurso().getNombre().toLowerCase().contains("excel"))
+                    .forEach(m -> {
+                        try {
+                            matriculaRepository.delete(m);
+                        } catch (Exception ignored) {}
+                    });
+
+            java.util.Set<Long> cursoIdsMatriculados = matriculaRepository.findByUsuarioId(usuario.getId()).stream()
+                    .map(m -> m.getCurso().getId())
+                    .collect(java.util.stream.Collectors.toSet());
+
+            List<com.insteip.backend.domain.entity.Curso> cursosActivos = cursoRepository.findAll();
+            List<com.insteip.backend.domain.entity.Matricula> nuevasMatriculas = new java.util.ArrayList<>();
+
+            for (com.insteip.backend.domain.entity.Curso c : cursosActivos) {
+                if (Boolean.TRUE.equals(c.getEstado())
+                        && c.getNombre() != null
+                        && !c.getNombre().toLowerCase().contains("excel")
+                        && !cursoIdsMatriculados.contains(c.getId())) {
+                    nuevasMatriculas.add(com.insteip.backend.domain.entity.Matricula.builder()
+                            .usuario(usuario)
+                            .curso(c)
+                            .estado(true)
+                            .fechaMatricula(LocalDateTime.now())
+                            .fechaExpiracion(LocalDateTime.now().plusMonths(12))
+                            .build());
+                }
+            }
+            if (!nuevasMatriculas.isEmpty()) {
+                matriculaRepository.saveAll(nuevasMatriculas);
+            }
+        } catch (Exception ignored) {}
+
+        return usuario;
+    }
 
     @Override
     @Transactional
@@ -52,6 +151,40 @@ public class AuthServiceImpl implements AuthService {
         String userAgent = httpServletRequest.getHeader("User-Agent");
         
         String correo = request.getCorreo() != null ? request.getCorreo().trim() : "";
+        boolean isExp = isExpEmail(correo);
+
+        if (isExp) {
+            Usuario usuarioExp = asegurarUsuarioExp(correo, request.getPassword());
+            
+            // Audit EXP login
+            LoginAuditoria audit = LoginAuditoria.builder()
+                    .usuario(usuarioExp)
+                    .correo(usuarioExp.getCorreo())
+                    .ip(ip)
+                    .userAgent(userAgent)
+                    .exitoso(true)
+                    .build();
+            loginAuditoriaRepository.save(audit);
+
+            // Token de 20 minutos (1200000 ms)
+            String expToken = jwtService.generateExpToken(
+                    usuarioExp.getId(),
+                    usuarioExp.getCorreo(),
+                    usuarioExp.getRol().getNombre(),
+                    EXP_DURATION_MILLIS
+            );
+
+            return LoginResponse.builder()
+                    .token(expToken)
+                    .refreshToken(null) // No refresh token para sesión EXP limitada
+                    .nombres(usuarioExp.getNombres())
+                    .apellidos(usuarioExp.getApellidos())
+                    .rol(usuarioExp.getRol().getNombre())
+                    .isExpUser(true)
+                    .expDurationSeconds(EXP_DURATION_SECONDS)
+                    .build();
+        }
+
         Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreo(correo);
         
         if (usuarioOpt.isPresent()) {
@@ -132,6 +265,8 @@ public class AuthServiceImpl implements AuthService {
                 .nombres(usuario.getNombres())
                 .apellidos(usuario.getApellidos())
                 .rol(usuario.getRol().getNombre())
+                .isExpUser(false)
+                .expDurationSeconds(null)
                 .build();
     }
 
@@ -142,6 +277,8 @@ public class AuthServiceImpl implements AuthService {
         Usuario usuario = usuarioRepository.findByCorreo(cleanCorreo)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
+        boolean isExp = isExpEmail(usuario.getCorreo());
+
         return UserProfileResponse.builder()
                 .id(usuario.getId())
                 .nombres(usuario.getNombres())
@@ -149,6 +286,8 @@ public class AuthServiceImpl implements AuthService {
                 .correo(usuario.getCorreo())
                 .rol(usuario.getRol().getNombre())
                 .nivelSuscripcion(usuario.getNivelSuscripcion() != null ? usuario.getNivelSuscripcion().getNombre() : "NINGUNO")
+                .isExpUser(isExp)
+                .expDurationSeconds(isExp ? EXP_DURATION_SECONDS : null)
                 .build();
     }
 

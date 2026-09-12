@@ -16,4 +16,6 @@ public class UserProfileResponse {
     private String correo;
     private String rol;
     private String nivelSuscripcion;
+    private Boolean isExpUser;
+    private Long expDurationSeconds;
 }

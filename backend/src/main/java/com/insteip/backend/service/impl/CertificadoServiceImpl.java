@@ -232,7 +232,7 @@ public class CertificadoServiceImpl implements CertificadoService {
             document.add(fallbackBrand);
         }
 
-        Paragraph insteipSubtitle = new Paragraph("INSTITUTO DE TECNOLOGÍA E INNOVACIÓN PROFESIONAL", new Font(Font.HELVETICA, 8, Font.BOLD, grayColor));
+        Paragraph insteipSubtitle = new Paragraph("INSTITUTO DE TERAPIAS INTEGRALES PERÚ", new Font(Font.HELVETICA, 8, Font.BOLD, grayColor));
         insteipSubtitle.setAlignment(Element.ALIGN_CENTER);
         document.add(insteipSubtitle);
         document.add(spacer);
@@ -425,7 +425,7 @@ class CertificatePageBorder extends com.lowagie.text.pdf.PdfPageEventHelper {
         float centerY = document.getPageSize().getHeight() / 2f;
         canvas.showTextAligned(com.lowagie.text.Element.ALIGN_CENTER, "INSTEIP", centerX, centerY + 22, 45);
         canvas.setFontAndSize(watermarkFont, 18);
-        canvas.showTextAligned(com.lowagie.text.Element.ALIGN_CENTER, "INSTITUTO DE TECNOLOGÍA E INNOVACIÓN PROFESIONAL", centerX, centerY - 22, 45);
+        canvas.showTextAligned(com.lowagie.text.Element.ALIGN_CENTER, "INSTITUTO DE TERAPIAS INTEGRALES PERÚ", centerX, centerY - 22, 45);
         canvas.endText();
         canvas.restoreState();
     }

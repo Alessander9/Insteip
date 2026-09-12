@@ -9,11 +9,9 @@ import com.insteip.backend.domain.entity.RefreshToken;
 import com.insteip.backend.domain.entity.Rol;
 import com.insteip.backend.domain.entity.Usuario;
 import com.insteip.backend.domain.exception.BadRequestException;
-import com.insteip.backend.repository.LoginAuditoriaRepository;
-import com.insteip.backend.repository.RefreshTokenRepository;
+import com.insteip.backend.repository.*;
 import com.insteip.backend.domain.dto.auth.ChangePasswordRequest;
 import com.insteip.backend.service.interfaces.AuditoriaService;
-import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.infrastructure.security.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,6 +49,9 @@ class AuthServiceImplTest {
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private HttpServletRequest httpServletRequest;
     @Mock private AuditoriaService auditoriaService;
+    @Mock private RolRepository rolRepository;
+    @Mock private CursoRepository cursoRepository;
+    @Mock private MatriculaRepository matriculaRepository;
 
     private JwtService jwtService;
     private AuthServiceImpl authService;
@@ -73,7 +74,10 @@ class AuthServiceImplTest {
                 passwordEncoder,
                 httpServletRequest,
                 java.util.Optional.empty(),
-                auditoriaService
+                auditoriaService,
+                rolRepository,
+                cursoRepository,
+                matriculaRepository
         );
 
         Rol rol = Rol.builder().id(1L).nombre("ADMINISTRADOR").estado(true).build();

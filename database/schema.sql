@@ -398,3 +398,31 @@ CREATE TABLE configuracion_institucion (
     color_principal VARCHAR(50),
     color_secundario VARCHAR(50)
 );
+
+-- =========================================================================
+-- 16. TABLA: matricula_modulos_acceso (Gestión de Acceso Modular por Cuotas)
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS matricula_modulos_acceso (
+    id BIGSERIAL PRIMARY KEY,
+    matricula_id BIGINT NOT NULL,
+    modulo_id BIGINT NOT NULL,
+    habilitado BOOLEAN DEFAULT TRUE NOT NULL,
+    fecha_habilitacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_acceso_matricula
+        FOREIGN KEY (matricula_id)
+        REFERENCES matriculas(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_acceso_modulo
+        FOREIGN KEY (modulo_id)
+        REFERENCES modulos(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT uq_matricula_modulo_acceso
+        UNIQUE (matricula_id, modulo_id)
+);
+
+CREATE INDEX idx_matricula_modulos_matricula ON matricula_modulos_acceso(matricula_id);
+CREATE INDEX idx_matricula_modulos_modulo ON matricula_modulos_acceso(modulo_id);
+

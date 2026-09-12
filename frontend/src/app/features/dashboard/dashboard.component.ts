@@ -7,6 +7,7 @@ import { UserProfile } from '../../core/models/';
 import { SkeletonLoaderComponent } from '../../core/components/skeleton-loader/skeleton-loader.component';
 import { NotificacionesMenuComponent } from '../../core/components/notificaciones-menu/notificaciones-menu.component';
 import { AnuncioModalDialogComponent } from '../../core/components/anuncio-modal-dialog/anuncio-modal-dialog.component';
+import { ExpTimerBannerComponent } from '../../core/components/exp-timer-banner/exp-timer-banner.component';
 import { ThemeService } from '../../core/services/';
 import { TareaService } from '../../core/services/tarea.service';
 import { NotificacionService } from '../../core/services/notificacion.service';
@@ -22,7 +23,8 @@ import { MensajeriaService } from '../../core/services/mensajeria.service';
     RouterModule,
     SkeletonLoaderComponent,
     NotificacionesMenuComponent,
-    AnuncioModalDialogComponent
+    AnuncioModalDialogComponent,
+    ExpTimerBannerComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
@@ -45,9 +47,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   tareasPendientesCount = 0;
   comunicadosNoLeidosCount = 0;
   mensajesNoLeidosCount = 0;
+  isExpUser = false;
 
   private notifSub?: Subscription;
   private mensajeSub?: Subscription;
+  private expSub?: Subscription;
 
   /** Controls the mobile slide-out sidebar drawer */
   sidebarOpen = false;
@@ -61,6 +65,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.expSub = this.authService.isExpUserSubject.subscribe(isExp => {
+      this.isExpUser = isExp;
+    });
+
     this.notifSub = this.notificacionService.resumen$.subscribe(resumen => {
       this.comunicadosNoLeidosCount = resumen.totalNoLeidas;
     });
@@ -91,6 +99,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.notifSub?.unsubscribe();
     this.mensajeSub?.unsubscribe();
+    this.expSub?.unsubscribe();
   }
 
   cargarTareasPendientesAlumno(): void {

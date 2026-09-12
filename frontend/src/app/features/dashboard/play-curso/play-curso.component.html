@@ -339,9 +339,39 @@
     </div>
 
     <!-- Empty or missing state -->
-    <div *ngIf="!currentVideo && !embedError && !isPlayerLoading" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 p-8 bg-black z-20">
+    <div *ngIf="!currentVideo && !selectedBlockedModulo && !embedError && !isPlayerLoading" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 p-8 bg-black z-20">
       <span class="material-symbols-outlined text-5xl mb-2 text-slate-600">movie</span>
       <p class="text-xs font-black uppercase tracking-wider text-center">Selecciona una clase para comenzar a aprender</p>
+    </div>
+
+    <!-- Blocked module state: shown when student selects a locked module -->
+    <div *ngIf="selectedBlockedModulo" class="absolute inset-0 flex flex-col items-center justify-center text-slate-100 p-6 sm:p-10 bg-slate-950/95 text-center z-20 overflow-y-auto">
+      <div class="max-w-md flex flex-col items-center gap-4 animate-in fade-in zoom-in-95 duration-300">
+        <div class="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-[0_0_25px_rgba(245,158,11,0.2)]">
+          <span class="material-symbols-outlined text-3xl">lock</span>
+        </div>
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 text-[10px] font-black uppercase tracking-widest border border-amber-500/30 mb-2">
+            Módulo {{ selectedBlockedModulo.orden }} • Pendiente de Habilitación
+          </span>
+          <h3 class="text-base sm:text-lg font-black uppercase tracking-tight text-white mt-1">
+            {{ selectedBlockedModulo.nombre }}
+          </h3>
+          <p class="text-xs text-slate-400 leading-relaxed mt-2">
+            Este módulo corresponde al siguiente periodo lectivo. Para desbloquear el acceso a sus clases grabadas, materiales y evaluaciones, coordina la habilitación con Administración.
+          </p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center gap-3 mt-2 w-full justify-center">
+          <button
+            type="button"
+            (click)="solicitarHabilitacionWhatsApp(selectedBlockedModulo)"
+            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#25D366] hover:bg-[#20bd5a] text-slate-950 font-black text-xs uppercase tracking-wider transition-all duration-200 shadow-lg hover:shadow-[#25D366]/30 active:scale-95">
+            <span class="material-symbols-outlined text-lg font-bold">chat</span>
+            <span>Habilitar por WhatsApp</span>
+          </button>
+        </div>
+      </div>
     </div>
 
     <div *ngIf="embedError" class="absolute inset-0 flex flex-col items-center justify-center text-slate-200 p-8 bg-slate-950/95 text-center z-20">
@@ -401,13 +431,22 @@
 
       <!-- Module collapsible rows -->
       <div class="divide-y divide-slate-200 dark:divide-slate-800 max-h-[400px] overflow-y-auto">
-        <div *ngFor="let mod of curso.modulos || []" class="p-4 space-y-3">
-          <div class="flex items-start gap-2">
-            <span class="text-[8px] font-black text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/45 border border-indigo-200 dark:border-indigo-900 px-1.5 py-0.5 shrink-0 select-none uppercase tracking-wider">
-              Mód {{ mod.orden }}
-            </span>
-            <span class="block text-xs font-bold text-slate-900 dark:text-white uppercase tracking-tight leading-tight">
-              {{ mod.nombre }}
+        <div *ngFor="let mod of curso.modulos || []" class="p-4 space-y-3" [ngClass]="{'bg-amber-500/5 dark:bg-amber-500/[0.03]': mod.bloqueado}">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span 
+                [ngClass]="mod.bloqueado ? 'text-amber-800 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/60 border-amber-300 dark:border-amber-800' : 'text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/45 border-indigo-200 dark:border-indigo-900'"
+                class="text-[8px] font-black border px-1.5 py-0.5 shrink-0 select-none uppercase tracking-wider">
+                Mód {{ mod.orden }}
+              </span>
+              <span class="block text-xs font-bold text-slate-900 dark:text-white uppercase tracking-tight leading-tight">
+                {{ mod.nombre }}
+              </span>
+            </div>
+            
+            <span *ngIf="mod.bloqueado" class="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-2 py-0.5 border border-amber-300 dark:border-amber-800 shrink-0">
+              <span class="material-symbols-outlined text-xs">lock</span>
+              <span>Bloqueado</span>
             </span>
           </div>
           
@@ -415,8 +454,8 @@
           <div class="space-y-1.5">
             <button 
               *ngFor="let vid of mod.videos"
-              (click)="playVideo(vid)"
-              [ngClass]="currentVideo?.id === vid.id ? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-900 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200/60 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'"
+              (click)="onVideoClick(mod, vid)"
+              [ngClass]="currentVideo?.id === vid.id ? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-900 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800' : (mod.bloqueado ? 'bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 border-dashed border-slate-200 dark:border-slate-800 hover:bg-amber-50/50 dark:hover:bg-amber-950/20' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200/60 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800')"
               class="w-full text-left p-3 border dark:border-slate-800/70 text-xs flex items-center justify-between gap-3 transition-colors rounded-none group relative focus:outline-none">
               
               <!-- Left accent border for active state -->
@@ -424,15 +463,24 @@
 
               <div class="flex items-center gap-2 overflow-hidden">
                 <span 
+                  *ngIf="!mod.bloqueado"
                   [ngClass]="vid.completado ? 'text-emerald-600 dark:text-emerald-500 font-bold' : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-400'"
                   class="material-symbols-outlined text-sm font-semibold block shrink-0 select-none">
                   {{ vid.completado ? 'check_circle' : 'circle' }}
                 </span>
+                <span 
+                  *ngIf="mod.bloqueado"
+                  class="material-symbols-outlined text-sm text-amber-500 dark:text-amber-400 block shrink-0 select-none">
+                  lock
+                </span>
                 <span class="truncate font-semibold uppercase tracking-tight block">{{ vid.titulo }}</span>
               </div>
-              <span class="text-[9px] font-mono text-slate-400 dark:text-slate-500 shrink-0">
-                {{ vid.duracionSegundos ? (vid.duracionSegundos / 60 | number:'1.0-0') + 'm' : '' }}
-              </span>
+              <div class="flex items-center gap-2 shrink-0">
+                <span *ngIf="mod.bloqueado" class="text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Requiere pago</span>
+                <span class="text-[9px] font-mono text-slate-400 dark:text-slate-500">
+                  {{ vid.duracionSegundos ? (vid.duracionSegundos / 60 | number:'1.0-0') + 'm' : '' }}
+                </span>
+              </div>
             </button>
             
             <!-- Empty state for module videos -->
@@ -489,8 +537,11 @@
                       </div>
                       <button 
                         (click)="descargarMaterial(mat.archivoUrl, mat.nombre, mat.tipoArchivo)"
+                        [title]="isExpUser ? 'Descargas restringidas en EXP INSTEIP' : 'Descargar material'"
+                        [ngClass]="isExpUser ? 'opacity-60 cursor-not-allowed bg-slate-100 dark:bg-slate-800' : ''"
                         class="p-2 border border-slate-200 dark:border-slate-750 hover:border-slate-900 dark:hover:border-slate-300 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shrink-0">
-                        <span class="material-symbols-outlined text-sm block">download</span>
+                        <span class="material-symbols-outlined text-sm block" *ngIf="!isExpUser">download</span>
+                        <span class="material-symbols-outlined text-sm block text-amber-500" *ngIf="isExpUser">lock</span>
                       </button>
                     </div>
                 </div>

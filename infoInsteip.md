@@ -13,7 +13,7 @@
 * 💆‍♀️💻 **Acupuntura Estética**: Protocolos faciales de rejuvenecimiento.
 * 🧘💻 **Stretching Terapéutico**: Movilidad, elongación y cuidado corporal.
 * 🩹💻 **Parálisis Facial con Acupuntura y Fisioterapia**: Enfoque clínico y práctico.
-* 🍏💻 **Auriculoterapia y Acupuntura en Control de Peso**: Protocolos clínicos integrados.
+* ⚡💻 **Electroacupuntura Clínica (Seminario Virtual - 8 Horas)**: Teoría aplicada a la práctica con casos reales durante la formación. 100% disponibilidad inmediata (grabado). Docente: **Lic. Lázaro Regalado Ponte**. Enlace: [Curso Virtual de Electroacupuntura](/cursos/electroacupuntura) (Inversión: **S/ 180**).
 
 🏫🏢 **Cursos Presenciales (Sede Lima y Regiones)**
 * ☯️🏫 **Acupuntura China (12 meses)**: Diplomado. Clases domingos. Práctica clínica con pacientes reales. Costo: **S/ 270 al mes**. Enlace: [Curso Presencial de Acupuntura](/cursos/acupuntura-presencial) (Temario descargable: `[button:📥 Descargar Temario de Acupuntura 12 Meses (PDF)](/assets/temarios/temario-acupuntura-12-meses.pdf)`)
@@ -100,8 +100,26 @@ De momento, los ÚNICOS 4 cursos que cuentan con temario en PDF descargable dire
 
 ---
 
-## 📱 9. Redes Sociales Oficiales
+---
+
+## 📚 10. Biblioteca Digital y Libros Oficiales
+* **Acceso y Catálogo**: [button:📖 Ver Biblioteca y Libros INSTEIP](/libros)
+* **Obras Destacadas**:
+  * *Atlas y Tratado Clínico de Acupuntura Tradicional China* (S/ 65)
+  * *Manual de Electroacupuntura Clínica y Neuromodulación* (Lic. Lázaro Regalado - S/ 55)
+  * *Tratado de Auriculoterapia China y Francesa: Mapas y Protocolos* (S/ 48)
+  * *Guía Terapéutica de Digitopresión Mecánica y Masaje Funcional* (S/ 45)
+  * *Compendio de Fitoterapia y Plantas Medicinales del Perú y Oriente* (S/ 50)
+  * *Dietética Energética y Nutrición según los 5 Elementos* (S/ 45)
+  * *Manual Clínico de Moxibustión, Ventosas y Terapias Térmicas* (S/ 42)
+  * *Atlas Clínico de Reflexología Podal y Zonas Reflejas* (S/ 45)
+* **Formato**: PDF Digital de alta resolución con descarga inmediata tras confirmación por WhatsApp (+51 939 371 250).
+
+---
+
+## 📱 11. Redes Sociales Oficiales
 * **TikTok**: [@terapias.integrales](https://www.tiktok.com/@terapias.integrales)
 * **Instagram**: [@institutodeterapias](https://www.instagram.com/institutodeterapias/?hl=es%20insteip)
 * **Facebook**: [/insteip](https://www.facebook.com/insteip)
 * **YouTube**: [@insteipperucursosterapiasc4318](https://www.youtube.com/@insteipperucursosterapiasc4318)
+

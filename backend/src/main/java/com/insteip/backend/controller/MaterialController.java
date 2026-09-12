@@ -1,20 +1,24 @@
 package com.insteip.backend.controller;
 
-
 import lombok.RequiredArgsConstructor;
 import com.insteip.backend.domain.dto.material.MaterialResponseDTO;
-import com.insteip.backend.domain.entity.Material;
+import com.insteip.backend.domain.entity.*;
 import com.insteip.backend.domain.exception.ForbiddenException;
 import com.insteip.backend.domain.exception.ResourceNotFoundException;
+import com.insteip.backend.repository.MatriculaModuloAccesoRepository;
+import com.insteip.backend.repository.MatriculaRepository;
+import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.service.interfaces.MaterialService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/materiales")
@@ -22,6 +26,9 @@ import java.util.Map;
 public class MaterialController {
 
     private final MaterialService materialService;
+    private final UsuarioRepository usuarioRepository;
+    private final MatriculaRepository matriculaRepository;
+    private final MatriculaModuloAccesoRepository matriculaModuloAccesoRepository;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessModulo(#moduloId)")
@@ -68,9 +75,42 @@ public class MaterialController {
 
     @GetMapping("/{id}/download")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ALUMNO', 'DOCENTE')")
-    public ResponseEntity<byte[]> descargarMaterial(@PathVariable Long id) {
+    public ResponseEntity<byte[]> descargarMaterial(@PathVariable Long id, Authentication authentication) {
         try {
+            if (authentication != null) {
+                String correoAuth = authentication.getName();
+                if (correoAuth != null && (correoAuth.equalsIgnoreCase("ExperianciaInsteip@insteip.com") || correoAuth.equalsIgnoreCase("ExperienciaInsteip@insteip.com"))) {
+                    throw new ForbiddenException("Las descargas de materiales están restringidas en el modo EXP INSTEIP.");
+                }
+            }
+
             Material material = materialService.obtenerMaterialEntity(id);
+
+            // Validar restricción de acceso por cuotas si el usuario solicitante es ALUMNO
+            if (authentication != null && authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ALUMNO"))) {
+                
+                String correo = authentication.getName();
+                Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreo(correo);
+                if (usuarioOpt.isPresent() && material.getModulo() != null && material.getModulo().getCurso() != null) {
+                    Long cursoId = material.getModulo().getCurso().getId();
+                    Optional<Matricula> matOpt = matriculaRepository.findByUsuarioIdAndCursoId(usuarioOpt.get().getId(), cursoId);
+                    
+                    if (matOpt.isEmpty() || Boolean.FALSE.equals(matOpt.get().getEstado())) {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                    }
+
+                    Long matriculaId = matOpt.get().getId();
+                    if (matriculaModuloAccesoRepository.existsByMatriculaId(matriculaId)) {
+                        boolean habilitado = matriculaModuloAccesoRepository
+                                .existsByMatriculaIdAndModuloIdAndHabilitadoTrue(matriculaId, material.getModulo().getId());
+                        if (!habilitado) {
+                            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                        }
+                    }
+                }
+            }
+
             byte[] data = materialService.descargarMaterialBytes(id);
 
             String filename = material.getNombre();

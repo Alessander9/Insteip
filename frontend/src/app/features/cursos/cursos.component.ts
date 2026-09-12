@@ -163,8 +163,8 @@ export class PublicCursosComponent {
       slug: 'aromaterapia-flores-bach-online',
       title: 'Aromaterapia y Flores de Bach (Online)',
       category: 'CORTOS',
-      modality: 'ONLINE',
       icon: 'local_florist',
+      modality: 'ONLINE',
       rating: 5.0,
       duration: '1 mes / Clases en vivo',
       description: 'Aprende a integrar el poder de los aceites esenciales y las Flores de Bach en el abordaje de las terapias integrales.',
@@ -172,6 +172,20 @@ export class PublicCursosComponent {
       price: 'S/ 120',
       image: 'assets/curso_aromaterapia_flores_bach.jpg',
       customLink: '/cursos/aromaterapia-flores-bach'
+    },
+    {
+      slug: 'electroacupuntura-online',
+      title: 'Electroacupuntura Clínica (Online)',
+      category: 'CORTOS',
+      modality: 'ONLINE',
+      icon: 'bolt',
+      rating: 4.9,
+      duration: '8 horas (Grabado / Inmediato)',
+      description: 'Teoría aplicada a la práctica con casos reales durante la formación. Docente: Lic. Lázaro Regalado Ponte.',
+      students: '+240',
+      price: 'S/ 180',
+      image: 'assets/electroAcupuntura_IMG/foto_electro.jpg',
+      customLink: '/cursos/electroacupuntura'
     },
 
     // Cursos Presenciales

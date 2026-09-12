@@ -1,25 +1,23 @@
 package com.insteip.backend.service.impl;
 
-
 import lombok.RequiredArgsConstructor;
 import com.insteip.backend.domain.dto.matricula.MatriculaRequestDTO;
 import com.insteip.backend.domain.dto.matricula.MatriculaResponseDTO;
-import com.insteip.backend.domain.entity.Curso;
-import com.insteip.backend.domain.entity.Matricula;
-import com.insteip.backend.domain.entity.Usuario;
+import com.insteip.backend.domain.dto.matricula.ModuloAccesoDTO;
+import com.insteip.backend.domain.entity.*;
 import com.insteip.backend.domain.exception.ResourceNotFoundException;
-import com.insteip.backend.repository.CursoRepository;
-import com.insteip.backend.repository.MatriculaRepository;
-import com.insteip.backend.repository.UsuarioRepository;
+import com.insteip.backend.domain.exception.BadRequestException;
+import com.insteip.backend.repository.*;
 import com.insteip.backend.service.interfaces.MatriculaService;
 import com.insteip.backend.service.interfaces.AuditoriaService;
 import com.insteip.backend.service.interfaces.NotificacionService;
-import com.insteip.backend.domain.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,13 +25,11 @@ import java.util.stream.Collectors;
 public class MatriculaServiceImpl implements MatriculaService {
 
     private final MatriculaRepository matriculaRepository;
-
     private final UsuarioRepository usuarioRepository;
-
     private final CursoRepository cursoRepository;
-
+    private final ModuloRepository moduloRepository;
+    private final MatriculaModuloAccesoRepository matriculaModuloAccesoRepository;
     private final AuditoriaService auditoriaService;
-
     private final NotificacionService notificacionService;
 
     @Override
@@ -63,12 +59,33 @@ public class MatriculaServiceImpl implements MatriculaService {
                 .build();
 
         Matricula saved = matriculaRepository.save(matricula);
+
+        // Si se especificó restricción de acceso inicial por módulos
+        if (Boolean.FALSE.equals(dto.accesoTotal()) || (dto.modulosHabilitadosIds() != null && !dto.modulosHabilitadosIds().isEmpty())) {
+            List<Modulo> modulosCurso = moduloRepository.findByCursoIdOrderByOrdenAsc(curso.getId());
+            List<Long> habilitados = dto.modulosHabilitadosIds() != null ? dto.modulosHabilitadosIds() : List.of();
+            List<MatriculaModuloAcceso> accesosIniciales = new ArrayList<>();
+            
+            for (Modulo m : modulosCurso) {
+                boolean estaHabilitado = habilitados.contains(m.getId());
+                accesosIniciales.add(MatriculaModuloAcceso.builder()
+                        .matricula(saved)
+                        .modulo(m)
+                        .habilitado(estaHabilitado)
+                        .fechaHabilitacion(LocalDateTime.now())
+                        .build());
+            }
+            if (!accesosIniciales.isEmpty()) {
+                matriculaModuloAccesoRepository.saveAll(accesosIniciales);
+            }
+        }
+
         auditoriaService.registrarEvento("MATRICULA", "CREAR", "Matriculado alumno ID: " + saved.getUsuario().getId() + " (" + saved.getUsuario().getCorreo() + ") en curso ID: " + saved.getCurso().getId() + " (" + saved.getCurso().getNombre() + ")");
 
         notificacionService.crearNotificacion(
                 usuario.getId(),
                 "🔑 Matrícula Habilitada",
-                "¡Bienvenido al curso '" + curso.getNombre() + "'! Ya tienes acceso completo a todos los módulos y clases.",
+                "¡Bienvenido al curso '" + curso.getNombre() + "'! Tu acceso ha sido registrado exitosamente.",
                 "MATRICULA_NUEVA",
                 "/dashboard/cursos-play/" + curso.getId(),
                 "auto_stories"
@@ -113,8 +130,140 @@ public class MatriculaServiceImpl implements MatriculaService {
         String info = "Matrícula ID: " + id + " | Alumno: " + matricula.getUsuario().getNombres() + " " + matricula.getUsuario().getApellidos()
                 + " | Curso: " + matricula.getCurso().getNombre();
 
+        matriculaModuloAccesoRepository.deleteByMatriculaId(id);
         matriculaRepository.deleteById(id);
         auditoriaService.registrarEvento("MATRICULAS", "ELIMINAR", "Eliminada físicamente " + info);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ModuloAccesoDTO> listarModulosAcceso(Long matriculaId) {
+        Matricula matricula = matriculaRepository.findById(matriculaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Matrícula no encontrada con id: " + matriculaId));
+
+        List<Modulo> modulosCurso = moduloRepository.findByCursoIdOrderByOrdenAsc(matricula.getCurso().getId());
+        List<MatriculaModuloAcceso> accesosExistentes = matriculaModuloAccesoRepository.findByMatriculaId(matriculaId);
+
+        boolean tieneRestriccionesConfiguradas = !accesosExistentes.isEmpty();
+        Map<Long, MatriculaModuloAcceso> mapaAccesos = accesosExistentes.stream()
+                .collect(Collectors.toMap(a -> a.getModulo().getId(), a -> a, (a1, a2) -> a1));
+
+        List<ModuloAccesoDTO> resultado = new ArrayList<>();
+        for (Modulo m : modulosCurso) {
+            if (Boolean.FALSE.equals(m.getEstado())) continue;
+
+            if (!tieneRestriccionesConfiguradas) {
+                // Alumno sin restricciones configuradas (Acceso Total por defecto)
+                resultado.add(new ModuloAccesoDTO(
+                        m.getId(),
+                        m.getNombre(),
+                        m.getOrden(),
+                        true,
+                        matricula.getFechaMatricula()
+                ));
+            } else {
+                // Alumno con restricciones explícitas
+                MatriculaModuloAcceso acc = mapaAccesos.get(m.getId());
+                if (acc != null) {
+                    resultado.add(new ModuloAccesoDTO(
+                            m.getId(),
+                            m.getNombre(),
+                            m.getOrden(),
+                            acc.getHabilitado(),
+                            acc.getFechaHabilitacion()
+                    ));
+                } else {
+                    // Módulo nuevo agregado con posterioridad a un alumno con restricciones -> bloqueado por defecto
+                    resultado.add(new ModuloAccesoDTO(
+                            m.getId(),
+                            m.getNombre(),
+                            m.getOrden(),
+                            false,
+                            null
+                    ));
+                }
+            }
+        }
+
+        return resultado;
+    }
+
+    @Override
+    @Transactional
+    public void actualizarModuloAcceso(Long matriculaId, Long moduloId, Boolean habilitado) {
+        Matricula matricula = matriculaRepository.findById(matriculaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Matrícula no encontrada con id: " + matriculaId));
+
+        Modulo modulo = moduloRepository.findById(moduloId)
+                .orElseThrow(() -> new ResourceNotFoundException("Módulo no encontrado con id: " + moduloId));
+
+        // Si es la primera vez que se define una restricción en esta matrícula, inicializar los demás módulos como habilitados en lote
+        List<MatriculaModuloAcceso> accesosExistentes = matriculaModuloAccesoRepository.findByMatriculaId(matriculaId);
+        if (accesosExistentes.isEmpty()) {
+            List<Modulo> todosLosModulos = moduloRepository.findByCursoIdOrderByOrdenAsc(matricula.getCurso().getId());
+            List<MatriculaModuloAcceso> listaInicial = new ArrayList<>();
+            for (Modulo m : todosLosModulos) {
+                if (m.getId().equals(moduloId)) continue;
+                listaInicial.add(MatriculaModuloAcceso.builder()
+                        .matricula(matricula)
+                        .modulo(m)
+                        .habilitado(true)
+                        .fechaHabilitacion(matricula.getFechaMatricula())
+                        .build());
+            }
+            if (!listaInicial.isEmpty()) {
+                matriculaModuloAccesoRepository.saveAll(listaInicial);
+            }
+        }
+
+        MatriculaModuloAcceso acceso = matriculaModuloAccesoRepository
+                .findByMatriculaIdAndModuloId(matriculaId, moduloId)
+                .orElse(MatriculaModuloAcceso.builder()
+                        .matricula(matricula)
+                        .modulo(modulo)
+                        .build());
+
+        acceso.setHabilitado(habilitado);
+        acceso.setFechaHabilitacion(LocalDateTime.now());
+        matriculaModuloAccesoRepository.save(acceso);
+
+        auditoriaService.registrarEvento("MATRICULAS", "MODULO_ACCESO_MODIFICADO",
+                (habilitado ? "Habilitado" : "Bloqueado") + " acceso al Módulo '" + modulo.getNombre() +
+                        "' para el alumno " + matricula.getUsuario().getCorreo() + " (Matrícula ID: " + matriculaId + ")");
+    }
+
+    @Override
+    @Transactional
+    public void actualizarModulosAccesoMasivo(Long matriculaId, List<Long> modulosHabilitadosIds) {
+        Matricula matricula = matriculaRepository.findById(matriculaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Matrícula no encontrada con id: " + matriculaId));
+
+        List<Modulo> todosLosModulos = moduloRepository.findByCursoIdOrderByOrdenAsc(matricula.getCurso().getId());
+        List<Long> habilitados = modulosHabilitadosIds != null ? modulosHabilitadosIds : List.of();
+
+        List<MatriculaModuloAcceso> accesosExistentes = matriculaModuloAccesoRepository.findByMatriculaId(matriculaId);
+        Map<Long, MatriculaModuloAcceso> mapaAccesos = accesosExistentes.stream()
+                .collect(Collectors.toMap(a -> a.getModulo().getId(), a -> a, (a1, a2) -> a1));
+
+        List<MatriculaModuloAcceso> aGuardar = new ArrayList<>();
+        for (Modulo m : todosLosModulos) {
+            boolean debeHabilitar = habilitados.contains(m.getId());
+            MatriculaModuloAcceso acc = mapaAccesos.get(m.getId());
+            if (acc == null) {
+                acc = MatriculaModuloAcceso.builder()
+                        .matricula(matricula)
+                        .modulo(m)
+                        .build();
+            }
+            acc.setHabilitado(debeHabilitar);
+            acc.setFechaHabilitacion(LocalDateTime.now());
+            aGuardar.add(acc);
+        }
+
+        matriculaModuloAccesoRepository.saveAll(aGuardar);
+
+        auditoriaService.registrarEvento("MATRICULAS", "MODULOS_ACCESO_MASIVO",
+                "Actualizados permisos de módulos para la matrícula ID: " + matriculaId + " (" + habilitados.size() + " módulos habilitados)");
     }
 
     private MatriculaResponseDTO toResponse(Matricula m) {
@@ -153,6 +302,4 @@ public class MatriculaServiceImpl implements MatriculaService {
                 m.getEstado()
         );
     }
-
-
 }

@@ -40,6 +40,21 @@ public class JwtService {
         return generateToken(extraClaims, correo);
     }
 
+    public String generateExpToken(Long id, String correo, String rol, long expirationMillis) {
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("id", id);
+        extraClaims.put("rol", rol);
+        extraClaims.put("isExpUser", true);
+        extraClaims.put("expDurationSeconds", expirationMillis / 1000);
+        return Jwts.builder()
+                .claims(extraClaims)
+                .subject(correo)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + expirationMillis))
+                .signWith(getSignInKey())
+                .compact();
+    }
+
     public String generateToken(Map<String, Object> extraClaims, String subject) {
         return Jwts.builder()
                 .claims(extraClaims)

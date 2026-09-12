@@ -11,12 +11,25 @@
            class="nav-item-wrapper"
            (mouseenter)="item.links && item.links.length > 0 ? showDropdown(i) : null; cancelHide()"
            (mouseleave)="scheduleHide()">
-        <button class="nav-item-btn"
-                 [class.active]="hasActiveRoute(item)"
-                 [routerLink]="item.route || null">
+        <!-- Button trigger for dropdown items -->
+        <button *ngIf="item.links && item.links.length > 0"
+                type="button"
+                class="nav-item-btn"
+                [class.active]="hasActiveRoute(item)"
+                (click)="toggleDropdown(i)"
+                [attr.aria-expanded]="activeDropdown === i">
           {{ item.label }}
-          <span *ngIf="item.links && item.links.length > 0" class="material-symbols-outlined nav-item-chevron">expand_more</span>
+          <span class="material-symbols-outlined nav-item-chevron">expand_more</span>
         </button>
+
+        <!-- Direct anchor link for single pages -->
+        <a *ngIf="!item.links || item.links.length === 0"
+           class="nav-item-btn"
+           [class.active]="hasActiveRoute(item)"
+           [routerLink]="item.route"
+           (click)="hideDropdown()">
+          {{ item.label }}
+        </a>
 
         <!-- Mega Dropdown Card (hidden by default, shown by GSAP) -->
         <div *ngIf="item.links && item.links.length > 0"
@@ -130,6 +143,7 @@
         <!-- Direct Link (For items with NO links) -->
         <a *ngIf="!item.links || item.links.length === 0" 
            class="mobile-direct-link" 
+           [class.active]="hasActiveRoute(item)"
            [routerLink]="item.route" 
            (click)="closeMobileMenu()">
           <span>{{ item.label }}</span>

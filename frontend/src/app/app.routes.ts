@@ -15,11 +15,43 @@ export const routes: Routes = [
     loadComponent: () => import('./features/inicio/inicio.component').then(m => m.InicioComponent)
   },
   {
+    path: 'inicio.html',
+    loadComponent: () => import('./features/inicio/inicio.component').then(m => m.InicioComponent)
+  },
+  {
     path: 'programas',
     loadComponent: () => import('./features/programas/programas.component').then(m => m.ProgramasComponent)
   },
   {
+    path: 'programas.html',
+    loadComponent: () => import('./features/programas/programas.component').then(m => m.ProgramasComponent)
+  },
+  {
+    path: 'libros',
+    loadComponent: () => import('./features/libros/libros.component').then(m => m.LibrosComponent)
+  },
+  {
+    path: 'libros.html',
+    loadComponent: () => import('./features/libros/libros.component').then(m => m.LibrosComponent)
+  },
+  {
+    path: 'biblioteca',
+    loadComponent: () => import('./features/libros/libros.component').then(m => m.LibrosComponent)
+  },
+  {
+    path: 'sedes',
+    loadComponent: () => import('./features/sedes/sedes.component').then(m => m.SedesComponent)
+  },
+  {
+    path: 'sedes.html',
+    loadComponent: () => import('./features/sedes/sedes.component').then(m => m.SedesComponent)
+  },
+  {
     path: 'recursos',
+    loadComponent: () => import('./features/recursos/recursos.component').then(m => m.RecursosComponent)
+  },
+  {
+    path: 'recursos.html',
     loadComponent: () => import('./features/recursos/recursos.component').then(m => m.RecursosComponent)
   },
   {
@@ -27,11 +59,31 @@ export const routes: Routes = [
     loadComponent: () => import('./features/certificacion/certificacion.component').then(m => m.CertificacionComponent)
   },
   {
+    path: 'certificacion.html',
+    loadComponent: () => import('./features/certificacion/certificacion.component').then(m => m.CertificacionComponent)
+  },
+  {
+    path: 'bolsa-de-trabajo',
+    loadComponent: () => import('./features/bolsa-de-trabajo/bolsa-de-trabajo.component').then(m => m.BolsaDeTrabajoComponent)
+  },
+  {
+    path: 'bolsa-de-trabajo.html',
+    loadComponent: () => import('./features/bolsa-de-trabajo/bolsa-de-trabajo.component').then(m => m.BolsaDeTrabajoComponent)
+  },
+  {
     path: 'por-que-elegirnos',
     loadComponent: () => import('./features/por-que-elegirnos/por-que-elegirnos.component').then(m => m.PorQueElegirnosComponent)
   },
   {
+    path: 'por-que-elegirnos.html',
+    loadComponent: () => import('./features/por-que-elegirnos/por-que-elegirnos.component').then(m => m.PorQueElegirnosComponent)
+  },
+  {
     path: 'como-aprenderas',
+    loadComponent: () => import('./features/como-aprenderas/como-aprenderas.component').then(m => m.ComoAprenderasComponent)
+  },
+  {
+    path: 'como-aprenderas.html',
     loadComponent: () => import('./features/como-aprenderas/como-aprenderas.component').then(m => m.ComoAprenderasComponent)
   },
   {
@@ -107,6 +159,22 @@ export const routes: Routes = [
     loadComponent: () => import('./features/formaciones/seminario-reflexologia-online/seminario-reflexologia-online.component').then(m => m.SeminarioReflexologiaOnlineComponent)
   },
   {
+    path: 'cursos/electroacupuntura',
+    loadComponent: () => import('./features/formaciones/electroacupuntura/electroacupuntura.component').then(m => m.ElectroacupunturaComponent)
+  },
+  {
+    path: 'cursos/electroacupuntura.html',
+    loadComponent: () => import('./features/formaciones/electroacupuntura/electroacupuntura.component').then(m => m.ElectroacupunturaComponent)
+  },
+  {
+    path: 'cursos/electroacupuntura-online',
+    loadComponent: () => import('./features/formaciones/electroacupuntura/electroacupuntura.component').then(m => m.ElectroacupunturaComponent)
+  },
+  {
+    path: 'cursos/electroacupuntura-online.html',
+    loadComponent: () => import('./features/formaciones/electroacupuntura/electroacupuntura.component').then(m => m.ElectroacupunturaComponent)
+  },
+  {
     path: 'cursos/digitopresion-presencial',
     loadComponent: () => import('./features/formaciones/digitopresion-presencial/digitopresion-presencial.component').then(m => m.DigitopresionPresencialComponent)
   },
@@ -135,6 +203,30 @@ export const routes: Routes = [
     loadComponent: () => import('./features/formaciones/fitoterapia-presencial/fitoterapia-presencial.component').then(m => m.FitoterapiaPresencialComponent)
   },
   {
+    path: 'cursos/aromaterapia-flores-bach',
+    loadComponent: () => import('./features/formaciones/aromaterapia-flores-bach/aromaterapia-flores-bach.component').then(m => m.AromaterapiaFloresBachComponent)
+  },
+  {
+    path: 'cursos/acupuntura-estetica-presencial',
+    loadComponent: () => import('./features/formaciones/acupuntura-estetica-presencial/acupuntura-estetica-presencial.component').then(m => m.AcupunturaEsteticaPresencialComponent)
+  },
+  {
+    path: 'cursos/moxibustion-ventosas-presencial',
+    loadComponent: () => import('./features/formaciones/moxibustion-ventosas-presencial/moxibustion-ventosas-presencial.component').then(m => m.MoxibustionVentosasPresencialComponent)
+  },
+  {
+    path: 'cursos/paralisis-facial-presencial',
+    loadComponent: () => import('./features/formaciones/paralisis-facial-presencial/paralisis-facial-presencial.component').then(m => m.ParalisisFacialPresencialComponent)
+  },
+  {
+    path: 'cursos/reflexologia-podal-presencial',
+    loadComponent: () => import('./features/formaciones/reflexologia-podal-presencial/reflexologia-podal-presencial.component').then(m => m.ReflexologiaPodalPresencialComponent)
+  },
+  {
+    path: 'cursos/stretching-terapeutico-presencial',
+    loadComponent: () => import('./features/formaciones/stretching-terapeutico-presencial/stretching-terapeutico-presencial.component').then(m => m.StretchingTerapeticoPresencialComponent)
+  },
+  {
     path: 'cursos/:id',
     loadComponent: () => import('./features/cursos/curso-detalle-publico/curso-detalle-publico.component').then(m => m.CursoDetallePublicoComponent)
   },
@@ -150,11 +242,15 @@ export const routes: Routes = [
   { path: 'ops-console', redirectTo: 'dashboard/master-ops', pathMatch: 'full' },
 
   // ================================================================
-  //  AUTENTICACIÓN
+  //  AUTENTICACIÓN & EXPERIENCIA EXP INSTEIP
   // ================================================================
   {
     path: 'login',
     loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent)
+  },
+  {
+    path: 'exp-final',
+    loadComponent: () => import('./features/exp-final/exp-final.component').then(m => m.ExpFinalComponent)
   },
 
   // ================================================================

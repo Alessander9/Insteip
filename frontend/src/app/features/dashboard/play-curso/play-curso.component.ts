@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, inject, NgZone, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { AlumnoDashboardService, AlumnoPlayCourse, AlumnoPlayVideo } from '../../../core/services/';
+import { AlumnoDashboardService, AlumnoPlayCourse, AlumnoPlayModulo, AlumnoPlayVideo } from '../../../core/services/';
 import { CertificadoService } from '../../../core/services/';
 import { AuthService } from '../../../core/services/';
 import { ArchivoProtegidoService } from '../../../core/services/';
@@ -48,6 +48,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
   isLoading = true;
   isPlayerLoading = false;
   activeTab: 'materiales' | 'tareas' | 'info' | 'certificado' | '' = 'materiales';
+  selectedBlockedModulo: AlumnoPlayModulo | null = null;
   
   // Tareas properties
   tareas: AlumnoTareaItem[] = [];
@@ -113,10 +114,17 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
   private pendingVideoIdFromQuery: number | null = null;
 
   ngOnInit(): void {
+    this.isExpUser = this.authService.isExpUser();
+
     this.authService.getProfile().pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: (user) => { this.profile = user; }
+      next: (user) => { 
+        this.profile = user; 
+        if (user?.isExpUser) {
+          this.isExpUser = true;
+        }
+      }
     });
 
     // Read query params for specific videoId
@@ -217,7 +225,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private flattenVideos(): AlumnoPlayVideo[] {
     if (!this.curso) return [];
-    return this.curso.modulos.flatMap(mod => mod.videos);
+    return this.curso.modulos.filter(mod => !mod.bloqueado).flatMap(mod => mod.videos);
   }
 
   private getNextVideoAfter(videoId: number): AlumnoPlayVideo | null {
@@ -311,11 +319,18 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
   selectDefaultVideo(videoId?: number | null): void {
     if (!this.curso || this.curso.modulos.length === 0) return;
 
+    const unlockedModulos = this.curso.modulos.filter(m => !m.bloqueado);
+    if (unlockedModulos.length === 0) {
+      this.selectedBlockedModulo = this.curso.modulos[0];
+      this.currentVideo = null;
+      return;
+    }
+
     let targetVideo: AlumnoPlayVideo | null = null;
 
-    // If a specific videoId was requested, find it
+    // If a specific videoId was requested, find it in unlocked modules
     if (videoId) {
-      for (const mod of this.curso.modulos) {
+      for (const mod of unlockedModulos) {
         for (const vid of mod.videos) {
           if (vid.id === videoId) {
             targetVideo = vid;
@@ -326,9 +341,9 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
 
-    // Otherwise, find first uncompleted video
+    // Otherwise, find first uncompleted video in unlocked modules
     if (!targetVideo) {
-      for (const mod of this.curso.modulos) {
+      for (const mod of unlockedModulos) {
         for (const vid of mod.videos) {
           if (!vid.completado) { targetVideo = vid; break; }
         }
@@ -336,14 +351,40 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
 
-    // Fallback to first video
+    // Fallback to first video in unlocked modules
     if (!targetVideo) {
-      for (const mod of this.curso.modulos) {
+      for (const mod of unlockedModulos) {
         if (mod.videos.length > 0) { targetVideo = mod.videos[0]; break; }
       }
     }
 
-    if (targetVideo) this.playVideo(targetVideo);
+    if (targetVideo) {
+      this.selectedBlockedModulo = null;
+      this.playVideo(targetVideo);
+    } else {
+      this.selectedBlockedModulo = this.curso.modulos[0];
+    }
+  }
+
+  onVideoClick(mod: AlumnoPlayModulo, vid: AlumnoPlayVideo): void {
+    if (mod.bloqueado) {
+      this.selectedBlockedModulo = mod;
+      this.currentVideo = null;
+      this.destroyPlayerSafely();
+      return;
+    }
+    this.selectedBlockedModulo = null;
+    this.playVideo(vid);
+  }
+
+  solicitarHabilitacionWhatsApp(mod?: AlumnoPlayModulo | null): void {
+    const moduloNombre = mod?.nombre || 'este módulo';
+    const cursoNombre = this.curso?.nombre || 'el curso';
+    const alumnoNombre = this.profile ? `${this.profile.nombres} ${this.profile.apellidos}`.trim() : 'Estudiante';
+    
+    const mensaje = `Hola INSTEIP, soy ${alumnoNombre}, deseo coordinar el pago para habilitar el Módulo "${moduloNombre}" del curso "${cursoNombre}".`;
+    const whatsappUrl = `https://wa.me/51939371250?text=${encodeURIComponent(mensaje)}`;
+    window.open(whatsappUrl, '_blank');
   }
 
   playVideo(video: AlumnoPlayVideo): void {
@@ -857,6 +898,8 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pendingNextVideo = null;
   }
 
+  isExpUser = false;
+
   fetchOrCreateCertificate(): void {
     this.certificadoService.generarCertificado(this.cursoId).pipe(
       takeUntil(this.destroy$)
@@ -870,6 +913,10 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   descargarMaterial(url: string, nombre: string, tipoArchivo: string): void {
+    if (this.isExpUser) {
+      this.toastService.warning('Las descargas de materiales no están permitidas en el modo EXP INSTEIP.');
+      return;
+    }
     const extension = getFileExtension(tipoArchivo);
     const fileName = nombre.toLowerCase().endsWith(`.${extension}`) ? nombre : `${nombre}.${extension}`;
     this.archivoProtegidoService.descargar(url, fileName).subscribe({
@@ -878,6 +925,10 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   descargarCertificado(): void {
+    if (this.isExpUser) {
+      this.toastService.warning('La emisión de certificados está reservada para alumnos con matrícula oficial.');
+      return;
+    }
     if (!this.certificatePdfUrl || !this.certificateCode) return;
     this.archivoProtegidoService.descargar(
       this.certificatePdfUrl,

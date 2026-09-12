@@ -8,5 +8,18 @@ public record AlumnoPlayModulo(
     String descripcion,
     Integer orden,
     List<AlumnoPlayVideo> videos,
-    List<AlumnoPlayMaterial> materiales
-) {}
+    List<AlumnoPlayMaterial> materiales,
+    Boolean bloqueado,
+    String mensajeBloqueo
+) {
+    public AlumnoPlayModulo(
+        Long id,
+        String nombre,
+        String descripcion,
+        Integer orden,
+        List<AlumnoPlayVideo> videos,
+        List<AlumnoPlayMaterial> materiales
+    ) {
+        this(id, nombre, descripcion, orden, videos, materiales, false, null);
+    }
+}

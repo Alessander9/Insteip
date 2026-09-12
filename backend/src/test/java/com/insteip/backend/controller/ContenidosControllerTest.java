@@ -68,6 +68,8 @@ class ContenidosControllerTest {
     @MockitoBean private MaterialService materialService;
     @MockitoBean private AvanceService avanceService;
     @MockitoBean private UsuarioRepository usuarioRepository;
+    @MockitoBean private com.insteip.backend.repository.MatriculaRepository matriculaRepository;
+    @MockitoBean private com.insteip.backend.repository.MatriculaModuloAccesoRepository matriculaModuloAccesoRepository;
 
     // --- CURSO CONTROLLER ---
 

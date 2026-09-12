@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { SkeletonLoaderComponent } from '../../../../core/components/skeleton-loader/skeleton-loader.component';
 import { DocenteDashboardService, DocenteEstudianteProgress } from '../../../../core/services/';
 import { CursoService } from '../../../../core/services/';
-import { CursoResponse } from '../../../../core/models/';
+import { CursoResponse, ModuloAccesoItem } from '../../../../core/models/';
 import { FormsModule } from '@angular/forms';
 import { matchesQuery, paginate, sortByDate, totalPages, SortOrder } from '../../../../core/utils/';
 
@@ -34,6 +34,13 @@ export class MisAlumnosDocenteComponent implements OnInit {
   dateSortOrder: SortOrder = 'desc';
   currentPage = 1;
   pageSize = 10;
+
+  // Modal Control de Acceso Modular
+  showModulosModal = false;
+  selectedEstudiante: DocenteEstudianteProgress | null = null;
+  modulosAcceso: ModuloAccesoItem[] = [];
+  loadingModulos = false;
+  isSavingModulos = false;
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -105,6 +112,68 @@ export class MisAlumnosDocenteComponent implements OnInit {
 
   nextPage(): void {
     if (this.currentPage < this.totalPages) this.currentPage++;
+  }
+
+  // --- Modal de Acceso a Módulos por Cuotas ---
+  abrirModalModulos(estudiante: DocenteEstudianteProgress): void {
+    if (!estudiante.matriculaId) {
+      this.toastService.warning('Este estudiante no cuenta con ID de matrícula asociado.');
+      return;
+    }
+    this.selectedEstudiante = estudiante;
+    this.showModulosModal = true;
+    this.loadingModulos = true;
+    this.modulosAcceso = [];
+
+    this.matriculaService.obtenerModulosAcceso(estudiante.matriculaId).subscribe({
+      next: (data) => {
+        this.modulosAcceso = data || [];
+        this.loadingModulos = false;
+      },
+      error: (err) => {
+        this.loadingModulos = false;
+        this.toastService.error('Error al cargar permisos de módulos: ' + (err.error?.message || err.message));
+      }
+    });
+  }
+
+  cerrarModalModulos(): void {
+    this.showModulosModal = false;
+    this.selectedEstudiante = null;
+    this.modulosAcceso = [];
+  }
+
+  toggleModuloAcceso(item: ModuloAccesoItem): void {
+    if (!this.selectedEstudiante?.matriculaId) return;
+    const nuevoEstado = !item.habilitado;
+
+    this.matriculaService.cambiarAccesoModulo(this.selectedEstudiante.matriculaId, item.moduloId, nuevoEstado).subscribe({
+      next: () => {
+        item.habilitado = nuevoEstado;
+        this.toastService.success(`Módulo ${nuevoEstado ? 'habilitado' : 'bloqueado'} con éxito.`);
+      },
+      error: (err) => {
+        this.toastService.error('Error al actualizar acceso: ' + (err.error?.message || err.message));
+      }
+    });
+  }
+
+  habilitarTodosModulos(habilitar: boolean): void {
+    if (!this.selectedEstudiante?.matriculaId) return;
+    this.isSavingModulos = true;
+    const habilitadosIds = habilitar ? this.modulosAcceso.map(m => m.moduloId) : [];
+
+    this.matriculaService.guardarModulosAccesoMasivo(this.selectedEstudiante.matriculaId, habilitadosIds).subscribe({
+      next: () => {
+        this.modulosAcceso.forEach(m => m.habilitado = habilitar);
+        this.isSavingModulos = false;
+        this.toastService.success(`Todos los módulos han sido ${habilitar ? 'habilitados' : 'bloqueados'}.`);
+      },
+      error: (err) => {
+        this.isSavingModulos = false;
+        this.toastService.error('Error al actualizar permisos en masa: ' + (err.error?.message || err.message));
+      }
+    });
   }
 
   descargarFichaDocente(estudiante: DocenteEstudianteProgress): void {

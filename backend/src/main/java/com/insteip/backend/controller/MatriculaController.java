@@ -3,6 +3,7 @@ package com.insteip.backend.controller;
 import lombok.RequiredArgsConstructor;
 import com.insteip.backend.domain.dto.matricula.MatriculaRequestDTO;
 import com.insteip.backend.domain.dto.matricula.MatriculaResponseDTO;
+import com.insteip.backend.domain.dto.matricula.ModuloAccesoDTO;
 import com.insteip.backend.service.interfaces.MatriculaService;
 import com.insteip.backend.service.interfaces.MatriculaPdfService;
 import com.insteip.backend.service.interfaces.AuditoriaService;
@@ -67,6 +68,42 @@ public class MatriculaController {
             nuevoEstado = true;
         }
         matriculaService.cambiarEstado(id, nuevoEstado);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/modulos-acceso")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DOCENTE')")
+    public ResponseEntity<List<ModuloAccesoDTO>> listarModulosAcceso(@PathVariable Long id) {
+        return ResponseEntity.ok(matriculaService.listarModulosAcceso(id));
+    }
+
+    @PatchMapping("/{id}/modulos/{moduloId}/acceso")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<Void> actualizarModuloAcceso(
+            @PathVariable Long id,
+            @PathVariable Long moduloId,
+            @RequestParam(required = false) Boolean habilitado,
+            @RequestBody(required = false) Map<String, Boolean> body) {
+
+        Boolean nuevoHabilitado = habilitado;
+        if (nuevoHabilitado == null && body != null) {
+            nuevoHabilitado = body.get("habilitado");
+        }
+        if (nuevoHabilitado == null) {
+            nuevoHabilitado = true;
+        }
+
+        matriculaService.actualizarModuloAcceso(id, moduloId, nuevoHabilitado);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/modulos-acceso")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<Void> actualizarModulosAccesoMasivo(
+            @PathVariable Long id,
+            @RequestBody List<Long> modulosHabilitadosIds) {
+
+        matriculaService.actualizarModulosAccesoMasivo(id, modulosHabilitadosIds);
         return ResponseEntity.noContent().build();
     }
 

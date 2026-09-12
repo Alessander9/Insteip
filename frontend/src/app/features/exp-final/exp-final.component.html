@@ -1,0 +1,110 @@
+<section class="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between relative overflow-hidden font-sans">
+  
+  <!-- Background Glow Accents -->
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-emerald-600/15 via-teal-500/10 to-transparent blur-3xl pointer-events-none"></div>
+  <div class="absolute bottom-0 right-0 w-[500px] h-[350px] bg-gradient-to-t from-navy-800/20 to-transparent blur-3xl pointer-events-none"></div>
+
+  <!-- Top Header Navigation -->
+  <header class="w-full max-w-6xl mx-auto px-6 py-6 flex items-center justify-between relative z-10">
+    <a routerLink="/" class="flex items-center gap-3">
+      <img src="assets/insteip-logo.png" alt="INSTEIP" class="h-10 w-auto object-contain brightness-0 invert" (error)="$event.target.style.display='none'">
+      <div class="flex flex-col">
+        <span class="font-black text-lg tracking-wider text-white">INSTEIP</span>
+        <span class="text-[10px] tracking-widest text-emerald-400 font-semibold uppercase">Terapias Integrales Perú</span>
+      </div>
+    </a>
+
+    <a routerLink="/inicio" class="text-xs font-semibold text-slate-400 hover:text-white transition-colors flex items-center gap-1.5">
+      <span>Volver al portal</span>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+    </a>
+  </header>
+
+  <!-- Main Hero Card Content -->
+  <main class="w-full max-w-3xl mx-auto px-6 py-8 my-auto relative z-10 text-center">
+    
+    <!-- Experience Finished Badge -->
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-widest mb-6 shadow-inner animate-fade-in">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      Sesión EXP INSTEIP Concluida
+    </div>
+
+    <!-- Main Title -->
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4 leading-tight">
+      🎓 ¡Esperamos que hayas disfrutado <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">EXP INSTEIP</span>!
+    </h1>
+
+    <!-- Subtitle / Message -->
+    <p class="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto mb-8 font-normal leading-relaxed">
+      Has conocido parte de nuestra plataforma educativa y nuestros programas de formación especializada. 
+      <br class="hidden sm:inline">
+      <strong class="text-white font-semibold">Da el siguiente paso en tu formación profesional</strong> y desbloquea el acceso ilimitado a todos los cursos, materiales y certificaciones oficiales.
+    </p>
+
+    <!-- Key Benefits Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mb-10 text-left max-w-2xl mx-auto">
+      <div class="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800/80 backdrop-blur-sm">
+        <div class="text-xl mb-1">📜</div>
+        <h2 class="text-xs font-bold text-white mb-0.5">Certificación Oficial</h2>
+        <p class="text-[11px] text-slate-400">Respaldo profesional e institucional con validez curricular.</p>
+      </div>
+      <div class="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800/80 backdrop-blur-sm">
+        <div class="text-xl mb-1">💻</div>
+        <h2 class="text-xs font-bold text-white mb-0.5">Campus 24/7 Ilimitado</h2>
+        <p class="text-[11px] text-slate-400">Acceso total a videos en alta calidad y descarga de materiales.</p>
+      </div>
+      <div class="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800/80 backdrop-blur-sm">
+        <div class="text-xl mb-1">👨‍🏫</div>
+        <h2 class="text-xs font-bold text-white mb-0.5">Asesoría Docente</h2>
+        <p class="text-[11px] text-slate-400">Acompañamiento pedagógico y resolución de dudas personalizadas.</p>
+      </div>
+    </div>
+
+    <!-- Action Buttons Stack (The 3 requested options) -->
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5 max-w-xl mx-auto">
+      
+      <!-- 1. Botón Azul: Ver cursos disponibles -->
+      <a 
+        routerLink="/cursos" 
+        class="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-bold text-sm text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 transition-all duration-200 shadow-md active:scale-95"
+      >
+        <span>🔵</span>
+        <span>Ver cursos disponibles</span>
+      </a>
+
+      <!-- 2. Botón Morado / Destacado: Matricularme ahora -->
+      <a 
+        routerLink="/programas" 
+        class="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-bold text-sm text-white bg-purple-600 hover:bg-purple-500 shadow-lg shadow-purple-600/30 transition-all duration-200 active:scale-95"
+      >
+        <span>🟣</span>
+        <span>Matricularme ahora</span>
+      </a>
+
+      <!-- 3. Botón WhatsApp: Hablar con un asesor -->
+      <a 
+        [href]="whatsappUrl" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-bold text-sm text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-600/30 transition-all duration-200 active:scale-95"
+      >
+        <span>💬</span>
+        <span>Hablar con asesor</span>
+      </a>
+      
+    </div>
+
+    <!-- Advisor WhatsApp Direct Tag -->
+    <p class="text-xs text-slate-500 mt-6 flex items-center justify-center gap-1.5">
+      <span>Atención directa por WhatsApp:</span>
+      <a [href]="whatsappUrl" target="_blank" class="text-emerald-400 hover:underline font-bold">+51 939 371 250</a>
+    </p>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full max-w-6xl mx-auto px-6 py-6 text-center text-xs text-slate-600 relative z-10">
+    <p>© {{ 2026 }} INSTEIP - Instituto de Terapias Integrales Perú. Todos los derechos reservados.</p>
+  </footer>
+
+</section>

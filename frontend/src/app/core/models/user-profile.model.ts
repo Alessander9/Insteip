@@ -5,4 +5,6 @@ export interface UserProfile {
   correo: string;
   rol: string;
   nivelSuscripcion?: string;
+  isExpUser?: boolean;
+  expDurationSeconds?: number;
 }

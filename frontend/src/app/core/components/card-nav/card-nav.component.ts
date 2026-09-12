@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router, NavigationEnd, Event } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { gsap } from 'gsap';
 import { ThemeService } from '../../services/theme.service';
 
@@ -31,14 +33,17 @@ interface NavItem {
 export class CardNavComponent implements OnInit, OnDestroy {
   @ViewChild('navbarRef') navbarRef!: ElementRef<HTMLElement>;
 
+  private router = inject(Router);
   themeService = inject(ThemeService);
 
   activeDropdown: number | null = null;
   isMobileMenuOpen = false;
   activeMobileDropdown: number | null = null;
+  currentUrl: string = '';
 
   private tl: gsap.core.Timeline | null = null;
   private hideTimeout: any = null;
+  private routerSub?: Subscription;
 
   readonly navItems: NavItem[] = [
     {
@@ -55,6 +60,7 @@ export class CardNavComponent implements OnInit, OnDestroy {
       ctaRoute: '/cursos-online',
       links: [
         { label: 'Acupuntura China', route: '/cursos/acupuntura-china', ariaLabel: 'Curso de Acupuntura China', description: 'Formación profesional en medicina tradicional', icon: 'spa' },
+        { label: 'Electroacupuntura', route: '/cursos/electroacupuntura', ariaLabel: 'Curso de Electroacupuntura', description: 'Seminario clínico con casos reales grabado de 8h', icon: 'bolt' },
         { label: 'Auriculoterapia', route: '/cursos/auriculoterapia', ariaLabel: 'Curso de Auriculoterapia', description: 'Diagnóstico y estímulo del pabellón auricular', icon: 'hearing' },
         { label: 'Masaje Terapéutico', route: '/cursos/masaje-terapeutico', ariaLabel: 'Curso de Masaje Terapéutico', description: 'Técnicas manuales para la salud y bienestar', icon: 'physical_therapy' }
       ]
@@ -71,6 +77,13 @@ export class CardNavComponent implements OnInit, OnDestroy {
       ]
     },
     {
+      label: 'Libros',
+      route: '/libros',
+      bgColor: '#1e293b',
+      textColor: '#fff',
+      links: []
+    },
+    {
       label: 'Sedes',
       route: '/sedes',
       bgColor: '#1e293b',
@@ -78,7 +91,7 @@ export class CardNavComponent implements OnInit, OnDestroy {
       links: []
     },
     {
-      label: 'Certificación Internacional',
+      label: 'Certificación',
       route: '/certificacion',
       bgColor: '#1e293b',
       textColor: '#fff',
@@ -90,46 +103,49 @@ export class CardNavComponent implements OnInit, OnDestroy {
       bgColor: '#1e293b',
       textColor: '#fff',
       links: []
-    },
-    /*
-    {
-      label: 'Por qué elegirnos',
-      route: '/por-que-elegirnos',
-      bgColor: '#1e293b',
-      textColor: '#fff',
-      links: []
-    },
-    {
-      label: 'Cómo aprenderás',
-      route: '/como-aprenderas',
-      bgColor: '#1e293b',
-      textColor: '#fff',
-      links: []
-    }*/
+    }
   ];
 
   ngOnInit(): void {
-    document.addEventListener('click', this.onDocumentClick);
+    if (typeof window !== 'undefined') {
+      this.currentUrl = this.router.url || window.location.pathname;
+      document.addEventListener('click', this.onDocumentClick);
+    }
+
+    this.routerSub = this.router.events
+      .pipe(filter((e: Event): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe((e: NavigationEnd) => {
+        this.currentUrl = e.urlAfterRedirects || e.url;
+        this.hideDropdown();
+        this.closeMobileMenu();
+      });
   }
 
   ngOnDestroy(): void {
-    document.removeEventListener('click', this.onDocumentClick);
+    if (typeof window !== 'undefined') {
+      document.removeEventListener('click', this.onDocumentClick);
+    }
+    this.routerSub?.unsubscribe();
     this.tl?.kill();
     if (this.hideTimeout) clearTimeout(this.hideTimeout);
   }
 
   toggleMobileMenu(): void {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
-    if (this.isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden'; // Prevent scrolling when open
-    } else {
-      document.body.style.overflow = '';
+    if (typeof document !== 'undefined') {
+      if (this.isMobileMenuOpen) {
+        document.body.style.overflow = 'hidden'; // Prevent scrolling when open
+      } else {
+        document.body.style.overflow = '';
+      }
     }
   }
 
   closeMobileMenu(): void {
     this.isMobileMenuOpen = false;
-    document.body.style.overflow = '';
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = '';
+    }
   }
 
   toggleMobileDropdown(index: number): void {
@@ -137,6 +153,14 @@ export class CardNavComponent implements OnInit, OnDestroy {
       this.activeMobileDropdown = null;
     } else {
       this.activeMobileDropdown = index;
+    }
+  }
+
+  toggleDropdown(index: number): void {
+    if (this.activeDropdown === index) {
+      this.hideDropdown();
+    } else {
+      this.showDropdown(index);
     }
   }
 
@@ -204,12 +228,19 @@ export class CardNavComponent implements OnInit, OnDestroy {
   }
 
   hasActiveRoute(item: NavItem): boolean {
-    const path = window.location.pathname;
-    if (item.route && path === item.route) {
+    const rawUrl = this.currentUrl || (typeof window !== 'undefined' ? window.location.pathname : '');
+    const url = rawUrl.split('?')[0].split('#')[0];
+
+    if (item.route) {
+      if (url === item.route || url === `${item.route}.html` || (item.route !== '/inicio' && url.startsWith(item.route))) {
+        return true;
+      }
+    }
+    if (item.ctaRoute && (url === item.ctaRoute || url === `${item.ctaRoute}.html`)) {
       return true;
     }
     if (item.links && item.links.length > 0) {
-      return item.links.some(l => path.startsWith(l.route));
+      return item.links.some(l => url === l.route || url === `${l.route}.html` || (l.route !== '/' && url.startsWith(l.route)));
     }
     return false;
   }

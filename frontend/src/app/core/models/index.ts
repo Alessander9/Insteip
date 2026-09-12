@@ -6,7 +6,7 @@ export { DocenteRequest, DocenteResponse } from './docente.model';
 export { LoginRequest } from './login-request.model';
 export { LoginResponse } from './login-response.model';
 export { MaterialResponse } from './material.model';
-export { MatriculaRequest, MatriculaResponse } from './matricula.model';
+export { MatriculaRequest, MatriculaResponse, ModuloAccesoItem } from './matricula.model';
 export { ModuloRequest, ModuloResponse } from './modulo.model';
 export { TokenRefreshRequest, TokenRefreshResponse } from './token-refresh.model';
 export { UserProfile } from './user-profile.model';

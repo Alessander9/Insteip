@@ -160,6 +160,19 @@ export class CursosOnlineComponent {
       price: 'S/ 120',
       image: 'assets/curso_aromaterapia_flores_bach.jpg',
       customLink: '/cursos/aromaterapia-flores-bach'
+    },
+    {
+      slug: 'electroacupuntura-online',
+      title: 'Electroacupuntura Clínica (Online)',
+      category: 'CORTOS',
+      icon: 'bolt',
+      rating: 4.9,
+      duration: '8 horas (Grabado / Inmediato)',
+      description: 'Teoría aplicada a la práctica con casos reales durante la formación. Docente: Lic. Lázaro Regalado Ponte.',
+      students: '+240',
+      price: 'S/ 180',
+      image: 'assets/electroAcupuntura_IMG/foto_electro.jpg',
+      customLink: '/cursos/electroacupuntura'
     }
   ];
 

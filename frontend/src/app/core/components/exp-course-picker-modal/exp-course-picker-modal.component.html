@@ -1,0 +1,114 @@
+<div class="exp-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="exp-modal-title">
+  <div class="exp-modal-wrapper">
+    <div class="exp-modal-card">
+      
+      <!-- Top Decorative Glows -->
+      <div class="exp-modal-glow exp-modal-glow--top" aria-hidden="true"></div>
+      <div class="exp-modal-glow exp-modal-glow--bottom" aria-hidden="true"></div>
+
+      <!-- Header -->
+      <header class="exp-modal-header">
+        <div class="exp-modal-badge">
+          <span class="exp-modal-badge-dot"></span>
+          <span>Demostración Oficial · 15 Minutos</span>
+        </div>
+
+        <h2 id="exp-modal-title" class="exp-modal-title">
+          ¡Bienvenido a tu <span class="exp-gradient-text">Experiencia INSTEIP</span>!
+        </h2>
+
+        <p class="exp-modal-subtitle">
+          Explora nuestro campus virtual y la excelencia de nuestras clases en terapias integrales. 
+          <strong>Elige 2 cursos</strong> de nuestro catálogo para iniciar tu prueba de 15 minutos.
+        </p>
+
+        <!-- Selection Tracker Bar -->
+        <div class="exp-tracker-bar" [class.exp-tracker-bar--complete]="selectedIds.length === maxSelection">
+          <div class="exp-tracker-info">
+            <span class="material-symbols-outlined exp-tracker-icon">
+              {{ selectedIds.length === maxSelection ? 'check_circle' : 'touch_app' }}
+            </span>
+            <span class="exp-tracker-label">
+              {{ selectedIds.length === maxSelection 
+                  ? '¡Excelente selección! Ya puedes comenzar tu experiencia' 
+                  : 'Selecciona 2 cursos (' + selectedIds.length + ' de ' + maxSelection + ' elegidos)' }}
+            </span>
+          </div>
+          <div class="exp-tracker-pills">
+            <span class="exp-pill" [class.exp-pill--active]="selectedIds.length >= 1">1</span>
+            <span class="exp-pill" [class.exp-pill--active]="selectedIds.length === 2">2</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Course Cards Selection Grid -->
+      <div class="exp-modal-body">
+        <div class="exp-courses-grid">
+          <div 
+            *ngFor="let curso of cursos" 
+            class="exp-course-card"
+            [class.exp-course-card--selected]="isSelected(curso.id)"
+            [class.exp-course-card--disabled]="!isSelected(curso.id) && selectedIds.length >= maxSelection"
+            (click)="toggleCourse(curso.id)"
+          >
+            <!-- Card Thumbnail with Fallback -->
+            <div class="exp-card-thumb-wrap">
+              <img 
+                *ngIf="curso.imagenPortada && !hasImageFailed(curso.id)" 
+                [src]="curso.imagenPortada" 
+                [alt]="curso.nombre" 
+                class="exp-card-thumb"
+                (error)="onImgError(curso.id)"
+                loading="lazy"
+              />
+              <div *ngIf="!curso.imagenPortada || hasImageFailed(curso.id)" class="exp-card-thumb-fallback">
+                <span class="material-symbols-outlined exp-fallback-icon">auto_awesome</span>
+                <span class="exp-fallback-text">{{ curso.nombre }}</span>
+              </div>
+              <div class="exp-card-thumb-overlay"></div>
+              
+              <!-- Checkmark badge on image -->
+              <div class="exp-card-check" [class.exp-card-check--active]="isSelected(curso.id)">
+                <span class="material-symbols-outlined">
+                  {{ isSelected(curso.id) ? 'check' : 'add' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="exp-card-content">
+              <span class="exp-card-badge" *ngIf="curso.nivelSuscripcion">
+                {{ curso.nivelSuscripcion }}
+              </span>
+              <h3 class="exp-card-name" [title]="curso.nombre">{{ curso.nombre }}</h3>
+              <p class="exp-card-desc">{{ curso.descripcion || 'Formación especializada con docentes de primer nivel y enfoque clínico práctico.' }}</p>
+            </div>
+
+            <!-- Selection Glow Ring -->
+            <div class="exp-card-ring" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Action -->
+      <footer class="exp-modal-footer">
+        <div class="exp-footer-helper">
+          <span class="material-symbols-outlined">info</span>
+          <span>El temporizador de 15 minutos comenzará al confirmar tu selección.</span>
+        </div>
+
+        <button 
+          type="button" 
+          class="exp-confirm-btn"
+          [disabled]="selectedIds.length !== maxSelection"
+          (click)="confirm()"
+        >
+          <span class="material-symbols-outlined">play_circle</span>
+          <span>Comenzar mi Experiencia (15 min)</span>
+          <span class="material-symbols-outlined exp-btn-arrow">arrow_forward</span>
+        </button>
+      </footer>
+
+    </div>
+  </div>
+</div>

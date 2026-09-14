@@ -1,0 +1,549 @@
+/* =========================================================================
+   INSTEIP — EXP COURSE PICKER MODAL (15 MIN SESSION) - ULTRA RESPONSIVE
+   ========================================================================= */
+
+.exp-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 15, 29, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 0.75rem;
+  overflow-y: auto;
+  animation: expModalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes expModalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.exp-modal-wrapper {
+  width: 100%;
+  max-width: 1060px;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.exp-modal-card {
+  position: relative;
+  width: 100%;
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.25rem;
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.7),
+              0 0 30px rgba(56, 189, 248, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 2rem);
+  animation: expCardSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes expCardSlideUp {
+  from {
+    transform: translateY(16px) scale(0.98);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Atmospheric Glows */
+.exp-modal-glow {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.2;
+  z-index: 0;
+}
+
+.exp-modal-glow--top {
+  top: -60px;
+  right: -60px;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, #0284c7, #38bdf8);
+}
+
+.exp-modal-glow--bottom {
+  bottom: -60px;
+  left: -60px;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, #0d9488, #10b981);
+}
+
+/* Header */
+.exp-modal-header {
+  position: relative;
+  z-index: 1;
+  padding: 1rem 1.5rem 0.65rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.5) 100%);
+  flex-shrink: 0;
+}
+
+.exp-modal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  background: rgba(14, 165, 233, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.35rem;
+}
+
+.exp-modal-badge-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 6px #38bdf8;
+  animation: expPulse 1.8s infinite;
+}
+
+@keyframes expPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+.exp-modal-title {
+  font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.25rem;
+  line-height: 1.2;
+}
+
+.exp-gradient-text {
+  background: linear-gradient(135deg, #38bdf8 0%, #2dd4bf 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.exp-modal-subtitle {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  max-width: 600px;
+  margin: 0 auto 0.65rem;
+  line-height: 1.35;
+}
+
+.exp-modal-subtitle strong {
+  color: #f1f5f9;
+  font-weight: 600;
+}
+
+/* Tracker Bar */
+.exp-tracker-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0.85rem;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.7rem;
+  max-width: 560px;
+  margin: 0 auto;
+  transition: all 0.25s ease;
+}
+
+.exp-tracker-bar--complete {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(52, 211, 153, 0.35);
+}
+
+.exp-tracker-info {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.exp-tracker-bar--complete .exp-tracker-info {
+  color: #34d399;
+}
+
+.exp-tracker-icon {
+  font-size: 1.05rem;
+  color: #38bdf8;
+}
+
+.exp-tracker-bar--complete .exp-tracker-icon {
+  color: #34d399;
+}
+
+.exp-tracker-pills {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.exp-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.08);
+  color: #64748b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.exp-pill--active {
+  background: #0ea5e9;
+  color: #ffffff;
+  border-color: #38bdf8;
+  box-shadow: 0 0 8px rgba(14, 165, 233, 0.4);
+}
+
+/* Body / Cards Grid */
+.exp-modal-body {
+  position: relative;
+  z-index: 1;
+  padding: 1rem 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 180px;
+}
+
+/* Custom Sleek Scrollbar */
+.exp-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.exp-modal-body::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 8px;
+}
+
+.exp-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.25);
+  border-radius: 8px;
+}
+
+.exp-modal-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.5);
+}
+
+.exp-courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+/* Card */
+.exp-course-card {
+  position: relative;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.85rem;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.exp-course-card:hover:not(.exp-course-card--disabled) {
+  transform: translateY(-3px);
+  border-color: rgba(56, 189, 248, 0.45);
+  box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.5);
+}
+
+.exp-course-card--selected {
+  background: rgba(14, 165, 233, 0.12);
+  border-color: #38bdf8;
+  box-shadow: 0 0 16px rgba(14, 165, 233, 0.25);
+}
+
+.exp-course-card--disabled {
+  opacity: 0.4;
+  filter: grayscale(0.4);
+  cursor: not-allowed;
+}
+
+/* Card Thumbnail */
+.exp-card-thumb-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 8.5;
+  overflow: hidden;
+  background: #1e293b;
+}
+
+.exp-card-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.exp-course-card:hover:not(.exp-course-card--disabled) .exp-card-thumb {
+  transform: scale(1.05);
+}
+
+.exp-card-thumb-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.exp-fallback-icon {
+  font-size: 1.4rem;
+  color: #38bdf8;
+  opacity: 0.85;
+}
+
+.exp-fallback-text {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #94a3b8;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 90%;
+}
+
+.exp-card-thumb-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.05) 0%, rgba(15, 23, 42, 0.75) 100%);
+}
+
+.exp-card-check {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.45rem;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(4px);
+  z-index: 2;
+}
+
+.exp-card-check span {
+  font-size: 0.95rem;
+}
+
+.exp-card-check--active {
+  background: #0ea5e9;
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(14, 165, 233, 0.6);
+  transform: scale(1.05);
+}
+
+/* Card Content */
+.exp-card-content {
+  padding: 0.65rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.exp-card-badge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.3rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.3rem;
+}
+
+.exp-course-card--selected .exp-card-badge {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+}
+
+.exp-card-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.25rem;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.exp-course-card--selected .exp-card-name {
+  color: #38bdf8;
+}
+
+.exp-card-desc {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  line-height: 1.35;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Footer */
+.exp-modal-footer {
+  position: relative;
+  z-index: 1;
+  padding: 0.75rem 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.exp-footer-helper {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.exp-footer-helper span:first-child {
+  font-size: 0.95rem;
+  color: #0ea5e9;
+}
+
+.exp-confirm-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.4rem;
+  border-radius: 0.65rem;
+  background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 50%, #06b6d4 100%);
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.exp-confirm-btn:hover:not(:disabled) {
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5);
+}
+
+.exp-confirm-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.exp-btn-arrow {
+  font-size: 1rem;
+  transition: transform 0.2s ease;
+}
+
+.exp-confirm-btn:hover:not(:disabled) .exp-btn-arrow {
+  transform: translateX(3px);
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+  .exp-modal-backdrop {
+    padding: 0.5rem;
+  }
+  .exp-modal-header {
+    padding: 0.85rem 1rem 0.5rem;
+  }
+  .exp-modal-body {
+    padding: 0.75rem 1rem;
+  }
+  .exp-courses-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.6rem;
+  }
+  .exp-card-desc {
+    display: none; /* Keep cards compact on tablet/mobile */
+  }
+  .exp-modal-footer {
+    padding: 0.65rem 1rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .exp-footer-helper {
+    justify-content: center;
+    text-align: center;
+  }
+  .exp-confirm-btn {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .exp-courses-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  .exp-modal-title {
+    font-size: 1.1rem;
+  }
+  .exp-modal-subtitle {
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  .exp-tracker-bar {
+    padding: 0.35rem 0.65rem;
+  }
+  .exp-tracker-label {
+    font-size: 0.72rem;
+  }
+}

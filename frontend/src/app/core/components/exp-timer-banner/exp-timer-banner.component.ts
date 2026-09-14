@@ -15,10 +15,10 @@ export class ExpTimerBannerComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private sub?: Subscription;
 
-  remainingSeconds: number = 1200;
-  totalDurationSeconds: number = 1200;
+  remainingSeconds: number = 900;
+  totalDurationSeconds: number = 900;
   progressPercentage: number = 100;
-  formattedTime: string = '20:00';
+  formattedTime: string = '15:00';
   isUrgent: boolean = false;
   isCritical: boolean = false;
 
@@ -29,7 +29,7 @@ export class ExpTimerBannerComponent implements OnInit, OnDestroy {
       this.remainingSeconds = seconds;
       this.formattedTime = this.formatSeconds(seconds);
       this.progressPercentage = Math.min(100, Math.max(0, (seconds / this.totalDurationSeconds) * 100));
-      this.isUrgent = seconds <= 300 && seconds > 60; // < 5 mins
+      this.isUrgent = seconds <= 180 && seconds > 60; // < 3 mins
       this.isCritical = seconds <= 60; // < 1 min
     });
   }

@@ -222,8 +222,8 @@ const DEFAULT_INSTEIP_BOOKS: NewsletterBookshelfItem[] = [
     color: '#0a3d74',
     foil: '#dfb76c',
     customTextures: {
-      spread: 'assets/libroPortada_Acu_Estetica/libro1_4.png',
-      insideSpread: 'assets/libroPortada_Acu_Estetica/libro1_3.png'
+      spread: 'assets/libroPortada_Acu_Estetica/4.png',
+      insideSpread: 'assets/libroPortada_Acu_Estetica/3.png'
     }
   }
 ];
@@ -491,7 +491,8 @@ function createCroppedTexture(
   targetWidth: number,
   targetHeight: number,
   cropRatio: { sx: number; sy: number; sw: number; sh: number },
-  fallbackDraw: (ctx: CanvasRenderingContext2D) => void
+  fallbackDraw: (ctx: CanvasRenderingContext2D) => void,
+  bgColor: string = '#00274e'
 ): THREE.CanvasTexture | null {
   if (typeof document === 'undefined') return null;
   const canvas = document.createElement('canvas');
@@ -500,12 +501,18 @@ function createCroppedTexture(
   const context = canvas.getContext('2d');
   if (!context) return null;
 
+  // Fill solid background so there is never transparent or dark border
+  context.fillStyle = bgColor;
+  context.fillRect(0, 0, targetWidth, targetHeight);
+
   // Draw procedural fallback immediately so 3D model is never blank
   fallbackDraw(context);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 8;
+  texture.wrapS = THREE.ClampToEdgeWrapping;
+  texture.wrapT = THREE.ClampToEdgeWrapping;
   texture.needsUpdate = true;
 
   // Load custom image and replace texture once loaded
@@ -517,7 +524,8 @@ function createCroppedTexture(
     const sw = Math.floor(img.naturalWidth * cropRatio.sw);
     const sh = Math.floor(img.naturalHeight * cropRatio.sh);
 
-    context.clearRect(0, 0, targetWidth, targetHeight);
+    context.fillStyle = bgColor;
+    context.fillRect(0, 0, targetWidth, targetHeight);
     context.drawImage(img, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
     texture.needsUpdate = true;
   };
@@ -647,13 +655,13 @@ function coverTexture(book: BookLayout, brand: string, face: 'cover' | 'spine' |
   };
 
   if (book.customTextures?.spread) {
-    let cropRatio = { sx: 0.56315, sy: 0.03711, sw: 0.40365, sh: 0.92969 }; // Front cover
+    let cropRatio = { sx: 0.54688, sy: 0.05371, sw: 0.39388, sh: 0.88867 }; // Front cover
     if (face === 'back') {
-      cropRatio = { sx: 0.03581, sy: 0.04102, sw: 0.39714, sh: 0.92578 }; // Back cover
+      cropRatio = { sx: 0.05859, sy: 0.05371, sw: 0.39388, sh: 0.88867 }; // Back cover
     } else if (face === 'spine') {
-      cropRatio = { sx: 0.42969, sy: 0.04102, sw: 0.13542, sh: 0.92578 }; // Spine
+      cropRatio = { sx: 0.46875, sy: 0.05371, sw: 0.06250, sh: 0.88867 }; // Spine
     }
-    return createCroppedTexture(book.customTextures.spread, targetWidth, targetHeight, cropRatio, drawProcedural);
+    return createCroppedTexture(book.customTextures.spread, targetWidth, targetHeight, cropRatio, drawProcedural, book.color || '#00274e');
   }
 
   const canvas = document.createElement('canvas');
@@ -705,8 +713,8 @@ function insideCoverTexture(book: BookLayout, brand: string): THREE.CanvasTextur
   };
 
   if (book.customTextures?.insideSpread) {
-    const cropRatio = { sx: 0.07812, sy: 0.02734, sw: 0.41341, sh: 0.92969 }; // Inside flap clean
-    const customTex = createCroppedTexture(book.customTextures.insideSpread, targetWidth, targetHeight, cropRatio, drawProcedural);
+    const cropRatio = { sx: 0.03255, sy: 0.02930, sw: 0.45573, sh: 0.91797 }; // Inside left flap
+    const customTex = createCroppedTexture(book.customTextures.insideSpread, targetWidth, targetHeight, cropRatio, drawProcedural, book.color || '#00274e');
     if (customTex) return customTex;
   }
 
@@ -812,8 +820,8 @@ function innerPageTexture(book: BookLayout, brand: string): THREE.CanvasTexture 
   };
 
   if (book.customTextures?.insideSpread) {
-    const cropRatio = { sx: 0.52734, sy: 0.06641, sw: 0.40690, sh: 0.85938 }; // Inner page pure parchment
-    const customTex = createCroppedTexture(book.customTextures.insideSpread, targetWidth, targetHeight, cropRatio, drawProcedural);
+    const cropRatio = { sx: 0.50130, sy: 0.03418, sw: 0.44596, sh: 0.91309 }; // Inner page right
+    const customTex = createCroppedTexture(book.customTextures.insideSpread, targetWidth, targetHeight, cropRatio, drawProcedural, '#f8f4ec');
     if (customTex) return customTex;
   }
 
@@ -1390,7 +1398,7 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
         0.006
       );
 
-      const coverEdgeColor = book.customTextures ? '#083c74' : book.color;
+      const coverEdgeColor = book.customTextures ? '#00274e' : book.color;
       const clothMat = new THREE.MeshStandardMaterial({
         color: new THREE.Color(coverEdgeColor),
         roughness: 0.5,

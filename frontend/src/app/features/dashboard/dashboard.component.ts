@@ -8,6 +8,9 @@ import { SkeletonLoaderComponent } from '../../core/components/skeleton-loader/s
 import { NotificacionesMenuComponent } from '../../core/components/notificaciones-menu/notificaciones-menu.component';
 import { AnuncioModalDialogComponent } from '../../core/components/anuncio-modal-dialog/anuncio-modal-dialog.component';
 import { ExpTimerBannerComponent } from '../../core/components/exp-timer-banner/exp-timer-banner.component';
+import { ExpCoursePickerModalComponent } from '../../core/components/exp-course-picker-modal/exp-course-picker-modal.component';
+import { AlumnoDashboardService, AlumnoCurso } from '../../core/services/alumno-dashboard.service';
+import { ToastService } from '../../core/services/toast.service';
 import { ThemeService } from '../../core/services/';
 import { TareaService } from '../../core/services/tarea.service';
 import { NotificacionService } from '../../core/services/notificacion.service';
@@ -24,7 +27,8 @@ import { MensajeriaService } from '../../core/services/mensajeria.service';
     SkeletonLoaderComponent,
     NotificacionesMenuComponent,
     AnuncioModalDialogComponent,
-    ExpTimerBannerComponent
+    ExpTimerBannerComponent,
+    ExpCoursePickerModalComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
@@ -33,6 +37,8 @@ import { MensajeriaService } from '../../core/services/mensajeria.service';
 export class DashboardComponent implements OnInit, OnDestroy {
   
   private authService = inject(AuthService);
+  private studentService = inject(AlumnoDashboardService);
+  private toastService = inject(ToastService);
   private tareaService = inject(TareaService);
   private notificacionService = inject(NotificacionService);
   private docenteDashboardService = inject(DocenteDashboardService);
@@ -48,6 +54,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   comunicadosNoLeidosCount = 0;
   mensajesNoLeidosCount = 0;
   isExpUser = false;
+  showExpCoursePicker = false;
+  allExpCourses: AlumnoCurso[] = [];
 
   private notifSub?: Subscription;
   private mensajeSub?: Subscription;
@@ -67,6 +75,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.expSub = this.authService.isExpUserSubject.subscribe(isExp => {
       this.isExpUser = isExp;
+      if (isExp) {
+        this.verificarExpPicker();
+      }
     });
 
     this.notifSub = this.notificacionService.resumen$.subscribe(resumen => {
@@ -81,6 +92,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
       next: (user) => {
         this.profile = user;
         this.isLoading = false;
+        if (user?.isExpUser) {
+          this.isExpUser = true;
+          this.verificarExpPicker();
+        }
         if (user && user.rol === 'ALUMNO') {
           this.cargarTareasPendientesAlumno();
         } else if (user && user.rol === 'DOCENTE') {
@@ -94,6 +109,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.errorMsg = 'No se pudo cargar el perfil del usuario autenticado.';
       }
     });
+  }
+
+  private verificarExpPicker(): void {
+    if (!this.isExpUser) return;
+    const selected = this.authService.getExpSelectedCourseIds();
+    if (!selected || selected.length < 2) {
+      this.showExpCoursePicker = true;
+      this.studentService.getEnrolledCursos().subscribe({
+        next: (data) => {
+          this.allExpCourses = (data || []).filter(c => !c.nombre?.toLowerCase().includes('excel'));
+        }
+      });
+    } else {
+      this.showExpCoursePicker = false;
+    }
+  }
+
+  onExpCoursesSelected(courseIds: number[]): void {
+    this.authService.saveExpSelectedCourseIds(courseIds);
+    this.showExpCoursePicker = false;
+    this.toastService.success('¡Cursos seleccionados! Tienes 15 minutos para explorar tu experiencia INSTEIP.');
+    this.router.navigate(['/dashboard/mis-cursos']);
   }
 
   ngOnDestroy(): void {

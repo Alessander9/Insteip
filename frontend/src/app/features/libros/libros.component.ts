@@ -9,6 +9,12 @@ import {
   NewsletterBookshelfItem
 } from '../../shared/components/newsletter-bookshelf/newsletter-bookshelf.component';
 
+export interface LibroGaleriaItem {
+  url: string;
+  label: string;
+  descripcion?: string;
+}
+
 export interface LibroItem {
   id: string;
   titulo: string;
@@ -21,6 +27,7 @@ export interface LibroItem {
   anio: string;
   formato: string;
   portada: string;
+  galeria?: LibroGaleriaItem[];
   destacado?: boolean;
   bestseller?: boolean;
   nuevo?: boolean;
@@ -299,9 +306,32 @@ export class LibrosComponent implements OnInit, AfterViewInit, OnDestroy {
       paginas: 210,
       anio: 'Edición 2026',
       formato: 'PDF Digital HD + Fichas Clínicas',
-      portada: 'assets/libroPortada_Acu_Estetica/libro1_1.png',
+      portada: 'assets/libroPortada_Acu_Estetica/1.png',
+      galeria: [
+        {
+          url: 'assets/libroPortada_Acu_Estetica/1.png',
+          label: 'Portada Principal',
+          descripcion: 'Encuadernación de lujo con estampado en oro y grabado botánico de flor de loto.'
+        },
+        {
+          url: 'assets/libroPortada_Acu_Estetica/2.png',
+          label: 'Contraportada & Sinopsis',
+          descripcion: 'Resumen clínico, código de barras ISBN y sello oficial editorial INSTEIP.'
+        },
+        {
+          url: 'assets/libroPortada_Acu_Estetica/3.png',
+          label: 'Páginas Interiores',
+          descripcion: 'Diseño interior en papel apergaminado y diagramas con agujas de acupuntura.'
+        },
+        {
+          url: 'assets/libroPortada_Acu_Estetica/4.png',
+          label: 'Sobrecubierta Completa',
+          descripcion: 'Despliegue integral de cubierta frontal, lomo dorado y contracubierta.'
+        }
+      ],
       destacado: true,
       nuevo: true,
+      bestseller: true,
       resumen: 'Obra especializada en protocolos de acupuntura cosmética, dermocosmética china y rejuvenecimiento facial no invasivo. Aborda la inserción de microagujas intradérmicas, lifting facial bioenergético, tratamiento de líneas de expresión, flacidez cutánea, melasma y drenaje linfático con guasha de jade.',
       capitulos: [
         'Capítulo I: Anatomía Funcional y Biofísica de la Piel y Fascia Facial',
@@ -311,13 +341,16 @@ export class LibrosComponent implements OnInit, AfterViewInit, OnDestroy {
         'Capítulo V: Sinergia con Guasha de Jade, Rodillos Térmicos y Aceites Esenciales',
         'Capítulo VI: Normas de Asepsia, Bioseguridad y Consentimiento Informado'
       ],
-      etiquetas: ['Acupuntura Estética', 'Lifting Facial', 'Rejuvenecimiento', 'Guasha'],
+      etiquetas: ['Acupuntura Estética', 'Lifting Facial', 'Rejuvenecimiento', 'Guasha', 'Microagujas'],
       cursoRelacionado: {
-        nombre: 'Diplomado en Acupuntura China',
-        ruta: '/cursos/acupuntura-china'
+        nombre: 'Curso de Acupuntura Estética Presencial',
+        ruta: '/cursos/acupuntura-estetica-presencial'
       }
     }
   ];
+
+  activeModalImage = '';
+  activeModalImageIndex = 0;
 
   ngOnInit(): void {}
 
@@ -338,17 +371,28 @@ export class LibrosComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedCategory = catId;
   }
 
-  openDetails(libro: LibroItem): void {
+  openDetails(libro: LibroItem, initialImage?: string): void {
     this.selectedBook = libro;
+    this.activeModalImage = initialImage || (libro.galeria?.length ? libro.galeria[0].url : libro.portada);
+    this.activeModalImageIndex = libro.galeria
+      ? Math.max(0, libro.galeria.findIndex(g => g.url === this.activeModalImage))
+      : 0;
     this.showModal = true;
     if (typeof window !== 'undefined') {
       document.body.style.overflow = 'hidden';
     }
   }
 
+  setModalImage(url: string, index: number): void {
+    this.activeModalImage = url;
+    this.activeModalImageIndex = index;
+  }
+
   closeModal(): void {
     this.showModal = false;
     this.selectedBook = null;
+    this.activeModalImage = '';
+    this.activeModalImageIndex = 0;
     if (typeof window !== 'undefined') {
       document.body.style.overflow = '';
     }

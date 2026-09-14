@@ -438,7 +438,7 @@
             <button 
               *ngFor="let vid of mod.videos"
               (click)="onVideoClick(mod, vid)"
-              [ngClass]="currentVideo?.id === vid.id ? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-900 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800' : (mod.bloqueado ? 'bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 border-dashed border-slate-200 dark:border-slate-800 hover:bg-amber-50/50 dark:hover:bg-amber-950/20' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200/60 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800')"
+              [ngClass]="currentVideo?.id === vid.id ? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-900 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800' : ((mod.bloqueado || isExpVideoLocked(mod, vid)) ? 'bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 border-dashed border-slate-200 dark:border-slate-800 hover:bg-amber-50/50 dark:hover:bg-amber-950/20' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200/60 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800')"
               class="w-full text-left p-3 border dark:border-slate-800/70 text-xs flex items-center justify-between gap-3 transition-colors rounded-none group relative focus:outline-none">
               
               <!-- Left accent border for active state -->
@@ -446,13 +446,13 @@
 
               <div class="flex items-center gap-2 overflow-hidden">
                 <span 
-                  *ngIf="!mod.bloqueado"
+                  *ngIf="!mod.bloqueado && !isExpVideoLocked(mod, vid)"
                   [ngClass]="vid.completado ? 'text-emerald-600 dark:text-emerald-500 font-bold' : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-400'"
                   class="material-symbols-outlined text-sm font-semibold block shrink-0 select-none">
                   {{ vid.completado ? 'check_circle' : 'circle' }}
                 </span>
                 <span 
-                  *ngIf="mod.bloqueado"
+                  *ngIf="mod.bloqueado || isExpVideoLocked(mod, vid)"
                   class="material-symbols-outlined text-sm text-amber-500 dark:text-amber-400 block shrink-0 select-none">
                   lock
                 </span>
@@ -460,6 +460,7 @@
               </div>
               <div class="flex items-center gap-2 shrink-0">
                 <span *ngIf="mod.bloqueado" class="text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Requiere pago</span>
+                <span *ngIf="!mod.bloqueado && isExpVideoLocked(mod, vid)" class="text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Requiere matrícula</span>
                 <span class="text-[9px] font-mono text-slate-400 dark:text-slate-500">
                   {{ vid.duracionSegundos ? (vid.duracionSegundos / 60 | number:'1.0-0') + 'm' : '' }}
                 </span>
@@ -817,4 +818,43 @@
       
     </div>
   </div>
+
+  <!-- Modal Candado Lección EXP INSTEIP -->
+  <div *ngIf="showExpLockedModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
+    <div class="relative w-full max-w-lg bg-slate-900 border border-slate-700 text-slate-100 shadow-2xl p-6 sm:p-8 flex flex-col items-center text-center">
+      
+      <div class="w-14 h-14 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-4">
+        <span class="material-symbols-outlined text-3xl">lock</span>
+      </div>
+
+      <span class="text-[10px] font-bold uppercase tracking-widest text-amber-400 bg-amber-950/60 border border-amber-800 px-3 py-1 mb-3">
+        Experiencia INSTEIP · Lección Bloqueada
+      </span>
+
+      <h3 class="text-lg sm:text-xl font-bold text-white mb-2 leading-tight">
+        {{ selectedExpLockedVideoTitle || 'Lección Reservada' }}
+      </h3>
+
+      <p class="text-xs text-slate-300 max-w-md leading-relaxed mb-6">
+        Has alcanzado las lecciones avanzadas de este programa. Esta clase y los materiales clínicos están disponibles de forma ilimitada para los <strong>alumnos matriculados oficialmente</strong>.
+      </p>
+
+      <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <button 
+          (click)="closeExpLockedModal()" 
+          class="w-full py-3 px-4 border border-slate-700 text-slate-300 hover:bg-slate-800 text-xs font-bold uppercase tracking-wider transition-colors">
+          Seguir explorando
+        </button>
+
+        <button 
+          (click)="solicitarMatriculaExpWhatsApp()" 
+          class="w-full py-3 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/50 transition-all">
+          <span class="material-symbols-outlined text-sm">school</span>
+          <span>Matricularme ahora</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
 </div>

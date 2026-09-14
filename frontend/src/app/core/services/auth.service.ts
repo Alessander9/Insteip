@@ -47,7 +47,8 @@ export class AuthService {
         }
         
         if (res?.isExpUser) {
-          const duration = res.expDurationSeconds || 1200;
+          const duration = res.expDurationSeconds || 900;
+          localStorage.removeItem('expSelectedCourseIds');
           this.startExpTimer(duration);
         } else {
           this.clearExpState();
@@ -80,7 +81,7 @@ export class AuthService {
       tap(profile => {
         if (profile?.isExpUser) {
           if (!this.isExpUser()) {
-            this.startExpTimer(profile.expDurationSeconds || 1200);
+            this.startExpTimer(profile.expDurationSeconds || 900);
           }
         }
       })
@@ -136,7 +137,7 @@ export class AuthService {
   }
 
   // =========================================================================
-  //  MÉTODOS EXP INSTEIP (Sesión 20 Minutos)
+  //  MÉTODOS EXP INSTEIP (Sesión 12 Minutos & Selección de 2 Cursos)
   // =========================================================================
 
   public isExpUser(): boolean {
@@ -154,7 +155,22 @@ export class AuthService {
     return this.isExpUser();
   }
 
-  public startExpTimer(durationSeconds: number = 1200): void {
+  public getExpSelectedCourseIds(): number[] {
+    const raw = localStorage.getItem('expSelectedCourseIds');
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  public saveExpSelectedCourseIds(courseIds: number[]): void {
+    localStorage.setItem('expSelectedCourseIds', JSON.stringify(courseIds));
+  }
+
+  public startExpTimer(durationSeconds: number = 900): void {
     const now = Date.now();
     const expiresAt = now + (durationSeconds * 1000);
     
@@ -202,6 +218,7 @@ export class AuthService {
   private clearExpState(): void {
     localStorage.removeItem('isExpUser');
     localStorage.removeItem('expExpiresAt');
+    localStorage.removeItem('expSelectedCourseIds');
     this.isExpUserSubject.next(false);
     this.expRemainingSeconds$.next(0);
     this.stopExpTimer();

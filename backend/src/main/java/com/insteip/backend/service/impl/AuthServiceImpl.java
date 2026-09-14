@@ -52,8 +52,8 @@ public class AuthServiceImpl implements AuthService {
     public static final String EXP_USER_EMAIL_1 = "ExperianciaInsteip@insteip.com";
     public static final String EXP_USER_EMAIL_2 = "ExperienciaInsteip@insteip.com";
     public static final String EXP_PASSWORD_DEFAULT = "insteip";
-    public static final long EXP_DURATION_SECONDS = 1200L; // 20 minutos
-    public static final long EXP_DURATION_MILLIS = 1200000L; // 20 minutos
+    public static final long EXP_DURATION_SECONDS = 900L; // 15 minutos
+    public static final long EXP_DURATION_MILLIS = 900000L; // 15 minutos
 
     private boolean isExpEmail(String correo) {
         if (correo == null) return false;

@@ -93,7 +93,7 @@ class ExpInsteipAuthTest {
     }
 
     @Test
-    void loginExp_ConCredencialesCorrectas_DebeRetornarToken20MinutosSinRefreshToken() {
+    void loginExp_ConCredencialesCorrectas_DebeRetornarToken15MinutosSinRefreshToken() {
         LoginRequest request = new LoginRequest();
         request.setCorreo("ExperianciaInsteip@insteip.com");
         request.setPassword("insteip");
@@ -112,16 +112,16 @@ class ExpInsteipAuthTest {
         when(passwordEncoder.encode("insteip")).thenReturn("hashed_insteip");
         when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuarioMock);
         when(cursoRepository.findAll()).thenReturn(List.of());
-        when(jwtService.generateExpToken(eq(999L), eq("ExperianciaInsteip@insteip.com"), eq("ALUMNO"), eq(1200000L)))
-                .thenReturn("mock_jwt_exp_token_20_minutes");
+        when(jwtService.generateExpToken(eq(999L), eq("ExperianciaInsteip@insteip.com"), eq("ALUMNO"), eq(900000L)))
+                .thenReturn("mock_jwt_exp_token_15_minutes");
 
         LoginResponse response = authService.login(request);
 
         assertNotNull(response);
-        assertEquals("mock_jwt_exp_token_20_minutes", response.getToken());
+        assertEquals("mock_jwt_exp_token_15_minutes", response.getToken());
         assertNull(response.getRefreshToken(), "El usuario EXP no debe recibir Refresh Token de larga duración");
         assertTrue(response.getIsExpUser(), "isExpUser debe ser true");
-        assertEquals(1200L, response.getExpDurationSeconds(), "La duración debe ser 1200 segundos (20 min)");
+        assertEquals(900L, response.getExpDurationSeconds(), "La duración debe ser 900 segundos (15 min)");
     }
 
     @Test
@@ -150,7 +150,7 @@ class ExpInsteipAuthTest {
 
         assertNotNull(profile);
         assertTrue(profile.getIsExpUser());
-        assertEquals(1200L, profile.getExpDurationSeconds());
+        assertEquals(900L, profile.getExpDurationSeconds());
     }
 
     @Test

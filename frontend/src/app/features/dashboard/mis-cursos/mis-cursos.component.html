@@ -249,4 +249,11 @@
     </div>
   </div>
 
+  <!-- EXP INSTEIP 12 MIN - 2 Courses Selection Modal -->
+  <app-exp-course-picker-modal
+    *ngIf="showExpPicker"
+    [cursos]="allCursosRaw"
+    (selectionConfirmed)="onExpCoursesSelected($event)"
+  ></app-exp-course-picker-modal>
+
 </div>

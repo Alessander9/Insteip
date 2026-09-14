@@ -366,11 +366,42 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  showExpLockedModal = false;
+  selectedExpLockedVideoTitle = '';
+
+  isExpVideoLocked(mod: AlumnoPlayModulo, vid: AlumnoPlayVideo): boolean {
+    if (!this.isExpUser || !this.curso || !this.curso.modulos) return false;
+    const modIndex = this.curso.modulos.findIndex(m => m.id === mod.id);
+    if (modIndex > 0) return true;
+    const vidIndex = mod.videos ? mod.videos.findIndex(v => v.id === vid.id) : 0;
+    return vidIndex > 1; // Only first 2 videos (index 0 and 1) are unlocked
+  }
+
+  openExpLockedModal(vidTitle: string): void {
+    this.selectedExpLockedVideoTitle = vidTitle;
+    this.showExpLockedModal = true;
+  }
+
+  closeExpLockedModal(): void {
+    this.showExpLockedModal = false;
+  }
+
+  solicitarMatriculaExpWhatsApp(): void {
+    const cursoNombre = this.curso?.nombre || 'el curso';
+    const mensaje = `Hola INSTEIP, acabo de ver la lección de muestra del curso "${cursoNombre}" en mi Experiencia INSTEIP y deseo matricularme para acceder al temario completo y obtener mi certificación.`;
+    const whatsappUrl = `https://wa.me/51939371250?text=${encodeURIComponent(mensaje)}`;
+    window.open(whatsappUrl, '_blank');
+  }
+
   onVideoClick(mod: AlumnoPlayModulo, vid: AlumnoPlayVideo): void {
     if (mod.bloqueado) {
       this.selectedBlockedModulo = mod;
       this.currentVideo = null;
       this.destroyPlayerSafely();
+      return;
+    }
+    if (this.isExpUser && this.isExpVideoLocked(mod, vid)) {
+      this.openExpLockedModal(vid.titulo);
       return;
     }
     this.selectedBlockedModulo = null;

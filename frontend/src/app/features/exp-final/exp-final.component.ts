@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-exp-final',
@@ -9,9 +10,18 @@ import { RouterModule } from '@angular/router';
   templateUrl: './exp-final.component.html',
   styleUrls: ['./exp-final.component.css']
 })
-export class ExpFinalComponent {
+export class ExpFinalComponent implements OnInit {
+  private authService = inject(AuthService);
+
   readonly whatsappMatriculaUrl = 'https://wa.me/51939371250?text=Hola%2C+vengo+de+probar+la+experiencia+EXP+INSTEIP+y+deseo+matricularme+en+un+curso';
   readonly whatsappAsesorUrl = 'https://wa.me/51939371250?text=Hola%2C+tengo+consultas+sobre+los+cursos+y+certificaciones+de+INSTEIP';
+
+  ngOnInit(): void {
+    // Asegurar que la sesión previa quede completamente reiniciada
+    localStorage.removeItem('isExpUser');
+    localStorage.removeItem('expExpiresAt');
+    localStorage.removeItem('expSelectedCourseIds');
+  }
   
   readonly socialLinks = [
     {

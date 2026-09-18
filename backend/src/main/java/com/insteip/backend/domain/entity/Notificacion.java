@@ -37,7 +37,7 @@ public class Notificacion {
     @Column(nullable = false, length = 50)
     private String tipo;
 
-    @Column(name = "url_destino", length = 500)
+    @Column(name = "url_destino", columnDefinition = "TEXT")
     private String urlDestino;
 
     @Column(length = 50)
@@ -58,6 +58,9 @@ public class Notificacion {
 
     @Column(name = "adjunto_url", columnDefinition = "TEXT")
     private String adjuntoUrl;
+
+    @Column(name = "imagen_url", columnDefinition = "TEXT")
+    private String imagenUrl;
 
     @Column(name = "adjunto_nombre", length = 200)
     private String adjuntoNombre;

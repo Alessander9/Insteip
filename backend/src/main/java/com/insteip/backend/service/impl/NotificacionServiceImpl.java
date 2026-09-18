@@ -208,6 +208,7 @@ public class NotificacionServiceImpl implements NotificacionService {
                     .adjuntoUrl(request.getAdjuntoUrl())
                     .adjuntoNombre(request.getAdjuntoNombre())
                     .adjuntoTamano(request.getAdjuntoTamano())
+                    .imagenUrl(request.getImagenUrl())
                     .leido(false)
                     .build();
             notificaciones.add(n);
@@ -233,6 +234,7 @@ public class NotificacionServiceImpl implements NotificacionService {
                 .adjuntoUrl(n.getAdjuntoUrl())
                 .adjuntoNombre(n.getAdjuntoNombre())
                 .adjuntoTamano(n.getAdjuntoTamano())
+                .imagenUrl(n.getImagenUrl())
                 .fechaCreacion(n.getFechaCreacion())
                 .build();
     }

@@ -24,5 +24,6 @@ public class NotificacionResponseDTO {
     private String adjuntoUrl;
     private String adjuntoNombre;
     private String adjuntoTamano;
+    private String imagenUrl;
     private LocalDateTime fechaCreacion;
 }

@@ -29,14 +29,14 @@ public class AnuncioModal {
     @Column(columnDefinition = "TEXT")
     private String mensaje;
 
-    @Column(name = "imagen_url", length = 500)
+    @Column(name = "imagen_url", columnDefinition = "TEXT")
     private String imagenUrl;
 
     @Column(name = "boton_texto", length = 100)
     @Builder.Default
     private String botonTexto = "Ver Más";
 
-    @Column(name = "boton_url", length = 500)
+    @Column(name = "boton_url", columnDefinition = "TEXT")
     private String botonUrl;
 
     @Column(length = 50)

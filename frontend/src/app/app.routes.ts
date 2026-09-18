@@ -363,7 +363,7 @@ export const routes: Routes = [
         path: 'mis-alumnos-docente/:id',
         loadComponent: () => import('./features/dashboard/docente/mis-alumnos-docente/mis-alumnos-docente.component').then(m => m.MisAlumnosDocenteComponent),
         canActivate: [roleGuard],
-        data: { roles: ['DOCENTE'] }
+        data: { roles: ['DOCENTE', 'ADMINISTRADOR'] }
       },
       {
         path: 'docente/tareas',

@@ -86,6 +86,11 @@
             </span>
           </div>
         </div>
+
+        <!-- Miniatura de Imagen en Notificación -->
+        <div *ngIf="item.imagenUrl" class="shrink-0 w-11 h-11 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 self-center">
+          <img [src]="item.imagenUrl" alt="Miniatura" class="w-full h-full object-cover" />
+        </div>
       </div>
 
     </div>

@@ -10,6 +10,7 @@ export interface NotificacionItem {
   adjuntoUrl?: string;
   adjuntoNombre?: string;
   adjuntoTamano?: string;
+  imagenUrl?: string;
   leido: boolean;
   fechaCreacion: string;
 }
@@ -29,6 +30,7 @@ export interface ComunicadoRequest {
   adjuntoUrl?: string;
   adjuntoNombre?: string;
   adjuntoTamano?: string;
+  imagenUrl?: string;
   audiencia: 'TODOS' | 'SOLO_ESTUDIANTES' | 'SOLO_DOCENTES' | 'DOCENTES_Y_ESTUDIANTES' | 'POR_CURSO';
   cursoId?: number;
 }

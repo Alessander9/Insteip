@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS notificaciones (
     titulo VARCHAR(200) NOT NULL,
     mensaje TEXT NOT NULL,
     tipo VARCHAR(50) NOT NULL, -- 'VIDEO_NUEVO', 'MATERIAL_NUEVO', 'TAREA_NUEVA', 'TAREA_CALIFICADA', 'TAREA_POR_VENCER', 'MATRICULA_NUEVA', 'ENTREGA_DOCENTE', 'COMUNICADO_GLOBAL'
-    url_destino VARCHAR(500),
+    url_destino TEXT,
     icono VARCHAR(50) DEFAULT 'notifications',
     leido BOOLEAN DEFAULT false,
     fecha_creacion TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -25,9 +25,9 @@ CREATE TABLE IF NOT EXISTS anuncios_modal (
     id BIGSERIAL PRIMARY KEY,
     titulo VARCHAR(200) NOT NULL,
     mensaje TEXT,
-    imagen_url VARCHAR(500),
+    imagen_url TEXT,
     boton_texto VARCHAR(100) DEFAULT 'Ver Más',
-    boton_url VARCHAR(500),
+    boton_url TEXT,
     audiencia VARCHAR(50) DEFAULT 'TODOS', -- 'TODOS', 'SOLO_ESTUDIANTES', 'SOLO_DOCENTES', 'DOCENTES_Y_ESTUDIANTES'
     activo BOOLEAN DEFAULT true,
     fecha_inicio TIMESTAMP WITH TIME ZONE,

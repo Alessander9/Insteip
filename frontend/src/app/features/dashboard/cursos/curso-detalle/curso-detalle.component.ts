@@ -10,7 +10,7 @@ import { MatriculaService } from '../../../../core/services/';
 import { AlumnoService } from '../../../../core/services/';
 import { CursoRequest, CursoResponse } from '../../../../core/models/';
 import { ModuloRequest, ModuloResponse } from '../../../../core/models/';
-import { MatriculaRequest, MatriculaResponse } from '../../../../core/models/';
+import { MatriculaRequest, MatriculaResponse, ModuloAccesoItem } from '../../../../core/models/';
 import { AlumnoResponse } from '../../../../core/models/';
 import { VideoService } from '../../../../core/services/';
 import { MaterialService } from '../../../../core/services/';
@@ -129,6 +129,13 @@ export class CursoDetalleComponent implements OnInit {
   // Matriculas
   matriculas: MatriculaResponse[] = [];
   searchMatriculaQuery = '';
+
+  // Control de Acceso a Módulos (Cuotas)
+  showModulosModal = false;
+  loadingModulos = false;
+  isSavingModulos = false;
+  modulosAcceso: ModuloAccesoItem[] = [];
+  selectedMatriculaParaModulos: MatriculaResponse | null = null;
 
   get matriculasFiltradas(): MatriculaResponse[] {
     if (!this.searchMatriculaQuery || !this.searchMatriculaQuery.trim()) {
@@ -1219,6 +1226,68 @@ export class CursoDetalleComponent implements OnInit {
 
     this.archivoProtegidoService.descargar(mat.archivoUrl, fileName).subscribe({
       error: (err) => console.error('Error al descargar material:', err)
+    });
+  }
+
+  // --- Modal de Acceso a Módulos por Cuotas ---
+  abrirModalModulos(matricula: MatriculaResponse): void {
+    if (!matricula?.id) {
+      this.toastService.warning('Esta matrícula no cuenta con ID válido.');
+      return;
+    }
+    this.selectedMatriculaParaModulos = matricula;
+    this.showModulosModal = true;
+    this.loadingModulos = true;
+    this.modulosAcceso = [];
+
+    this.matriculaService.obtenerModulosAcceso(matricula.id).subscribe({
+      next: (data) => {
+        this.modulosAcceso = data || [];
+        this.loadingModulos = false;
+      },
+      error: (err) => {
+        this.loadingModulos = false;
+        this.toastService.error('Error al cargar permisos de módulos: ' + (err.error?.message || err.message));
+      }
+    });
+  }
+
+  cerrarModalModulos(): void {
+    this.showModulosModal = false;
+    this.selectedMatriculaParaModulos = null;
+    this.modulosAcceso = [];
+  }
+
+  toggleModuloAcceso(item: ModuloAccesoItem): void {
+    if (!this.selectedMatriculaParaModulos?.id) return;
+    const nuevoEstado = !item.habilitado;
+
+    this.matriculaService.cambiarAccesoModulo(this.selectedMatriculaParaModulos.id, item.moduloId, nuevoEstado).subscribe({
+      next: () => {
+        item.habilitado = nuevoEstado;
+        this.toastService.success(`Módulo ${nuevoEstado ? 'habilitado' : 'bloqueado'} con éxito.`);
+      },
+      error: (err) => {
+        this.toastService.error('Error al actualizar acceso: ' + (err.error?.message || err.message));
+      }
+    });
+  }
+
+  habilitarTodosModulos(habilitar: boolean): void {
+    if (!this.selectedMatriculaParaModulos?.id) return;
+    this.isSavingModulos = true;
+    const habilitadosIds = habilitar ? this.modulosAcceso.map(m => m.moduloId) : [];
+
+    this.matriculaService.guardarModulosAccesoMasivo(this.selectedMatriculaParaModulos.id, habilitadosIds).subscribe({
+      next: () => {
+        this.modulosAcceso.forEach(m => m.habilitado = habilitar);
+        this.isSavingModulos = false;
+        this.toastService.success(`Todos los módulos han sido ${habilitar ? 'habilitados' : 'bloqueados'}.`);
+      },
+      error: (err) => {
+        this.isSavingModulos = false;
+        this.toastService.error('Error al actualizar permisos en masa: ' + (err.error?.message || err.message));
+      }
     });
   }
 }

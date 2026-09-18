@@ -182,6 +182,7 @@ export class ComunicadosAnunciosComponent implements OnInit, OnDestroy {
     adjuntoUrl: '',
     adjuntoNombre: '',
     adjuntoTamano: '',
+    imagenUrl: '',
     audiencia: 'TODOS',
     cursoId: undefined
   };
@@ -190,6 +191,7 @@ export class ComunicadosAnunciosComponent implements OnInit, OnDestroy {
   mensajeErrorComunicado = '';
   prioridadComunicado: 'INFO' | 'PROMO' | 'AVISO' | 'URGENTE' = 'PROMO';
   isDraggingAdjunto = false;
+  isDraggingImagenComunicado = false;
 
   // Asistente de Enlace para Comunicado
   linkTypeComunicado: 'WHATSAPP' | 'CURSO' | 'INTERNO' | 'EXTERNO' | 'NINGUNO' = 'NINGUNO';
@@ -463,6 +465,7 @@ export class ComunicadosAnunciosComponent implements OnInit, OnDestroy {
   onFileDropped(event: DragEvent, target: 'anuncio' | 'comunicado'): void {
     event.preventDefault();
     if (target === 'anuncio') this.isDraggingAnuncio = false;
+    if (target === 'comunicado') this.isDraggingImagenComunicado = false;
     if (event.dataTransfer && event.dataTransfer.files.length > 0) {
       this.procesarArchivoImagen(event.dataTransfer.files[0], target);
     }
@@ -484,6 +487,8 @@ export class ComunicadosAnunciosComponent implements OnInit, OnDestroy {
       const base64Url = reader.result as string;
       if (target === 'anuncio') {
         this.anuncioForm.imagenUrl = base64Url;
+      } else if (target === 'comunicado') {
+        this.comunicado.imagenUrl = base64Url;
       }
       this.toastService.success('Imagen cargada correctamente');
     };
@@ -493,6 +498,8 @@ export class ComunicadosAnunciosComponent implements OnInit, OnDestroy {
   removerImagen(target: 'anuncio' | 'comunicado'): void {
     if (target === 'anuncio') {
       this.anuncioForm.imagenUrl = '';
+    } else if (target === 'comunicado') {
+      this.comunicado.imagenUrl = '';
     }
   }
 
@@ -756,6 +763,7 @@ export class ComunicadosAnunciosComponent implements OnInit, OnDestroy {
           adjuntoUrl: '',
           adjuntoNombre: '',
           adjuntoTamano: '',
+          imagenUrl: '',
           audiencia: 'TODOS',
           cursoId: undefined
         };

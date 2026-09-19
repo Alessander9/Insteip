@@ -29,6 +29,7 @@ import org.springframework.security.core.Authentication;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
+    private final RateLimiterService rateLimiterService;
     private final AuthenticationProvider authenticationProvider;
 
     @Value("${application.cors.allowed-origins}")
@@ -36,6 +37,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        RateLimitingFilter rateLimitingFilter = new RateLimitingFilter(rateLimiterService);
+
         http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -57,12 +60,13 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Permitir TODAS las peticiones OPTIONS (preflight CORS del navegador)
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                // Rutas públicas de autenticación y validación de certificados
-                .requestMatchers("/api/auth/login", "/api/auth/refresh", "/api/auth/logout", "/api/auth/forgot-password", "/api/auth/reset-password", "/api/certificados/validar/**", "/api/chatbot/**", "/api/anuncios-modal/activo", "/actuator/**").permitAll()
+                // Rutas públicas de autenticación, validación y health check de actuator
+                .requestMatchers("/api/auth/login", "/api/auth/refresh", "/api/auth/logout", "/api/auth/forgot-password", "/api/auth/reset-password", "/api/certificados/validar/**", "/api/chatbot/**", "/api/anuncios-modal/activo", "/actuator/health", "/actuator/info").permitAll()
                 // Cualquier otra solicitud requiere estar autenticado
                 .anyRequest().authenticated()
             )
-            // Agregar filtro JWT antes del de usuario y contraseña
+            // Agregar filtro de Rate Limiting y filtro JWT
+            .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

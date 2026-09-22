@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+﻿import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
@@ -79,7 +79,7 @@ export class SeminarioReflexologiaOnlineComponent implements OnInit, AfterViewIn
     duration: '1 mes / En vivo',
     access: 'Clases en vivo y grabadas',
     teacher: 'Lic. Lázaro Regalado Ponte',
-    contact: '+51 939 371 250 / ecabanillasbardales@gmail.com',
+    contact: '+51 930 830 427 / ecabanillasbardales@gmail.com',
     heroDescription: 'Convierte la reflexología en una herramienta terapéutica efectiva y aprende a abordar diferentes alteraciones mediante técnicas basadas en la Medicina Tradicional China.',
     heroImage: 'assets/seminario_reflexologia_curso.jpg',
     heroAlt: 'Seminario de Reflexología Podal Online',
@@ -190,7 +190,7 @@ export class SeminarioReflexologiaOnlineComponent implements OnInit, AfterViewIn
   }
 
   get whatsappLink(): string {
-    return `https://wa.me/51939371250?text=${encodeURIComponent(`Hola, deseo información sobre el ${this.course.fullName}`)}`;
+    return `https://wa.me/51930830427?text=${encodeURIComponent(`Hola, deseo información sobre el ${this.course.fullName}`)}`;
   }
 
   get docenteData(): DocenteData {

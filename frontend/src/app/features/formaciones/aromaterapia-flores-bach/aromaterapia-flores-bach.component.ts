@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+﻿import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
 import { FooterComponent } from '../../../core/components/footer/footer.component';
@@ -117,7 +117,7 @@ export class AromaterapiaFloresBachComponent implements OnInit, AfterViewInit, O
     precio: 200,
     cuotasInfo: 'Presencial: S/ 200.00 | Online: S/ 120.00',
     plazasDisponibles: 6,
-    whatsappLink: 'https://wa.me/51939371250?text=Hola%2C%20deseo%20matricularme%20en%20el%20Curso%20de%20Aromaterapia%20y%20Flores%20de%20Bach',
+    whatsappLink: 'https://wa.me/51930830427?text=Hola%2C%20deseo%20matricularme%20en%20el%20Curso%20de%20Aromaterapia%20y%20Flores%20de%20Bach',
     email: 'Terapiasintegralesinsteip@gmail.com',
     beneficios: [
       'Modalidad Presencial (Lince – Lima): S/ 200.00',

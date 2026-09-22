@@ -1,4 +1,4 @@
-package com.insteip.backend.service;
+﻿package com.insteip.backend.service;
 
 import com.insteip.backend.domain.dto.chatbot.ChatMessage;
 import com.insteip.backend.domain.dto.chatbot.ChatRequest;
@@ -108,7 +108,7 @@ public class ChatbotService {
                 "1. Respuestas Ultra Breves: Responde en español en un máximo de 2 a 3 líneas o viñetas muy cortas. PROHIBIDO escribir párrafos largos o explicaciones pesadas.\n" +
                 "2. NO listes todos los cursos si la pregunta es general (ej: 'qué cursos tienen'). En su lugar, menciona en 1 frase que tenemos cursos presenciales y online, e incluye los botones correspondientes.\n" +
                 "3. Botones de Acción Obligatorios: NUNCA uses comillas invertidas (backticks) ni bloques de código alrededor de los botones. Escribe exactamente [button:Texto](URL):\n" +
-                "   - WhatsApp de Admisión: [button:💬 Hablar por WhatsApp](https://wa.me/51939371250?text=Hola%20Insteip%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n)\n" +
+                "   - WhatsApp de Admisión: [button:💬 Hablar por WhatsApp](https://wa.me/51930830427?text=Hola%20Insteip%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n)\n" +
                 "   - Sede Huánuco (Contacto): [button:💬 Contactar vía WhatsApp](https://wa.me/51935354183?text=Hola%20Insteip%2C%20deseo%20contactar%20con%20la%20Coordinaci%C3%B3n%20de%20la%20Sede%20Hu%C3%A1nuco%20para%20m%C3%A1s%20informaci%C3%B3n)\n" +
                 "   - Cursos Presenciales: [button:🏫 Ver Cursos Presenciales](/cursos-presenciales)\n" +
                 "   - Cursos Virtuales / Online: [button:💻 Ver Cursos Online](/cursos-online)\n" +
@@ -151,7 +151,7 @@ public class ChatbotService {
         List<AIProviderConfig> providers = getActiveProviders();
         if (providers.isEmpty()) {
             log.error("No hay proveedores de IA configurados o válidos.");
-            return new ChatResponse("Lo siento, el asistente virtual no está disponible o no está configurado correctamente en este momento. Por favor, comunícate al WhatsApp oficial +51 939 371 250.");
+            return new ChatResponse("Lo siento, el asistente virtual no está disponible o no está configurado correctamente en este momento. Por favor, comunícate al WhatsApp oficial +51 930 830 427.");
         }
 
         // Intentar con cada proveedor en orden
@@ -198,7 +198,7 @@ public class ChatbotService {
 
         // Si todos los proveedores fallaron
         log.error("Todos los proveedores de IA configurados fallaron secuencialmente.");
-        return new ChatResponse("Lo siento, experimenté un problema al conectar con mis servicios de asistencia virtual. Por favor, comunícate al WhatsApp oficial +51 939 371 250.");
+        return new ChatResponse("Lo siento, experimenté un problema al conectar con mis servicios de asistencia virtual. Por favor, comunícate al WhatsApp oficial +51 930 830 427.");
     }
 
     private String readContextFile() {

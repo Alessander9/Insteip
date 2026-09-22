@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+﻿import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
@@ -182,7 +182,7 @@ export class ElectroacupunturaComponent implements OnInit, AfterViewInit, OnDest
     precio: 180,
     cuotasInfo: 'Seminario Grabado · 8 Horas · 100% Disponibilidad Inmediata · Pago único',
     plazasDisponibles: 12,
-    whatsappLink: 'https://wa.me/51939371250?text=' + encodeURIComponent('Hola, deseo inscribirme en el Curso Virtual de Electroacupuntura (S/ 180) con el Lic. Lázaro Regalado Ponte'),
+    whatsappLink: 'https://wa.me/51930830427?text=' + encodeURIComponent('Hola, deseo inscribirme en el Curso Virtual de Electroacupuntura (S/ 180) con el Lic. Lázaro Regalado Ponte'),
     email: 'Terapiasintegralesinsteip@gmail.com',
     beneficios: [
       'Seminario completo grabado con 8 horas de contenido intensivo',

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+﻿import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
 import { FooterComponent } from '../../../core/components/footer/footer.component';
@@ -186,7 +186,7 @@ export class AcupunturaChina7MesesComponent implements OnInit, AfterViewInit, On
     tipoPago: '/ mes',
     cuotasInfo: '7 mensualidades de S/ 150 · Matrícula regular',
     plazasDisponibles: 15,
-    whatsappLink: 'https://wa.me/51939371250?text=Hola%2C%20deseo%20inscribirme%20en%20el%20curso%20de%20Acupuntura%20China%20(7%20meses)',
+    whatsappLink: 'https://wa.me/51930830427?text=Hola%2C%20deseo%20inscribirme%20en%20el%20curso%20de%20Acupuntura%20China%20(7%20meses)',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
       'Materiales de práctica incluidos en cada clase',

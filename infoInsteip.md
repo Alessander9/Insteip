@@ -1,4 +1,4 @@
-# 🌿 INSTEIP - Información Oficial y Académica
+﻿# 🌿 INSTEIP - Información Oficial y Académica
 
 ## 📚 1. Oferta Académica y Cursos Activos
 
@@ -54,7 +54,7 @@ De momento, los ÚNICOS 4 cursos que cuentan con temario en PDF descargable dire
 ---
 
 ## 📞 3. Canales de Contacto Oficiales
-* **WhatsApp Central (Admisiones/Virtuales)**: [button:💬 Hablar por WhatsApp Central](https://wa.me/51939371250?text=Hola%20Insteip%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n)
+* **WhatsApp Central (Admisiones/Virtuales)**: [button:💬 Hablar por WhatsApp Central](https://wa.me/51930830427?text=Hola%20Insteip%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n)
 * **Sede Huánuco (Coordinación)**: Alessandro Ner Esteban Valladares – [button:💬 Contactar vía WhatsApp](https://wa.me/51935354183?text=Hola%20Insteip%2C%20deseo%20contactar%20con%20la%20Coordinaci%C3%B3n%20de%20la%20Sede%20Hu%C3%A1nuco%20para%20m%C3%A1s%20informaci%C3%B3n)
 * **Sede Lima (Lince)**: [button:📍 Ver Sede Lince](/sedes)
 * **Correos electrónicos**: `Terapiasintegralesinsteip@gmail.com`
@@ -113,7 +113,7 @@ De momento, los ÚNICOS 4 cursos que cuentan con temario en PDF descargable dire
   * *Dietética Energética y Nutrición según los 5 Elementos* (S/ 45)
   * *Manual Clínico de Moxibustión, Ventosas y Terapias Térmicas* (S/ 42)
   * *Atlas Clínico de Reflexología Podal y Zonas Reflejas* (S/ 45)
-* **Formato**: PDF Digital de alta resolución con descarga inmediata tras confirmación por WhatsApp (+51 939 371 250).
+* **Formato**: PDF Digital de alta resolución con descarga inmediata tras confirmación por WhatsApp (+51 930 830 427).
 
 ---
 

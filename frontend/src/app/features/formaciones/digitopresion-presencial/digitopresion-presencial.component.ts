@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+﻿import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
 import { FooterComponent } from '../../../core/components/footer/footer.component';
@@ -107,7 +107,7 @@ export class DigitopresionPresencialComponent implements OnInit, AfterViewInit, 
     precio: 250,
     cuotasInfo: '2 meses · Matrícula S/ 30 · Clases los domingos (3:00 PM – 6:00 PM)',
     plazasDisponibles: 8,
-    whatsappLink: 'https://wa.me/51939371250?text=Hola%2C%20deseo%20reservar%20mi%20cupo%20para%20la%20Formaci%C3%B3n%20de%20Masaje%20Terap%C3%A9utico%20y%20Digitopresi%C3%B3n%20Mec%C3%A1nica',
+    whatsappLink: 'https://wa.me/51930830427?text=Hola%2C%20deseo%20reservar%20mi%20cupo%20para%20la%20Formaci%C3%B3n%20de%20Masaje%20Terap%C3%A9utico%20y%20Digitopresi%C3%B3n%20Mec%C3%A1nica',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
       '2 meses de clases presenciales (domingos 3:00 PM – 6:00 PM)',
@@ -121,9 +121,9 @@ export class DigitopresionPresencialComponent implements OnInit, AfterViewInit, 
       { icon: 'help', pregunta: '¿Sin experiencia previa?', respuesta: 'No se requieren conocimientos previos. Comenzamos desde las bases prácticas elementales.' },
       { icon: 'schedule', pregunta: '¿Cuál es el horario y sede?', respuesta: 'Domingos de 3:00 PM a 6:00 PM en Julio C Tello 438, Lince, Lima, Perú.' },
       { icon: 'verified', pregunta: '¿Qué certificación recibo?', respuesta: 'Constancia oficial emitida por INSTEIP respaldando tu formación.' },
-      { icon: 'location_on', pregunta: '¿Cómo me inscribo?', respuesta: 'Puedes reservar por WhatsApp al +51 939 371 250.' }
+      { icon: 'location_on', pregunta: '¿Cómo me inscribo?', respuesta: 'Puedes reservar por WhatsApp al +51 930 830 427.' }
     ],
-    trustText: 'Reserva segura · Asesoría personalizada vía WhatsApp +51 939 371 250'
+    trustText: 'Reserva segura · Asesoría personalizada vía WhatsApp +51 930 830 427'
   };
 
   constructor(private readonly host: ElementRef<HTMLElement>) { }

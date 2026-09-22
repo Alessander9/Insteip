@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy, ElementRef, Renderer2, inject } from '@angular/core';
+﻿import { Component, AfterViewInit, OnDestroy, ElementRef, Renderer2, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 
@@ -14,7 +14,7 @@ export class SocialSidebarComponent implements AfterViewInit, OnDestroy {
   socialLinks = [
     {
       name: 'WhatsApp',
-      url: 'https://wa.me/51939371250',
+      url: 'https://wa.me/51930830427',
       iconClass: 'bg-[#25D366]/10 border-[#25D366]/20 hover:bg-[#25D366]',
       shadowClass: 'hover:shadow-[#25D366]/20',
       svgPath: 'M12.012 2c-5.506 0-9.989 4.478-9.99 9.984a9.96 9.96 0 001.352 4.978L2 22l5.176-1.356a9.923 9.923 0 004.833 1.258h.005c5.505 0 9.988-4.478 9.99-9.984A9.99 9.99 0 0012.012 2zm5.733 14.174c-.234.659-1.358 1.258-1.87 1.309-.465.045-.927.241-2.98-.567-2.628-1.034-4.298-3.708-4.43-3.882-.132-.174-1.066-1.418-1.066-2.704 0-1.287.674-1.92.915-2.181.242-.261.528-.326.704-.326.176 0 .352.002.506.01.16.008.375-.061.587.45.22.529.749 1.83.815 1.961.066.131.11.283.022.46-.088.177-.132.287-.264.441-.132.155-.278.347-.396.463-.132.13-.27.272-.116.536.154.264.684 1.13 1.47 1.83.997.89 1.834 1.164 2.098 1.295.264.131.418.11.572-.066.154-.176.66-.767.836-1.029.176-.261.352-.218.594-.127.242.091 1.54.726 1.804.858.264.131.44.195.506.308.066.113.066.659-.168 1.318z'

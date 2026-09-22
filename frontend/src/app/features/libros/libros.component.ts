@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
+﻿import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -400,7 +400,7 @@ export class LibrosComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getWhatsAppLink(libro: LibroItem): string {
     const text = `Hola INSTEIP, deseo adquirir el libro digital: "${libro.titulo}" (S/ ${libro.precioSoles}). Por favor, indíquenme los métodos de pago y el enlace de descarga inmediata.`;
-    return `https://wa.me/51939371250?text=${encodeURIComponent(text)}`;
+    return `https://wa.me/51930830427?text=${encodeURIComponent(text)}`;
   }
 
   on3DBookViewDetails(event: { item: NewsletterBookshelfItem; index: number }): void {
@@ -439,7 +439,7 @@ export class LibrosComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getGeneralWhatsAppCatalog(): string {
     const text = 'Hola INSTEIP, deseo solicitar el catálogo completo de libros y manuales clínicos en PDF.';
-    return `https://wa.me/51939371250?text=${encodeURIComponent(text)}`;
+    return `https://wa.me/51930830427?text=${encodeURIComponent(text)}`;
   }
 
   ngAfterViewInit(): void {

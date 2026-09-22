@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+﻿import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -22,7 +22,7 @@ export class ExpTimerBannerComponent implements OnInit, OnDestroy {
   isUrgent: boolean = false;
   isCritical: boolean = false;
 
-  readonly whatsappUrl = 'https://wa.me/51939371250?text=Hola%2C+vengo+de+probar+la+experiencia+EXP+INSTEIP+y+deseo+matricularme+en+un+curso';
+  readonly whatsappUrl = 'https://wa.me/51930830427?text=Hola%2C+vengo+de+probar+la+experiencia+EXP+INSTEIP+y+deseo+matricularme+en+un+curso';
 
   ngOnInit(): void {
     this.sub = this.authService.expRemainingSeconds$.subscribe(seconds => {

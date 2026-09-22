@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+﻿import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
 import { FooterComponent } from '../../../core/components/footer/footer.component';
@@ -108,7 +108,7 @@ export class AcupunturaPresencialComponent implements OnInit, AfterViewInit, OnD
     tipoPago: '/ mes',
     cuotasInfo: '12 cuotas · Matrícula: S/ 30',
     plazasDisponibles: 8,
-    whatsappLink: 'https://wa.me/51939371250',
+    whatsappLink: 'https://wa.me/51930830427',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
       '12 meses de clases presenciales en Lince, Lima',

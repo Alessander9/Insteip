@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+﻿import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
 import { FooterComponent } from '../../../core/components/footer/footer.component';
@@ -100,7 +100,7 @@ export class FitoterapiaPresencialComponent implements OnInit, AfterViewInit, On
     precio: 250,
     cuotasInfo: 'Presencial: S/ 250.00 | Online: S/ 100.00',
     plazasDisponibles: 8,
-    whatsappLink: 'https://wa.me/51939371250?text=Hola%2C%20deseo%20matricularme%20en%20el%20Curso%20de%20Fitoterapia',
+    whatsappLink: 'https://wa.me/51930830427?text=Hola%2C%20deseo%20matricularme%20en%20el%20Curso%20de%20Fitoterapia',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
       'Modalidad Presencial: S/ 250.00',

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+﻿import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
 import { FooterComponent } from '../../../core/components/footer/footer.component';
@@ -144,7 +144,7 @@ export class MasajeTerapeticoComponent implements OnInit, AfterViewInit, OnDestr
     precio: 260,
     cuotasInfo: 'Matrícula S/ 30 + 1 mensualidad de S/ 260 · Sin intereses',
     plazasDisponibles: 8,
-    whatsappLink: 'https://wa.me/51939371250',
+    whatsappLink: 'https://wa.me/51930830427',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
       'Manual impreso exclusivo paso a paso',

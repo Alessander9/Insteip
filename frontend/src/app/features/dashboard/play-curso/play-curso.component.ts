@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, inject, NgZone, HostListener } from '@angular/core';
+﻿import { Component, OnInit, OnDestroy, AfterViewInit, inject, NgZone, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AlumnoDashboardService, AlumnoPlayCourse, AlumnoPlayModulo, AlumnoPlayVideo } from '../../../core/services/';
@@ -389,7 +389,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
   solicitarMatriculaExpWhatsApp(): void {
     const cursoNombre = this.curso?.nombre || 'el curso';
     const mensaje = `Hola INSTEIP, acabo de ver la lección de muestra del curso "${cursoNombre}" en mi Experiencia INSTEIP y deseo matricularme para acceder al temario completo y obtener mi certificación.`;
-    const whatsappUrl = `https://wa.me/51939371250?text=${encodeURIComponent(mensaje)}`;
+    const whatsappUrl = `https://wa.me/51930830427?text=${encodeURIComponent(mensaje)}`;
     window.open(whatsappUrl, '_blank');
   }
 
@@ -414,7 +414,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     const alumnoNombre = this.profile ? `${this.profile.nombres} ${this.profile.apellidos}`.trim() : 'Estudiante';
     
     const mensaje = `Hola INSTEIP, soy ${alumnoNombre}, deseo coordinar el pago para habilitar el Módulo "${moduloNombre}" del curso "${cursoNombre}".`;
-    const whatsappUrl = `https://wa.me/51939371250?text=${encodeURIComponent(mensaje)}`;
+    const whatsappUrl = `https://wa.me/51930830427?text=${encodeURIComponent(mensaje)}`;
     window.open(whatsappUrl, '_blank');
   }
 

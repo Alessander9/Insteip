@@ -1,4 +1,4 @@
-import {
+﻿import {
   Component,
   ElementRef,
   Input,
@@ -1750,9 +1750,9 @@ export class NewsletterBookshelfComponent implements OnInit, AfterViewInit, OnDe
   }
 
   getWhatsAppLink(book: BookLayout | null): string {
-    if (!book) return 'https://wa.me/51939371250';
+    if (!book) return 'https://wa.me/51930830427';
     const text = `Hola INSTEIP, deseo adquirir el libro digital "${book.title}" (S/ ${book.price || 50}).`;
-    return `https://wa.me/51939371250?text=${encodeURIComponent(text)}`;
+    return `https://wa.me/51930830427?text=${encodeURIComponent(text)}`;
   }
 
   selectBookIndex(index: number): void {

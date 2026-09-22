@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+﻿import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
 import { FooterComponent } from '../../../core/components/footer/footer.component';
@@ -171,7 +171,7 @@ export class AcupunturaChinaComponent implements OnInit, AfterViewInit, OnDestro
     tipoPago: '/ mes',
     cuotasInfo: 'Modalidad Online · Campus virtual 24/7',
     plazasDisponibles: 20,
-    whatsappLink: 'https://wa.me/51939371250?text=Hola%2C%20deseo%20inscribirme%20en%20el%20curso%20Online%20de%20Acupuntura%20China',
+    whatsappLink: 'https://wa.me/51930830427?text=Hola%2C%20deseo%20inscribirme%20en%20el%20curso%20Online%20de%20Acupuntura%20China',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
       'Acceso al Campus Virtual 24/7',

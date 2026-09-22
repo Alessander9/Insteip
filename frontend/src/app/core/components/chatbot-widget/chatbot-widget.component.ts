@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, inject } from '@angular/core';
+﻿import { Component, OnInit, OnDestroy, ElementRef, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, NavigationEnd } from '@angular/router';
@@ -187,7 +187,7 @@ export class ChatbotWidgetComponent implements OnInit, OnDestroy {
       }
     }
     const encoded = encodeURIComponent(message);
-    return `https://wa.me/51939371250?text=${encoded}`;
+    return `https://wa.me/51930830427?text=${encoded}`;
   }
 
   openWhatsApp(): void {
@@ -482,7 +482,7 @@ export class ChatbotWidgetComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         this.messages.push({
           role: 'assistant',
-          content: '👋 **Atención Personalizada con un Asesor** 🌿\n\nTe conecto directamente con nuestro equipo de Admisiones para una atención 1 a 1 inmediata:\n\n[button:💬 Hablar con un Asesor Humano](https://wa.me/51939371250?text=Hola%20Insteip%2C%20solicito%20atenci%C3%B3n%20con%20un%20asesor%20humano)\n[button:📍 Ver Sedes y Horarios](/sedes)'
+          content: '👋 **Atención Personalizada con un Asesor** 🌿\n\nTe conecto directamente con nuestro equipo de Admisiones para una atención 1 a 1 inmediata:\n\n[button:💬 Hablar con un Asesor Humano](https://wa.me/51930830427?text=Hola%20Insteip%2C%20solicito%20atenci%C3%B3n%20con%20un%20asesor%20humano)\n[button:📍 Ver Sedes y Horarios](/sedes)'
         });
         this.isLoading = false;
         this.suggestions = ['🏫 Cursos Presenciales', '💻 Cursos Online', '🔄 Volver al Inicio'];
@@ -581,7 +581,7 @@ export class ChatbotWidgetComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         this.messages.push({
           role: 'assistant',
-          content: `📞 **Canales de Atención Oficial** 🌿\n\n• **WhatsApp Central**: +51 939 371 250\n• **Sede Lince**: Av. Julio C. Tello 438\n\n[button:💬 Hablar por WhatsApp](https://wa.me/51939371250?text=Hola%20Insteip%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n)\n[button:📍 Ver Sedes y Horarios](/sedes)`
+          content: `📞 **Canales de Atención Oficial** 🌿\n\n• **WhatsApp Central**: +51 930 830 427\n• **Sede Lince**: Av. Julio C. Tello 438\n\n[button:💬 Hablar por WhatsApp](https://wa.me/51930830427?text=Hola%20Insteip%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n)\n[button:📍 Ver Sedes y Horarios](/sedes)`
         });
         this.isLoading = false;
         this.suggestions = ['🏫 Cursos Presenciales', '💻 Cursos Online', '🔄 Volver al Inicio'];
@@ -705,7 +705,7 @@ export class ChatbotWidgetComponent implements OnInit, OnDestroy {
       error: () => {
         this.messages.push({
           role: 'assistant',
-          content: 'Lo siento, experimenté un problema al conectar con el servidor de inteligencia artificial. Puedes escribir directamente a nuestro WhatsApp oficial: [+51 939 371 250](https://wa.me/51939371250) para obtener ayuda inmediata.'
+          content: 'Lo siento, experimenté un problema al conectar con el servidor de inteligencia artificial. Puedes escribir directamente a nuestro WhatsApp oficial: [+51 930 830 427](https://wa.me/51930830427) para obtener ayuda inmediata.'
         });
         this.isLoading = false;
         this.saveChatHistory();
@@ -867,7 +867,7 @@ export class ChatbotWidgetComponent implements OnInit, OnDestroy {
     if (lowerSugg.includes('acupuntura') && lowerSugg.includes('7') && (lowerSugg.includes('online') || lowerSugg.includes('virtual'))) {
       this.showCourseResponse(
         '☯️ Acupuntura China 7 Meses Online',
-        'https://wa.me/51939371250',
+        'https://wa.me/51930830427',
         '/assets/temarios/temario-acupuntura-7-meses.pdf'
       );
       return;
@@ -883,7 +883,7 @@ export class ChatbotWidgetComponent implements OnInit, OnDestroy {
     if (lowerSugg.includes('digitopres') && (lowerSugg.includes('online') || lowerSugg.includes('virtual'))) {
       this.showCourseResponse(
         '💆 Digitopresión Mecánica Online',
-        'https://wa.me/51939371250',
+        'https://wa.me/51930830427',
         '/assets/temarios/temario-digitopresion.pdf'
       );
       return;

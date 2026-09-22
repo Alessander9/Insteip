@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+﻿import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
@@ -81,7 +81,7 @@ const courses: Record<string, WorkshopCourse> = {
     duration: '2 horas',
     access: '12 meses',
     teacher: 'Consultar',
-    contact: '+51 939 371 250 / ecabanillasbardales@gmail.com',
+    contact: '+51 930 830 427 / ecabanillasbardales@gmail.com',
     heroDescription: 'Curso online de <strong>reflexologia aplicada</strong> para aprender una base clara, ordenada y lista para integrar a sesiones de bienestar.',
     heroImage: 'assets/reflexologia_img_curso.jpg',
     heroAlt: 'Curso de reflexologia online INSTEIP',
@@ -124,7 +124,7 @@ const courses: Record<string, WorkshopCourse> = {
     duration: '2 horas',
     access: '12 meses',
     teacher: 'Lic. Lazaro Regalado Ponte',
-    contact: '+51 939 371 250',
+    contact: '+51 930 830 427',
     heroDescription: 'Taller online de <strong>acupuntura estetica</strong> para conocer protocolos faciales, criterio de aplicacion y enfoque profesional.',
     heroImage: 'assets/estetica_virtual_img_curso.jpg',
     heroAlt: 'Taller de acupuntura estetica online',
@@ -167,7 +167,7 @@ const courses: Record<string, WorkshopCourse> = {
     duration: '2 horas',
     access: '12 meses',
     teacher: 'Emanuel Cabanillas B.',
-    contact: '+51 939 371 250',
+    contact: '+51 930 830 427',
     heroDescription: 'Taller online de <strong>stretching terapeutico</strong> para aplicar movilidad, elongacion y criterios de cuidado corporal.',
     heroImage: 'assets/img_curso_stretching_online.jpg',
     heroAlt: 'Taller de stretching terapeutico online',
@@ -210,7 +210,7 @@ const courses: Record<string, WorkshopCourse> = {
     duration: '2 horas',
     access: '12 meses',
     teacher: 'Lazaro Regalado Ponte',
-    contact: '+51 939 371 250',
+    contact: '+51 930 830 427',
     heroDescription: 'Taller online para abordar <strong>paralisis facial</strong> integrando acupuntura, fisioterapia y criterio clinico complementario.',
     heroImage: 'assets/paralisis_facial_img_curso.jpg',
     heroAlt: 'Taller de paralisis facial con acupuntura y fisioterapia',
@@ -260,7 +260,7 @@ const courses: Record<string, WorkshopCourse> = {
     accessSubtext: 'Prácticas: 27 y 28 Sep',
     accessHeading: 'Fechas y horarios',
     teacher: 'Lic. Lázaro Regalado Potente',
-    contact: '+51 939 371 250 / ecabanillasbardales@gmail.com',
+    contact: '+51 930 830 427 / ecabanillasbardales@gmail.com',
     heroKicker: 'Inicio: Miércoles 2 de Septiembre',
     heroKickerTag: 'Seminario Internacional',
     heroBadgeLabel: 'Seminario Internacional INSTEIP',
@@ -342,7 +342,7 @@ const courses: Record<string, WorkshopCourse> = {
     duration: '10 horas',
     access: '12 meses',
     teacher: 'Lic. Lázaro Regalado Ponte',
-    contact: '+51 939 371 250 / ecabanillasbardales@gmail.com',
+    contact: '+51 930 830 427 / ecabanillasbardales@gmail.com',
     heroDescription: 'Taller <strong>100% virtual con clases grabadas</strong> de craneopuntura clínica y neurofuncional. Aprende la estimulación de zonas corticales proyectadas en el cráneo para el tratamiento del dolor y patologías neurológicas.',
     heroImage: 'assets/craneopuntura.jpg',
     heroAlt: 'Taller de craneopuntura online INSTEIP',
@@ -417,7 +417,7 @@ const courses: Record<string, WorkshopCourse> = {
     duration: '10 horas',
     access: '12 meses',
     teacher: 'Lic. Lázaro Regalado Ponte',
-    contact: '+51 939 371 250 / ecabanillasbardales@gmail.com',
+    contact: '+51 930 830 427 / ecabanillasbardales@gmail.com',
     heroDescription: 'Taller <strong>100% virtual con clases grabadas</strong> de craneopuntura clínica y neurofuncional. Aprende la estimulación de zonas corticales proyectadas en el cráneo para el tratamiento del dolor y patologías neurológicas.',
     heroImage: 'assets/craneopuntura.jpg',
     heroAlt: 'Taller de craneopuntura online INSTEIP',
@@ -573,7 +573,7 @@ export class OnlineWorkshopComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   get whatsappLink(): string {
-    return `https://wa.me/51939371250?text=${encodeURIComponent(`Hola, deseo informacion sobre el ${this.course.fullName}`)}`;
+    return `https://wa.me/51930830427?text=${encodeURIComponent(`Hola, deseo informacion sobre el ${this.course.fullName}`)}`;
   }
 
   get docenteData(): DocenteData {
@@ -653,7 +653,7 @@ export class OnlineWorkshopComponent implements OnInit, AfterViewInit, OnDestroy
         precio: 280,
         cuotasInfo: 'Inversión: S/ 280 · Inscripción: S/ 30 · Incluye Kit',
         plazasDisponibles: 12,
-        whatsappLink: 'https://wa.me/51939371250?text=' + encodeURIComponent('Hola, deseo inscribirme en el Seminario Internacional de Auriculoterapia'),
+        whatsappLink: 'https://wa.me/51930830427?text=' + encodeURIComponent('Hola, deseo inscribirme en el Seminario Internacional de Auriculoterapia'),
         email: 'ecabanillasbardales@gmail.com',
         beneficios: [
           'Modalidad Virtual vía Zoom: 4 sesiones en vivo (7:00 p.m. a 9:00 p.m.)',

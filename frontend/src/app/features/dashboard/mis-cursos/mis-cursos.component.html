@@ -16,7 +16,45 @@
     </div>
   </div>
 
-  <ng-container *ngIf="isLoading">
+  <!-- OVERLAY DE CARGA EXPERIENCIA INSTEIP (0 a 100%) -->
+  <div class="exp-dash-loading-overlay" *ngIf="isExpUser && expLoading">
+    <div class="exp-dash-loading-card">
+      <div class="exp-dash-icon-ring">
+        <div class="exp-dash-halo"></div>
+        <span class="material-symbols-outlined exp-dash-icon">school</span>
+      </div>
+
+      <div class="exp-dash-text-group">
+        <div class="exp-dash-badge">
+          <span class="exp-dash-badge-dot"></span>
+          <span>DEMOSTRACIÓN OFICIAL · 15 MINUTOS</span>
+        </div>
+        <h2 class="exp-dash-title">{{ expMainTitle }}</h2>
+        <p class="exp-dash-subtitle">{{ expStatusText }}</p>
+      </div>
+
+      <div class="exp-dash-progress-box">
+        <div class="exp-dash-track">
+          <div class="exp-dash-bar" [style.width.%]="expProgress">
+            <div class="exp-dash-shimmer"></div>
+          </div>
+        </div>
+        <div class="exp-dash-footer">
+          <span class="exp-dash-step-msg">
+            <span class="exp-dash-pulse-dot"></span> Sincronizando aula virtual
+          </span>
+          <span class="exp-dash-percent">{{ expProgress }}%</span>
+        </div>
+      </div>
+
+      <div class="exp-dash-helper">
+        <span class="material-symbols-outlined">timer</span>
+        <span>Tu sesión de 15 minutos se encuentra activa.</span>
+      </div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="isLoading && !expLoading">
     <app-skeleton-loader type="custom"></app-skeleton-loader>
   </ng-container>
 

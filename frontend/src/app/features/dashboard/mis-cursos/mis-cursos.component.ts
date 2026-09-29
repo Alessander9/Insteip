@@ -39,8 +39,19 @@ export class MisCursosComponent implements OnInit {
   currentPage = 1;
   pageSize = 6;
 
+  // Barra de progreso 0 a 100% para Experiencia INSTEIP en Dashboard
+  expLoading = false;
+  expProgress = 0;
+  expMainTitle = 'Preparando la Experiencia INSTEIP';
+  expStatusText = 'Iniciando conexión con el campus virtual...';
+  private expProgressInterval: any = null;
+
   ngOnInit(): void {
     this.isExpUser = this.authService.isExpUser();
+
+    if (this.isExpUser) {
+      this.iniciarCargaExperiencia();
+    }
 
     this.studentService.getEnrolledCursos().subscribe({
       next: (data) => {
@@ -51,9 +62,11 @@ export class MisCursosComponent implements OnInit {
           if (selectedIds && selectedIds.length === 2) {
             this.cursos = this.allCursosRaw.filter(c => selectedIds.includes(c.id));
             this.showExpPicker = false;
+            this.completarCargaExperiencia();
           } else {
             this.cursos = [];
             this.showExpPicker = true;
+            this.expLoading = false;
           }
         } else {
           this.cursos = this.allCursosRaw;
@@ -65,15 +78,62 @@ export class MisCursosComponent implements OnInit {
       error: (err) => {
         console.error('Error fetching enrolled courses:', err);
         this.isLoading = false;
+        this.expLoading = false;
       }
     });
+  }
+
+  iniciarCargaExperiencia(): void {
+    this.expLoading = true;
+    this.expProgress = 0;
+    this.expMainTitle = 'Preparando la Experiencia INSTEIP';
+    this.expStatusText = 'Iniciando conexión con el campus virtual...';
+
+    if (this.expProgressInterval) clearInterval(this.expProgressInterval);
+
+    this.expProgressInterval = setInterval(() => {
+      if (this.expProgress < 25) {
+        this.expProgress += 4;
+        this.expStatusText = 'Configurando tus cursos seleccionados...';
+      } else if (this.expProgress < 60) {
+        this.expProgress += 3;
+        this.expStatusText = 'Cargando clases, módulos y videos interactivos...';
+      } else if (this.expProgress < 88) {
+        this.expProgress += 2;
+        this.expStatusText = 'Optimizando el aula virtual de demostración...';
+      } else if (this.expProgress < 96) {
+        this.expProgress += 1;
+        this.expStatusText = 'Sincronizando materiales y accesos...';
+      }
+    }, 60);
+  }
+
+  completarCargaExperiencia(): void {
+    if (this.expProgressInterval) clearInterval(this.expProgressInterval);
+    this.expMainTitle = '¡Todo listo para tu clase!';
+    this.expStatusText = '¡Bienvenido a tu Experiencia de 15 minutos!';
+
+    const fin = setInterval(() => {
+      this.expProgress += 8;
+      if (this.expProgress >= 100) {
+        this.expProgress = 100;
+        clearInterval(fin);
+        setTimeout(() => {
+          this.expLoading = false;
+        }, 300);
+      }
+    }, 20);
   }
 
   onExpCoursesSelected(courseIds: number[]): void {
     this.authService.saveExpSelectedCourseIds(courseIds);
     this.cursos = this.allCursosRaw.filter(c => courseIds.includes(c.id));
     this.showExpPicker = false;
-    this.toastService.success('¡Cursos seleccionados! Tienes 15 minutos para explorar tu experiencia INSTEIP.');
+    this.iniciarCargaExperiencia();
+    setTimeout(() => {
+      this.completarCargaExperiencia();
+      this.toastService.success('¡Cursos seleccionados! Tienes 15 minutos para explorar tu experiencia INSTEIP.');
+    }, 600);
   }
 
   get filteredCursos(): AlumnoCurso[] {

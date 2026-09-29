@@ -242,15 +242,45 @@ export const routes: Routes = [
   { path: 'ops-console', redirectTo: 'dashboard/master-ops', pathMatch: 'full' },
 
   // ================================================================
-  //  AUTENTICACIÓN & EXPERIENCIA EXP INSTEIP
+  //  AUTENTICACIÓN & EXPERIENCIA INSTEIP
   // ================================================================
   {
     path: 'login',
     loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent)
   },
   {
+    path: 'experiencia-insteip',
+    loadComponent: () => import('./features/experiencia-insteip/experiencia-insteip.component').then(m => m.ExperienciaInsteipComponent)
+  },
+  {
+    path: 'experiencia-insteip/play',
+    loadComponent: () => import('./features/experiencia-insteip/play/exp-play.component').then(m => m.ExpPlayComponent)
+  },
+  {
     path: 'exp-final',
     loadComponent: () => import('./features/exp-final/exp-final.component').then(m => m.ExpFinalComponent)
+  },
+  {
+    path: 'privacidad',
+    loadComponent: () => import('./features/legal/privacidad/privacidad.component').then(m => m.PrivacidadComponent)
+  },
+  {
+    path: 'politica-de-privacidad',
+    redirectTo: 'privacidad',
+    pathMatch: 'full'
+  },
+  {
+    path: 'terminos',
+    loadComponent: () => import('./features/legal/terminos/terminos.component').then(m => m.TerminosComponent)
+  },
+  {
+    path: 'terminos-y-condiciones',
+    redirectTo: 'terminos',
+    pathMatch: 'full'
+  },
+  {
+    path: '404',
+    loadComponent: () => import('./features/not-found/not-found.component').then(m => m.NotFoundComponent)
   },
 
   // ================================================================
@@ -397,7 +427,11 @@ export const routes: Routes = [
   },
 
   // ================================================================
-  //  WILDCARD — redirige al login si no hay match
+  //  WILDCARD — 404 Not Found personalizado
   // ================================================================
-  { path: '**', redirectTo: 'login' }
+  {
+    path: '**',
+    loadComponent: () => import('./features/not-found/not-found.component').then(m => m.NotFoundComponent)
+  }
 ];
+

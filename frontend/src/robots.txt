@@ -1,0 +1,26 @@
+# ====================================================================
+# ROBOTS.TXT — INSTEIP (Instituto de Terapias Integrales)
+# https://insteip.com
+# ====================================================================
+
+User-agent: *
+Allow: /
+Allow: /inicio
+Allow: /programas
+Allow: /libros
+Allow: /biblioteca
+Allow: /sedes
+Allow: /recursos
+Allow: /certificacion
+Allow: /experiencia-insteip
+Allow: /privacidad
+Allow: /terminos
+
+# Rutas privadas que no deben ser indexadas
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /experiencia-insteip/play
+Disallow: /exp-final
+
+# Sitemap Oficial
+Sitemap: https://insteip.com/sitemap.xml

@@ -4,12 +4,13 @@ import { SocialSidebarComponent } from './core/components/social-sidebar/social-
 import { ToastComponent } from './core/components/toast/toast.component';
 import { ScrollToTopComponent } from './core/components/scroll-to-top/scroll-to-top.component';
 import { ChatbotWidgetComponent } from './core/components/chatbot-widget/chatbot-widget.component';
+import { CookieBannerComponent } from './core/components/cookie-banner/cookie-banner.component';
 import { ThemeService, SeoService } from './core/services/';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, SocialSidebarComponent, ToastComponent, ScrollToTopComponent, ChatbotWidgetComponent],
+  imports: [RouterOutlet, SocialSidebarComponent, ToastComponent, ScrollToTopComponent, ChatbotWidgetComponent, CookieBannerComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })

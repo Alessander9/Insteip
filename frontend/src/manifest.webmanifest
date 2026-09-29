@@ -1,0 +1,21 @@
+{
+  "name": "INSTEIP — Instituto de Terapias Integrales",
+  "short_name": "INSTEIP",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b1120",
+  "theme_color": "#003466",
+  "description": "Instituto online líder en formación profesional y terapias integrales en Perú.",
+  "icons": [
+    {
+      "src": "assets/insteip-logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/insteip-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

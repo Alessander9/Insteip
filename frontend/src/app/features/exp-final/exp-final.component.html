@@ -30,7 +30,8 @@
         <!-- Status Kicker Badge -->
         <div class="exp-final-badge">
           <span class="exp-badge-pulse"></span>
-          <span>Sesión EXP INSTEIP Concluida</span>
+          <span *ngIf="numeroUso < 3">Sesión #{{ numeroUso }} de 3 Concluida · Te quedan {{ 3 - numeroUso }} acceso(s) disponible(s)</span>
+          <span *ngIf="numeroUso >= 3">Sesión #3 de 3 Concluida · Experiencia Gratuita Completa</span>
         </div>
 
         <!-- Headline -->

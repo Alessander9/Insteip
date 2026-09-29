@@ -1,0 +1,21 @@
+<aside class="cookie-banner" *ngIf="mostrarBanner" role="dialog" aria-label="Consentimiento de cookies">
+  <div class="cookie-content">
+    <div class="cookie-icon">🍪</div>
+    <div class="cookie-text">
+      <strong>Tu privacidad es importante para nosotros</strong>
+      <p>
+        Utilizamos cookies propias y de terceros para personalizar tu experiencia en el campus, recordar tus preferencias y realizar analítica anónima. Consulta nuestra 
+        <a routerLink="/privacidad" class="cookie-link">Política de Privacidad</a>.
+      </p>
+    </div>
+  </div>
+
+  <div class="cookie-actions">
+    <button type="button" class="btn-cookie-secondary" (click)="aceptarNecesarias()">
+      Solo necesarias
+    </button>
+    <button type="button" class="btn-cookie-primary" (click)="aceptarTodas()">
+      Aceptar todas
+    </button>
+  </div>
+</aside>

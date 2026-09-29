@@ -24,3 +24,5 @@ export {
   BuzonResumen,
   CarpetaBuzon
 } from './mensajeria.model';
+export * from './experiencia.model';
+

@@ -1,0 +1,132 @@
+<div class="exp-play-layout">
+  <!-- Top Navigation Bar -->
+  <header class="play-navbar">
+    <div class="nav-left">
+      <div class="live-indicator">
+        <span class="pulse-dot"></span>
+        <span class="live-text">CAMPUS EN VIVO · EXPERIENCIA INSTEIP</span>
+      </div>
+      <span class="usage-badge" *ngIf="sesion?.numeroUso">
+        Uso {{ sesion?.numeroUso }} de 3
+      </span>
+    </div>
+
+    <!-- Timer Central Flotante -->
+    <div class="nav-timer" [class.timer-warning]="esPocoTiempo">
+      <span class="timer-icon">⏱</span>
+      <div class="timer-display">
+        <span class="timer-time">{{ tiempoFormateado }}</span>
+        <span class="timer-label">minutos restantes</span>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <a [href]="whatsappUrl" target="_blank" rel="noopener" class="btn-enroll-nav">
+        <span>Quiero Inscribirme →</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Pestañas de Selección de los 2 Cursos -->
+  <div class="course-tabs-bar">
+    <div class="tabs-container">
+      <button
+        *ngFor="let curso of cursos; let i = index"
+        class="tab-btn"
+        [class.active]="cursoActivoIndex === i"
+        (click)="seleccionarCurso(i)"
+      >
+        <span class="tab-index">Curso {{ i + 1 }}</span>
+        <span class="tab-title">{{ curso.nombre }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenido Principal: Reproductor + Sidebar de Módulos -->
+  <main class="play-main-content">
+    <!-- Columna Izquierda: Video Player + Detalle -->
+    <section class="video-column">
+      <div class="player-container">
+        <div class="video-responsive" *ngIf="videoSafeUrl">
+          <iframe
+            [src]="videoSafeUrl"
+            title="Reproductor de clase INSTEIP"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        </div>
+
+        <div class="no-video-placeholder" *ngIf="!videoSafeUrl">
+          <div class="placeholder-icon">📺</div>
+          <p>Selecciona una clase del menú lateral para comenzar a ver el contenido.</p>
+        </div>
+      </div>
+
+      <!-- Info del Video Activo -->
+      <div class="video-info-box" *ngIf="videoActivo">
+        <h1 class="video-title">{{ videoActivo.titulo }}</h1>
+        <p class="video-desc" *ngIf="videoActivo.descripcion">{{ videoActivo.descripcion }}</p>
+      </div>
+
+      <!-- Banner de Materiales Protegidos -->
+      <div class="materials-alert-banner">
+        <div class="alert-icon-lock">🔒</div>
+        <div class="alert-text">
+          <strong>Materiales y Descargas Protegidos</strong>
+          <p>Las guías de estudio, PDFs y archivos descargables se habilitan automáticamente al matricularte en el curso completo.</p>
+        </div>
+        <a [href]="whatsappUrl" target="_blank" rel="noopener" class="btn-unlock-link">
+          Desbloquear acceso →
+        </a>
+      </div>
+    </section>
+
+    <!-- Columna Derecha: Temario del Curso (Módulos, Videos y Materiales) -->
+    <aside class="curriculum-column">
+      <div class="curriculum-header">
+        <h2>Contenido del Curso</h2>
+        <span class="course-badge">{{ cursoActivo?.nombre }}</span>
+      </div>
+
+      <div class="curriculum-scroll">
+        <div
+          class="module-accordion"
+          *ngFor="let mod of cursoActivo?.modulos; let modIdx = index"
+        >
+          <div class="module-title-bar">
+            <span class="mod-num">Módulo {{ modIdx + 1 }}</span>
+            <span class="mod-name">{{ mod.nombre }}</span>
+          </div>
+
+          <div class="module-items-list">
+            <!-- Lista de Videos -->
+            <div
+              *ngFor="let v of mod.videos"
+              class="video-item"
+              [class.active]="videoActivo?.id === v.id"
+              (click)="reproducirVideo(v)"
+            >
+              <span class="play-icon">{{ videoActivo?.id === v.id ? '▶' : '▷' }}</span>
+              <span class="video-item-title">{{ v.titulo }}</span>
+              <span class="video-duration" *ngIf="v.duracionSegundos">
+                {{ Math.floor(v.duracionSegundos / 60) }} min
+              </span>
+            </div>
+
+            <!-- Lista de Materiales (Bloqueados) -->
+            <div
+              *ngFor="let mat of mod.materiales"
+              class="material-item-locked"
+              title="Disponible solo con suscripción activa"
+            >
+              <span class="lock-icon">🔒</span>
+              <span class="material-name">{{ mat.nombre }}</span>
+              <span class="material-tag">PDF / Guía</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+</div>

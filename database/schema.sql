@@ -426,3 +426,23 @@ CREATE TABLE IF NOT EXISTS matricula_modulos_acceso (
 CREATE INDEX idx_matricula_modulos_matricula ON matricula_modulos_acceso(matricula_id);
 CREATE INDEX idx_matricula_modulos_modulo ON matricula_modulos_acceso(modulo_id);
 
+-- =========================================================================
+-- 17. TABLA: experiencias_usos (Prueba gratuita de 15 min / Experiencia INSTEIP)
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS experiencias_usos (
+    id            BIGSERIAL PRIMARY KEY,
+    numero_uso    INTEGER NOT NULL DEFAULT 1,
+    correo        VARCHAR(150) NOT NULL,
+    ip            VARCHAR(100),
+    cookie_id     VARCHAR(100),
+    cursos_vistos BIGINT[] NOT NULL,
+    fecha_uso     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expira_en     TIMESTAMP NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_exp_usos_correo    ON experiencias_usos(correo);
+CREATE INDEX IF NOT EXISTS idx_exp_usos_ip        ON experiencias_usos(ip);
+CREATE INDEX IF NOT EXISTS idx_exp_usos_cookie    ON experiencias_usos(cookie_id);
+CREATE INDEX IF NOT EXISTS idx_exp_usos_expira_en ON experiencias_usos(expira_en);
+
+

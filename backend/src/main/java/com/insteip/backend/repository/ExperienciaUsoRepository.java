@@ -11,27 +11,27 @@ import java.util.Optional;
 
 public interface ExperienciaUsoRepository extends JpaRepository<ExperienciaUso, Long> {
 
-    @Query("""
-        SELECT e FROM ExperienciaUso e
-        WHERE (:correo IS NOT NULL AND LOWER(e.correo) = LOWER(:correo))
-           OR (:ip IS NOT NULL AND e.ip = :ip)
-           OR (:cookieId IS NOT NULL AND e.cookieId = :cookieId)
-        ORDER BY e.fechaUso DESC
-    """)
+    @Query(value = """
+        SELECT * FROM experiencias_usos e
+        WHERE (COALESCE(:correo, '') != '' AND LOWER(e.correo) = LOWER(:correo))
+           OR (COALESCE(:ip, '') != '' AND e.ip = :ip)
+           OR (COALESCE(:cookieId, '') != '' AND e.cookie_id = :cookieId)
+        ORDER BY e.fecha_uso DESC
+    """, nativeQuery = true)
     List<ExperienciaUso> findHistorialVisitante(
         @Param("correo") String correo,
         @Param("ip") String ip,
         @Param("cookieId") String cookieId
     );
 
-    @Query("""
-        SELECT e FROM ExperienciaUso e
-        WHERE ((:correo IS NOT NULL AND LOWER(e.correo) = LOWER(:correo))
-           OR (:ip IS NOT NULL AND e.ip = :ip)
-           OR (:cookieId IS NOT NULL AND e.cookieId = :cookieId))
-          AND e.expiraEn > :ahora
-        ORDER BY e.expiraEn DESC
-    """)
+    @Query(value = """
+        SELECT * FROM experiencias_usos e
+        WHERE ((COALESCE(:correo, '') != '' AND LOWER(e.correo) = LOWER(:correo))
+           OR (COALESCE(:ip, '') != '' AND e.ip = :ip)
+           OR (COALESCE(:cookieId, '') != '' AND e.cookie_id = :cookieId))
+          AND e.expira_en > :ahora
+        ORDER BY e.expira_en DESC
+    """, nativeQuery = true)
     List<ExperienciaUso> findBloqueosActivos(
         @Param("correo") String correo,
         @Param("ip") String ip,
@@ -39,12 +39,12 @@ public interface ExperienciaUsoRepository extends JpaRepository<ExperienciaUso, 
         @Param("ahora") LocalDateTime ahora
     );
 
-    @Query("""
-        SELECT COUNT(e) FROM ExperienciaUso e
-        WHERE (:correo IS NOT NULL AND LOWER(e.correo) = LOWER(:correo))
-           OR (:ip IS NOT NULL AND e.ip = :ip)
-           OR (:cookieId IS NOT NULL AND e.cookieId = :cookieId)
-    """)
+    @Query(value = """
+        SELECT COUNT(*) FROM experiencias_usos e
+        WHERE (COALESCE(:correo, '') != '' AND LOWER(e.correo) = LOWER(:correo))
+           OR (COALESCE(:ip, '') != '' AND e.ip = :ip)
+           OR (COALESCE(:cookieId, '') != '' AND e.cookie_id = :cookieId)
+    """, nativeQuery = true)
     long countUsosVisitante(
         @Param("correo") String correo,
         @Param("ip") String ip,

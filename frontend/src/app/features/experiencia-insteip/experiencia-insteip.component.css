@@ -381,6 +381,88 @@
   margin-bottom: 32px;
 }
 
+/* Barra de progreso de cursos 0 a 100% */
+.courses-progress-box {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 20px;
+  padding: 40px 32px;
+  text-align: center;
+  max-width: 540px;
+  margin: 40px auto;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5),
+              0 0 25px rgba(56, 189, 248, 0.15);
+  animation: expCardSlideUp 0.3s ease-out;
+}
+
+.courses-progress-box h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0 0 8px;
+}
+
+.courses-status-text {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  margin: 0 0 24px;
+}
+
+.courses-track-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.courses-track {
+  width: 100%;
+  height: 10px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.courses-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #0284c7 0%, #38bdf8 50%, #10b981 100%);
+  border-radius: 999px;
+  transition: width 0.12s linear;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.7);
+  position: relative;
+}
+
+.courses-shimmer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  animation: shimmerMove 1.5s infinite;
+}
+
+.courses-progress-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.courses-percent {
+  font-family: monospace;
+  font-weight: 800;
+  color: #38bdf8;
+  font-size: 1.1rem;
+}
+
 .selection-guide h2 {
   font-size: 1.8rem;
   font-weight: 800;

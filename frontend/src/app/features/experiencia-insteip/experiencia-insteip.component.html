@@ -128,10 +128,22 @@
       </div>
     </div>
 
-    <!-- Spinner cargando cursos -->
-    <div class="courses-loading" *ngIf="cargandoCursos">
-      <div class="spinner-large"></div>
-      <p>Cargando catálogo de cursos...</p>
+    <!-- Barra de progreso cargando cursos 0 a 100% -->
+    <div class="courses-progress-box" *ngIf="cargandoCursos">
+      <div class="spinner-pulse-ring"></div>
+      <h3>Cargando Catálogo de Cursos</h3>
+      <p class="courses-status-text">{{ textoCargaCursos }}</p>
+      <div class="courses-track-wrap">
+        <div class="courses-track">
+          <div class="courses-progress-bar" [style.width.%]="progresoCargaCursos">
+            <div class="courses-shimmer"></div>
+          </div>
+        </div>
+        <div class="courses-progress-footer">
+          <span>Sincronizando campus...</span>
+          <span class="courses-percent">{{ progresoCargaCursos }}%</span>
+        </div>
+      </div>
     </div>
 
     <!-- Grid de cursos -->

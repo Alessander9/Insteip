@@ -41,9 +41,40 @@
         </div>
       </header>
 
-      <!-- Course Cards Selection Grid -->
+      <!-- Course Cards Selection Grid / Loading Progress Bar -->
       <div class="exp-modal-body">
-        <div class="exp-courses-grid">
+
+        <!-- ESTADO DE CARGA: Barra de Progreso 0 a 100% -->
+        <div class="exp-progress-container" *ngIf="isLoading">
+          <div class="exp-progress-card">
+            <div class="exp-progress-icon-ring">
+              <div class="exp-pulse-halo"></div>
+              <span class="material-symbols-outlined exp-progress-main-icon">school</span>
+            </div>
+
+            <div class="exp-progress-header">
+              <h3 class="exp-progress-title">Cargando Catálogo de Cursos</h3>
+              <p class="exp-progress-status-msg">{{ loadingStatusText }}</p>
+            </div>
+
+            <div class="exp-progress-track-wrapper">
+              <div class="exp-progress-track">
+                <div class="exp-progress-bar" [style.width.%]="progressPercentage">
+                  <div class="exp-progress-shimmer"></div>
+                </div>
+              </div>
+              <div class="exp-progress-footer">
+                <span class="exp-progress-tag">
+                  <span class="exp-dot-pulse"></span> Sincronizando campus
+                </span>
+                <span class="exp-progress-percent">{{ progressPercentage }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grid de Cursos (Cuando termina de cargar al 100%) -->
+        <div class="exp-courses-grid" *ngIf="!isLoading">
           <div 
             *ngFor="let curso of cursos" 
             class="exp-course-card"
@@ -86,6 +117,27 @@
 
             <!-- Selection Glow Ring -->
             <div class="exp-card-ring" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OVERLAY AL INICIAR SESIÓN (Progreso 0 a 100) -->
+      <div class="exp-starting-overlay" *ngIf="isStartingSession">
+        <div class="exp-starting-card">
+          <div class="exp-pulse-halo-large"></div>
+          <span class="material-symbols-outlined exp-starting-icon">rocket_launch</span>
+          <h3>Preparando tu Experiencia</h3>
+          <p>Configurando tus 2 cursos y activando tu sesión de 15 minutos...</p>
+          <div class="exp-progress-track-wrapper exp-starting-track">
+            <div class="exp-progress-track">
+              <div class="exp-progress-bar exp-progress-bar--gold" [style.width.%]="startProgressPercentage">
+                <div class="exp-progress-shimmer"></div>
+              </div>
+            </div>
+            <div class="exp-progress-footer">
+              <span>Accediendo al aula virtual...</span>
+              <span class="exp-progress-percent">{{ startProgressPercentage }}%</span>
+            </div>
           </div>
         </div>
       </div>

@@ -86,14 +86,46 @@ export class ExperienciaInsteipComponent implements OnInit {
     });
   }
 
+  progresoCargaCursos: number = 0;
+  textoCargaCursos: string = 'Conectando con el campus virtual...';
+  private progresoInterval: any = null;
+
   cargarCursos(email: string): void {
     this.cargandoCursos = true;
+    this.progresoCargaCursos = 0;
+    this.textoCargaCursos = 'Conectando con el campus virtual...';
+
+    if (this.progresoInterval) clearInterval(this.progresoInterval);
+    this.progresoInterval = setInterval(() => {
+      if (this.progresoCargaCursos < 30) {
+        this.progresoCargaCursos += 5;
+        this.textoCargaCursos = 'Conectando con el servidor...';
+      } else if (this.progresoCargaCursos < 70) {
+        this.progresoCargaCursos += 4;
+        this.textoCargaCursos = 'Cargando catálogo oficial de formaciones...';
+      } else if (this.progresoCargaCursos < 92) {
+        this.progresoCargaCursos += 2;
+        this.textoCargaCursos = 'Preparando clases y materiales...';
+      }
+    }, 70);
+
     this.expService.listarCursos(email).subscribe({
       next: (data) => {
-        this.cursos = data;
-        this.cargandoCursos = false;
+        if (this.progresoInterval) clearInterval(this.progresoInterval);
+        const finInt = setInterval(() => {
+          this.progresoCargaCursos += 10;
+          if (this.progresoCargaCursos >= 100) {
+            this.progresoCargaCursos = 100;
+            clearInterval(finInt);
+            setTimeout(() => {
+              this.cursos = data;
+              this.cargandoCursos = false;
+            }, 200);
+          }
+        }, 20);
       },
       error: () => {
+        if (this.progresoInterval) clearInterval(this.progresoInterval);
         this.cargandoCursos = false;
         this.mensajeError = 'No se pudieron cargar los cursos disponibles.';
       }

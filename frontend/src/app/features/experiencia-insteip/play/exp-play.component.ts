@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ExperienciaService } from '../../../core/services/experiencia.service';
 import { SesionActivaExp, CursoExp, ModuloExp, VideoExp, MaterialExp } from '../../../core/models/experiencia.model';
+import { extraerIdYoutube } from '../../../core/utils/youtube.utils';
 
 @Component({
   selector: 'app-exp-play',
@@ -158,18 +159,16 @@ export class ExpPlayComponent implements OnInit, OnDestroy {
       this.moduloAbiertoIndices.add(moduloIndex);
     }
 
-    let url = video.youtubeUrl;
-    if (video.youtubeId) {
-      url = `https://www.youtube-nocookie.com/embed/${video.youtubeId}?autoplay=1&rel=0&modestbranding=1`;
-    } else if (url && !url.includes('embed')) {
-      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-      const match = url.match(regExp);
-      if (match && match[2].length === 11) {
-        url = `https://www.youtube-nocookie.com/embed/${match[2]}?autoplay=1&rel=0&modestbranding=1`;
-      }
+    const id = (video.youtubeId || '').trim() || extraerIdYoutube(video.youtubeUrl || '');
+    if (id) {
+      const origin = typeof window !== 'undefined' && window.location.origin ? window.location.origin : 'https://insteip.com';
+      const embedUrl = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1&origin=${encodeURIComponent(origin)}`;
+      this.videoSafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
+    } else if (video.youtubeUrl) {
+      this.videoSafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(video.youtubeUrl);
+    } else {
+      this.videoSafeUrl = null;
     }
-
-    this.videoSafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   // Modales de funciones del campus bloqueadas

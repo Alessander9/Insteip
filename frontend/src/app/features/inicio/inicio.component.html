@@ -1,16 +1,30 @@
 <!-- =====================================================
-  MODAL DE IMAGEN DE BIENVENIDA
+  MODAL DE IMAGEN DE BIENVENIDA / EVENTO ESPECIAL
 ====================================================== -->
 <div class="video-modal-overlay" *ngIf="showVideoModal" (click)="closeVideoModal()">
   <div class="video-modal-container" (click)="$event.stopPropagation()">
     <div class="video-modal-player">
-      <img
-        src="assets/mesAcupuntura.jpg"
-        alt="Mes de la Acupuntura - INSTEIP">
+      <a href="https://wa.me/51930830427?text=Hola%2C+deseo+m%C3%A1s+informaci%C3%B3n+sobre+la+Jornada+Especial+por+el+D%C3%ADa+de+la+Acupuntura"
+         target="_blank" rel="noopener noreferrer" title="Inscribirse vía WhatsApp">
+        <img
+          src="assets/diaACUPUNTURA.jpg"
+          alt="Jornada Especial por el Día de la Acupuntura - INSTEIP"
+          loading="eager">
+      </a>
     </div>
-    <button class="video-modal-close-btn" (click)="closeVideoModal()">
-      Cerrar
-    </button>
+    <div class="video-modal-actions">
+      <a href="https://wa.me/51930830427?text=Hola%2C+deseo+m%C3%A1s+informaci%C3%B3n+sobre+la+Jornada+Especial+por+el+D%C3%ADa+de+la+Acupuntura"
+         target="_blank" rel="noopener noreferrer"
+         class="video-modal-wa-btn">
+        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+          <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.77.814 2.796.814 3.18 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.766-5.768-5.766zm9.969 5.766c0 5.514-4.486 10-10 10-1.758 0-3.411-.456-4.85-1.258l-5.15 1.35 1.373-5.016c-.868-1.488-1.373-3.224-1.373-5.076 0-5.514 4.486-10 10-10s10 4.486 10 10z"/>
+        </svg>
+        Más información por WhatsApp
+      </a>
+      <button class="video-modal-close-btn" (click)="closeVideoModal()">
+        Cerrar
+      </button>
+    </div>
   </div>
 </div>
 
@@ -138,6 +152,37 @@
       {{ (currentSlide + 1).toString().padStart(2, '0') }} / {{ slides.length.toString().padStart(2, '0') }}
     </div>
 
+  </section>
+
+  <!-- =====================================================
+    BANNER DESTACADO: EXPERIENCIA INSTEIP (15 MINUTOS GRATIS)
+  ====================================================== -->
+  <section class="relative bg-gradient-to-r from-emerald-950/90 via-slate-900 to-teal-950/90 py-10 px-4 md:px-8 border-b border-emerald-500/20">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-4 text-center md:text-left">
+        <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shrink-0 text-3xl shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+          🌿
+        </div>
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Prueba Gratuita en Vivo
+          </div>
+          <h2 class="text-xl md:text-2xl font-extrabold text-white">
+            Explora el Campus Virtual durante 15 minutos
+          </h2>
+          <p class="text-sm text-slate-300 mt-0.5">
+            Sin contraseñas ni registro previo. Elige 2 cursos y experimenta las clases reales ahora mismo.
+          </p>
+        </div>
+      </div>
+
+      <a
+        routerLink="/experiencia-insteip"
+        class="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-sm md:text-base rounded-xl shadow-lg shadow-emerald-500/25 transition-all transform hover:-translate-y-0.5 shrink-0">
+        <span>¡Comenzar Experiencia Gratis! →</span>
+      </a>
+    </div>
   </section>
 
   <!-- Certification Banner -->

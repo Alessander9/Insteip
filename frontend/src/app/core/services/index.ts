@@ -23,4 +23,6 @@ export { TareaService } from './tarea.service';
 export { EntregaTareaService } from './entrega-tarea.service';
 export { NotificacionService } from './notificacion.service';
 export { AnuncioModalService } from './anuncio-modal.service';
+export { ExperienciaService } from './experiencia.service';
+
 

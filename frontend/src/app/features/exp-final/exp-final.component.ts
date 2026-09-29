@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -13,10 +13,18 @@ import { AuthService } from '../../core/services/auth.service';
 export class ExpFinalComponent implements OnInit {
   private authService = inject(AuthService);
 
+  numeroUso: number = 1;
+
   readonly whatsappMatriculaUrl = 'https://wa.me/51930830427?text=Hola%2C+vengo+de+probar+la+experiencia+EXP+INSTEIP+y+deseo+matricularme+en+un+curso';
   readonly whatsappAsesorUrl = 'https://wa.me/51930830427?text=Hola%2C+tengo+consultas+sobre+los+cursos+y+certificaciones+de+INSTEIP';
 
+
   ngOnInit(): void {
+    const state = typeof history !== 'undefined' ? history.state : null;
+    if (state && state.usoExp) {
+      this.numeroUso = Number(state.usoExp);
+    }
+
     // Asegurar que la sesión previa quede completamente reiniciada
     localStorage.removeItem('isExpUser');
     localStorage.removeItem('expExpiresAt');

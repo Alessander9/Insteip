@@ -1,0 +1,60 @@
+<app-navbar></app-navbar>
+
+<main class="not-found-page">
+  <div class="not-found-glow" aria-hidden="true"></div>
+
+  <div class="not-found-card">
+    <div class="error-code">404</div>
+    <div class="error-pill">
+      <span class="pill-dot"></span>
+      Página no encontrada
+    </div>
+    
+    <h1 class="error-title">Parece que este camino no existe</h1>
+    <p class="error-desc">
+      La página que estás buscando fue movida, renombrada o ya no se encuentra disponible en nuestro campus virtual.
+    </p>
+
+    <div class="quick-links-box">
+      <h3>Quizás estabas buscando:</h3>
+      <div class="links-grid">
+        <a routerLink="/programas" class="quick-link-item">
+          <span class="link-icon">📚</span>
+          <div>
+            <strong>Nuestros Programas</strong>
+            <p>Conoce los cursos y diplomados en terapias</p>
+          </div>
+        </a>
+        <a routerLink="/experiencia-insteip" class="quick-link-item">
+          <span class="link-icon">🌿</span>
+          <div>
+            <strong>Experiencia Gratuita</strong>
+            <p>15 minutos de prueba del campus en vivo</p>
+          </div>
+        </a>
+        <a routerLink="/certificacion" class="quick-link-item">
+          <span class="link-icon">📜</span>
+          <div>
+            <strong>Certificación Oficial</strong>
+            <p>Validez y acreditación institucional</p>
+          </div>
+        </a>
+        <a routerLink="/login" class="quick-link-item">
+          <span class="link-icon">🔐</span>
+          <div>
+            <strong>Campus Virtual</strong>
+            <p>Acceso para alumnos matriculados</p>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="actions-row">
+      <a routerLink="/inicio" class="btn-primary-home">
+        <span>← Volver a la página principal</span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>

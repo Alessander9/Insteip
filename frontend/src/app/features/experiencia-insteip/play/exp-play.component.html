@@ -1,132 +1,422 @@
-<div class="exp-play-layout">
-  <!-- Top Navigation Bar -->
-  <header class="play-navbar">
-    <div class="nav-left">
-      <div class="live-indicator">
-        <span class="pulse-dot"></span>
-        <span class="live-text">CAMPUS EN VIVO · EXPERIENCIA INSTEIP</span>
+<div class="campus-layout">
+
+  <!-- ============================================================ -->
+  <!-- MODAL DE FUNCIÓN BLOQUEADA (Para Tareas, Certificados, etc.) -->
+  <!-- ============================================================ -->
+  <div
+    *ngIf="modalBloqueo.abierto"
+    class="modal-backdrop"
+    (click)="cerrarModalBloqueo()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-icon-badge">🔒</div>
+      <span class="modal-category-tag">{{ modalBloqueo.badge }}</span>
+      <h3 class="modal-title">{{ modalBloqueo.titulo }}</h3>
+      <p class="modal-desc">{{ modalBloqueo.descripcion }}</p>
+
+      <div class="modal-benefits-box">
+        <div class="benefit-item">
+          <span class="benefit-icon">✓</span>
+          <span>Acceso ilimitado a todas las clases y módulos sin límite de tiempo</span>
+        </div>
+        <div class="benefit-item">
+          <span class="benefit-icon">✓</span>
+          <span>Descarga de materiales PDF, diapositivas y guías clínicas</span>
+        </div>
+        <div class="benefit-item">
+          <span class="benefit-icon">✓</span>
+          <span>Certificación oficial con código QR y respaldo internacional</span>
+        </div>
       </div>
-      <span class="usage-badge" *ngIf="sesion?.numeroUso">
-        Uso {{ sesion?.numeroUso }} de 3
-      </span>
-    </div>
 
-    <!-- Timer Central Flotante -->
-    <div class="nav-timer" [class.timer-warning]="esPocoTiempo">
-      <span class="timer-icon">⏱</span>
-      <div class="timer-display">
-        <span class="timer-time">{{ tiempoFormateado }}</span>
-        <span class="timer-label">minutos restantes</span>
+      <div class="modal-actions">
+        <a [href]="whatsappUrl" target="_blank" rel="noopener" class="btn-primary-wa">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.77.814 2.796.814 3.18 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.766-5.768-5.766zm9.969 5.766c0 5.514-4.486 10-10 10-1.758 0-3.411-.456-4.85-1.258l-5.15 1.35 1.373-5.016c-.868-1.488-1.373-3.224-1.373-5.076 0-5.514 4.486-10 10-10s10 4.486 10 10z"/>
+          </svg>
+          Inscribirme por WhatsApp
+        </a>
+        <button type="button" class="btn-close-modal" (click)="cerrarModalBloqueo()">
+          Seguir explorando
+        </button>
       </div>
-    </div>
-
-    <div class="nav-right">
-      <a [href]="whatsappUrl" target="_blank" rel="noopener" class="btn-enroll-nav">
-        <span>Quiero Inscribirme →</span>
-      </a>
-    </div>
-  </header>
-
-  <!-- Pestañas de Selección de los 2 Cursos -->
-  <div class="course-tabs-bar">
-    <div class="tabs-container">
-      <button
-        *ngFor="let curso of cursos; let i = index"
-        class="tab-btn"
-        [class.active]="cursoActivoIndex === i"
-        (click)="seleccionarCurso(i)"
-      >
-        <span class="tab-index">Curso {{ i + 1 }}</span>
-        <span class="tab-title">{{ curso.nombre }}</span>
-      </button>
     </div>
   </div>
 
-  <!-- Contenido Principal: Reproductor + Sidebar de Módulos -->
-  <main class="play-main-content">
-    <!-- Columna Izquierda: Video Player + Detalle -->
-    <section class="video-column">
-      <div class="player-container">
-        <div class="video-responsive" *ngIf="videoSafeUrl">
-          <iframe
-            [src]="videoSafeUrl"
-            title="Reproductor de clase INSTEIP"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen
-          ></iframe>
-        </div>
+  <!-- ============================================================ -->
+  <!-- SIDEBAR DEL CAMPUS VIRTUAL (Navegación del Estudiante)       -->
+  <!-- ============================================================ -->
+  <div
+    class="sidebar-overlay"
+    *ngIf="sidebarOpen"
+    (click)="closeSidebar()">
+  </div>
 
-        <div class="no-video-placeholder" *ngIf="!videoSafeUrl">
-          <div class="placeholder-icon">📺</div>
-          <p>Selecciona una clase del menú lateral para comenzar a ver el contenido.</p>
+  <aside class="campus-sidebar" [class.sidebar-mobile-open]="sidebarOpen">
+    <!-- Brand / Logo -->
+    <div class="sidebar-header">
+      <div class="logo-box">
+        <span class="logo-symbol">I</span>
+        <div class="logo-titles">
+          <h2 class="brand-name">INSTEIP</h2>
+          <span class="brand-sub">CAMPUS ESTUDIANTES</span>
+        </div>
+      </div>
+      <button class="btn-close-sidebar-mobile" (click)="closeSidebar()">✕</button>
+    </div>
+
+    <!-- Student Profile Badge -->
+    <div class="student-profile-card">
+      <div class="student-avatar">
+        <span>👨‍🎓</span>
+        <span class="online-indicator"></span>
+      </div>
+      <div class="student-meta">
+        <span class="student-name">Estudiante en Prueba</span>
+        <span class="student-email" *ngIf="sesion?.correo">{{ sesion?.correo }}</span>
+        <span class="student-role-badge">MODO DEMO VIVO</span>
+      </div>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">PLAN DE ESTUDIOS</div>
+
+      <div class="nav-item active-nav-item">
+        <div class="nav-item-header">
+          <span class="nav-icon">🎓</span>
+          <span class="nav-label">Mis Cursos en Prueba</span>
+          <span class="nav-badge">2 Activos</span>
+        </div>
+        <!-- Sub-lista de Cursos Seleccionados -->
+        <div class="sub-course-list">
+          <button
+            *ngFor="let c of cursos; let i = index"
+            class="sub-course-btn"
+            [class.active-sub]="cursoActivoIndex === i"
+            (click)="seleccionarCurso(i); closeSidebar()">
+            <span class="sub-dot"></span>
+            <span class="sub-title">{{ c.nombre }}</span>
+          </button>
         </div>
       </div>
 
-      <!-- Info del Video Activo -->
-      <div class="video-info-box" *ngIf="videoActivo">
-        <h1 class="video-title">{{ videoActivo.titulo }}</h1>
-        <p class="video-desc" *ngIf="videoActivo.descripcion">{{ videoActivo.descripcion }}</p>
+      <div class="nav-section-title">HERRAMIENTAS DEL ALUMNO</div>
+
+      <button
+        type="button"
+        class="nav-item-btn"
+        (click)="abrirModalBloqueo('Mis Tareas y Evaluaciones', 'Las entregas de tareas, cuestionarios y retroalimentación docente personalizada se habilitan con tu matrícula oficial.')">
+        <span class="nav-icon">📝</span>
+        <span class="nav-label">Tareas y Evaluaciones</span>
+        <span class="lock-pill">🔒 Bloqueado</span>
+      </button>
+
+      <button
+        type="button"
+        class="nav-item-btn"
+        (click)="abrirModalBloqueo('Mis Certificados Oficiales', 'Los certificados digitales con código QR verificable y respaldo internacional se emiten al culminar el curso como alumno regular.')">
+        <span class="nav-icon">📜</span>
+        <span class="nav-label">Certificados</span>
+        <span class="lock-pill">🔒 Bloqueado</span>
+      </button>
+
+      <button
+        type="button"
+        class="nav-item-btn"
+        (click)="abrirModalBloqueo('Biblioteca Digital y Descargas', 'Accede a más de 50 libros digitales, vademécums y guías clínicas en PDF con tu cuenta de alumno oficial.')">
+        <span class="nav-icon">📚</span>
+        <span class="nav-label">Biblioteca y PDFs</span>
+        <span class="lock-pill">🔒 Bloqueado</span>
+      </button>
+
+      <a [href]="whatsappUrl" target="_blank" rel="noopener" class="nav-item-link">
+        <span class="nav-icon">💬</span>
+        <span class="nav-label">Tutoría y Soporte</span>
+        <span class="online-pill">Online</span>
+      </a>
+    </nav>
+
+    <!-- Sidebar Footer Promo Card -->
+    <div class="sidebar-footer-card">
+      <div class="footer-card-header">
+        <span class="sparkle-icon">✨</span>
+        <span class="footer-card-title">Matrícula Oficial</span>
+      </div>
+      <p class="footer-card-text">
+        Desbloquea todos los módulos, tareas y certificado con validez internacional.
+      </p>
+      <a [href]="whatsappUrl" target="_blank" rel="noopener" class="btn-sidebar-upgrade">
+        Quiero Matricularme →
+      </a>
+    </div>
+  </aside>
+
+  <!-- ============================================================ -->
+  <!-- MAIN WORKSPACE CONTAINER                                    -->
+  <!-- ============================================================ -->
+  <div class="campus-main-wrapper">
+
+    <!-- Top Campus Header -->
+    <header class="campus-topbar">
+      <div class="topbar-left">
+        <button class="btn-hamburger" (click)="toggleSidebar()" aria-label="Abrir menú">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="campus-breadcrumbs">
+          <span class="bc-root">Campus Virtual</span>
+          <span class="bc-sep">/</span>
+          <span class="bc-course">{{ cursoActivo?.nombre }}</span>
+          <span class="bc-sep hidden-mobile">/</span>
+          <span class="bc-lesson hidden-mobile" *ngIf="videoActivo">{{ videoActivo.titulo }}</span>
+        </div>
       </div>
 
-      <!-- Banner de Materiales Protegidos -->
-      <div class="materials-alert-banner">
-        <div class="alert-icon-lock">🔒</div>
-        <div class="alert-text">
-          <strong>Materiales y Descargas Protegidos</strong>
-          <p>Las guías de estudio, PDFs y archivos descargables se habilitan automáticamente al matricularte en el curso completo.</p>
+      <div class="topbar-right">
+        <!-- Floating Live Timer Capsule -->
+        <div class="timer-capsule" [class.timer-capsule-warning]="esPocoTiempo">
+          <span class="pulsing-live-dot"></span>
+          <span class="timer-time-digits">{{ tiempoFormateado }}</span>
+          <span class="timer-desc">min restantes</span>
         </div>
-        <a [href]="whatsappUrl" target="_blank" rel="noopener" class="btn-unlock-link">
-          Desbloquear acceso →
+
+        <a [href]="whatsappUrl" target="_blank" rel="noopener" class="btn-topbar-enroll">
+          <span>Inscribirme →</span>
         </a>
       </div>
-    </section>
+    </header>
 
-    <!-- Columna Derecha: Temario del Curso (Módulos, Videos y Materiales) -->
-    <aside class="curriculum-column">
-      <div class="curriculum-header">
-        <h2>Contenido del Curso</h2>
-        <span class="course-badge">{{ cursoActivo?.nombre }}</span>
+    <!-- Pestañas Superiores de los 2 Cursos Matriculados -->
+    <div class="courses-selector-bar">
+      <div class="selector-label">CURSOS ASIGNADOS EN PRUEBA:</div>
+      <div class="selector-tabs">
+        <button
+          *ngFor="let c of cursos; let i = index"
+          class="course-tab-pill"
+          [class.active-pill]="cursoActivoIndex === i"
+          (click)="seleccionarCurso(i)">
+          <span class="pill-number">0{{ i + 1 }}</span>
+          <span class="pill-title">{{ c.nombre }}</span>
+        </button>
       </div>
+    </div>
 
-      <div class="curriculum-scroll">
-        <div
-          class="module-accordion"
-          *ngFor="let mod of cursoActivo?.modulos; let modIdx = index"
-        >
-          <div class="module-title-bar">
-            <span class="mod-num">Módulo {{ modIdx + 1 }}</span>
-            <span class="mod-name">{{ mod.nombre }}</span>
+    <!-- Course Player Stage -->
+    <main class="course-stage-layout">
+
+      <!-- Columna Central: Video Player + Pestañas de la Clase -->
+      <section class="stage-player-column">
+
+        <!-- Barra de Progreso del Curso -->
+        <div class="course-progress-bar-card">
+          <div class="progress-info-left">
+            <span class="badge-reproduciendo">EN REPRODUCCIÓN</span>
+            <h1 class="active-class-title">{{ videoActivo?.titulo || cursoActivo?.nombre }}</h1>
+          </div>
+          <div class="progress-info-right">
+            <span class="progress-label">Contenido Disponible</span>
+            <span class="progress-count">{{ totalVideosCurso }} Clases · {{ totalMaterialesCurso }} Recursos</span>
+          </div>
+        </div>
+
+        <!-- Video Player Frame -->
+        <div class="player-wrapper">
+          <div class="iframe-container" *ngIf="videoSafeUrl">
+            <iframe
+              [src]="videoSafeUrl"
+              title="Reproductor de clase INSTEIP"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen>
+            </iframe>
           </div>
 
-          <div class="module-items-list">
-            <!-- Lista de Videos -->
-            <div
-              *ngFor="let v of mod.videos"
-              class="video-item"
-              [class.active]="videoActivo?.id === v.id"
-              (click)="reproducirVideo(v)"
-            >
-              <span class="play-icon">{{ videoActivo?.id === v.id ? '▶' : '▷' }}</span>
-              <span class="video-item-title">{{ v.titulo }}</span>
-              <span class="video-duration" *ngIf="v.duracionSegundos">
-                {{ Math.floor(v.duracionSegundos / 60) }} min
-              </span>
-            </div>
+          <div class="no-video-state" *ngIf="!videoSafeUrl">
+            <div class="no-video-icon">📺</div>
+            <p>Selecciona una lección del temario para iniciar la reproducción.</p>
+          </div>
+        </div>
 
-            <!-- Lista de Materiales (Bloqueados) -->
-            <div
-              *ngFor="let mat of mod.materiales"
-              class="material-item-locked"
-              title="Disponible solo con suscripción activa"
-            >
-              <span class="lock-icon">🔒</span>
-              <span class="material-name">{{ mat.nombre }}</span>
-              <span class="material-tag">PDF / Guía</span>
+        <!-- Alert Banner de Materiales Protegidos -->
+        <div class="materials-lock-banner">
+          <div class="lock-banner-icon">🔒</div>
+          <div class="lock-banner-text">
+            <strong>Materiales de Estudio y Descargas Protegidos</strong>
+            <p>Los archivos PDF, presentaciones y vademécums se desbloquean automáticamente al completar tu inscripción oficial.</p>
+          </div>
+          <a [href]="whatsappUrl" target="_blank" rel="noopener" class="btn-lock-action">
+            Desbloquear Todo →
+          </a>
+        </div>
+
+        <!-- Interactive Tabs Under Video -->
+        <div class="lesson-tabs-container">
+          <div class="tabs-nav-header">
+            <button
+              class="tab-nav-btn"
+              [class.active-tab-nav]="activeTab === 'temario'"
+              (click)="activeTab = 'temario'">
+              📖 Descripción y Objetivos
+            </button>
+            <button
+              class="tab-nav-btn"
+              [class.active-tab-nav]="activeTab === 'materiales'"
+              (click)="activeTab = 'materiales'">
+              📁 Materiales ({{ totalMaterialesCurso }})
+            </button>
+            <button
+              class="tab-nav-btn"
+              [class.active-tab-nav]="activeTab === 'docente'"
+              (click)="activeTab = 'docente'">
+              👨‍🏫 Plana Docente
+            </button>
+            <button
+              class="tab-nav-btn"
+              [class.active-tab-nav]="activeTab === 'beneficios'"
+              (click)="activeTab = 'beneficios'">
+              🌟 Beneficios de Certificación
+            </button>
+          </div>
+
+          <!-- Tab Content 1: Temario & Descripción -->
+          <div class="tab-pane-body" *ngIf="activeTab === 'temario'">
+            <h3 class="tab-section-title">Sobre esta lección</h3>
+            <p class="tab-paragraph" *ngIf="videoActivo?.descripcion">
+              {{ videoActivo?.descripcion }}
+            </p>
+            <p class="tab-paragraph" *ngIf="!videoActivo?.descripcion">
+              {{ cursoActivo?.descripcion || 'Esta lección forma parte del programa oficial de formación profesional en terapias complementarias de INSTEIP.' }}
+            </p>
+
+            <div class="learning-outcomes-box">
+              <h4>Lo que aprenderás en este curso:</h4>
+              <ul>
+                <li>Fundamentos teóricos y protocolos clínicos basados en evidencia.</li>
+                <li>Técnicas de aplicación práctica paso a paso en pacientes reales.</li>
+                <li>Estrategias de abordaje terapéutico integral para el bienestar y la salud.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Tab Content 2: Materiales -->
+          <div class="tab-pane-body" *ngIf="activeTab === 'materiales'">
+            <h3 class="tab-section-title">Archivos y Documentos del Curso</h3>
+            <div class="materials-grid">
+              <ng-container *ngFor="let mod of cursoActivo?.modulos">
+                <div
+                  *ngFor="let mat of mod.materiales"
+                  class="material-card-locked"
+                  (click)="abrirModalBloqueo('Descarga de ' + mat.nombre, 'Para descargar las guías clínicas y diapositivas de estudio debes contar con matrícula activa.')">
+                  <div class="mat-card-icon">📄</div>
+                  <div class="mat-card-info">
+                    <span class="mat-card-title">{{ mat.nombre }}</span>
+                    <span class="mat-card-sub">{{ mat.tipo || 'Documento PDF' }} · Exclusivo Alumnos</span>
+                  </div>
+                  <span class="mat-lock-badge">🔒 Bloqueado</span>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+
+          <!-- Tab Content 3: Docente -->
+          <div class="tab-pane-body" *ngIf="activeTab === 'docente'">
+            <h3 class="tab-section-title">Docentes Especialistas de INSTEIP</h3>
+            <div class="docente-profile-card">
+              <div class="docente-avatar-box">👨‍⚕️</div>
+              <div class="docente-info">
+                <h4>Especialistas Certificados</h4>
+                <p>Nuestros docentes cuentan con más de 15 años de experiencia clínica y docente en Medicina Tradicional China, Acupuntura y Terapias Complementarias.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Content 4: Beneficios -->
+          <div class="tab-pane-body" *ngIf="activeTab === 'beneficios'">
+            <h3 class="tab-section-title">¿Qué obtienes al matricularte en INSTEIP?</h3>
+            <div class="benefits-grid-list">
+              <div class="benefit-card">
+                <span class="b-icon">🎓</span>
+                <strong>Certificación Oficial</strong>
+                <p>Con validez nacional e internacional respaldada por convenios académicos.</p>
+              </div>
+              <div class="benefit-card">
+                <span class="b-icon">♾️</span>
+                <strong>Acceso Ilimitado</strong>
+                <p>Estudia a tu propio ritmo las 24 horas del día sin restricciones de horario.</p>
+              </div>
+              <div class="benefit-card">
+                <span class="b-icon">👥</span>
+                <strong>Comunidad de Terapeutas</strong>
+                <p>Acceso a grupos de consulta y bolsa de trabajo activa para terapeutas.</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </aside>
-  </main>
+      </section>
+
+      <!-- Columna Derecha: Acordeón del Temario (Módulos y Clases) -->
+      <aside class="stage-curriculum-column">
+        <div class="curriculum-box-header">
+          <div class="curriculum-title-wrap">
+            <span class="c-icon">📑</span>
+            <h3>Temario del Curso</h3>
+          </div>
+          <span class="c-count">{{ cursoActivo?.modulos?.length || 0 }} Módulos</span>
+        </div>
+
+        <div class="curriculum-accordion-list">
+          <div
+            class="curriculum-module-item"
+            *ngFor="let mod of cursoActivo?.modulos; let modIdx = index">
+            <!-- Header del Módulo -->
+            <button
+              type="button"
+              class="module-collapse-header"
+              [class.module-open]="isModuloAbierto(modIdx)"
+              (click)="toggleModulo(modIdx)">
+              <div class="mod-header-text">
+                <span class="mod-tag">Módulo {{ modIdx + 1 }}</span>
+                <span class="mod-title-text">{{ mod.nombre }}</span>
+              </div>
+              <span class="chevron-icon">{{ isModuloAbierto(modIdx) ? '▲' : '▼' }}</span>
+            </button>
+
+            <!-- Lista de Videos y Materiales del Módulo -->
+            <div class="module-lessons-container" *ngIf="isModuloAbierto(modIdx)">
+              <!-- Videos -->
+              <div
+                *ngFor="let v of mod.videos"
+                class="lesson-row"
+                [class.lesson-row-active]="videoActivo?.id === v.id"
+                (click)="reproducirVideo(v, modIdx)">
+                <div class="lesson-status-icon">
+                  <span *ngIf="videoActivo?.id === v.id" class="icon-playing">▶</span>
+                  <span *ngIf="videoActivo?.id !== v.id" class="icon-idle">▷</span>
+                </div>
+                <div class="lesson-meta-wrap">
+                  <span class="lesson-title">{{ v.titulo }}</span>
+                  <span class="lesson-duration" *ngIf="v.duracionSegundos">
+                    ⏱ {{ Math.floor(v.duracionSegundos / 60) }} min
+                  </span>
+                </div>
+              </div>
+
+              <!-- Materiales dentro del módulo -->
+              <div
+                *ngFor="let mat of mod.materiales"
+                class="lesson-material-locked"
+                (click)="abrirModalBloqueo('Material: ' + mat.nombre, 'Las guías y PDFs de este módulo están disponibles para alumnos inscritos.')">
+                <span class="mat-lock-icon">🔒</span>
+                <span class="mat-name-text">{{ mat.nombre }}</span>
+                <span class="mat-type-pill">PDF</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+    </main>
+  </div>
+
 </div>
+

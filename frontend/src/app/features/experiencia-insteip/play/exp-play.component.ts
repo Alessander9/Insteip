@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ExperienciaService } from '../../../core/services/experiencia.service';
-import { SesionActivaExp, CursoExp, ModuloExp, VideoExp } from '../../../core/models/experiencia.model';
+import { SesionActivaExp, CursoExp, ModuloExp, VideoExp, MaterialExp } from '../../../core/models/experiencia.model';
 
 @Component({
   selector: 'app-exp-play',
@@ -23,15 +23,29 @@ export class ExpPlayComponent implements OnInit, OnDestroy {
   cursos: CursoExp[] = [];
   cursoActivoIndex: number = 0;
 
-  // Video seleccionado
+  // Video y módulo seleccionados
   videoActivo: VideoExp | null = null;
   videoSafeUrl: SafeResourceUrl | null = null;
+  moduloActivoIndex: number = 0;
+  moduloAbiertoIndices: Set<number> = new Set([0]);
+
+  // Pestañas inferiores del reproductor
+  activeTab: 'temario' | 'materiales' | 'docente' | 'beneficios' = 'temario';
+
+  // Control de barra lateral móvil y modal de funciones bloqueadas
+  sidebarOpen: boolean = false;
+  modalBloqueo = {
+    abierto: false,
+    titulo: '',
+    descripcion: '',
+    badge: 'Función para Alumnos Oficiales'
+  };
 
   // Temporizador
   segundosRestantes: number = 900; // 15 minutos por defecto
   private timerInterval: any = null;
 
-  readonly whatsappUrl = 'https://wa.me/51939371250?text=Hola%2C+vengo+de+probar+la+Experiencia+INSTEIP+y+deseo+matricularme';
+  readonly whatsappUrl = 'https://wa.me/51930830427?text=Hola%2C+vengo+de+probar+la+Experiencia+INSTEIP+y+deseo+matricularme';
 
   ngOnInit(): void {
     this.sesion = this.expService.getSesionActual();
@@ -102,6 +116,8 @@ export class ExpPlayComponent implements OnInit, OnDestroy {
   seleccionarCurso(index: number): void {
     if (index >= 0 && index < this.cursos.length) {
       this.cursoActivoIndex = index;
+      this.moduloAbiertoIndices.clear();
+      this.moduloAbiertoIndices.add(0);
       this.seleccionarPrimerVideoDisponible();
     }
   }
@@ -109,9 +125,12 @@ export class ExpPlayComponent implements OnInit, OnDestroy {
   seleccionarPrimerVideoDisponible(): void {
     const curso = this.cursoActivo;
     if (curso && curso.modulos && curso.modulos.length > 0) {
-      for (const mod of curso.modulos) {
+      for (let i = 0; i < curso.modulos.length; i++) {
+        const mod = curso.modulos[i];
         if (mod.videos && mod.videos.length > 0) {
-          this.reproducirVideo(mod.videos[0]);
+          this.moduloActivoIndex = i;
+          this.moduloAbiertoIndices.add(i);
+          this.reproducirVideo(mod.videos[0], i);
           return;
         }
       }
@@ -120,14 +139,29 @@ export class ExpPlayComponent implements OnInit, OnDestroy {
     this.videoSafeUrl = null;
   }
 
-  reproducirVideo(video: VideoExp): void {
+  toggleModulo(moduloIndex: number): void {
+    if (this.moduloAbiertoIndices.has(moduloIndex)) {
+      this.moduloAbiertoIndices.delete(moduloIndex);
+    } else {
+      this.moduloAbiertoIndices.add(moduloIndex);
+    }
+  }
+
+  isModuloAbierto(moduloIndex: number): boolean {
+    return this.moduloAbiertoIndices.has(moduloIndex);
+  }
+
+  reproducirVideo(video: VideoExp, moduloIndex?: number): void {
     this.videoActivo = video;
+    if (moduloIndex !== undefined) {
+      this.moduloActivoIndex = moduloIndex;
+      this.moduloAbiertoIndices.add(moduloIndex);
+    }
 
     let url = video.youtubeUrl;
     if (video.youtubeId) {
       url = `https://www.youtube-nocookie.com/embed/${video.youtubeId}?autoplay=1&rel=0&modestbranding=1`;
     } else if (url && !url.includes('embed')) {
-      // Extraer video ID si es URL completa de YouTube
       const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
       const match = url.match(regExp);
       if (match && match[2].length === 11) {
@@ -136,6 +170,40 @@ export class ExpPlayComponent implements OnInit, OnDestroy {
     }
 
     this.videoSafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
+  // Modales de funciones del campus bloqueadas
+  abrirModalBloqueo(titulo: string, descripcion: string, badge: string = 'Función para Alumnos Oficiales'): void {
+    this.modalBloqueo = {
+      abierto: true,
+      titulo,
+      descripcion,
+      badge
+    };
+  }
+
+  cerrarModalBloqueo(): void {
+    this.modalBloqueo.abierto = false;
+  }
+
+  toggleSidebar(): void {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  closeSidebar(): void {
+    this.sidebarOpen = false;
+  }
+
+  get totalVideosCurso(): number {
+    const curso = this.cursoActivo;
+    if (!curso || !curso.modulos) return 0;
+    return curso.modulos.reduce((total, m) => total + (m.videos ? m.videos.length : 0), 0);
+  }
+
+  get totalMaterialesCurso(): number {
+    const curso = this.cursoActivo;
+    if (!curso || !curso.modulos) return 0;
+    return curso.modulos.reduce((total, m) => total + (m.materiales ? m.materiales.length : 0), 0);
   }
 
   get tiempoFormateado(): string {
@@ -150,3 +218,4 @@ export class ExpPlayComponent implements OnInit, OnDestroy {
     return this.segundosRestantes <= 120; // Menos de 2 minutos
   }
 }
+

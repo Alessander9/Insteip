@@ -14,7 +14,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  z-index: 9999;
+  z-index: 9999999;
+  pointer-events: auto;
   box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7);
   animation: slideUp 0.4s ease-out;
 }

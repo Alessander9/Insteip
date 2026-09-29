@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AnalyticsService } from '../../services/analytics.service';
@@ -13,6 +13,7 @@ import { AnalyticsService } from '../../services/analytics.service';
 export class CookieBannerComponent implements OnInit {
   private analytics = inject(AnalyticsService);
 
+  private cdr = inject(ChangeDetectorRef);
   mostrarBanner = false;
   private readonly STORAGE_KEY = 'insteip_cookie_consent';
 
@@ -22,7 +23,8 @@ export class CookieBannerComponent implements OnInit {
       if (!consent) {
         setTimeout(() => {
           this.mostrarBanner = true;
-        }, 1200);
+          this.cdr.markForCheck();
+        }, 300);
       }
     }
   }

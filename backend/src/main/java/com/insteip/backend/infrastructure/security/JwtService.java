@@ -55,6 +55,38 @@ public class JwtService {
                 .compact();
     }
 
+    public String generateDemoToken(Long id, String correo, String rol, java.util.List<Long> demoCursoIds, long expirationMillis) {
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("id", id);
+        extraClaims.put("rol", rol);
+        extraClaims.put("isExpUser", true);
+        extraClaims.put("isDemoUser", true);
+        extraClaims.put("demoCursoIds", demoCursoIds != null ? demoCursoIds : java.util.Collections.emptyList());
+        extraClaims.put("expDurationSeconds", expirationMillis / 1000);
+        return Jwts.builder()
+                .claims(extraClaims)
+                .subject(correo)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + expirationMillis))
+                .signWith(getSignInKey())
+                .compact();
+    }
+
+    @SuppressWarnings("unchecked")
+    public java.util.List<Long> extractDemoCursoIds(String token) {
+        try {
+            Claims claims = extractAllClaims(token);
+            Object obj = claims.get("demoCursoIds");
+            if (obj instanceof java.util.List) {
+                java.util.List<?> list = (java.util.List<?>) obj;
+                return list.stream()
+                        .map(item -> ((Number) item).longValue())
+                        .toList();
+            }
+        } catch (Exception ignored) {}
+        return java.util.Collections.emptyList();
+    }
+
     public String generateToken(Map<String, Object> extraClaims, String subject) {
         return Jwts.builder()
                 .claims(extraClaims)

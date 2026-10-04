@@ -84,3 +84,33 @@ export interface SesionActivaExp {
   correo: string;
   cursos: CursoExp[];
 }
+
+export interface DemoCursoDto {
+  id: number;
+  nombre: string;
+  descripcion?: string;
+  imagenPortada?: string;
+  nivelSuscripcion?: string;
+  totalModulos: number;
+  yaVisto: boolean;
+}
+
+export interface DemoCuentaDisponibleResponse {
+  tokenTemporal: string;
+  correoAsignado: string;
+  cursos: DemoCursoDto[];
+  todosCursosVistos: boolean;
+  totalCursosDisponibles: number;
+}
+
+export interface DemoActivarRequest {
+  cursoIds: number[];
+}
+
+export interface DemoActivarResponse {
+  token: string;
+  expiraEnSegundos: number;
+  demoCursoIds: number[];
+  correo: string;
+}
+

@@ -51,16 +51,9 @@
   <script>
     (function () {
       try {
-        const themeKey = 'insteip-theme';
-        const savedTheme = localStorage.getItem(themeKey);
-        const shouldBeDark = savedTheme === 'dark';
-
-        if (shouldBeDark) {
-          document.documentElement.classList.add('dark');
-        }
-      } catch (error) {
-        // If storage or matchMedia is unavailable, fall back to the default theme.
-      }
+        localStorage.removeItem('insteip-theme');
+        document.documentElement.classList.remove('dark');
+      } catch (error) {}
     })();
   </script>
   <!-- ── Preconnect Google Fonts ── -->
@@ -168,7 +161,7 @@
     }
   </script> -->
 </head>
-<body class="bg-surface text-on-surface dark:bg-slate-950 dark:text-slate-100 font-body-md antialiased overflow-x-hidden transition-colors duration-300">
+<body class="bg-surface text-on-surface font-body-md antialiased overflow-x-hidden transition-colors duration-300">
   <!-- Splash Screen -->
   <style>
     @keyframes splash-pulse {

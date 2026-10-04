@@ -50,6 +50,11 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
         Usuario usuario = usuarioRepository.findByCorreo(correo)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
+        boolean isDemo = usuario.getRol() != null && "DEMO".equalsIgnoreCase(usuario.getRol().getNombre());
+        if (isDemo) {
+            return new AlumnoDashboardMetrics(2L, 0L, 0L);
+        }
+
         List<Matricula> matriculas = matriculaRepository.findByUsuarioIdAndEstadoTrue(usuario.getId()).stream()
                 .filter(m -> m.getCurso() != null && Boolean.TRUE.equals(m.getCurso().getEstado()) && (m.getCurso().getNombre() == null || !m.getCurso().getNombre().toLowerCase().contains("excel")))
                 .collect(Collectors.toList());
@@ -84,6 +89,33 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
     public List<AlumnoCursoResponse> getEnrolledCursos(String correo) {
         Usuario usuario = usuarioRepository.findByCorreo(correo)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+
+        boolean isDemo = usuario.getRol() != null && "DEMO".equalsIgnoreCase(usuario.getRol().getNombre());
+        if (isDemo) {
+            List<Curso> cursos = cursoRepository.findByEstadoTrue().stream()
+                    .filter(c -> c.getNombre() == null || !c.getNombre().toLowerCase().contains("excel"))
+                    .collect(Collectors.toList());
+
+            return cursos.stream().map(curso -> {
+                String nivel = (curso.getNivelesSuscripcion() != null && !curso.getNivelesSuscripcion().isEmpty())
+                        ? curso.getNivelesSuscripcion().get(0).getNombre()
+                        : "BASICO";
+
+                return new AlumnoCursoResponse(
+                        curso.getId(),
+                        curso.getNombre(),
+                        curso.getDescripcion(),
+                        curso.getImagenPortada(),
+                        nivel,
+                        BigDecimal.ZERO,
+                        false,
+                        LocalDateTime.now(),
+                        LocalDateTime.now().plusMinutes(20),
+                        0L,
+                        "OK"
+                );
+            }).collect(Collectors.toList());
+        }
 
         List<Matricula> matriculas = matriculaRepository.findByUsuarioIdAndEstadoTrue(usuario.getId()).stream()
                 .filter(m -> m.getCurso() != null && Boolean.TRUE.equals(m.getCurso().getEstado()) && (m.getCurso().getNombre() == null || !m.getCurso().getNombre().toLowerCase().contains("excel")))
@@ -170,6 +202,66 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
 
         Curso curso = cursoRepository.findById(cursoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado"));
+
+        boolean isDemo = usuario.getRol() != null && "DEMO".equalsIgnoreCase(usuario.getRol().getNombre());
+        if (isDemo) {
+            List<Modulo> modulos = moduloRepository.findByCursoIdOrderByOrdenAsc(cursoId);
+            List<AlumnoPlayModulo> playModulos = new ArrayList<>();
+            int totalModulos = modulos.size();
+            int modulosPermitidos = Math.max(1, (int) Math.ceil(totalModulos * 0.35));
+
+            for (int i = 0; i < modulos.size(); i++) {
+                Modulo modulo = modulos.get(i);
+                if (Boolean.FALSE.equals(modulo.getEstado())) continue;
+
+                boolean moduloHabilitado = (i < modulosPermitidos);
+                List<Video> videos = videoRepository.findByModuloIdOrderByOrdenAsc(modulo.getId());
+                List<AlumnoPlayVideo> playVideos = new ArrayList<>();
+
+                for (Video video : videos) {
+                    if (Boolean.FALSE.equals(video.getEstado())) continue;
+                    String videoUrl = moduloHabilitado ? video.getYoutubeUrl() : null;
+                    String videoId = moduloHabilitado ? video.getYoutubeId() : null;
+
+                    playVideos.add(new AlumnoPlayVideo(
+                            video.getId(),
+                            video.getTitulo(),
+                            video.getDescripcion(),
+                            videoUrl,
+                            videoId,
+                            video.getDuracionSegundos(),
+                            video.getOrden(),
+                            0,
+                            BigDecimal.ZERO,
+                            false
+                    ));
+                }
+
+                playModulos.add(new AlumnoPlayModulo(
+                        modulo.getId(),
+                        modulo.getNombre(),
+                        modulo.getDescripcion(),
+                        modulo.getOrden(),
+                        playVideos,
+                        java.util.Collections.emptyList(), // Descargas bloqueadas para modo demo
+                        !moduloHabilitado,
+                        !moduloHabilitado ? "Módulo disponible con tu matrícula completa" : null
+                ));
+            }
+
+            String nivel = (curso.getNivelesSuscripcion() != null && !curso.getNivelesSuscripcion().isEmpty())
+                    ? curso.getNivelesSuscripcion().get(0).getNombre()
+                    : "BASICO";
+
+            return new AlumnoPlayCourseResponse(
+                    curso.getId(),
+                    curso.getNombre(),
+                    curso.getDescripcion(),
+                    curso.getImagenPortada(),
+                    nivel,
+                    playModulos
+            );
+        }
 
         Matricula matricula = matriculaRepository.findByUsuarioIdAndCursoId(usuario.getId(), cursoId)
                 .filter(m -> Boolean.TRUE.equals(m.getEstado()))

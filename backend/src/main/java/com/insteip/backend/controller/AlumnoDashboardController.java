@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/alumno")
-@PreAuthorize("hasAnyRole('ALUMNO', 'ADMINISTRADOR')")
+@PreAuthorize("hasAnyRole('ALUMNO', 'ADMINISTRADOR', 'DEMO')")
 @RequiredArgsConstructor
 public class AlumnoDashboardController {
 
@@ -41,6 +41,7 @@ public class AlumnoDashboardController {
     }
 
     @GetMapping("/certificados")
+    @PreAuthorize("hasAnyRole('ALUMNO', 'ADMINISTRADOR')")
     public ResponseEntity<List<AlumnoCertificadoResponse>> getCertificados(Authentication authentication) {
         String correo = getCorreo(authentication);
         return ResponseEntity.ok(alumnoDashboardService.getCertificados(correo));

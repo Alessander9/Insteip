@@ -10,7 +10,10 @@ import {
   IniciarExpResponse,
   ValidarSesionRequest,
   ValidarSesionResponse,
-  SesionActivaExp
+  SesionActivaExp,
+  DemoCuentaDisponibleResponse,
+  DemoActivarRequest,
+  DemoActivarResponse
 } from '../models/experiencia.model';
 
 @Injectable({
@@ -19,6 +22,7 @@ import {
 export class ExperienciaService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl + '/experiencias';
+  private demoApiUrl = environment.apiUrl + '/demo';
 
   private readonly COOKIE_NAME = 'insteip_vid';
   private readonly SESSION_KEY = 'insteip_exp_session';
@@ -127,4 +131,28 @@ export class ExperienciaService {
       sessionStorage.removeItem(this.SESSION_KEY);
     }
   }
+
+  // =========================================================================
+  //  NUEVO MODELO EXPERIENCIA INSTEIP (1-CLIC & CUENTAS DEMO ROTATIVAS)
+  // =========================================================================
+
+  /**
+   * Obtiene la cuenta demo asignada, el token temporal y el catálogo con cursos ya vistos por la IP del visitante.
+   */
+  obtenerCuentaYCursosDisponibles(): Observable<DemoCuentaDisponibleResponse> {
+    return this.http.get<DemoCuentaDisponibleResponse>(`${this.demoApiUrl}/cuenta-disponible`);
+  }
+
+  /**
+   * Activa la sesión demo de 20 minutos con los 2 cursos elegidos y bloquea dichos cursos para la IP actual.
+   */
+  activarDemo(cursoIds: number[], tokenTemporal: string): Observable<DemoActivarResponse> {
+    const headers = { Authorization: `Bearer ${tokenTemporal}` };
+    return this.http.post<DemoActivarResponse>(
+      `${this.demoApiUrl}/activar`,
+      { cursoIds },
+      { headers }
+    );
+  }
 }
+

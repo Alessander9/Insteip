@@ -12,25 +12,23 @@ export class ThemeService {
   }
 
   private initializeTheme(): void {
-    const savedTheme = localStorage.getItem(this.THEME_KEY);
-    const shouldBeDark = savedTheme === 'dark';
-    this.isDarkMode.set(shouldBeDark);
-    this.applyTheme(shouldBeDark);
+    // Forzar modo claro (light mode) por defecto
+    try {
+      localStorage.removeItem(this.THEME_KEY);
+    } catch {}
+    this.isDarkMode.set(false);
+    this.applyTheme(false);
   }
 
   toggleTheme(): void {
-    const nextDarkState = !this.isDarkMode();
-    this.isDarkMode.set(nextDarkState);
-    localStorage.setItem(this.THEME_KEY, nextDarkState ? 'dark' : 'light');
-    this.applyTheme(nextDarkState);
+    // Deshabilitado: mantener modo claro
+    this.isDarkMode.set(false);
+    this.applyTheme(false);
   }
 
   private applyTheme(isDark: boolean): void {
     const root = document.documentElement;
-    if (isDark) {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
+    root.classList.remove('dark');
   }
 }
+

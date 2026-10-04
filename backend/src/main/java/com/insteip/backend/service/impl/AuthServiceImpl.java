@@ -49,34 +49,44 @@ public class AuthServiceImpl implements AuthService {
     private final com.insteip.backend.repository.CursoRepository cursoRepository;
     private final com.insteip.backend.repository.MatriculaRepository matriculaRepository;
 
-    public static final String EXP_USER_EMAIL_1 = "ExperianciaInsteip@insteip.com";
-    public static final String EXP_USER_EMAIL_2 = "ExperienciaInsteip@insteip.com";
-    public static final String EXP_PASSWORD_DEFAULT = "insteip";
+    private static final java.util.Map<String, List<String>> EXP_ACCOUNTS_PASSWORDS = java.util.Map.of(
+            "experienciainsteip@insteip.com", List.of("insteip", "Eip#Luna1!"),
+            "experianciainsteip@insteip.com", List.of("insteip", "Eip#Luna1!"),
+            "experienciainsteip1@insteip.com", List.of("Eip#Sol2!", "insteip"),
+            "experienciainsteip2@insteip.com", List.of("Eip#Mar3!", "insteip"),
+            "experienciainsteip3@insteip.com", List.of("Eip#Cielo4!", "insteip"),
+            "experienciainsteip4@insteip.com", List.of("Eip#Flor5!", "insteip"),
+            "experienciainsteip5@insteip.com", List.of("Eip#Sol6!", "insteip")
+    );
+
     public static final long EXP_DURATION_SECONDS = 900L; // 15 minutos
     public static final long EXP_DURATION_MILLIS = 900000L; // 15 minutos
 
-    private boolean isExpEmail(String correo) {
+    public static boolean isExpEmail(String correo) {
         if (correo == null) return false;
         String clean = correo.trim().toLowerCase();
-        return clean.equals(EXP_USER_EMAIL_1.toLowerCase()) || clean.equals(EXP_USER_EMAIL_2.toLowerCase());
+        return EXP_ACCOUNTS_PASSWORDS.containsKey(clean);
     }
 
     private Usuario asegurarUsuarioExp(String correo, String rawPassword) {
-        if (!EXP_PASSWORD_DEFAULT.equals(rawPassword)) {
+        String cleanEmail = correo.trim().toLowerCase();
+        List<String> validPasswords = EXP_ACCOUNTS_PASSWORDS.get(cleanEmail);
+
+        if (validPasswords == null || !validPasswords.contains(rawPassword)) {
             throw new BadRequestException("Credenciales inválidas para EXP INSTEIP");
         }
 
-        Usuario usuario = usuarioRepository.findByCorreo(correo).orElse(null);
-        if (usuario == null) {
-            com.insteip.backend.domain.entity.Rol rolAlumno = rolRepository.findByNombre("ALUMNO")
-                    .orElseGet(() -> rolRepository.save(com.insteip.backend.domain.entity.Rol.builder().nombre("ALUMNO").build()));
+        Usuario usuario = usuarioRepository.findByCorreo(cleanEmail).orElse(null);
+        com.insteip.backend.domain.entity.Rol rolAlumno = rolRepository.findByNombre("ALUMNO")
+                .orElseGet(() -> rolRepository.save(com.insteip.backend.domain.entity.Rol.builder().nombre("ALUMNO").build()));
 
+        if (usuario == null) {
             usuario = Usuario.builder()
                     .nombres("Experiencia")
                     .apellidos("INSTEIP")
-                    .correo(correo)
-                    .passwordHash(passwordEncoder.encode(EXP_PASSWORD_DEFAULT))
-                    .passwordPlain(EXP_PASSWORD_DEFAULT)
+                    .correo(cleanEmail)
+                    .passwordHash(passwordEncoder.encode(rawPassword))
+                    .passwordPlain(rawPassword)
                     .rol(rolAlumno)
                     .estado(true)
                     .build();
@@ -92,9 +102,9 @@ public class AuthServiceImpl implements AuthService {
                 usuario.setIntentosFallidos(0);
                 needsUpdate = true;
             }
-            if (usuario.getPasswordHash() == null || !passwordEncoder.matches(EXP_PASSWORD_DEFAULT, usuario.getPasswordHash())) {
-                usuario.setPasswordHash(passwordEncoder.encode(EXP_PASSWORD_DEFAULT));
-                usuario.setPasswordPlain(EXP_PASSWORD_DEFAULT);
+            if (usuario.getPasswordHash() == null || !passwordEncoder.matches(rawPassword, usuario.getPasswordHash())) {
+                usuario.setPasswordHash(passwordEncoder.encode(rawPassword));
+                usuario.setPasswordPlain(rawPassword);
                 needsUpdate = true;
             }
             if (needsUpdate) {

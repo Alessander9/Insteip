@@ -1,9 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ExperienciaService } from '../../core/services/experiencia.service';
-import { CursoExp, EstadoExperiencia, VerificarExpResponse } from '../../core/models/experiencia.model';
+import { AuthService } from '../../core/services/auth.service';
+import { DemoCursoDto, DemoCuentaDisponibleResponse } from '../../core/models/experiencia.model';
 
 @Component({
   selector: 'app-experiencia-insteip',
@@ -12,105 +13,72 @@ import { CursoExp, EstadoExperiencia, VerificarExpResponse } from '../../core/mo
   templateUrl: './experiencia-insteip.component.html',
   styleUrls: ['./experiencia-insteip.component.css']
 })
-export class ExperienciaInsteipComponent implements OnInit {
+export class ExperienciaInsteipComponent implements OnInit, OnDestroy {
   private expService = inject(ExperienciaService);
+  private authService = inject(AuthService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
-  correo: string = '';
-  cargandoVerificacion: boolean = false;
+  // Estado de carga 0 a 100%
+  cargandoCursos: boolean = true;
+  progresoCargaCursos: number = 0;
+  textoCargaCursos: string = 'Iniciando conexión con el campus virtual...';
+  private progresoInterval: any = null;
+
+  // Estado al iniciar experiencia
   cargandoInicio: boolean = false;
-  cargandoCursos: boolean = false;
-  mensajeError: string = '';
+  progresoInicio: number = 0;
+  textoInicio: string = 'Preparando tus cursos seleccionados...';
 
-  // Estado del flujo
-  verificado: boolean = false;
-  estadoVisitante: EstadoExperiencia | null = null;
-  datosEstado: VerificarExpResponse | null = null;
-
-  // Cursos
-  cursos: CursoExp[] = [];
+  // Datos demo
+  tokenTemporal: string = '';
+  correoAsignado: string = '';
+  todosCursosVistos: boolean = false;
+  cursos: DemoCursoDto[] = [];
   cursosSeleccionados: number[] = [];
+  mensajeError: string = '';
 
   readonly whatsappUrl = 'https://wa.me/51939371250?text=Hola%2C+deseo+informaci%C3%B3n+para+matricularme+en+el+Campus+INSTEIP';
 
   ngOnInit(): void {
-    // Si ya existe una sesión activa no expirada, redirigir directo a /play
-    const sesion = this.expService.getSesionActual();
-    if (sesion && sesion.expiraSesion) {
-      const expira = new Date(sesion.expiraSesion).getTime();
-      if (Date.now() < expira) {
-        this.router.navigate(['/experiencia-insteip/play']);
-      } else {
-        this.expService.limpiarSesion();
-      }
-    }
-  }
-
-  validarCorreoRegex(email: string): boolean {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email.trim());
-  }
-
-  verificarCorreo(): void {
-    this.mensajeError = '';
-    const email = this.correo.trim();
-
-    if (!email) {
-      this.mensajeError = 'Por favor, ingresa tu correo electrónico.';
+    // Si ya existe una sesión demo activa y vigente, ir directo al dashboard
+    if (this.authService.isExpUser()) {
+      this.router.navigate(['/dashboard/mis-cursos']);
       return;
     }
 
-    if (!this.validarCorreoRegex(email)) {
-      this.mensajeError = 'Ingresa un formato de correo válido (ej: usuario@correo.com).';
-      return;
-    }
-
-    this.cargandoVerificacion = true;
-    this.cursosSeleccionados = [];
-
-    this.expService.verificarEstado(email).subscribe({
-      next: (resp) => {
-        this.cargandoVerificacion = false;
-        this.verificado = true;
-        this.estadoVisitante = resp.estado;
-        this.datosEstado = resp;
-
-        if (resp.estado === 'LIBRE') {
-          this.cargarCursos(email);
-        }
-      },
-      error: (err) => {
-        this.cargandoVerificacion = false;
-        this.mensajeError = err.error?.message || 'Ocurrió un error al verificar tu acceso. Intenta de nuevo.';
-      }
-    });
+    this.cargarCatalogoDemo();
   }
 
-  progresoCargaCursos: number = 0;
-  textoCargaCursos: string = 'Conectando con el campus virtual...';
-  private progresoInterval: any = null;
+  ngOnDestroy(): void {
+    if (this.progresoInterval) {
+      clearInterval(this.progresoInterval);
+    }
+  }
 
-  cargarCursos(email: string): void {
+  cargarCatalogoDemo(): void {
     this.cargandoCursos = true;
     this.progresoCargaCursos = 0;
-    this.textoCargaCursos = 'Conectando con el campus virtual...';
+    this.textoCargaCursos = 'Iniciando conexión con el campus virtual...';
+    this.mensajeError = '';
 
     if (this.progresoInterval) clearInterval(this.progresoInterval);
     this.progresoInterval = setInterval(() => {
       if (this.progresoCargaCursos < 30) {
         this.progresoCargaCursos += 5;
-        this.textoCargaCursos = 'Conectando con el servidor...';
+        this.textoCargaCursos = 'Conectando con el servidor de demostración...';
       } else if (this.progresoCargaCursos < 70) {
         this.progresoCargaCursos += 4;
-        this.textoCargaCursos = 'Cargando catálogo oficial de formaciones...';
+        this.textoCargaCursos = 'Cargando catálogo oficial de terapias integrales...';
       } else if (this.progresoCargaCursos < 92) {
         this.progresoCargaCursos += 2;
-        this.textoCargaCursos = 'Preparando clases y materiales...';
+        this.textoCargaCursos = 'Comprobando disponibilidad de cursos para tu conexión...';
       }
+      this.cdr.markForCheck();
     }, 70);
 
-    this.expService.listarCursos(email).subscribe({
-      next: (data) => {
+    this.expService.obtenerCuentaYCursosDisponibles().subscribe({
+      next: (resp: DemoCuentaDisponibleResponse) => {
         if (this.progresoInterval) clearInterval(this.progresoInterval);
         const finInt = setInterval(() => {
           this.progresoCargaCursos += 10;
@@ -118,22 +86,28 @@ export class ExperienciaInsteipComponent implements OnInit {
             this.progresoCargaCursos = 100;
             clearInterval(finInt);
             setTimeout(() => {
-              this.cursos = data;
+              this.tokenTemporal = resp.tokenTemporal;
+              this.correoAsignado = resp.correoAsignado;
+              this.todosCursosVistos = resp.todosCursosVistos;
+              this.cursos = resp.cursos || [];
               this.cargandoCursos = false;
+              this.cdr.markForCheck();
             }, 200);
           }
+          this.cdr.markForCheck();
         }, 20);
       },
-      error: () => {
+      error: (err) => {
         if (this.progresoInterval) clearInterval(this.progresoInterval);
         this.cargandoCursos = false;
-        this.mensajeError = 'No se pudieron cargar los cursos disponibles.';
+        this.mensajeError = err.error?.message || 'No se pudo conectar con el servidor de demostración. Inténtalo de nuevo.';
+        this.cdr.markForCheck();
       }
     });
   }
 
-  toggleSeleccionCurso(curso: CursoExp): void {
-    if (curso.yaVisto) return;
+  toggleSeleccionCurso(curso: DemoCursoDto): void {
+    if (curso.yaVisto || this.cargandoInicio) return;
 
     const index = this.cursosSeleccionados.indexOf(curso.id);
     if (index > -1) {
@@ -149,7 +123,7 @@ export class ExperienciaInsteipComponent implements OnInit {
     return this.cursosSeleccionados.includes(cursoId);
   }
 
-  isDeshabilitado(curso: CursoExp): boolean {
+  isDeshabilitado(curso: DemoCursoDto): boolean {
     if (curso.yaVisto) return true;
     if (this.cursosSeleccionados.length >= 2 && !this.isSeleccionado(curso.id)) return true;
     return false;
@@ -157,60 +131,56 @@ export class ExperienciaInsteipComponent implements OnInit {
 
   iniciarExperiencia(): void {
     if (this.cursosSeleccionados.length !== 2) {
-      this.mensajeError = 'Debes seleccionar exactamente 2 cursos para comenzar.';
+      this.mensajeError = 'Debes seleccionar exactamente 2 cursos para comenzar tu experiencia.';
       return;
     }
 
     this.mensajeError = '';
     this.cargandoInicio = true;
+    this.progresoInicio = 0;
+    this.textoInicio = 'Preparando tus 2 cursos en el campus virtual...';
 
-    this.expService.iniciarExperiencia(this.correo, this.cursosSeleccionados).subscribe({
+    const startInterval = setInterval(() => {
+      if (this.progresoInicio < 85) {
+        this.progresoInicio += 8;
+        if (this.progresoInicio > 40) {
+          this.textoInicio = 'Asignando aula virtual y credenciales temporales...';
+        }
+        this.cdr.markForCheck();
+      }
+    }, 40);
+
+    this.expService.activarDemo(this.cursosSeleccionados, this.tokenTemporal).subscribe({
       next: (resp) => {
-        this.cargandoInicio = false;
-        // Guardar sesión activa en sessionStorage
-        this.expService.guardarSesion({
-          sessionToken: resp.sessionToken,
-          inicioSesion: resp.inicioSesion,
-          expiraSesion: resp.expiraSesion,
-          duracionSegundos: resp.duracionSegundos,
-          numeroUso: resp.numeroUso,
-          correo: this.correo.trim().toLowerCase(),
-          cursos: resp.cursos
-        });
+        clearInterval(startInterval);
+        const finInt = setInterval(() => {
+          this.progresoInicio += 10;
+          if (this.progresoInicio >= 100) {
+            this.progresoInicio = 100;
+            clearInterval(finInt);
+            this.cdr.markForCheck();
 
-        // Navegar a la pantalla de reproducción de la experiencia
-        this.router.navigate(['/experiencia-insteip/play']);
+            setTimeout(() => {
+              // Guardar credenciales de sesión demo en AuthService
+              this.authService.saveToken(resp.token);
+              this.authService.saveUserRole('ROLE_DEMO');
+              this.authService.saveExpSelectedCourseIds(resp.demoCursoIds);
+              this.authService.startExpTimer(resp.expiraEnSegundos || 900);
+
+              // Redirigir al dashboard del campus con la experiencia activa
+              this.router.navigate(['/dashboard/mis-cursos']);
+            }, 250);
+          }
+          this.cdr.markForCheck();
+        }, 20);
       },
       error: (err) => {
+        clearInterval(startInterval);
         this.cargandoInicio = false;
-        this.mensajeError = err.error?.message || 'No se pudo iniciar la experiencia. Por favor revisa los cursos seleccionados.';
+        this.mensajeError = err.error?.message || 'No se pudo iniciar la experiencia demo. Intenta de nuevo.';
+        this.cdr.markForCheck();
       }
     });
   }
-
-  cambiarCorreo(): void {
-    this.verificado = false;
-    this.estadoVisitante = null;
-    this.datosEstado = null;
-    this.cursos = [];
-    this.cursosSeleccionados = [];
-    this.mensajeError = '';
-  }
-
-  formatearFecha(fechaStr?: string): string {
-    if (!fechaStr) return '';
-    try {
-      const d = new Date(fechaStr);
-      return d.toLocaleDateString('es-PE', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    } catch {
-      return fechaStr;
-    }
-  }
 }
+

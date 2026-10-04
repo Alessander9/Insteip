@@ -39,12 +39,15 @@ textarea {
   font: inherit;
 }
 
+/* Dark mode override disabled - light theme enforced */
+/*
 html.dark,
 html.dark body {
   background-color: #020617;
   color: #f1f5f9;
   color-scheme: dark;
 }
+*/
 
 body {
   transition: background-color 300ms ease, color 300ms ease;

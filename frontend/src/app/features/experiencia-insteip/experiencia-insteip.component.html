@@ -6,132 +6,22 @@
   <header class="exp-header">
     <div class="exp-brand-pill">
       <span class="pill-dot"></span>
-      <span>EXPERIENCIA INSTEIP · ACCESO GRATUITO</span>
+      <span>EXPERIENCIA INSTEIP · DEMO EN VIVO</span>
     </div>
     <h1 class="exp-title">
       Prueba el Campus <span class="gradient-text">INSTEIP en Vivo</span>
     </h1>
     <p class="exp-subtitle">
-      Explora nuestras clases reales durante 15 minutos. Sin registro previo, sin contraseñas y totalmente gratis.
+      Explora nuestras clases y módulos reales durante 15 minutos. 
+      <strong>Sin contraseñas, sin esperas y con acceso inmediato.</strong>
     </p>
   </header>
 
-  <!-- SECCIÓN 1: Ingreso y verificación de correo -->
-  <section class="exp-card exp-auth-card" *ngIf="!verificado || estadoVisitante !== 'LIBRE'">
-    <div class="card-inner">
-      <div class="input-header">
-        <span class="input-step-badge">Paso 1</span>
-        <h2>Ingresa tu correo para comenzar</h2>
-        <p>Utilizamos tu correo únicamente para activar tu sesión de prueba personalizada.</p>
-      </div>
-
-      <form (ngSubmit)="verificarCorreo()" class="exp-form" *ngIf="!verificado">
-        <div class="input-wrapper">
-          <span class="input-icon">✉️</span>
-          <input
-            type="email"
-            [(ngModel)]="correo"
-            name="correo"
-            placeholder="ejemplo@correo.com"
-            class="exp-input"
-            [disabled]="cargandoVerificacion"
-            required
-            autocomplete="email"
-          />
-        </div>
-
-        <button
-          type="submit"
-          class="btn-primary btn-verify"
-          [disabled]="cargandoVerificacion || !correo.trim()"
-        >
-          <span *ngIf="!cargandoVerificacion">Verificar acceso →</span>
-          <span *ngIf="cargandoVerificacion" class="spinner-inline">
-            <span class="spinner"></span> Verificando...
-          </span>
-        </button>
-      </form>
-
-      <!-- Mensaje de Error -->
-      <div class="alert-box alert-error" *ngIf="mensajeError">
-        <span class="alert-icon">⚠️</span>
-        <span>{{ mensajeError }}</span>
-      </div>
-
-      <!-- ESTADO: BLOQUEADO (Dentro de la semana de pausa) -->
-      <div class="status-box status-bloqueado" *ngIf="verificado && estadoVisitante === 'BLOQUEADO'">
-        <div class="status-icon-circle">⏳</div>
-        <h3>Tu acceso gratuito está en pausa</h3>
-        <p class="status-desc">
-          Ya realizaste una prueba recientemente con el correo <strong>{{ correo }}</strong>. Por política de la academia, existe un periodo de 7 días entre accesos.
-        </p>
-        <div class="unlock-date-card">
-          <span class="label">Disponible nuevamente el:</span>
-          <span class="date-val">{{ formatearFecha(datosEstado?.expiraEn) }}</span>
-        </div>
-        <div class="status-actions">
-          <a [href]="whatsappUrl" target="_blank" rel="noopener" class="btn-primary btn-whatsapp">
-            <span>💬 Quiero inscribirme sin esperas</span>
-          </a>
-          <button type="button" (click)="cambiarCorreo()" class="btn-secondary">
-            Probar con otro correo
-          </button>
-        </div>
-      </div>
-
-      <!-- ESTADO: AGOTADO (3 usos completados) -->
-      <div class="status-box status-agotado" *ngIf="verificado && estadoVisitante === 'AGOTADO'">
-        <div class="status-icon-circle">🎓</div>
-        <h3>¡Has completado tus 3 accesos gratuitos!</h3>
-        <p class="status-desc">
-          Has explorado toda la experiencia gratuita de INSTEIP con el correo <strong>{{ correo }}</strong>. ¡Es el momento perfecto para dar el siguiente paso y unirte a la comunidad!
-        </p>
-        <div class="benefits-reminder">
-          <h4>Con tu matrícula completa obtienes:</h4>
-          <ul>
-            <li>✅ Acceso 24/7 a todos los módulos y videos en HD</li>
-            <li>📥 Descarga ilimitada de materiales, guías y PDFs</li>
-            <li>📜 Certificado oficial a nombre del Instituto</li>
-            <li>👩‍🏫 Acompañamiento y tutoría personalizada</li>
-          </ul>
-        </div>
-        <div class="status-actions">
-          <a [href]="whatsappUrl" target="_blank" rel="noopener" class="btn-primary btn-whatsapp">
-            <span>🚀 Inscribirme ahora por WhatsApp</span>
-          </a>
-          <button type="button" (click)="cambiarCorreo()" class="btn-secondary">
-            Ingresar otro correo
-          </button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECCIÓN 2: GRID DE SELECCIÓN DE CURSOS (Estado LIBRE) -->
-  <section class="exp-courses-section" *ngIf="verificado && estadoVisitante === 'LIBRE'">
-    <!-- Barra superior de estado del visitante -->
-    <div class="visitor-status-bar">
-      <div class="visitor-info">
-        <span class="visitor-badge">
-          🌿 Uso <strong>{{ datosEstado?.numeroUsoActual }}</strong> de 3 disponibles
-        </span>
-        <span class="visitor-email">{{ correo }}</span>
-      </div>
-      <button (click)="cambiarCorreo()" class="btn-link">Cambiar correo</button>
-    </div>
-
-    <div class="selection-guide">
-      <h2>Selecciona 2 cursos para tu sesión</h2>
-      <p>Explorarás las clases y módulos reales de ambos cursos durante 15 minutos.</p>
-      <div class="selection-counter" [class.ready]="cursosSeleccionados.length === 2">
-        <span>Cursos seleccionados: <strong>{{ cursosSeleccionados.length }}</strong> / 2</span>
-      </div>
-    </div>
-
-    <!-- Barra de progreso cargando cursos 0 a 100% -->
-    <div class="courses-progress-box" *ngIf="cargandoCursos">
+  <!-- SECCIÓN 1: ESTADO CARGANDO CATÁLOGO CON PROGRESO 0 A 100% -->
+  <section class="exp-courses-section" *ngIf="cargandoCursos">
+    <div class="courses-progress-box">
       <div class="spinner-pulse-ring"></div>
-      <h3>Cargando Catálogo de Cursos</h3>
+      <h3>Cargando Experiencia INSTEIP</h3>
       <p class="courses-status-text">{{ textoCargaCursos }}</p>
       <div class="courses-track-wrap">
         <div class="courses-track">
@@ -140,14 +30,52 @@
           </div>
         </div>
         <div class="courses-progress-footer">
-          <span>Sincronizando campus...</span>
+          <span>Sincronizando campus virtual...</span>
           <span class="courses-percent">{{ progresoCargaCursos }}%</span>
         </div>
       </div>
     </div>
+  </section>
+
+  <!-- SECCIÓN 2: MENSAJE SI TODOS LOS CURSOS FUERON PROBADOS DESDE ESTA IP -->
+  <section class="exp-card exp-auth-card" *ngIf="!cargandoCursos && todosCursosVistos">
+    <div class="card-inner">
+      <div class="status-box status-agotado">
+        <div class="status-icon-circle">🎓</div>
+        <h3>¡Has explorado todo nuestro catálogo de demostración!</h3>
+        <p class="status-desc">
+          Has probado las formaciones disponibles desde tu conexión. ¡Es el momento ideal para dar el siguiente paso y matricularte para acceder a todas las clases completas, materiales descargables y certificación oficial!
+        </p>
+        <div class="benefits-reminder">
+          <h4>Beneficios con tu matrícula completa:</h4>
+          <ul>
+            <li>✅ Acceso 24/7 a todos los módulos y videos en Full HD</li>
+            <li>📥 Descarga ilimitada de guías clínicas, atlas y PDFs</li>
+            <li>📜 Certificado con valor curricular a nombre del Instituto</li>
+            <li>👩‍🏫 Acompañamiento docente y resolución de dudas</li>
+          </ul>
+        </div>
+        <div class="status-actions">
+          <a [href]="whatsappUrl" target="_blank" rel="noopener" class="btn-primary btn-whatsapp">
+            <span>🚀 Matricularme por WhatsApp</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 3: CATÁLOGO DISPONIBLE & SELECCIÓN DE 2 CURSOS -->
+  <section class="exp-courses-section" *ngIf="!cargandoCursos && !todosCursosVistos">
+    <div class="selection-guide">
+      <h2>Elige 2 cursos para tu sesión de demostración</h2>
+      <p>Tendrás 15 minutos de acceso libre para explorar las clases y videos reales de ambos cursos.</p>
+      <div class="selection-counter" [class.ready]="cursosSeleccionados.length === 2">
+        <span>Cursos seleccionados: <strong>{{ cursosSeleccionados.length }}</strong> de 2</span>
+      </div>
+    </div>
 
     <!-- Grid de cursos -->
-    <div class="courses-grid" *ngIf="!cargandoCursos">
+    <div class="courses-grid">
       <div
         *ngFor="let curso of cursos"
         class="course-card"
@@ -164,7 +92,7 @@
             loading="lazy"
           />
           <div class="card-overlay" *ngIf="curso.yaVisto">
-            <span class="badge-seen">🔒 Ya explorado</span>
+            <span class="badge-seen">🔒 Ya probado</span>
           </div>
           <div class="card-overlay selected-overlay" *ngIf="isSeleccionado(curso.id)">
             <span class="badge-selected">✓ Seleccionado</span>
@@ -173,40 +101,44 @@
 
         <!-- Contenido de tarjeta -->
         <div class="card-body">
+          <div class="card-meta">
+            <span class="badge-level" *ngIf="curso.nivelSuscripcion">{{ curso.nivelSuscripcion }}</span>
+            <span class="badge-modules" *ngIf="curso.totalModulos">{{ curso.totalModulos }} módulos</span>
+          </div>
           <h3 class="course-name">{{ curso.nombre }}</h3>
-          <p class="course-desc">{{ curso.descripcion || 'Conoce las técnicas y fundamentos profesionales en este curso.' }}</p>
+          <p class="course-desc">{{ curso.descripcion || 'Formación especializada con docentes de primer nivel y metodología práctica.' }}</p>
           
           <div class="card-footer">
             <span class="selection-indicator" *ngIf="!curso.yaVisto && !isSeleccionado(curso.id)">
-              + Hacer clic para elegir
+              + Clic para seleccionar
             </span>
             <span class="selection-indicator active" *ngIf="isSeleccionado(curso.id)">
-              ✓ Elegido (1 de 2)
+              ✓ Seleccionado ({{ cursosSeleccionados.indexOf(curso.id) + 1 }} de 2)
             </span>
             <span class="selection-indicator disabled-text" *ngIf="curso.yaVisto">
-              Explorado en visita anterior
+              🔒 Probado en visita anterior
             </span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Error al iniciar -->
+    <!-- Mensaje de Error si ocurre -->
     <div class="alert-box alert-error" *ngIf="mensajeError">
       <span class="alert-icon">⚠️</span>
       <span>{{ mensajeError }}</span>
     </div>
 
     <!-- Barra fija inferior de acción -->
-    <div class="floating-action-bar" *ngIf="!cargandoCursos">
+    <div class="floating-action-bar">
       <div class="bar-inner">
         <div class="bar-text">
           <span class="bar-timer-hint">⏱ 15:00 minutos de sesión libre</span>
           <span class="bar-count-hint" *ngIf="cursosSeleccionados.length < 2">
-            Elige {{ 2 - cursosSeleccionados.length }} curso(s) más para activar el botón
+            Selecciona {{ 2 - cursosSeleccionados.length }} curso(s) más para activar el campus
           </span>
           <span class="bar-count-hint ready-hint" *ngIf="cursosSeleccionados.length === 2">
-            ¡Todo listo! Presiona el botón para iniciar
+            ¡Excelente selección! Presiona el botón para comenzar
           </span>
         </div>
 
@@ -215,12 +147,33 @@
           [disabled]="cursosSeleccionados.length !== 2 || cargandoInicio"
           (click)="iniciarExperiencia()"
         >
-          <span *ngIf="!cargandoInicio">¡Comenzar mis 15 minutos! 🚀</span>
+          <span *ngIf="!cargandoInicio">¡Comenzar mi Experiencia (15 min)! 🚀</span>
           <span *ngIf="cargandoInicio" class="spinner-inline">
-            <span class="spinner"></span> Preparando tu campus...
+            <span class="spinner"></span> {{ textoInicio }}
           </span>
         </button>
       </div>
     </div>
   </section>
+
+  <!-- OVERLAY DE INICIO CON PROGRESO 0 A 100% -->
+  <div class="exp-modal-backdrop" *ngIf="cargandoInicio">
+    <div class="exp-starting-card">
+      <div class="spinner-pulse-ring"></div>
+      <h3>Preparando tu Experiencia INSTEIP</h3>
+      <p class="courses-status-text">{{ textoInicio }}</p>
+      <div class="courses-track-wrap">
+        <div class="courses-track">
+          <div class="courses-progress-bar" [style.width.%]="progresoInicio">
+            <div class="courses-shimmer"></div>
+          </div>
+        </div>
+        <div class="courses-progress-footer">
+          <span>Accediendo al aula virtual...</span>
+          <span class="courses-percent">{{ progresoInicio }}%</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+

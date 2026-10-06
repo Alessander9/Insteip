@@ -111,7 +111,7 @@ export class AcupunturaChinaComponent implements OnInit, AfterViewInit, OnDestro
     precio: 270,
     cuotasInfo: '12 cuotas · Sin intereses · Matrícula incluida',
     plazasDisponibles: 8,
-    whatsappLink: 'https://wa.me/51939371250',
+    whatsappLink: 'https://wa.me/51930830427',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
       '12 meses de clases teóricas en vivo — acceso a grabaciones 24/7',

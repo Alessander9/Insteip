@@ -13,6 +13,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./database/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
       - ./database/seed.sql:/docker-entrypoint-initdb.d/2-seed.sql
+      - ./database/seed_dia_acupuntura.sql:/docker-entrypoint-initdb.d/3-seed_dia_acupuntura.sql
 
 volumes:
   postgres_data:

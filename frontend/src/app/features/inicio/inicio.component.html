@@ -4,24 +4,29 @@
 <div class="video-modal-overlay" *ngIf="showVideoModal" (click)="closeVideoModal()">
   <div class="video-modal-container" (click)="$event.stopPropagation()">
     <div class="video-modal-player">
-      <a href="https://wa.me/51930830427?text=Hola%2C+deseo+m%C3%A1s+informaci%C3%B3n+sobre+la+Jornada+Especial+por+el+D%C3%ADa+de+la+Acupuntura"
-         target="_blank" rel="noopener noreferrer" title="Inscribirse vía WhatsApp">
+      <a routerLink="/dia-acupuntura" (click)="closeVideoModal()" title="Ver Talleres del Día de la Acupuntura">
         <img
           src="assets/diaACUPUNTURA.jpg"
           alt="Jornada Especial por el Día de la Acupuntura - INSTEIP"
           loading="eager">
       </a>
     </div>
-    <div class="video-modal-actions">
+    <div class="video-modal-actions flex flex-wrap gap-2 items-center justify-center">
+      <a routerLink="/dia-acupuntura"
+         (click)="closeVideoModal()"
+         class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-lg shadow-md transition-all">
+        <span class="material-symbols-outlined text-sm">spa</span>
+        <span>Ver Landing y Talleres</span>
+      </a>
       <a href="https://wa.me/51930830427?text=Hola%2C+deseo+m%C3%A1s+informaci%C3%B3n+sobre+la+Jornada+Especial+por+el+D%C3%ADa+de+la+Acupuntura"
          target="_blank" rel="noopener noreferrer"
-         class="video-modal-wa-btn">
-        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+         class="video-modal-wa-btn text-xs font-bold">
+        <svg class="w-4 h-4 fill-current inline-block mr-1" viewBox="0 0 24 24">
           <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.77.814 2.796.814 3.18 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.766-5.768-5.766zm9.969 5.766c0 5.514-4.486 10-10 10-1.758 0-3.411-.456-4.85-1.258l-5.15 1.35 1.373-5.016c-.868-1.488-1.373-3.224-1.373-5.076 0-5.514 4.486-10 10-10s10 4.486 10 10z"/>
         </svg>
-        Más información por WhatsApp
+        WhatsApp
       </a>
-      <button class="video-modal-close-btn" (click)="closeVideoModal()">
+      <button class="video-modal-close-btn text-xs" (click)="closeVideoModal()">
         Cerrar
       </button>
     </div>
@@ -34,6 +39,21 @@
 </header>
 
 <main id="main-content" class="pt-20">
+
+  <!-- TOP EVENT ANNOUNCEMENT BANNER -->
+  <aside aria-label="Anuncio del evento" class="bg-slate-950 border-b border-amber-500/30 py-2.5 px-4 text-center relative z-20">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-xs font-medium text-slate-200">
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-amber-500 text-slate-950 font-black uppercase text-[10px] rounded-full shadow-xs">
+        <span class="material-symbols-outlined text-[12px]">spa</span>
+        <span>Día de la Acupuntura 2026</span>
+      </span>
+      <span><strong>17 y 18 de Octubre:</strong> Accede a los 6 Talleres Especializados, grabaciones en alta definición y materiales en PDF.</span>
+      <a routerLink="/dia-acupuntura" class="inline-flex items-center gap-1 text-amber-400 hover:text-amber-300 font-black uppercase tracking-wider text-xs underline decoration-amber-400">
+        <span>Ingresar a los Talleres</span>
+        <span class="material-symbols-outlined text-sm font-bold">arrow_forward</span>
+      </a>
+    </div>
+  </aside>
 
   <!-- =====================================================
   HERO — CAROUSEL SLIDER
@@ -178,7 +198,9 @@
       </div>
 
       <a
-        routerLink="/experiencia-insteip"
+        href="https://wa.me/51930830427?text=Hola%20INSTEIP%2C%20deseo%20solicitar%20la%20Experiencia%20Gratis%20para%20explorar%20el%20Campus%20Virtual%20y%20conocer%20sus%20cursos."
+        target="_blank"
+        rel="noopener noreferrer"
         class="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-sm md:text-base rounded-xl shadow-lg shadow-emerald-500/25 transition-all transform hover:-translate-y-0.5 shrink-0">
         <span>¡Comenzar Experiencia Gratis! →</span>
       </a>

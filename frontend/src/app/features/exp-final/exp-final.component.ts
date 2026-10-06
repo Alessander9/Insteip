@@ -15,8 +15,8 @@ export class ExpFinalComponent implements OnInit {
 
   numeroUso: number = 1;
 
-  readonly whatsappMatriculaUrl = 'https://wa.me/51939371250?text=Hola%2C+vengo+de+probar+la+experiencia+EXP+INSTEIP+y+deseo+matricularme+en+un+curso';
-  readonly whatsappAsesorUrl = 'https://wa.me/51939371250?text=Hola%2C+tengo+consultas+sobre+los+cursos+y+certificaciones+de+INSTEIP';
+  readonly whatsappMatriculaUrl = 'https://wa.me/51930830427?text=Hola%2C+vengo+de+probar+la+experiencia+EXP+INSTEIP+y+deseo+matricularme+en+un+curso';
+  readonly whatsappAsesorUrl = 'https://wa.me/51930830427?text=Hola%2C+tengo+consultas+sobre+los+cursos+y+certificaciones+de+INSTEIP';
 
   ngOnInit(): void {
     const state = typeof history !== 'undefined' ? history.state : null;

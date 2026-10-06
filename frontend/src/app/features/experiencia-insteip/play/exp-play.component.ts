@@ -31,7 +31,7 @@ export class ExpPlayComponent implements OnInit, OnDestroy {
   segundosRestantes: number = 900; // 15 minutos por defecto
   private timerInterval: any = null;
 
-  readonly whatsappUrl = 'https://wa.me/51939371250?text=Hola%2C+vengo+de+probar+la+Experiencia+INSTEIP+y+deseo+matricularme';
+  readonly whatsappUrl = 'https://wa.me/51930830427?text=Hola%2C+vengo+de+probar+la+Experiencia+INSTEIP+y+deseo+matricularme';
 
   ngOnInit(): void {
     this.sesion = this.expService.getSesionActual();

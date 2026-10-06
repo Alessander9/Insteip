@@ -257,8 +257,13 @@ export const routes: Routes = [
     loadComponent: () => import('./features/experiencia-insteip/play/exp-play.component').then(m => m.ExpPlayComponent)
   },
   {
-    path: 'exp-final',
-    loadComponent: () => import('./features/exp-final/exp-final.component').then(m => m.ExpFinalComponent)
+    path: 'dia-acupuntura',
+    loadComponent: () => import('./features/dia-acupuntura/dia-acupuntura.component').then(m => m.DiaAcupunturaComponent)
+  },
+  {
+    path: 'dia-acupuntura/play/:id',
+    loadComponent: () => import('./features/dia-acupuntura/play/dia-acupuntura-play.component').then(m => m.DiaAcupunturaPlayComponent),
+    canActivate: [authGuard]
   },
   {
     path: 'privacidad',
@@ -358,6 +363,12 @@ export const routes: Routes = [
       {
         path: 'master-ops',
         loadComponent: () => import('./features/master-ops/master-ops.component').then(m => m.MasterOpsComponent),
+        canActivate: [roleGuard],
+        data: { roles: ['ADMINISTRADOR'] }
+      },
+      {
+        path: 'dia-acupuntura',
+        loadComponent: () => import('./features/dashboard/dia-acupuntura/dia-acupuntura-admin.component').then(m => m.DiaAcupunturaAdminComponent),
         canActivate: [roleGuard],
         data: { roles: ['ADMINISTRADOR'] }
       },

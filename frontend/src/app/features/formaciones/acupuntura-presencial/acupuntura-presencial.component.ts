@@ -108,7 +108,7 @@ export class AcupunturaPresencialComponent implements OnInit, AfterViewInit, OnD
     precio: 270,
     cuotasInfo: '12 cuotas · Matrícula: S/ 30',
     plazasDisponibles: 8,
-    whatsappLink: 'https://wa.me/51939371250',
+    whatsappLink: 'https://wa.me/51930830427',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
       '12 meses de clases presenciales en Lince, Lima',

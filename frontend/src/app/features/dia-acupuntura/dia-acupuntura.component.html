@@ -1,0 +1,266 @@
+<div class="dia-acupuntura-page">
+  <!-- TOPBAR NAVEGACIÓN GLOBAL -->
+  <header class="dia-catalog-topbar">
+    <div class="topbar-container">
+      <a routerLink="/inicio" class="btn-back-home" title="Volver a la Página Principal">
+        <span class="material-symbols-outlined">arrow_back</span>
+        <span class="btn-back-home__text">Volver a la Página Principal</span>
+      </a>
+
+      <a routerLink="/inicio" class="topbar-brand" title="INSTEIP - Inicio">
+        <img src="assets/insteip-logo.png" alt="Logo INSTEIP" class="brand-logo" onerror="this.style.display='none'" />
+        <span class="brand-name">INSTEIP</span>
+      </a>
+
+      <div class="topbar-actions">
+        <a routerLink="/cursos-presenciales" class="topbar-link">
+          <span class="material-symbols-outlined">school</span>
+          <span class="topbar-link__text">Ver Catálogo</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="dia-hero">
+    <div class="dia-hero__overlay"></div>
+    <div class="dia-hero__container">
+      <div class="dia-badge-pill">
+        <span class="pulse-dot"></span>
+        <span class="dia-badge-pill__text">JORNADA INTERNACIONAL · 17 Y 18 DE OCTUBRE</span>
+      </div>
+
+      <h1 class="dia-hero__title">
+        Día de la <span class="text-gold">Acupuntura</span> 2026
+      </h1>
+      <p class="dia-hero__subtitle">
+        6 Talleres Magistrales con especialistas internacionales de la Medicina Tradicional China. Accede a tus clases en vivo, grabaciones de alta definición y material clínico exclusivo.
+      </p>
+
+      <!-- FECHAS Y METADATA -->
+      <div class="dia-hero__stats">
+        <div class="stat-card">
+          <span class="stat-icon material-symbols-outlined">event</span>
+          <div class="stat-info">
+            <strong>17 y 18 de Octubre</strong>
+            <small>Transmisión y Grabaciones</small>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon material-symbols-outlined">school</span>
+          <div class="stat-info">
+            <strong>6 Talleres Clínicos</strong>
+            <small>Acceso según tu matrícula</small>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon material-symbols-outlined">verified</span>
+          <div class="stat-info">
+            <strong>Certificación Oficial</strong>
+            <small>Instituto Superior INSTEIP</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="dia-main-container">
+
+    <!-- ESTADO DE SESIÓN / LOGIN -->
+    <section class="dia-auth-card">
+      <!-- USUARIO LOGUEADO -->
+      <div *ngIf="estaAutenticado" class="auth-box auth-box--logged">
+        <div class="auth-box__info">
+          <div class="avatar-circle">
+            <span class="material-symbols-outlined">person</span>
+          </div>
+          <div class="user-details">
+            <h3>¡Bienvenido(a), {{ usuarioNombre }}!</h3>
+            <p class="text-muted">{{ usuarioCorreo }}</p>
+          </div>
+        </div>
+
+        <div class="auth-box__status-pill">
+          <span class="material-symbols-outlined">auto_stories</span>
+          <span>Tienes <strong>{{ totalInscritosUsuario }} de {{ talleres.length }}</strong> talleres habilitados</span>
+        </div>
+
+        <div class="auth-box__actions">
+          <a *ngIf="esAdmin" routerLink="/dashboard/dia-acupuntura" class="btn btn--admin">
+            <span class="material-symbols-outlined">admin_panel_settings</span>
+            <span>Panel Admin Evento</span>
+          </a>
+          <button (click)="cerrarSesion()" class="btn btn--outline-sm">
+            <span class="material-symbols-outlined">logout</span>
+            <span>Cerrar Sesión</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- USUARIO NO LOGUEADO -->
+      <div *ngIf="!estaAutenticado" class="auth-box auth-box--login">
+        <div class="login-header">
+          <div class="login-header__icon">
+            <span class="material-symbols-outlined">key</span>
+          </div>
+          <div class="login-header__text">
+            <h3>¿Ya estás matriculado en el evento?</h3>
+            <p>Ingresa con tu correo y contraseña asignada para desbloquear tus talleres.</p>
+          </div>
+        </div>
+
+        <form (ngSubmit)="iniciarSesion()" class="login-form">
+          <div class="input-group">
+            <span class="material-symbols-outlined input-icon">mail</span>
+            <input
+              type="email"
+              [(ngModel)]="correoInput"
+              name="correo"
+              placeholder="Tu correo electrónico"
+              required
+              autocomplete="email"
+              class="form-control"
+            />
+          </div>
+
+          <div class="input-group">
+            <span class="material-symbols-outlined input-icon">lock</span>
+            <input
+              type="password"
+              [(ngModel)]="passwordInput"
+              name="password"
+              placeholder="Tu contraseña (o DNI)"
+              required
+              autocomplete="current-password"
+              class="form-control"
+            />
+          </div>
+
+          <button type="submit" [disabled]="cargandoLogin" class="btn btn--gold btn--login">
+            <span *ngIf="!cargandoLogin" class="material-symbols-outlined">login</span>
+            <span *ngIf="cargandoLogin" class="spinner"></span>
+            <span>{{ cargandoLogin ? 'Verificando...' : 'Desbloquear Mis Talleres' }}</span>
+          </button>
+        </form>
+
+        <div *ngIf="loginError" class="alert alert--danger">
+          <span class="material-symbols-outlined">error</span>
+          <span>{{ loginError }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- LISTADO DE TALLERES (GRID) -->
+    <section class="dia-workshops-section">
+      <div class="section-title-wrap">
+        <h2 class="section-title">
+          Catálogo Oficial de <span class="text-gold">Talleres Magistrales</span>
+        </h2>
+        <p class="section-subtitle">
+          Cada taller cuenta con su clase magistral en video HD, temario paso a paso y materiales clínicos en PDF.
+        </p>
+      </div>
+
+      <!-- SPINNER CARGANDO -->
+      <div *ngIf="cargando" class="loading-state">
+        <div class="spinner-large"></div>
+        <p>Cargando talleres del Día de la Acupuntura...</p>
+      </div>
+
+      <!-- ERROR STATE -->
+      <div *ngIf="!cargando && errorMensaje" class="alert alert--danger text-center">
+        <span class="material-symbols-outlined">warning</span>
+        <span>{{ errorMensaje }}</span>
+      </div>
+
+      <!-- GRID CARDS -->
+      <div *ngIf="!cargando && !errorMensaje" class="workshops-grid">
+        <div 
+          *ngFor="let taller of talleres; let i = index" 
+          class="workshop-card"
+          [class.workshop-card--unlocked]="taller.inscrito"
+          [class.workshop-card--locked]="!taller.inscrito"
+        >
+          <!-- IMAGEN & BADGES -->
+          <div class="workshop-card__media">
+            <img [src]="taller.imagenPortada" [alt]="taller.nombre" loading="lazy" />
+            <div class="card-overlay"></div>
+
+            <span class="taller-number-badge">Taller #{{ taller.orden || (i + 1) }}</span>
+
+            <!-- BADGE ESTADO -->
+            <div *ngIf="taller.inscrito" class="status-badge status-badge--unlocked">
+              <span class="material-symbols-outlined">verified</span>
+              <span>Habilitado</span>
+            </div>
+            <div *ngIf="!taller.inscrito" class="status-badge status-badge--locked">
+              <span class="material-symbols-outlined">lock</span>
+              <span>No Inscrito</span>
+            </div>
+          </div>
+
+          <!-- CONTENIDO CARD -->
+          <div class="workshop-card__body">
+            <h3 class="workshop-title">{{ taller.nombre }}</h3>
+            <p class="workshop-desc">{{ taller.descripcion }}</p>
+
+            <div class="workshop-meta">
+              <div class="meta-item">
+                <span class="material-symbols-outlined">person_outline</span>
+                <span class="meta-text">{{ taller.docente }}</span>
+              </div>
+              <div class="meta-item">
+                <span class="material-symbols-outlined">schedule</span>
+                <span class="meta-text">{{ taller.duracionMinutos }} min</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD FOOTER / BOTONES -->
+          <div class="workshop-card__footer">
+            <!-- BOTÓN ENTRAR (SI ESTÁ HABILITADO) -->
+            <button 
+              *ngIf="taller.inscrito" 
+              (click)="entrarAlTaller(taller)" 
+              class="btn btn--unlocked-action"
+            >
+              <span class="material-symbols-outlined">play_circle</span>
+              <span>Ingresar al Taller</span>
+            </button>
+
+            <!-- BOTÓN WHATSAPP (SI ESTÁ BLOQUEADO) -->
+            <a 
+              *ngIf="!taller.inscrito" 
+              [href]="obtenerLinkWhatsapp(taller)" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="btn btn--locked-action"
+            >
+              <span class="material-symbols-outlined">chat</span>
+              <span>Inscribirme a este Taller</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BANNER SOPORTE & ASISTENCIA -->
+    <section class="dia-support-banner">
+      <div class="support-content">
+        <div class="support-icon">
+          <span class="material-symbols-outlined">headset_mic</span>
+        </div>
+        <div class="support-text">
+          <h3>¿Necesitas ayuda con tus accesos o deseas matricularte?</h3>
+          <p>Nuestro equipo de soporte académico está disponible por WhatsApp para validar tu matrícula al instante.</p>
+        </div>
+      </div>
+      <a [href]="whatsappUrl" target="_blank" rel="noopener noreferrer" class="btn btn--whatsapp">
+        <span class="material-symbols-outlined">support_agent</span>
+        <span>Contactar Soporte WhatsApp</span>
+      </a>
+    </section>
+
+  </main>
+</div>

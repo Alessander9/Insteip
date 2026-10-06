@@ -97,7 +97,7 @@ export class DieteticaPresencialComponent implements OnInit, AfterViewInit, OnDe
     precio: 250,
     cuotasInfo: 'Presencial: S/ 250.00 | Online: S/ 100.00',
     plazasDisponibles: 8,
-    whatsappLink: 'https://wa.me/51939371250?text=Hola%2C%20deseo%20matricularme%20en%20el%20Curso%20de%20Diet%C3%A9tica',
+    whatsappLink: 'https://wa.me/51930830427?text=Hola%2C%20deseo%20matricularme%20en%20el%20Curso%20de%20Diet%C3%A9tica',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
       'Modalidad Presencial (Lince): S/ 250.00',

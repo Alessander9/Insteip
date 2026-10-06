@@ -123,7 +123,7 @@ export class AuriculoterapiaPresencialComponent implements OnInit, AfterViewInit
     precio: 260,
     cuotasInfo: '2 meses · Matrícula S/ 30 · Reserva S/ 50 (vía WhatsApp)',
     plazasDisponibles: 8,
-    whatsappLink: 'https://wa.me/51939371250?text=Hola%2C%20deseo%20reservar%20mi%20cupo%20para%20la%20Formaci%C3%B3n%20de%20Auriculoterapia',
+    whatsappLink: 'https://wa.me/51930830427?text=Hola%2C%20deseo%20reservar%20mi%20cupo%20para%20la%20Formaci%C3%B3n%20de%20Auriculoterapia',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
       '2 meses de clases presenciales (domingos 10:00 AM – 1:00 PM)',
@@ -139,7 +139,7 @@ export class AuriculoterapiaPresencialComponent implements OnInit, AfterViewInit
       { icon: 'payments', pregunta: '¿Cómo es el pago?', respuesta: 'Matrícula S/ 30, Mensualidad S/ 260 por mes. Reserva tu cupo con S/ 50 vía WhatsApp.' },
       { icon: 'verified', pregunta: '¿Quién dicta el curso?', respuesta: 'Emanuel Cabanillas Bardales.' }
     ],
-    trustText: 'Reserva segura · Asesoría personalizada vía WhatsApp +51 939 371 250'
+    trustText: 'Reserva segura · Asesoría personalizada vía WhatsApp +51 930 830 427'
   };
 
   constructor(private readonly host: ElementRef<HTMLElement>) { }

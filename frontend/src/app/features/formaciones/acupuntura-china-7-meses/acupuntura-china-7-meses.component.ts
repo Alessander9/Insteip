@@ -109,7 +109,7 @@ export class AcupunturaChina7MesesComponent implements OnInit, AfterViewInit, On
     precio: 150,
     cuotasInfo: 'Matrícula: S/ 30 · Mensualidad: S/ 150',
     plazasDisponibles: 8,
-    whatsappLink: 'https://wa.me/51939371250?text=Hola%2C%20deseo%20informaci%C3%B3n%20sobre%20el%20curso%20de%207%20meses%20de%20Acupuntura%20China',
+    whatsappLink: 'https://wa.me/51930830427?text=Hola%2C%20deseo%20informaci%C3%B3n%20sobre%20el%20curso%20de%207%20meses%20de%20Acupuntura%20China',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
       '7 meses de clases presenciales intensivas en Lince, Lima',

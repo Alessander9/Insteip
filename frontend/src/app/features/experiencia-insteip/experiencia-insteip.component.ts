@@ -31,7 +31,7 @@ export class ExperienciaInsteipComponent implements OnInit {
   cursos: CursoExp[] = [];
   cursosSeleccionados: number[] = [];
 
-  readonly whatsappUrl = 'https://wa.me/51939371250?text=Hola%2C+deseo+informaci%C3%B3n+para+matricularme+en+el+Campus+INSTEIP';
+  readonly whatsappUrl = 'https://wa.me/51930830427?text=Hola%2C+deseo+informaci%C3%B3n+para+matricularme+en+el+Campus+INSTEIP';
 
   ngOnInit(): void {
     // Si ya existe una sesión activa no expirada, redirigir directo a /play

@@ -348,14 +348,11 @@ public class DiaAcupunturaServiceImpl implements DiaAcupunturaService {
 
         for (String nombreOficial : NOMBRES_TALLERES_OFICIALES) {
             todosActivos.stream()
-                    .filter(c -> c.getNombre() != null && (c.getNombre().equalsIgnoreCase(nombreOficial) || c.getNombre().toLowerCase().contains(nombreOficial.toLowerCase())))
+                    .filter(c -> c.getNombre() != null && (c.getNombre().trim().equalsIgnoreCase(nombreOficial.trim()) || c.getNombre().toLowerCase().contains(nombreOficial.toLowerCase())))
                     .findFirst()
                     .ifPresent(filtrados::add);
         }
 
-        if (filtrados.isEmpty()) {
-            return todosActivos.stream().limit(6).collect(Collectors.toList());
-        }
         return filtrados;
     }
 

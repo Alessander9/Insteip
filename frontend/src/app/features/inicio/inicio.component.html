@@ -4,24 +4,29 @@
 <div class="video-modal-overlay" *ngIf="showVideoModal" (click)="closeVideoModal()">
   <div class="video-modal-container" (click)="$event.stopPropagation()">
     <div class="video-modal-player">
-      <a href="https://wa.me/51930830427?text=Hola%2C+deseo+m%C3%A1s+informaci%C3%B3n+sobre+la+Jornada+Especial+por+el+D%C3%ADa+de+la+Acupuntura"
-         target="_blank" rel="noopener noreferrer" title="Inscribirse vía WhatsApp">
+      <a routerLink="/dia-acupuntura" (click)="closeVideoModal()" title="Ver Talleres del Día de la Acupuntura">
         <img
           src="assets/diaACUPUNTURA.jpg"
           alt="Jornada Especial por el Día de la Acupuntura - INSTEIP"
           loading="eager">
       </a>
     </div>
-    <div class="video-modal-actions">
+    <div class="video-modal-actions flex flex-wrap gap-2 items-center justify-center">
+      <a routerLink="/dia-acupuntura"
+         (click)="closeVideoModal()"
+         class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-lg shadow-md transition-all">
+        <span class="material-symbols-outlined text-sm">spa</span>
+        <span>Ver Landing y Talleres</span>
+      </a>
       <a href="https://wa.me/51930830427?text=Hola%2C+deseo+m%C3%A1s+informaci%C3%B3n+sobre+la+Jornada+Especial+por+el+D%C3%ADa+de+la+Acupuntura"
          target="_blank" rel="noopener noreferrer"
-         class="video-modal-wa-btn">
-        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+         class="video-modal-wa-btn text-xs font-bold">
+        <svg class="w-4 h-4 fill-current inline-block mr-1" viewBox="0 0 24 24">
           <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.77.814 2.796.814 3.18 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.766-5.768-5.766zm9.969 5.766c0 5.514-4.486 10-10 10-1.758 0-3.411-.456-4.85-1.258l-5.15 1.35 1.373-5.016c-.868-1.488-1.373-3.224-1.373-5.076 0-5.514 4.486-10 10-10s10 4.486 10 10z"/>
         </svg>
-        Más información por WhatsApp
+        WhatsApp
       </a>
-      <button class="video-modal-close-btn" (click)="closeVideoModal()">
+      <button class="video-modal-close-btn text-xs" (click)="closeVideoModal()">
         Cerrar
       </button>
     </div>
@@ -34,6 +39,21 @@
 </header>
 
 <main id="main-content" class="pt-20">
+
+  <!-- TOP EVENT ANNOUNCEMENT BANNER -->
+  <aside aria-label="Anuncio del evento" class="bg-slate-950 border-b border-amber-500/30 py-2.5 px-4 text-center relative z-20">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-xs font-medium text-slate-200">
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-amber-500 text-slate-950 font-black uppercase text-[10px] rounded-full shadow-xs">
+        <span class="material-symbols-outlined text-[12px]">spa</span>
+        <span>Día de la Acupuntura 2026</span>
+      </span>
+      <span><strong>17 y 18 de Octubre:</strong> Accede a los 6 Talleres Especializados, grabaciones en alta definición y materiales en PDF.</span>
+      <a routerLink="/dia-acupuntura" class="inline-flex items-center gap-1 text-amber-400 hover:text-amber-300 font-black uppercase tracking-wider text-xs underline decoration-amber-400">
+        <span>Ingresar a los Talleres</span>
+        <span class="material-symbols-outlined text-sm font-bold">arrow_forward</span>
+      </a>
+    </div>
+  </aside>
 
   <!-- =====================================================
   HERO — CAROUSEL SLIDER
@@ -176,14 +196,11 @@
       </div>
 
       <a
-        href="https://wa.me/51930830427?text=Hola%2C+deseo+solicitar+acceso+a+la+Experiencia+INSTEIP+%28demo+de+15+minutos+en+el+campus+virtual%29"
+        href="https://wa.me/51930830427?text=Hola%20INSTEIP%2C%20deseo%20solicitar%20la%20Experiencia%20Gratis%20para%20explorar%20el%20Campus%20Virtual%20y%20conocer%20sus%20cursos."
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#25D366] hover:bg-[#20bd5a] text-slate-950 font-bold text-sm md:text-base rounded-xl shadow-lg shadow-emerald-500/20 transition-all transform hover:-translate-y-0.5 shrink-0">
-        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
-        </svg>
-        <span>Solicitar Experiencia por WhatsApp</span>
+        class="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-sm md:text-base rounded-xl shadow-lg shadow-emerald-500/25 transition-all transform hover:-translate-y-0.5 shrink-0">
+        <span>¡Comenzar Experiencia Gratis! →</span>
       </a>
     </div>
   </section>

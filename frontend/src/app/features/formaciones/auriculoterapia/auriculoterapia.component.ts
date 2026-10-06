@@ -1,4 +1,4 @@
-﻿import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
 import { FooterComponent } from '../../../core/components/footer/footer.component';
@@ -166,12 +166,13 @@ export class AuriculoterapiaComponent implements OnInit, AfterViewInit, OnDestro
     ]
   };
 
+  // CTA configuration data
   readonly ctaData: CourseCtaData = {
-    precio: 150,
+    precio: 260,
     tipoPago: '/ mes',
-    cuotasInfo: 'Modalidad Online · Campus virtual 24/7',
-    plazasDisponibles: 20,
-    whatsappLink: 'https://wa.me/51930830427?text=Hola%2C%20deseo%20inscribirme%20en%20el%20curso%20Online%20de%20Auriculoterapia',
+    cuotasInfo: 'Matrícula S/ 30 + 1 mensualidad de S/ 260 · Sin intereses',
+    plazasDisponibles: 8,
+    whatsappLink: 'https://wa.me/51930830427?text=Hola%2C%20deseo%20informaci%C3%B3n%20sobre%20el%20curso%20Online%20de%20Auriculoterapia',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
       'Acceso al Campus Virtual 24/7',

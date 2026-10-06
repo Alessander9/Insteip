@@ -1,0 +1,145 @@
+<div class="dia-play-page">
+  <!-- TOPBAR NAVEGACIÓN -->
+  <header class="dia-play-topbar">
+    <div class="topbar-left">
+      <button (click)="volverAlCatalogo()" class="btn-back" title="Volver al Catálogo del Evento">
+        <span class="material-symbols-outlined">arrow_back</span>
+        <span class="btn-back__text">Volver al Catálogo</span>
+      </button>
+      <div class="course-meta-header" *ngIf="curso">
+        <span class="event-tag">DÍA DE LA ACUPUNTURA 2026</span>
+        <h1 class="course-main-title" [title]="curso.nombre">{{ curso.nombre }}</h1>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <a routerLink="/dia-acupuntura" class="btn-event-home">
+        <span class="material-symbols-outlined">event</span>
+        <span class="btn-event-home__text">17 y 18 de Octubre</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- SPINNER / ERROR -->
+  <div *ngIf="cargando" class="play-state-container">
+    <div class="spinner-large"></div>
+    <p>Cargando sesión y contenidos del taller...</p>
+  </div>
+
+  <div *ngIf="!cargando && errorMensaje" class="play-state-container error-state">
+    <div class="error-card">
+      <span class="material-symbols-outlined error-icon">lock</span>
+      <h2>Acceso Restringido</h2>
+      <p>{{ errorMensaje }}</p>
+      <div class="error-actions">
+        <button (click)="volverAlCatalogo()" class="btn btn--gold">
+          <span>Ver Talleres Disponibles</span>
+        </button>
+        <a href="https://wa.me/51930830427" target="_blank" rel="noopener noreferrer" class="btn btn--whatsapp">
+          <span class="material-symbols-outlined">chat</span>
+          <span>Solicitar Acceso por WhatsApp</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENIDO PRINCIPAL: PLAYER + SIDEBAR -->
+  <div *ngIf="!cargando && !errorMensaje && curso" class="dia-play-layout">
+    <!-- COLUMNA IZQUIERDA: VIDEO + INFO + MATERIALES -->
+    <main class="dia-video-column">
+      <!-- REPRODUCTOR -->
+      <div class="video-player-wrapper">
+        <iframe
+          *ngIf="videoSafeUrl"
+          [src]="videoSafeUrl"
+          title="Reproductor de Taller"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+          class="video-iframe"
+        ></iframe>
+
+        <div *ngIf="!videoSafeUrl" class="no-video-placeholder">
+          <span class="material-symbols-outlined placeholder-icon">smart_display</span>
+          <p>Selecciona una clase o módulo para iniciar la reproducción.</p>
+        </div>
+      </div>
+
+      <!-- DETALLE DE LA CLASE EN REPRODUCCIÓN -->
+      <div class="current-lesson-info" *ngIf="videoActivo">
+        <div class="lesson-header">
+          <div class="lesson-titles">
+            <span class="lesson-module-tag">{{ moduloActivo?.nombre || 'Módulo Principal' }}</span>
+            <h2 class="lesson-title">{{ videoActivo.titulo }}</h2>
+          </div>
+          <div class="lesson-duration" *ngIf="videoActivo.duracionSegundos">
+            <span class="material-symbols-outlined">schedule</span>
+            <span>{{ (videoActivo.duracionSegundos / 60) | number:'1.0-0' }} min</span>
+          </div>
+        </div>
+        <p class="lesson-desc" *ngIf="videoActivo.descripcion">{{ videoActivo.descripcion }}</p>
+      </div>
+
+      <!-- MATERIALES DESCARGABLES DEL TALLER -->
+      <section class="materials-section" *ngIf="moduloActivo && moduloActivo.materiales && moduloActivo.materiales.length > 0">
+        <h3 class="materials-title">
+          <span class="material-symbols-outlined text-gold">folder_zip</span>
+          <span>Materiales y Guías Clínicas del Taller</span>
+        </h3>
+        <div class="materials-list">
+          <a 
+            *ngFor="let mat of moduloActivo.materiales" 
+            [href]="mat.archivoUrl" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="material-item"
+          >
+            <div class="material-icon">
+              <span class="material-symbols-outlined">description</span>
+            </div>
+            <div class="material-info">
+              <strong>{{ mat.nombre }}</strong>
+              <small>{{ mat.tipoArchivo || 'Documento PDF' }}</small>
+            </div>
+            <span class="material-symbols-outlined download-arrow">download</span>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <!-- COLUMNA DERECHA: TEMARIO & MÓDULOS -->
+    <aside class="dia-sidebar-column">
+      <div class="sidebar-card">
+        <div class="sidebar-header">
+          <span class="material-symbols-outlined text-gold">menu_book</span>
+          <h3>Contenido del Taller</h3>
+        </div>
+
+        <div class="modules-accordion">
+          <div *ngFor="let mod of curso.modulos" class="module-group">
+            <div class="module-title-bar">
+              <span class="material-symbols-outlined">folder</span>
+              <strong>{{ mod.nombre }}</strong>
+            </div>
+
+            <div class="lessons-list">
+              <button
+                *ngFor="let vid of mod.videos"
+                (click)="seleccionarVideo(mod, vid)"
+                class="lesson-btn"
+                [class.lesson-btn--active]="videoActivo?.id === vid.id"
+              >
+                <span class="material-symbols-outlined lesson-icon">
+                  {{ videoActivo?.id === vid.id ? 'play_arrow' : 'play_circle' }}
+                </span>
+                <div class="lesson-text">
+                  <span class="lesson-name">{{ vid.titulo }}</span>
+                  <small *ngIf="vid.duracionSegundos">{{ (vid.duracionSegundos / 60) | number:'1.0-0' }} min</small>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>

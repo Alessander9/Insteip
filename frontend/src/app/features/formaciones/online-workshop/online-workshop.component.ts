@@ -1,4 +1,4 @@
-﻿import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
@@ -679,7 +679,7 @@ export class OnlineWorkshopComponent implements OnInit, AfterViewInit, OnDestroy
       precio: this.course.price,
       tipoPago: '(Pago único)',
       cuotasInfo: `${this.course.duration} · 100% Virtual (Clases Grabadas) · Acceso ${this.course.access}`,
-      plazasDisponibles: 20,
+      plazasDisponibles: 15,
       whatsappLink: this.whatsappLink,
       email: 'ecabanillasbardales@gmail.com',
       beneficios: [

@@ -1,0 +1,528 @@
+<div class="space-y-6 font-body">
+
+  <!-- HEADER CARD CON ALTO CONTRASTE -->
+  <div class="border-2 border-slate-300 dark:border-slate-800 bg-slate-900 text-white p-6 shadow-md flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
+    <div>
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-black uppercase tracking-wider mb-2">
+        <span class="material-symbols-outlined text-sm">spa</span>
+        <span>Día de la Acupuntura 2026 · 17 y 18 de Octubre</span>
+      </div>
+      <h1 class="text-2xl md:text-3xl font-black text-white tracking-tight uppercase">
+        Centro de Control: Día de la Acupuntura
+      </h1>
+      <p class="text-slate-300 text-xs md:text-sm mt-1">
+        Sube uno o varios videos de YouTube por taller, agrega PDFs y matricula a tus alumnos generando su ficha PDF oficial.
+      </p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <a 
+        routerLink="/dia-acupuntura" 
+        target="_blank" 
+        class="inline-flex items-center gap-2 px-5 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider shadow-md transition-all active:scale-95"
+      >
+        <span class="material-symbols-outlined text-sm font-bold">visibility</span>
+        <span>Ver Landing del Evento</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- MENSAJES DE ALERTA -->
+  <div *ngIf="mensajeExito" class="p-4 bg-emerald-100 dark:bg-emerald-950/60 border-2 border-emerald-500 text-emerald-950 dark:text-emerald-200 text-xs md:text-sm font-bold flex items-center justify-between shadow-xs">
+    <div class="flex items-center gap-3">
+      <span class="material-symbols-outlined text-emerald-700 dark:text-emerald-400 font-bold">check_circle</span>
+      <span>{{ mensajeExito }}</span>
+    </div>
+    <button (click)="mensajeExito = ''" class="text-emerald-800 dark:text-emerald-300 font-bold text-lg">&times;</button>
+  </div>
+
+  <div *ngIf="mensajeError" class="p-4 bg-rose-100 dark:bg-rose-950/60 border-2 border-rose-500 text-rose-950 dark:text-rose-200 text-xs md:text-sm font-bold flex items-center justify-between shadow-xs">
+    <div class="flex items-center gap-3">
+      <span class="material-symbols-outlined text-rose-700 dark:text-rose-400 font-bold">error</span>
+      <span>{{ mensajeError }}</span>
+    </div>
+    <button (click)="mensajeError = ''" class="text-rose-800 dark:text-rose-300 font-bold text-lg">&times;</button>
+  </div>
+
+  <!-- RESULTADO DE MATRÍCULA CON DESCARGA INMEDIATA DE FICHA PDF -->
+  <div *ngIf="resultadoMatricula" class="border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 p-6 shadow-md space-y-4">
+    <div class="flex items-start justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold">
+          <span class="material-symbols-outlined text-xl">how_to_reg</span>
+        </div>
+        <div>
+          <span class="text-xs font-black uppercase text-emerald-700 dark:text-emerald-400">¡Matrícula Exitosa Generada!</span>
+          <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase">{{ resultadoMatricula.nombresCompletos }}</h3>
+          <p class="text-xs text-slate-700 dark:text-slate-300 font-mono">
+            Usuario: <strong class="text-slate-950 dark:text-white">{{ resultadoMatricula.correo }}</strong> | Clave: <strong class="text-slate-950 dark:text-white">{{ resultadoMatricula.passwordAsignada }}</strong>
+          </p>
+        </div>
+      </div>
+      <button (click)="cerrarResultadoModal()" class="text-slate-500 hover:text-slate-900 dark:hover:text-white text-xl font-bold">&times;</button>
+    </div>
+
+    <div class="border-t border-emerald-200 dark:border-emerald-800/80 pt-3">
+      <h4 class="text-xs font-black uppercase text-slate-900 dark:text-white mb-2 flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-sm text-emerald-600">picture_as_pdf</span>
+        <span>Descargar Ficha(s) Oficial(es) en PDF:</span>
+      </h4>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div *ngFor="let m of resultadoMatricula.matriculas" class="p-3 bg-white dark:bg-slate-900 border-2 border-emerald-300 dark:border-emerald-700 shadow-xs flex items-center justify-between gap-2">
+          <div class="min-w-0 flex-1">
+            <span class="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 font-bold block">ID Matrícula #{{ m.matriculaId }}</span>
+            <div class="text-xs font-extrabold text-slate-900 dark:text-white truncate" [title]="m.cursoNombre">
+              {{ m.cursoNombre }}
+            </div>
+          </div>
+          <button
+            (click)="descargarFicha(m.matriculaId, resultadoMatricula.nombresCompletos, m.cursoNombre)"
+            [disabled]="descargandoPdfId === m.matriculaId"
+            class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase flex items-center gap-1 shrink-0 shadow-xs transition-all active:scale-95"
+            title="Descargar Ficha Oficial en PDF"
+          >
+            <span *ngIf="descargandoPdfId !== m.matriculaId" class="material-symbols-outlined text-sm">download</span>
+            <span *ngIf="descargandoPdfId === m.matriculaId" class="inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            <span>{{ descargandoPdfId === m.matriculaId ? 'PDF...' : 'Ficha PDF' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB NAVIGATION CON MÁXIMO CONTRASTE -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-slate-200 dark:bg-slate-800 p-1.5 border-2 border-slate-300 dark:border-slate-700">
+    <button
+      (click)="tabActiva = 'clases'"
+      [ngClass]="tabActiva === 'clases' 
+        ? 'bg-amber-500 text-slate-950 font-black shadow-md border-2 border-amber-600' 
+        : 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-850 font-extrabold border-2 border-transparent'"
+      class="flex items-center justify-center gap-2 px-4 py-3.5 text-xs md:text-sm uppercase tracking-wider transition-all"
+    >
+      <span class="material-symbols-outlined text-base">video_library</span>
+      <span>1. Videos y Clases</span>
+      <span [ngClass]="tabActiva === 'clases' ? 'bg-slate-950 text-amber-400' : 'bg-amber-500 text-slate-950'" class="px-2 py-0.5 text-[11px] font-black rounded-full">
+        {{ talleres.length }}
+      </span>
+    </button>
+
+    <button
+      (click)="tabActiva = 'matriculas'"
+      [ngClass]="tabActiva === 'matriculas' 
+        ? 'bg-amber-500 text-slate-950 font-black shadow-md border-2 border-amber-600' 
+        : 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-850 font-extrabold border-2 border-transparent'"
+      class="flex items-center justify-center gap-2 px-4 py-3.5 text-xs md:text-sm uppercase tracking-wider transition-all"
+    >
+      <span class="material-symbols-outlined text-base">how_to_reg</span>
+      <span>2. Matrícula de Alumnos</span>
+    </button>
+
+    <button
+      (click)="tabActiva = 'reporte'"
+      [ngClass]="tabActiva === 'reporte' 
+        ? 'bg-amber-500 text-slate-950 font-black shadow-md border-2 border-amber-600' 
+        : 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-850 font-extrabold border-2 border-transparent'"
+      class="flex items-center justify-center gap-2 px-4 py-3.5 text-xs md:text-sm uppercase tracking-wider transition-all"
+    >
+      <span class="material-symbols-outlined text-base">analytics</span>
+      <span>3. Reporte de Inscritos & Fichas PDF</span>
+    </button>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <!-- TAB 1: GESTIÓN DE VIDEOS / CLASES -->
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <div *ngIf="tabActiva === 'clases'" class="space-y-6">
+
+    <div class="border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-xs">
+      <h2 class="text-base font-black text-slate-950 dark:text-white uppercase tracking-wide flex items-center gap-2">
+        <span class="material-symbols-outlined text-amber-500">smart_display</span>
+        <span>Videos Grabados de YouTube por Taller</span>
+      </h2>
+      <p class="text-xs md:text-sm text-slate-700 dark:text-slate-300 mt-1 font-medium">
+        Cada taller puede contener uno o varios videos de YouTube (ej. Parte 1, Parte 2). Puedes añadir, editar o eliminar videos en cualquier momento.
+      </p>
+    </div>
+
+    <!-- SPINNER -->
+    <div *ngIf="cargando" class="text-center py-12">
+      <div class="inline-block w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-xs font-bold text-slate-700 dark:text-slate-300 mt-2 uppercase">Cargando talleres del evento...</p>
+    </div>
+
+    <!-- GRID DE LOS 6 TALLERES -->
+    <div *ngIf="!cargando" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let taller of talleres" class="border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm flex flex-col justify-between overflow-hidden">
+        
+        <!-- Media & Header -->
+        <div>
+          <div class="relative h-44 bg-slate-950 overflow-hidden">
+            <img [src]="taller.imagenPortada" [alt]="taller.nombre" class="w-full h-full object-cover opacity-90" />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent"></div>
+            <span class="absolute top-3 left-3 bg-amber-500 text-slate-950 text-xs font-black uppercase px-2.5 py-1 tracking-wider shadow-sm">
+              Taller #{{ taller.orden }}
+            </span>
+          </div>
+
+          <div class="p-5 space-y-4">
+            <div>
+              <h3 class="font-black text-slate-950 dark:text-white text-sm md:text-base uppercase leading-snug">
+                {{ taller.nombre }}
+              </h3>
+              <p class="text-xs text-slate-600 dark:text-slate-300 font-bold flex items-center gap-1.5 mt-1.5">
+                <span class="material-symbols-outlined text-sm text-amber-500 font-bold">person</span>
+                <span>{{ taller.docente }}</span>
+              </p>
+            </div>
+
+            <!-- CONTENEDOR DE VIDEOS -->
+            <div class="border-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-3.5 space-y-3">
+              <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                <span class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1">
+                  <span class="material-symbols-outlined text-base text-amber-500">play_circle</span>
+                  <span>Videos ({{ taller.videos ? taller.videos.length : 0 }})</span>
+                </span>
+                <button 
+                  (click)="abrirModalNuevoVideo(taller)" 
+                  class="text-xs font-black uppercase tracking-wider text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 flex items-center gap-0.5"
+                >
+                  <span class="material-symbols-outlined text-sm font-bold">add</span>
+                  <span>+ Agregar Video</span>
+                </button>
+              </div>
+
+              <!-- SI NO HAY VIDEOS -->
+              <div *ngIf="!taller.videos || taller.videos.length === 0" class="py-3 text-center text-slate-500 dark:text-slate-400 text-xs font-bold">
+                Sin videos asignados aún
+              </div>
+
+              <!-- LISTA DE VIDEOS -->
+              <div *ngIf="taller.videos && taller.videos.length > 0" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                <div *ngFor="let vid of taller.videos; let vIdx = index" class="p-2.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 flex items-center justify-between gap-2">
+                  <div class="min-w-0 flex-1">
+                    <div class="text-xs font-black text-slate-950 dark:text-white truncate" [title]="vid.titulo">
+                      <span class="text-amber-600 dark:text-amber-400 font-mono mr-1">#{{ vIdx + 1 }}</span>
+                      {{ vid.titulo }}
+                    </div>
+                    <div class="text-[11px] text-slate-600 dark:text-slate-400 font-mono truncate mt-0.5" [title]="vid.youtubeUrl">
+                      {{ vid.youtubeUrl }}
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-1 shrink-0">
+                    <button 
+                      (click)="abrirModalEditarVideo(taller, vid)" 
+                      class="p-1.5 text-slate-700 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400" 
+                      title="Editar enlace"
+                    >
+                      <span class="material-symbols-outlined text-base">edit</span>
+                    </button>
+                    <button 
+                      (click)="eliminarVideo(taller, vid)" 
+                      class="p-1.5 text-slate-700 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400" 
+                      title="Eliminar video"
+                    >
+                      <span class="material-symbols-outlined text-base">delete</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- MATERIALES PDF -->
+            <div *ngIf="taller.materiales && taller.materiales.length > 0" class="text-xs text-emerald-700 dark:text-emerald-400 font-extrabold flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-base">folder_zip</span>
+              <span>{{ taller.materiales.length }} documento(s) PDF adjunto(s)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FOOTER ACCIONES -->
+        <div class="p-4 bg-slate-100 dark:bg-slate-950 border-t-2 border-slate-200 dark:border-slate-800 flex items-center gap-2">
+          <button 
+            (click)="abrirModalNuevoVideo(taller)" 
+            class="flex-1 py-2.5 px-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-xs"
+          >
+            <span class="material-symbols-outlined text-sm font-bold">add_circle</span>
+            <span>+ Video</span>
+          </button>
+
+          <a 
+            *ngIf="taller.moduloId" 
+            [routerLink]="['/dashboard/modulos', taller.moduloId, 'materiales']" 
+            class="py-2.5 px-3 border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white hover:border-amber-500 font-black text-xs uppercase tracking-wider flex items-center gap-1 transition-all"
+            title="Subir archivos PDF y diapositivas"
+          >
+            <span class="material-symbols-outlined text-sm font-bold text-rose-500">picture_as_pdf</span>
+            <span>PDFs</span>
+          </a>
+
+          <a 
+            [routerLink]="['/dia-acupuntura/play', taller.id]" 
+            target="_blank" 
+            class="p-2.5 border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white hover:text-amber-500 flex items-center justify-center"
+            title="Probar reproducción del taller"
+          >
+            <span class="material-symbols-outlined text-base">play_arrow</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <!-- TAB 2: MATRÍCULA DE ALUMNOS -->
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <div *ngIf="tabActiva === 'matriculas'" class="space-y-6">
+    <div class="flex items-center gap-2">
+      <button 
+        (click)="modoLote = false" 
+        [ngClass]="!modoLote ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700 font-bold'"
+        class="px-5 py-2.5 text-xs uppercase tracking-wider flex items-center gap-2 transition-all"
+      >
+        <span class="material-symbols-outlined text-sm">person_add</span>
+        <span>Matrícula Individual (Checkboxes + Ficha PDF)</span>
+      </button>
+
+      <button 
+        (click)="modoLote = true" 
+        [ngClass]="modoLote ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700 font-bold'"
+        class="px-5 py-2.5 text-xs uppercase tracking-wider flex items-center gap-2 transition-all"
+      >
+        <span class="material-symbols-outlined text-sm">group_add</span>
+        <span>Carga Masiva (Excel / Lote)</span>
+      </button>
+    </div>
+
+    <!-- FORM INDIVIDUAL -->
+    <div *ngIf="!modoLote" class="border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 space-y-6 shadow-sm">
+      <div>
+        <h3 class="text-base font-black text-slate-950 dark:text-white uppercase flex items-center gap-2">
+          <span class="material-symbols-outlined text-amber-500">assignment_ind</span>
+          <span>Matricular Alumno y Generar Ficha PDF</span>
+        </h3>
+        <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+          Completa los datos del participante y selecciona los talleres contratados para habilitar su acceso y descargar su ficha de matrícula.
+        </p>
+      </div>
+
+      <form (ngSubmit)="guardarMatriculaIndividual()" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-black text-slate-900 dark:text-white uppercase mb-1">Nombres *</label>
+            <input type="text" [(ngModel)]="formIndividual.nombres" name="nombres" placeholder="Ej. Juan Carlos" required class="w-full p-3 border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white font-bold text-xs focus:border-amber-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-black text-slate-900 dark:text-white uppercase mb-1">Apellidos *</label>
+            <input type="text" [(ngModel)]="formIndividual.apellidos" name="apellidos" placeholder="Ej. Pérez Gómez" required class="w-full p-3 border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white font-bold text-xs focus:border-amber-500" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-black text-slate-900 dark:text-white uppercase mb-1">Correo Electrónico *</label>
+            <input type="email" [(ngModel)]="formIndividual.correo" name="correo" placeholder="alumno@correo.com" required class="w-full p-3 border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white font-bold text-xs focus:border-amber-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-black text-slate-900 dark:text-white uppercase mb-1">Teléfono / WhatsApp</label>
+            <input type="text" [(ngModel)]="formIndividual.telefono" name="telefono" placeholder="Ej. 987654321" class="w-full p-3 border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white font-bold text-xs focus:border-amber-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-black text-slate-900 dark:text-white uppercase mb-1">Contraseña de Acceso (Opcional)</label>
+            <input type="text" [(ngModel)]="formIndividual.password" name="password" placeholder="Por defecto: número de teléfono" class="w-full p-3 border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white font-bold text-xs focus:border-amber-500" />
+          </div>
+        </div>
+
+        <!-- WORKSHOPS SELECTOR -->
+        <div class="border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 p-5 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+            <span class="text-xs font-black uppercase text-slate-950 dark:text-white">Selecciona los Talleres que Pagó el Alumno:</span>
+            <div class="flex items-center gap-3 text-xs">
+              <button type="button" (click)="marcarTodosTalleres()" class="text-amber-600 dark:text-amber-400 font-black hover:underline">Marcar Todos (6)</button>
+              <span class="text-slate-400">·</span>
+              <button type="button" (click)="desmarcarTodosTalleres()" class="text-slate-600 dark:text-slate-400 font-bold hover:underline">Desmarcar Todos</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <label *ngFor="let t of talleres" class="p-3.5 border-2 border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center gap-3 cursor-pointer hover:border-amber-500 transition-all">
+              <input type="checkbox" [(ngModel)]="formIndividual.cursosSeleccionados[t.id]" [name]="'curso_' + t.id" class="w-4 h-4 text-amber-500 focus:ring-amber-400" />
+              <span class="text-xs font-extrabold text-slate-950 dark:text-white leading-tight">{{ t.nombre }}</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 pt-2">
+          <button type="submit" [disabled]="guardando" class="px-7 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md transition-all active:scale-95">
+            <span class="material-symbols-outlined text-base font-bold">save</span>
+            <span>{{ guardando ? 'Guardando...' : 'Habilitar Matrícula y Ver Ficha PDF' }}</span>
+          </button>
+          <button type="button" (click)="limpiarFormIndividual()" class="px-5 py-3.5 border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs uppercase">
+            <span>Limpiar</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- FORM LOTE -->
+    <div *ngIf="modoLote" class="border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 space-y-4 shadow-sm">
+      <h3 class="text-base font-black text-slate-950 dark:text-white uppercase flex items-center gap-2">
+        <span class="material-symbols-outlined text-amber-500">table_rows</span>
+        <span>Carga Masiva de Alumnos (Pega desde Excel / CSV)</span>
+      </h3>
+      <p class="text-xs text-slate-700 dark:text-slate-300 font-medium">
+        Formato por línea: <code class="p-1 bg-slate-200 dark:bg-slate-800 font-mono text-amber-700 dark:text-amber-400 font-bold">correo,nombres,apellidos,telefono</code>
+      </p>
+
+      <textarea
+        [(ngModel)]="textoLote"
+        rows="8"
+        class="w-full p-3.5 border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white font-mono text-xs focus:border-amber-500"
+        placeholder="juan.perez@gmail.com,Juan,Perez Gomez,987654321&#10;maria.lopez@gmail.com,Maria,Lopez Silva,912345678"
+      ></textarea>
+
+      <button (click)="procesarMatriculaLote()" [disabled]="guardando" class="px-7 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md transition-all active:scale-95">
+        <span class="material-symbols-outlined text-base font-bold">playlist_add_check</span>
+        <span>{{ guardando ? 'Procesando...' : 'Procesar Matrículas Masivas' }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <!-- TAB 3: REPORTE DE INSCRITOS & FICHAS PDF -->
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <div *ngIf="tabActiva === 'reporte'" class="space-y-6">
+    <!-- METRIC CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" *ngIf="!cargando">
+      <div *ngFor="let item of resumen" class="border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm flex items-center justify-between">
+        <div class="min-w-0 pr-2">
+          <span class="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 block">Total Inscritos</span>
+          <h4 class="text-xs font-black text-slate-950 dark:text-white mt-1 leading-tight truncate">{{ item.cursoNombre }}</h4>
+        </div>
+        <span class="text-2xl font-black font-mono text-emerald-600 dark:text-emerald-400 shrink-0">{{ item.totalInscritos }}</span>
+      </div>
+    </div>
+
+    <!-- DETALLE POR TALLER CON BOTÓN DE FICHA PDF DIRECTA -->
+    <div class="space-y-4">
+      <div *ngFor="let item of resumen" class="border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+        
+        <div class="p-4 border-b-2 border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div class="flex items-center gap-2.5">
+            <span class="w-7 h-7 rounded-full bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center font-mono">
+              {{ item.totalInscritos }}
+            </span>
+            <h3 class="text-sm font-black uppercase text-slate-950 dark:text-white">
+              {{ item.cursoNombre }}
+            </h3>
+          </div>
+          <span class="text-xs font-bold text-slate-600 dark:text-slate-400 font-mono">
+            {{ item.totalInscritos }} estudiante(s) activo(s)
+          </span>
+        </div>
+
+        <!-- LISTA DE ALUMNOS DEL TALLER -->
+        <div class="p-4">
+          <div *ngIf="item.alumnos && item.alumnos.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+            <div *ngFor="let a of item.alumnos" class="p-3 bg-slate-50 dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2">
+              <div class="min-w-0 flex-1">
+                <div class="text-xs font-black text-slate-950 dark:text-white truncate" [title]="a.nombresCompletos">
+                  {{ a.nombresCompletos }}
+                </div>
+                <div class="text-[11px] text-slate-600 dark:text-slate-400 font-mono truncate">
+                  {{ a.correo }}
+                </div>
+                <div *ngIf="a.telefono" class="text-[10px] text-slate-500 dark:text-slate-500 font-mono mt-0.5">
+                  Tel: {{ a.telefono }}
+                </div>
+              </div>
+
+              <!-- BOTÓN DESCARGA FICHA PDF -->
+              <button
+                (click)="descargarFicha(a.matriculaId, a.nombresCompletos, item.cursoNombre)"
+                [disabled]="descargandoPdfId === a.matriculaId"
+                class="px-2.5 py-1.5 bg-slate-900 dark:bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-white font-black text-[11px] uppercase flex items-center gap-1 shrink-0 border border-slate-700 transition-all active:scale-95 shadow-xs"
+                title="Descargar Ficha Oficial en PDF"
+              >
+                <span *ngIf="descargandoPdfId !== a.matriculaId" class="material-symbols-outlined text-sm text-rose-400">picture_as_pdf</span>
+                <span *ngIf="descargandoPdfId === a.matriculaId" class="inline-block w-3 h-3 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></span>
+                <span>{{ descargandoPdfId === a.matriculaId ? 'PDF...' : 'Ficha PDF' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="!item.alumnos || item.alumnos.length === 0" class="py-4 text-center text-slate-500 dark:text-slate-400 text-xs font-bold italic">
+            Sin alumnos matriculados en este taller todavía.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <!-- MODAL: AGREGAR O EDITAR VIDEO DE YOUTUBE -->
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <div *ngIf="modalVideoAbierto" class="fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 w-full max-w-lg shadow-2xl overflow-hidden animate-scaleIn">
+      <div class="p-4 border-b-2 border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950 flex items-center justify-between">
+        <div class="flex items-center gap-2 text-slate-950 dark:text-white font-black text-sm uppercase">
+          <span class="material-symbols-outlined text-amber-500 font-bold">smart_display</span>
+          <span>{{ videoSeleccionado ? 'Editar Video' : 'Agregar Nuevo Video' }}</span>
+        </div>
+        <button (click)="cerrarModalVideo()" class="text-slate-500 hover:text-slate-900 dark:hover:text-white text-xl font-bold">&times;</button>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <div class="p-3.5 bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-800 text-slate-950 dark:text-white text-xs">
+          <span class="text-slate-600 dark:text-slate-400 block text-[10px] uppercase font-black">Taller Seleccionado:</span>
+          <strong class="text-sm font-black">{{ tallerSeleccionado?.nombre }}</strong>
+        </div>
+
+        <div>
+          <label class="block text-xs font-black text-slate-900 dark:text-white uppercase mb-1">Título del Video / Parte *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="formVideo.titulo" 
+            placeholder="Ej. Parte 1: Fundamentos y Demostración" 
+            class="w-full p-3 border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white text-xs font-bold focus:border-amber-500"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-black text-slate-900 dark:text-white uppercase mb-1">Enlace de YouTube *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="formVideo.youtubeUrl" 
+            placeholder="https://www.youtube.com/watch?v=..." 
+            class="w-full p-3 border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white text-xs font-mono font-bold focus:border-amber-500"
+          />
+          <small class="text-slate-600 dark:text-slate-400 text-[11px] mt-1 block font-medium">Pega cualquier enlace de YouTube (grabado o video oculto).</small>
+        </div>
+
+        <div>
+          <label class="block text-xs font-black text-slate-900 dark:text-white uppercase mb-1">Duración Estimada (Minutos)</label>
+          <input 
+            type="number" 
+            [(ngModel)]="formVideo.duracionMinutos" 
+            placeholder="90" 
+            class="w-full p-3 border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white text-xs font-bold focus:border-amber-500"
+          />
+        </div>
+      </div>
+
+      <div class="p-4 bg-slate-100 dark:bg-slate-950 border-t-2 border-slate-200 dark:border-slate-800 flex items-center justify-end gap-2">
+        <button (click)="cerrarModalVideo()" class="px-5 py-2.5 border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs uppercase">
+          Cancelar
+        </button>
+        <button (click)="guardarVideoTaller()" [disabled]="guardando" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-md">
+          <span class="material-symbols-outlined text-sm font-bold">save</span>
+          <span>{{ guardando ? 'Guardando...' : (videoSeleccionado ? 'Actualizar Video' : 'Guardar Video') }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

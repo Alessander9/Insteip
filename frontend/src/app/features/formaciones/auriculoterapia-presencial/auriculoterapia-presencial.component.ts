@@ -1,4 +1,4 @@
-﻿import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../../../core/components/navbar/navbar.component';
 import { FooterComponent } from '../../../core/components/footer/footer.component';
@@ -181,11 +181,11 @@ export class AuriculoterapiaPresencialComponent implements OnInit, AfterViewInit
   };
 
   readonly ctaData: CourseCtaData = {
-    precio: 150,
+    precio: 260,
     tipoPago: '/ mes',
-    cuotasInfo: 'Curso Presencial · Práctica clínica garantizada',
-    plazasDisponibles: 15,
-    whatsappLink: 'https://wa.me/51930830427?text=Hola%2C%20deseo%20inscribirme%20en%20el%20curso%20Presencial%20de%20Auriculoterapia',
+    cuotasInfo: '2 meses · Matrícula S/ 30 · Reserva S/ 50 (vía WhatsApp)',
+    plazasDisponibles: 8,
+    whatsappLink: 'https://wa.me/51930830427?text=Hola%2C%20deseo%20reservar%20mi%20cupo%20para%20la%20Formaci%C3%B3n%20de%20Auriculoterapia',
     email: 'ecabanillasbardales@gmail.com',
     beneficios: [
       'Materiales de práctica incluidos (semillas, balines, chinchetas)',
@@ -201,7 +201,7 @@ export class AuriculoterapiaPresencialComponent implements OnInit, AfterViewInit
       { icon: 'payments', pregunta: '¿Qué incluye la matrícula?', respuesta: 'Incluye clases presenciales, kit de materiales inicial, acceso al campus virtual y asesoría continua.' },
       { icon: 'school', pregunta: '¿Qué certificación obtengo?', respuesta: 'Recibes Certificado Oficial con valor institucional emitido por INSTEIP.' }
     ],
-    trustText: 'Garantía INSTEIP · Kit de materiales incluido · Práctica clínica presencial'
+    trustText: 'Reserva segura · Asesoría personalizada vía WhatsApp +51 930 830 427'
   };
 
   constructor(private readonly host: ElementRef<HTMLElement>) { }

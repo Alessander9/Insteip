@@ -10,7 +10,7 @@ import { MatriculaService } from '../../../../core/services/';
 import { AlumnoService } from '../../../../core/services/';
 import { CursoRequest, CursoResponse } from '../../../../core/models/';
 import { ModuloRequest, ModuloResponse } from '../../../../core/models/';
-import { MatriculaRequest, MatriculaResponse, ModuloAccesoItem } from '../../../../core/models/';
+import { MatriculaRequest, MatriculaResponse, ModuloAccesoItem, VideoAccesoItem, MaterialAccesoItem } from '../../../../core/models/';
 import { AlumnoResponse } from '../../../../core/models/';
 import { VideoService } from '../../../../core/services/';
 import { MaterialService } from '../../../../core/services/';
@@ -1256,7 +1256,9 @@ export class CursoDetalleComponent implements OnInit {
     });
   }
 
-  // --- Modal de Acceso a Módulos por Cuotas ---
+  // --- Modal de Acceso a Módulos y Videos por Cuotas ---
+  expandedModulos: { [moduloId: number]: boolean } = {};
+
   abrirModalModulos(matricula: MatriculaResponse): void {
     if (!matricula?.id) {
       this.toastService.warning('Esta matrícula no cuenta con ID válido.');
@@ -1266,11 +1268,16 @@ export class CursoDetalleComponent implements OnInit {
     this.showModulosModal = true;
     this.loadingModulos = true;
     this.modulosAcceso = [];
+    this.expandedModulos = {};
 
     this.matriculaService.obtenerModulosAcceso(matricula.id).subscribe({
       next: (data) => {
         this.modulosAcceso = data || [];
         this.loadingModulos = false;
+        // Expand first module by default if available
+        if (this.modulosAcceso.length > 0) {
+          this.expandedModulos[this.modulosAcceso[0].moduloId] = true;
+        }
       },
       error: (err) => {
         this.loadingModulos = false;
@@ -1283,6 +1290,11 @@ export class CursoDetalleComponent implements OnInit {
     this.showModulosModal = false;
     this.selectedMatriculaParaModulos = null;
     this.modulosAcceso = [];
+    this.expandedModulos = {};
+  }
+
+  toggleModuloAccordion(moduloId: number): void {
+    this.expandedModulos[moduloId] = !this.expandedModulos[moduloId];
   }
 
   toggleModuloAcceso(item: ModuloAccesoItem): void {
@@ -1292,6 +1304,12 @@ export class CursoDetalleComponent implements OnInit {
     this.matriculaService.cambiarAccesoModulo(this.selectedMatriculaParaModulos.id, item.moduloId, nuevoEstado).subscribe({
       next: () => {
         item.habilitado = nuevoEstado;
+        if (item.videos) {
+          item.videos.forEach(v => v.habilitado = nuevoEstado);
+        }
+        if (item.materiales) {
+          item.materiales.forEach(mat => mat.habilitado = nuevoEstado);
+        }
         this.toastService.success(`Módulo ${nuevoEstado ? 'habilitado' : 'bloqueado'} con éxito.`);
       },
       error: (err) => {
@@ -1300,16 +1318,68 @@ export class CursoDetalleComponent implements OnInit {
     });
   }
 
+  toggleVideoAcceso(modulo: ModuloAccesoItem, video: VideoAccesoItem): void {
+    if (!this.selectedMatriculaParaModulos?.id) return;
+    const nuevoEstado = !video.habilitado;
+
+    this.matriculaService.cambiarAccesoVideo(this.selectedMatriculaParaModulos.id, video.videoId, nuevoEstado).subscribe({
+      next: () => {
+        video.habilitado = nuevoEstado;
+        this.toastService.success(`Video "${video.titulo}" ${nuevoEstado ? 'habilitado' : 'bloqueado'} con éxito.`);
+      },
+      error: (err) => {
+        this.toastService.error('Error al actualizar acceso al video: ' + (err.error?.message || err.message));
+      }
+    });
+  }
+
+  toggleMaterialAcceso(modulo: ModuloAccesoItem, material: MaterialAccesoItem): void {
+    if (!this.selectedMatriculaParaModulos?.id) return;
+    const nuevoEstado = !material.habilitado;
+
+    this.matriculaService.cambiarAccesoMaterial(this.selectedMatriculaParaModulos.id, material.materialId, nuevoEstado).subscribe({
+      next: () => {
+        material.habilitado = nuevoEstado;
+        this.toastService.success(`Material "${material.nombre}" ${nuevoEstado ? 'habilitado' : 'bloqueado'} con éxito.`);
+      },
+      error: (err) => {
+        this.toastService.error('Error al actualizar acceso al material: ' + (err.error?.message || err.message));
+      }
+    });
+  }
+
   habilitarTodosModulos(habilitar: boolean): void {
     if (!this.selectedMatriculaParaModulos?.id) return;
     this.isSavingModulos = true;
-    const habilitadosIds = habilitar ? this.modulosAcceso.map(m => m.moduloId) : [];
+    const modulosHabilitadosIds = habilitar ? this.modulosAcceso.map(m => m.moduloId) : [];
+    const videosHabilitadosIds: number[] = [];
+    const materialesHabilitadosIds: number[] = [];
+    if (habilitar) {
+      this.modulosAcceso.forEach(m => {
+        (m.videos || []).forEach(v => videosHabilitadosIds.push(v.videoId));
+        (m.materiales || []).forEach(mat => materialesHabilitadosIds.push(mat.materialId));
+      });
+    }
 
-    this.matriculaService.guardarModulosAccesoMasivo(this.selectedMatriculaParaModulos.id, habilitadosIds).subscribe({
+    const request = {
+      modulosHabilitadosIds,
+      videosHabilitadosIds,
+      materialesHabilitadosIds
+    };
+
+    this.matriculaService.guardarAccesosMasivo(this.selectedMatriculaParaModulos.id, request).subscribe({
       next: () => {
-        this.modulosAcceso.forEach(m => m.habilitado = habilitar);
+        this.modulosAcceso.forEach(m => {
+          m.habilitado = habilitar;
+          if (m.videos) {
+            m.videos.forEach(v => v.habilitado = habilitar);
+          }
+          if (m.materiales) {
+            m.materiales.forEach(mat => mat.habilitado = habilitar);
+          }
+        });
         this.isSavingModulos = false;
-        this.toastService.success(`Todos los módulos han sido ${habilitar ? 'habilitados' : 'bloqueados'}.`);
+        this.toastService.success(`Todos los módulos, videos y materiales han sido ${habilitar ? 'habilitados' : 'bloqueados'}.`);
       },
       error: (err) => {
         this.isSavingModulos = false;
@@ -1317,5 +1387,102 @@ export class CursoDetalleComponent implements OnInit {
       }
     });
   }
+
+  habilitarVideosModulo(modulo: ModuloAccesoItem, habilitar: boolean): void {
+    if (!this.selectedMatriculaParaModulos?.id || !modulo.videos || modulo.videos.length === 0) return;
+    this.isSavingModulos = true;
+
+    const videosHabilitadosIds: number[] = [];
+    this.modulosAcceso.forEach(m => {
+      (m.videos || []).forEach(v => {
+        const isThisVideo = m.moduloId === modulo.moduloId;
+        const willBeEnabled = isThisVideo ? habilitar : v.habilitado;
+        if (willBeEnabled) {
+          videosHabilitadosIds.push(v.videoId);
+        }
+      });
+    });
+
+    const materialesHabilitadosIds: number[] = [];
+    this.modulosAcceso.forEach(m => {
+      (m.materiales || []).forEach(mat => {
+        if (mat.habilitado) {
+          materialesHabilitadosIds.push(mat.materialId);
+        }
+      });
+    });
+
+    const request = {
+      modulosHabilitadosIds: this.modulosAcceso.filter(m => m.habilitado).map(m => m.moduloId),
+      videosHabilitadosIds,
+      materialesHabilitadosIds
+    };
+
+    this.matriculaService.guardarAccesosMasivo(this.selectedMatriculaParaModulos.id, request).subscribe({
+      next: () => {
+        (modulo.videos || []).forEach(v => v.habilitado = habilitar);
+        this.isSavingModulos = false;
+        this.toastService.success(`Todos los videos del módulo "${modulo.nombreModulo}" han sido ${habilitar ? 'habilitados' : 'bloqueados'}.`);
+      },
+      error: (err) => {
+        this.isSavingModulos = false;
+        this.toastService.error('Error al actualizar videos del módulo: ' + (err.error?.message || err.message));
+      }
+    });
+  }
+
+  habilitarMaterialesModulo(modulo: ModuloAccesoItem, habilitar: boolean): void {
+    if (!this.selectedMatriculaParaModulos?.id || !modulo.materiales || modulo.materiales.length === 0) return;
+    this.isSavingModulos = true;
+
+    const materialesHabilitadosIds: number[] = [];
+    this.modulosAcceso.forEach(m => {
+      (m.materiales || []).forEach(mat => {
+        const isThisMat = m.moduloId === modulo.moduloId;
+        const willBeEnabled = isThisMat ? habilitar : mat.habilitado;
+        if (willBeEnabled) {
+          materialesHabilitadosIds.push(mat.materialId);
+        }
+      });
+    });
+
+    const videosHabilitadosIds: number[] = [];
+    this.modulosAcceso.forEach(m => {
+      (m.videos || []).forEach(v => {
+        if (v.habilitado) {
+          videosHabilitadosIds.push(v.videoId);
+        }
+      });
+    });
+
+    const request = {
+      modulosHabilitadosIds: this.modulosAcceso.filter(m => m.habilitado).map(m => m.moduloId),
+      videosHabilitadosIds,
+      materialesHabilitadosIds
+    };
+
+    this.matriculaService.guardarAccesosMasivo(this.selectedMatriculaParaModulos.id, request).subscribe({
+      next: () => {
+        (modulo.materiales || []).forEach(mat => mat.habilitado = habilitar);
+        this.isSavingModulos = false;
+        this.toastService.success(`Todos los materiales del módulo "${modulo.nombreModulo}" han sido ${habilitar ? 'habilitados' : 'bloqueados'}.`);
+      },
+      error: (err) => {
+        this.isSavingModulos = false;
+        this.toastService.error('Error al actualizar materiales del módulo: ' + (err.error?.message || err.message));
+      }
+    });
+  }
+
+  getVideosHabilitadosCount(modulo: ModuloAccesoItem): number {
+    if (!modulo.habilitado || !modulo.videos) return 0;
+    return modulo.videos.filter(v => v.habilitado).length;
+  }
+
+  getMaterialesHabilitadosCount(modulo: ModuloAccesoItem): number {
+    if (!modulo.habilitado || !modulo.materiales) return 0;
+    return modulo.materiales.filter(m => m.habilitado).length;
+  }
 }
+
 

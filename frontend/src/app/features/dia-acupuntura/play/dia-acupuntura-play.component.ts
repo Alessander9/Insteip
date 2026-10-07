@@ -61,14 +61,20 @@ export class DiaAcupunturaPlayComponent implements OnInit {
     if (this.curso && this.curso.modulos && this.curso.modulos.length > 0) {
       for (const mod of this.curso.modulos) {
         if (!mod.bloqueado && mod.videos && mod.videos.length > 0) {
-          this.seleccionarVideo(mod, mod.videos[0]);
-          break;
+          const firstUnlocked = mod.videos.find(v => !v.bloqueado);
+          if (firstUnlocked) {
+            this.seleccionarVideo(mod, firstUnlocked);
+            break;
+          }
         }
       }
     }
   }
 
   seleccionarVideo(modulo: AlumnoPlayModulo, video: AlumnoPlayVideo): void {
+    if (modulo.bloqueado || video.bloqueado) {
+      return;
+    }
     this.moduloActivo = modulo;
     this.videoActivo = video;
 

@@ -1,9 +1,15 @@
 package com.insteip.backend.domain.dto.avance;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AvanceProgressRequest {
     @NotNull(message = "El ID del video es obligatorio")
     private Long videoId;
@@ -13,4 +19,3 @@ public class AvanceProgressRequest {
 
     private Integer duracionSegundos;
 }
-

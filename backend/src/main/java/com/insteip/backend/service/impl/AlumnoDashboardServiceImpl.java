@@ -31,6 +31,8 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
     private final MatriculaRepository matriculaRepository;
     private final CertificadoRepository certificadoRepository;
     private final MatriculaModuloAccesoRepository matriculaModuloAccesoRepository;
+    private final MatriculaVideoAccesoRepository matriculaVideoAccesoRepository;
+    private final MatriculaMaterialAccesoRepository matriculaMaterialAccesoRepository;
 
     @Value("${application.api.base-url}")
     private String apiBaseUrl;
@@ -276,9 +278,19 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
 
         // Obtener permisos de acceso modular para esta matrícula
         List<MatriculaModuloAcceso> accesosModulo = matriculaModuloAccesoRepository.findByMatriculaId(matricula.getId());
-        boolean tieneRestricciones = !accesosModulo.isEmpty();
-        Map<Long, Boolean> mapaAccesos = accesosModulo.stream()
+        boolean tieneRestriccionesModulo = !accesosModulo.isEmpty();
+        Map<Long, Boolean> mapaAccesosModulos = accesosModulo.stream()
                 .collect(Collectors.toMap(a -> a.getModulo().getId(), a -> Boolean.TRUE.equals(a.getHabilitado()), (a1, a2) -> a1));
+
+        // Obtener permisos de acceso por video para esta matrícula
+        List<MatriculaVideoAcceso> accesosVideo = matriculaVideoAccesoRepository.findByMatriculaId(matricula.getId());
+        Map<Long, Boolean> mapaAccesosVideos = accesosVideo.stream()
+                .collect(Collectors.toMap(a -> a.getVideo().getId(), a -> Boolean.TRUE.equals(a.getHabilitado()), (v1, v2) -> v1));
+
+        // Obtener permisos de acceso por material para esta matrícula
+        List<MatriculaMaterialAcceso> accesosMaterial = matriculaMaterialAccesoRepository.findByMatriculaId(matricula.getId());
+        Map<Long, Boolean> mapaAccesosMateriales = accesosMaterial.stream()
+                .collect(Collectors.toMap(a -> a.getMaterial().getId(), a -> Boolean.TRUE.equals(a.getHabilitado()), (m1, m2) -> m1));
 
         List<Modulo> modulos = moduloRepository.findByCursoIdOrderByOrdenAsc(cursoId);
         List<AlumnoPlayModulo> playModulos = new ArrayList<>();
@@ -292,9 +304,9 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
             if (Boolean.FALSE.equals(modulo.getEstado())) continue;
 
             boolean moduloHabilitado = true;
-            if (tieneRestricciones) {
+            if (tieneRestriccionesModulo) {
                 // Si el alumno tiene restricciones configuradas, sólo accede a los módulos explícitamente habilitados
-                moduloHabilitado = mapaAccesos.getOrDefault(modulo.getId(), false);
+                moduloHabilitado = mapaAccesosModulos.getOrDefault(modulo.getId(), false);
             }
 
             List<Video> videos = videoRepository.findByModuloIdOrderByOrdenAsc(modulo.getId());
@@ -310,9 +322,26 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
                 BigDecimal porcentajeVisto = avance != null ? avance.getPorcentajeVisto() : BigDecimal.ZERO;
                 boolean completado = ProgresoAcademicoUtils.isVideoCompletado(video, avance);
 
-                // Si el módulo está bloqueado, se omiten las URLs directas de reproducción
-                String videoUrl = moduloHabilitado ? video.getYoutubeUrl() : null;
-                String videoId = moduloHabilitado ? video.getYoutubeId() : null;
+                // Determinar si el video está habilitado
+                boolean videoHabilitado;
+                String mensajeBloqueoVideo = null;
+
+                if (!moduloHabilitado) {
+                    videoHabilitado = false;
+                    mensajeBloqueoVideo = "Módulo bloqueado o pendiente de pago.";
+                } else if (mapaAccesosVideos.containsKey(video.getId())) {
+                    videoHabilitado = mapaAccesosVideos.get(video.getId());
+                    if (!videoHabilitado) {
+                        mensajeBloqueoVideo = "Video restringido por el administrador.";
+                    }
+                } else {
+                    // Por defecto hereda el estado del módulo (habilitado)
+                    videoHabilitado = true;
+                }
+
+                // Si el video está bloqueado, se omiten las URLs directas de reproducción
+                String videoUrl = videoHabilitado ? video.getYoutubeUrl() : null;
+                String videoId = videoHabilitado ? video.getYoutubeId() : null;
 
                 playVideos.add(new AlumnoPlayVideo(
                         video.getId(),
@@ -324,22 +353,45 @@ public class AlumnoDashboardServiceImpl implements AlumnoDashboardService {
                         video.getOrden(),
                         ultimoSegundo,
                         porcentajeVisto,
-                        completado
+                        completado,
+                        !videoHabilitado,
+                        mensajeBloqueoVideo
                 ));
             }
 
+            List<Material> materiales = materialRepository.findByModuloId(modulo.getId());
             List<AlumnoPlayMaterial> playMateriales = new ArrayList<>();
-            if (moduloHabilitado) {
-                List<Material> materiales = materialRepository.findByModuloId(modulo.getId());
-                playMateriales = materiales.stream()
-                        .filter(material -> Boolean.TRUE.equals(material.getEstado()))
-                        .map(m -> new AlumnoPlayMaterial(
-                                m.getId(),
-                                m.getNombre(),
-                                m.getArchivoUrl(),
-                                m.getTipoArchivo(),
-                                m.getPesoBytes()
-                        )).collect(Collectors.toList());
+
+            for (Material material : materiales) {
+                if (Boolean.FALSE.equals(material.getEstado())) continue;
+
+                boolean materialHabilitado;
+                String mensajeBloqueoMaterial = null;
+
+                if (!moduloHabilitado) {
+                    materialHabilitado = false;
+                    mensajeBloqueoMaterial = "Módulo pendiente de habilitación o pago de cuota.";
+                } else if (mapaAccesosMateriales.containsKey(material.getId())) {
+                    materialHabilitado = Boolean.TRUE.equals(mapaAccesosMateriales.get(material.getId()));
+                    if (!materialHabilitado) {
+                        mensajeBloqueoMaterial = "Material de apoyo no habilitado para su matrícula.";
+                    }
+                } else {
+                    // Por defecto hereda el estado del módulo (habilitado)
+                    materialHabilitado = true;
+                }
+
+                String archivoUrl = materialHabilitado ? material.getArchivoUrl() : null;
+
+                playMateriales.add(new AlumnoPlayMaterial(
+                        material.getId(),
+                        material.getNombre(),
+                        archivoUrl,
+                        material.getTipoArchivo(),
+                        material.getPesoBytes(),
+                        !materialHabilitado,
+                        mensajeBloqueoMaterial
+                ));
             }
 
             playModulos.add(new AlumnoPlayModulo(

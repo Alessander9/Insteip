@@ -1,7 +1,7 @@
 ﻿import { Component, OnInit, OnDestroy, AfterViewInit, inject, NgZone, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { AlumnoDashboardService, AlumnoPlayCourse, AlumnoPlayModulo, AlumnoPlayVideo } from '../../../core/services/';
+import { AlumnoDashboardService, AlumnoPlayCourse, AlumnoPlayModulo, AlumnoPlayVideo, AlumnoPlayMaterial } from '../../../core/services/';
 import { CertificadoService } from '../../../core/services/';
 import { AuthService } from '../../../core/services/';
 import { ArchivoProtegidoService } from '../../../core/services/';
@@ -49,6 +49,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
   isPlayerLoading = false;
   activeTab: 'materiales' | 'tareas' | 'info' | 'certificado' | '' = 'materiales';
   selectedBlockedModulo: AlumnoPlayModulo | null = null;
+  selectedBlockedVideo: AlumnoPlayVideo | null = null;
   
   // Tareas properties
   tareas: AlumnoTareaItem[] = [];
@@ -225,7 +226,10 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private flattenVideos(): AlumnoPlayVideo[] {
     if (!this.curso) return [];
-    return this.curso.modulos.filter(mod => !mod.bloqueado).flatMap(mod => mod.videos);
+    return this.curso.modulos
+      .filter(mod => !mod.bloqueado)
+      .flatMap(mod => mod.videos)
+      .filter(vid => !vid.bloqueado);
   }
 
   private getNextVideoAfter(videoId: number): AlumnoPlayVideo | null {
@@ -322,17 +326,18 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     const unlockedModulos = this.curso.modulos.filter(m => !m.bloqueado);
     if (unlockedModulos.length === 0) {
       this.selectedBlockedModulo = this.curso.modulos[0];
+      this.selectedBlockedVideo = null;
       this.currentVideo = null;
       return;
     }
 
     let targetVideo: AlumnoPlayVideo | null = null;
 
-    // If a specific videoId was requested, find it in unlocked modules
+    // If a specific videoId was requested, find it in unlocked modules and unlocked videos
     if (videoId) {
       for (const mod of unlockedModulos) {
         for (const vid of mod.videos) {
-          if (vid.id === videoId) {
+          if (vid.id === videoId && !vid.bloqueado) {
             targetVideo = vid;
             break;
           }
@@ -341,28 +346,31 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
 
-    // Otherwise, find first uncompleted video in unlocked modules
+    // Otherwise, find first uncompleted unlocked video in unlocked modules
     if (!targetVideo) {
       for (const mod of unlockedModulos) {
         for (const vid of mod.videos) {
-          if (!vid.completado) { targetVideo = vid; break; }
+          if (!vid.bloqueado && !vid.completado) { targetVideo = vid; break; }
         }
         if (targetVideo) break;
       }
     }
 
-    // Fallback to first video in unlocked modules
+    // Fallback to first unlocked video in unlocked modules
     if (!targetVideo) {
       for (const mod of unlockedModulos) {
-        if (mod.videos.length > 0) { targetVideo = mod.videos[0]; break; }
+        const firstUnlocked = mod.videos.find(v => !v.bloqueado);
+        if (firstUnlocked) { targetVideo = firstUnlocked; break; }
       }
     }
 
     if (targetVideo) {
       this.selectedBlockedModulo = null;
+      this.selectedBlockedVideo = null;
       this.playVideo(targetVideo);
     } else {
       this.selectedBlockedModulo = this.curso.modulos[0];
+      this.selectedBlockedVideo = null;
     }
   }
 
@@ -396,6 +404,14 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
   onVideoClick(mod: AlumnoPlayModulo, vid: AlumnoPlayVideo): void {
     if (mod.bloqueado) {
       this.selectedBlockedModulo = mod;
+      this.selectedBlockedVideo = null;
+      this.currentVideo = null;
+      this.destroyPlayerSafely();
+      return;
+    }
+    if (vid.bloqueado) {
+      this.selectedBlockedModulo = null;
+      this.selectedBlockedVideo = vid;
       this.currentVideo = null;
       this.destroyPlayerSafely();
       return;
@@ -405,6 +421,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
     this.selectedBlockedModulo = null;
+    this.selectedBlockedVideo = null;
     this.playVideo(vid);
   }
 
@@ -414,6 +431,16 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     const alumnoNombre = this.profile ? `${this.profile.nombres} ${this.profile.apellidos}`.trim() : 'Estudiante';
     
     const mensaje = `Hola INSTEIP, soy ${alumnoNombre}, deseo coordinar el pago para habilitar el Módulo "${moduloNombre}" del curso "${cursoNombre}".`;
+    const whatsappUrl = `https://wa.me/51930830427?text=${encodeURIComponent(mensaje)}`;
+    window.open(whatsappUrl, '_blank');
+  }
+
+  solicitarHabilitacionVideoWhatsApp(vid?: AlumnoPlayVideo | null): void {
+    const videoTitulo = vid?.titulo || 'esta clase';
+    const cursoNombre = this.curso?.nombre || 'el curso';
+    const alumnoNombre = this.profile ? `${this.profile.nombres} ${this.profile.apellidos}`.trim() : 'Estudiante';
+    
+    const mensaje = `Hola INSTEIP, soy ${alumnoNombre}, deseo coordinar la habilitación del video "${videoTitulo}" del curso "${cursoNombre}".`;
     const whatsappUrl = `https://wa.me/51930830427?text=${encodeURIComponent(mensaje)}`;
     window.open(whatsappUrl, '_blank');
   }
@@ -950,16 +977,37 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  descargarMaterial(url: string, nombre: string, tipoArchivo: string): void {
+  descargarMaterial(mat: AlumnoPlayMaterial, mod?: AlumnoPlayModulo): void {
     if (this.isExpUser) {
       this.toastService.warning('Las descargas de materiales no están permitidas en el modo EXP INSTEIP.');
       return;
     }
-    const extension = getFileExtension(tipoArchivo);
-    const fileName = nombre.toLowerCase().endsWith(`.${extension}`) ? nombre : `${nombre}.${extension}`;
-    this.archivoProtegidoService.descargar(url, fileName).subscribe({
-      error: (err) => console.error('Error al descargar material:', err)
+    if (mat.bloqueado || !mat.archivoUrl) {
+      const razon = mat.mensajeBloqueo || 'Este material no está habilitado para tu matrícula.';
+      this.toastService.warning(razon);
+      return;
+    }
+    const extension = getFileExtension(mat.tipoArchivo);
+    const fileName = mat.nombre.toLowerCase().endsWith(`.${extension}`) ? mat.nombre : `${mat.nombre}.${extension}`;
+    this.archivoProtegidoService.descargar(mat.archivoUrl, fileName).subscribe({
+      error: (err) => {
+        console.error('Error al descargar material:', err);
+        if (err.status === 403) {
+          this.toastService.error('Acceso denegado: Este material no está disponible con tu estado actual de matrícula.');
+        } else {
+          this.toastService.error('Error al descargar el material solicitado.');
+        }
+      }
     });
+  }
+
+  solicitarHabilitacionMaterialWhatsApp(mat: AlumnoPlayMaterial, mod?: AlumnoPlayModulo): void {
+    const materialNombre = mat.nombre;
+    const moduloNombre = mod?.nombre || 'el módulo';
+    const cursoNombre = this.curso?.nombre || 'el curso';
+    const mensaje = `Hola INSTEIP, soy alumno de ${cursoNombre}. Deseo solicitar la habilitación del material de apoyo "${materialNombre}" (Módulo: ${moduloNombre}). Muchas gracias.`;
+    const whatsappUrl = `https://wa.me/51930830427?text=${encodeURIComponent(mensaje)}`;
+    window.open(whatsappUrl, '_blank');
   }
 
   descargarCertificado(): void {

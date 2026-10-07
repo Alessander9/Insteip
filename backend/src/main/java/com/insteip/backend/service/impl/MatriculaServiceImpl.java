@@ -1,9 +1,12 @@
 package com.insteip.backend.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import com.insteip.backend.domain.dto.matricula.ActualizarAccesosRequestDTO;
 import com.insteip.backend.domain.dto.matricula.MatriculaRequestDTO;
 import com.insteip.backend.domain.dto.matricula.MatriculaResponseDTO;
 import com.insteip.backend.domain.dto.matricula.ModuloAccesoDTO;
+import com.insteip.backend.domain.dto.matricula.VideoAccesoDTO;
+import com.insteip.backend.domain.dto.matricula.MaterialAccesoDTO;
 import com.insteip.backend.domain.entity.*;
 import com.insteip.backend.domain.exception.ResourceNotFoundException;
 import com.insteip.backend.domain.exception.BadRequestException;
@@ -28,7 +31,11 @@ public class MatriculaServiceImpl implements MatriculaService {
     private final UsuarioRepository usuarioRepository;
     private final CursoRepository cursoRepository;
     private final ModuloRepository moduloRepository;
+    private final VideoRepository videoRepository;
+    private final MaterialRepository materialRepository;
     private final MatriculaModuloAccesoRepository matriculaModuloAccesoRepository;
+    private final MatriculaVideoAccesoRepository matriculaVideoAccesoRepository;
+    private final MatriculaMaterialAccesoRepository matriculaMaterialAccesoRepository;
     private final AuditoriaService auditoriaService;
     private final NotificacionService notificacionService;
 
@@ -130,6 +137,8 @@ public class MatriculaServiceImpl implements MatriculaService {
         String info = "Matrícula ID: " + id + " | Alumno: " + matricula.getUsuario().getNombres() + " " + matricula.getUsuario().getApellidos()
                 + " | Curso: " + matricula.getCurso().getNombre();
 
+        matriculaVideoAccesoRepository.deleteByMatriculaId(id);
+        matriculaMaterialAccesoRepository.deleteByMatriculaId(id);
         matriculaModuloAccesoRepository.deleteByMatriculaId(id);
         matriculaRepository.deleteById(id);
         auditoriaService.registrarEvento("MATRICULAS", "ELIMINAR", "Eliminada físicamente " + info);
@@ -142,47 +151,111 @@ public class MatriculaServiceImpl implements MatriculaService {
                 .orElseThrow(() -> new ResourceNotFoundException("Matrícula no encontrada con id: " + matriculaId));
 
         List<Modulo> modulosCurso = moduloRepository.findByCursoIdOrderByOrdenAsc(matricula.getCurso().getId());
-        List<MatriculaModuloAcceso> accesosExistentes = matriculaModuloAccesoRepository.findByMatriculaId(matriculaId);
+        List<MatriculaModuloAcceso> accesosExistentesModulos = matriculaModuloAccesoRepository.findByMatriculaId(matriculaId);
+        List<MatriculaVideoAcceso> accesosExistentesVideos = matriculaVideoAccesoRepository.findByMatriculaId(matriculaId);
+        List<MatriculaMaterialAcceso> accesosExistentesMateriales = matriculaMaterialAccesoRepository.findByMatriculaId(matriculaId);
 
-        boolean tieneRestriccionesConfiguradas = !accesosExistentes.isEmpty();
-        Map<Long, MatriculaModuloAcceso> mapaAccesos = accesosExistentes.stream()
+        boolean tieneRestriccionesModulo = !accesosExistentesModulos.isEmpty();
+        Map<Long, MatriculaModuloAcceso> mapaAccesosModulos = accesosExistentesModulos.stream()
                 .collect(Collectors.toMap(a -> a.getModulo().getId(), a -> a, (a1, a2) -> a1));
+
+        Map<Long, MatriculaVideoAcceso> mapaAccesosVideos = accesosExistentesVideos.stream()
+                .collect(Collectors.toMap(a -> a.getVideo().getId(), a -> a, (a1, a2) -> a1));
+
+        Map<Long, MatriculaMaterialAcceso> mapaAccesosMateriales = accesosExistentesMateriales.stream()
+                .collect(Collectors.toMap(a -> a.getMaterial().getId(), a -> a, (a1, a2) -> a1));
 
         List<ModuloAccesoDTO> resultado = new ArrayList<>();
         for (Modulo m : modulosCurso) {
             if (Boolean.FALSE.equals(m.getEstado())) continue;
 
-            if (!tieneRestriccionesConfiguradas) {
-                // Alumno sin restricciones configuradas (Acceso Total por defecto)
-                resultado.add(new ModuloAccesoDTO(
-                        m.getId(),
-                        m.getNombre(),
-                        m.getOrden(),
-                        true,
-                        matricula.getFechaMatricula()
-                ));
+            boolean moduloHabilitado;
+            LocalDateTime fechaHabilitacionModulo;
+
+            if (!tieneRestriccionesModulo) {
+                // Alumno sin restricciones de módulo configuradas (Acceso Total por defecto)
+                moduloHabilitado = true;
+                fechaHabilitacionModulo = matricula.getFechaMatricula();
             } else {
-                // Alumno con restricciones explícitas
-                MatriculaModuloAcceso acc = mapaAccesos.get(m.getId());
+                MatriculaModuloAcceso acc = mapaAccesosModulos.get(m.getId());
                 if (acc != null) {
-                    resultado.add(new ModuloAccesoDTO(
-                            m.getId(),
-                            m.getNombre(),
-                            m.getOrden(),
-                            acc.getHabilitado(),
-                            acc.getFechaHabilitacion()
-                    ));
+                    moduloHabilitado = Boolean.TRUE.equals(acc.getHabilitado());
+                    fechaHabilitacionModulo = acc.getFechaHabilitacion();
                 } else {
-                    // Módulo nuevo agregado con posterioridad a un alumno con restricciones -> bloqueado por defecto
-                    resultado.add(new ModuloAccesoDTO(
-                            m.getId(),
-                            m.getNombre(),
-                            m.getOrden(),
-                            false,
-                            null
-                    ));
+                    moduloHabilitado = false;
+                    fechaHabilitacionModulo = null;
                 }
             }
+
+            // Cargar videos activos del módulo
+            List<Video> videosModulo = videoRepository.findByModuloIdOrderByOrdenAsc(m.getId());
+            List<VideoAccesoDTO> videosDTO = new ArrayList<>();
+
+            for (Video v : videosModulo) {
+                if (Boolean.FALSE.equals(v.getEstado())) continue;
+
+                boolean videoHabilitado;
+                LocalDateTime fechaHabilitacionVideo;
+
+                MatriculaVideoAcceso accVideo = mapaAccesosVideos.get(v.getId());
+                if (accVideo != null) {
+                    videoHabilitado = Boolean.TRUE.equals(accVideo.getHabilitado());
+                    fechaHabilitacionVideo = accVideo.getFechaHabilitacion();
+                } else {
+                    // Por defecto hereda el estado del módulo
+                    videoHabilitado = moduloHabilitado;
+                    fechaHabilitacionVideo = fechaHabilitacionModulo;
+                }
+
+                videosDTO.add(new VideoAccesoDTO(
+                        v.getId(),
+                        v.getTitulo(),
+                        v.getOrden(),
+                        v.getDuracionSegundos(),
+                        videoHabilitado,
+                        fechaHabilitacionVideo
+                ));
+            }
+
+            // Cargar materiales activos del módulo
+            List<Material> materialesModulo = materialRepository.findByModuloId(m.getId());
+            List<MaterialAccesoDTO> materialesDTO = new ArrayList<>();
+
+            for (Material mat : materialesModulo) {
+                if (Boolean.FALSE.equals(mat.getEstado())) continue;
+
+                boolean materialHabilitado;
+                LocalDateTime fechaHabilitacionMaterial;
+
+                MatriculaMaterialAcceso accMaterial = mapaAccesosMateriales.get(mat.getId());
+                if (accMaterial != null) {
+                    materialHabilitado = Boolean.TRUE.equals(accMaterial.getHabilitado());
+                    fechaHabilitacionMaterial = accMaterial.getFechaHabilitacion();
+                } else {
+                    // Por defecto hereda el estado del módulo
+                    materialHabilitado = moduloHabilitado;
+                    fechaHabilitacionMaterial = fechaHabilitacionModulo;
+                }
+
+                materialesDTO.add(new MaterialAccesoDTO(
+                        mat.getId(),
+                        mat.getNombre(),
+                        mat.getTipoArchivo(),
+                        mat.getPesoBytes(),
+                        materialHabilitado,
+                        fechaHabilitacionMaterial
+                ));
+            }
+
+            resultado.add(new ModuloAccesoDTO(
+                    m.getId(),
+                    m.getNombre(),
+                    m.getOrden(),
+                    moduloHabilitado,
+                    fechaHabilitacionModulo,
+                    videosDTO,
+                    materialesDTO
+            ));
         }
 
         return resultado;
@@ -264,6 +337,134 @@ public class MatriculaServiceImpl implements MatriculaService {
 
         auditoriaService.registrarEvento("MATRICULAS", "MODULOS_ACCESO_MASIVO",
                 "Actualizados permisos de módulos para la matrícula ID: " + matriculaId + " (" + habilitados.size() + " módulos habilitados)");
+    }
+
+    @Override
+    @Transactional
+    public void actualizarVideoAcceso(Long matriculaId, Long videoId, Boolean habilitado) {
+        Matricula matricula = matriculaRepository.findById(matriculaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Matrícula no encontrada con id: " + matriculaId));
+
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Video no encontrado con id: " + videoId));
+
+        if (video.getModulo() == null || video.getModulo().getCurso() == null ||
+                !video.getModulo().getCurso().getId().equals(matricula.getCurso().getId())) {
+            throw new BadRequestException("El video indicado no pertenece al curso de la matrícula.");
+        }
+
+        MatriculaVideoAcceso acceso = matriculaVideoAccesoRepository
+                .findByMatriculaIdAndVideoId(matriculaId, videoId)
+                .orElse(MatriculaVideoAcceso.builder()
+                        .matricula(matricula)
+                        .video(video)
+                        .build());
+
+        boolean esHabilitado = Boolean.TRUE.equals(habilitado);
+        acceso.setHabilitado(esHabilitado);
+        acceso.setFechaHabilitacion(LocalDateTime.now());
+        matriculaVideoAccesoRepository.save(acceso);
+
+        auditoriaService.registrarEvento("MATRICULAS", "VIDEO_ACCESO_MODIFICADO",
+                (esHabilitado ? "Habilitado" : "Bloqueado") + " acceso al Video '" + video.getTitulo() +
+                        "' (ID: " + videoId + ") para el alumno " + matricula.getUsuario().getCorreo() + " (Matrícula ID: " + matriculaId + ")");
+    }
+
+    @Override
+    @Transactional
+    public void actualizarMaterialAcceso(Long matriculaId, Long materialId, Boolean habilitado) {
+        Matricula matricula = matriculaRepository.findById(matriculaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Matrícula no encontrada con id: " + matriculaId));
+
+        Material material = materialRepository.findById(materialId)
+                .orElseThrow(() -> new ResourceNotFoundException("Material no encontrado con id: " + materialId));
+
+        if (material.getModulo() == null || material.getModulo().getCurso() == null ||
+                !material.getModulo().getCurso().getId().equals(matricula.getCurso().getId())) {
+            throw new BadRequestException("El material indicado no pertenece al curso de la matrícula.");
+        }
+
+        MatriculaMaterialAcceso acceso = matriculaMaterialAccesoRepository
+                .findByMatriculaIdAndMaterialId(matriculaId, materialId)
+                .orElse(MatriculaMaterialAcceso.builder()
+                        .matricula(matricula)
+                        .material(material)
+                        .build());
+
+        boolean esHabilitado = Boolean.TRUE.equals(habilitado);
+        acceso.setHabilitado(esHabilitado);
+        acceso.setFechaHabilitacion(LocalDateTime.now());
+        matriculaMaterialAccesoRepository.save(acceso);
+
+        auditoriaService.registrarEvento("MATRICULAS", "MATERIAL_ACCESO_MODIFICADO",
+                (esHabilitado ? "Habilitado" : "Bloqueado") + " acceso al Material '" + material.getNombre() +
+                        "' (ID: " + materialId + ") para el alumno " + matricula.getUsuario().getCorreo() + " (Matrícula ID: " + matriculaId + ")");
+    }
+
+    @Override
+    @Transactional
+    public void actualizarAccesosMasivo(Long matriculaId, ActualizarAccesosRequestDTO request) {
+        Matricula matricula = matriculaRepository.findById(matriculaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Matrícula no encontrada con id: " + matriculaId));
+
+        if (request.modulosHabilitadosIds() != null) {
+            actualizarModulosAccesoMasivo(matriculaId, request.modulosHabilitadosIds());
+        }
+
+        if (request.videosHabilitadosIds() != null) {
+            List<Modulo> modulos = moduloRepository.findByCursoIdOrderByOrdenAsc(matricula.getCurso().getId());
+            List<MatriculaVideoAcceso> accesosExistentes = matriculaVideoAccesoRepository.findByMatriculaId(matriculaId);
+            Map<Long, MatriculaVideoAcceso> mapaAccesos = accesosExistentes.stream()
+                    .collect(Collectors.toMap(a -> a.getVideo().getId(), a -> a, (a1, a2) -> a1));
+
+            List<MatriculaVideoAcceso> aGuardar = new ArrayList<>();
+            for (Modulo m : modulos) {
+                List<Video> videos = videoRepository.findByModuloIdOrderByOrdenAsc(m.getId());
+                for (Video v : videos) {
+                    boolean debeHabilitar = request.videosHabilitadosIds().contains(v.getId());
+                    MatriculaVideoAcceso acc = mapaAccesos.get(v.getId());
+                    if (acc == null) {
+                        acc = MatriculaVideoAcceso.builder()
+                                .matricula(matricula)
+                                .video(v)
+                                .build();
+                    }
+                    acc.setHabilitado(debeHabilitar);
+                    acc.setFechaHabilitacion(LocalDateTime.now());
+                    aGuardar.add(acc);
+                }
+            }
+            matriculaVideoAccesoRepository.saveAll(aGuardar);
+        }
+
+        if (request.materialesHabilitadosIds() != null) {
+            List<Modulo> modulos = moduloRepository.findByCursoIdOrderByOrdenAsc(matricula.getCurso().getId());
+            List<MatriculaMaterialAcceso> accesosExistentes = matriculaMaterialAccesoRepository.findByMatriculaId(matriculaId);
+            Map<Long, MatriculaMaterialAcceso> mapaAccesos = accesosExistentes.stream()
+                    .collect(Collectors.toMap(a -> a.getMaterial().getId(), a -> a, (a1, a2) -> a1));
+
+            List<MatriculaMaterialAcceso> aGuardar = new ArrayList<>();
+            for (Modulo m : modulos) {
+                List<Material> materiales = materialRepository.findByModuloId(m.getId());
+                for (Material mat : materiales) {
+                    boolean debeHabilitar = request.materialesHabilitadosIds().contains(mat.getId());
+                    MatriculaMaterialAcceso acc = mapaAccesos.get(mat.getId());
+                    if (acc == null) {
+                        acc = MatriculaMaterialAcceso.builder()
+                                .matricula(matricula)
+                                .material(mat)
+                                .build();
+                    }
+                    acc.setHabilitado(debeHabilitar);
+                    acc.setFechaHabilitacion(LocalDateTime.now());
+                    aGuardar.add(acc);
+                }
+            }
+            matriculaMaterialAccesoRepository.saveAll(aGuardar);
+        }
+
+        auditoriaService.registrarEvento("MATRICULAS", "ACCESOS_COMPLETOS_MASIVO",
+                "Actualizados permisos granulares de módulos, videos y materiales para matrícula ID: " + matriculaId);
     }
 
     private MatriculaResponseDTO toResponse(Matricula m) {

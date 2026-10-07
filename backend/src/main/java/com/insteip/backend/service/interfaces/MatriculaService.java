@@ -1,5 +1,6 @@
 package com.insteip.backend.service.interfaces;
 
+import com.insteip.backend.domain.dto.matricula.ActualizarAccesosRequestDTO;
 import com.insteip.backend.domain.dto.matricula.MatriculaRequestDTO;
 import com.insteip.backend.domain.dto.matricula.MatriculaResponseDTO;
 import com.insteip.backend.domain.dto.matricula.ModuloAccesoDTO;
@@ -15,4 +16,8 @@ public interface MatriculaService {
     List<ModuloAccesoDTO> listarModulosAcceso(Long matriculaId);
     void actualizarModuloAcceso(Long matriculaId, Long moduloId, Boolean habilitado);
     void actualizarModulosAccesoMasivo(Long matriculaId, List<Long> modulosHabilitadosIds);
+
+    void actualizarVideoAcceso(Long matriculaId, Long videoId, Boolean habilitado);
+    void actualizarMaterialAcceso(Long matriculaId, Long materialId, Boolean habilitado);
+    void actualizarAccesosMasivo(Long matriculaId, ActualizarAccesosRequestDTO request);
 }

@@ -6,7 +6,7 @@ import { DocenteDashboardService, DocenteEstudianteProgress } from '../../../../
 import { CursoService } from '../../../../core/services/';
 import { CursoResponse, ModuloAccesoItem } from '../../../../core/models/';
 import { FormsModule } from '@angular/forms';
-import { matchesQuery, paginate, sortByDate, totalPages, SortOrder } from '../../../../core/utils/';
+import { matchesQuery, paginate, sortByDate, totalPages, SortOrder, formatBytes } from '../../../../core/utils/';
 
 import { MatriculaService } from '../../../../core/services/';
 import { ToastService } from '../../../../core/services/';
@@ -114,7 +114,9 @@ export class MisAlumnosDocenteComponent implements OnInit {
     if (this.currentPage < this.totalPages) this.currentPage++;
   }
 
-  // --- Modal de Acceso a Módulos por Cuotas ---
+  // --- Modal de Consulta de Acceso a Módulos y Videos (Solo Lectura para Docentes) ---
+  expandedModulos: { [moduloId: number]: boolean } = {};
+
   abrirModalModulos(estudiante: DocenteEstudianteProgress): void {
     if (!estudiante.matriculaId) {
       this.toastService.warning('Este estudiante no cuenta con ID de matrícula asociado.');
@@ -124,15 +126,19 @@ export class MisAlumnosDocenteComponent implements OnInit {
     this.showModulosModal = true;
     this.loadingModulos = true;
     this.modulosAcceso = [];
+    this.expandedModulos = {};
 
     this.matriculaService.obtenerModulosAcceso(estudiante.matriculaId).subscribe({
       next: (data) => {
         this.modulosAcceso = data || [];
         this.loadingModulos = false;
+        if (this.modulosAcceso.length > 0) {
+          this.expandedModulos[this.modulosAcceso[0].moduloId] = true;
+        }
       },
       error: (err) => {
         this.loadingModulos = false;
-        this.toastService.error('Error al cargar permisos de módulos: ' + (err.error?.message || err.message));
+        this.toastService.error('Error al consultar permisos de módulos: ' + (err.error?.message || err.message));
       }
     });
   }
@@ -141,40 +147,24 @@ export class MisAlumnosDocenteComponent implements OnInit {
     this.showModulosModal = false;
     this.selectedEstudiante = null;
     this.modulosAcceso = [];
+    this.expandedModulos = {};
   }
 
-  toggleModuloAcceso(item: ModuloAccesoItem): void {
-    if (!this.selectedEstudiante?.matriculaId) return;
-    const nuevoEstado = !item.habilitado;
-
-    this.matriculaService.cambiarAccesoModulo(this.selectedEstudiante.matriculaId, item.moduloId, nuevoEstado).subscribe({
-      next: () => {
-        item.habilitado = nuevoEstado;
-        this.toastService.success(`Módulo ${nuevoEstado ? 'habilitado' : 'bloqueado'} con éxito.`);
-      },
-      error: (err) => {
-        this.toastService.error('Error al actualizar acceso: ' + (err.error?.message || err.message));
-      }
-    });
+  toggleModuloAccordion(moduloId: number): void {
+    this.expandedModulos[moduloId] = !this.expandedModulos[moduloId];
   }
 
-  habilitarTodosModulos(habilitar: boolean): void {
-    if (!this.selectedEstudiante?.matriculaId) return;
-    this.isSavingModulos = true;
-    const habilitadosIds = habilitar ? this.modulosAcceso.map(m => m.moduloId) : [];
-
-    this.matriculaService.guardarModulosAccesoMasivo(this.selectedEstudiante.matriculaId, habilitadosIds).subscribe({
-      next: () => {
-        this.modulosAcceso.forEach(m => m.habilitado = habilitar);
-        this.isSavingModulos = false;
-        this.toastService.success(`Todos los módulos han sido ${habilitar ? 'habilitados' : 'bloqueados'}.`);
-      },
-      error: (err) => {
-        this.isSavingModulos = false;
-        this.toastService.error('Error al actualizar permisos en masa: ' + (err.error?.message || err.message));
-      }
-    });
+  getVideosHabilitadosCount(modulo: ModuloAccesoItem): number {
+    if (!modulo.habilitado || !modulo.videos) return 0;
+    return modulo.videos.filter(v => v.habilitado).length;
   }
+
+  getMaterialesHabilitadosCount(modulo: ModuloAccesoItem): number {
+    if (!modulo.habilitado || !modulo.materiales) return 0;
+    return modulo.materiales.filter(m => m.habilitado).length;
+  }
+
+  formatBytes = formatBytes;
 
   descargarFichaDocente(estudiante: DocenteEstudianteProgress): void {
     if (!estudiante.matriculaId) {

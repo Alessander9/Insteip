@@ -6,6 +6,7 @@ import com.insteip.backend.domain.entity.*;
 import com.insteip.backend.domain.exception.ForbiddenException;
 import com.insteip.backend.domain.exception.ResourceNotFoundException;
 import com.insteip.backend.repository.MatriculaModuloAccesoRepository;
+import com.insteip.backend.repository.MatriculaMaterialAccesoRepository;
 import com.insteip.backend.repository.MatriculaRepository;
 import com.insteip.backend.repository.UsuarioRepository;
 import com.insteip.backend.service.interfaces.MaterialService;
@@ -29,6 +30,7 @@ public class MaterialController {
     private final UsuarioRepository usuarioRepository;
     private final MatriculaRepository matriculaRepository;
     private final MatriculaModuloAccesoRepository matriculaModuloAccesoRepository;
+    private final MatriculaMaterialAccesoRepository matriculaMaterialAccesoRepository;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMINISTRADOR') or @cursoSecurity.canAccessModulo(#moduloId)")
@@ -88,26 +90,36 @@ public class MaterialController {
 
             // Validar restricción de acceso por cuotas si el usuario solicitante es ALUMNO
             if (authentication != null && authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("ROLE_ALUMNO"))) {
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ALUMNO") || a.getAuthority().equals("ALUMNO"))) {
                 
                 String correo = authentication.getName();
                 Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreo(correo);
-                if (usuarioOpt.isPresent() && material.getModulo() != null && material.getModulo().getCurso() != null) {
-                    Long cursoId = material.getModulo().getCurso().getId();
-                    Optional<Matricula> matOpt = matriculaRepository.findByUsuarioIdAndCursoId(usuarioOpt.get().getId(), cursoId);
-                    
-                    if (matOpt.isEmpty() || Boolean.FALSE.equals(matOpt.get().getEstado())) {
+                if (usuarioOpt.isEmpty() || material.getModulo() == null || material.getModulo().getCurso() == null) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                }
+
+                Long cursoId = material.getModulo().getCurso().getId();
+                Optional<Matricula> matOpt = matriculaRepository.findByUsuarioIdAndCursoId(usuarioOpt.get().getId(), cursoId);
+                
+                if (matOpt.isEmpty() || Boolean.FALSE.equals(matOpt.get().getEstado()) ||
+                        (matOpt.get().getFechaExpiracion() != null && java.time.LocalDateTime.now().isAfter(matOpt.get().getFechaExpiracion()))) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                }
+
+                Long matriculaId = matOpt.get().getId();
+                if (matriculaModuloAccesoRepository.existsByMatriculaId(matriculaId)) {
+                    boolean habilitado = matriculaModuloAccesoRepository
+                            .existsByMatriculaIdAndModuloIdAndHabilitadoTrue(matriculaId, material.getModulo().getId());
+                    if (!habilitado) {
                         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
                     }
+                }
 
-                    Long matriculaId = matOpt.get().getId();
-                    if (matriculaModuloAccesoRepository.existsByMatriculaId(matriculaId)) {
-                        boolean habilitado = matriculaModuloAccesoRepository
-                                .existsByMatriculaIdAndModuloIdAndHabilitadoTrue(matriculaId, material.getModulo().getId());
-                        if (!habilitado) {
-                            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-                        }
-                    }
+                // Validar restricción granular de material individual si existe registro explícito
+                Optional<MatriculaMaterialAcceso> matAccesoOpt = matriculaMaterialAccesoRepository
+                        .findByMatriculaIdAndMaterialId(matriculaId, material.getId());
+                if (matAccesoOpt.isPresent() && Boolean.FALSE.equals(matAccesoOpt.get().getHabilitado())) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
                 }
             }
 

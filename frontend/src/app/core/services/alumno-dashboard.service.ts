@@ -36,9 +36,11 @@ export interface AlumnoCertificado {
 export interface AlumnoPlayMaterial {
   id: number;
   nombre: string;
-  archivoUrl: string;
+  archivoUrl: string | null;
   tipoArchivo: string;
   pesoBytes: number;
+  bloqueado?: boolean;
+  mensajeBloqueo?: string;
 }
 
 export interface AlumnoPlayVideo {
@@ -52,6 +54,8 @@ export interface AlumnoPlayVideo {
   ultimoSegundo: number;
   porcentajeVisto: number;
   completado: boolean;
+  bloqueado?: boolean;
+  mensajeBloqueo?: string;
 }
 
 export interface AlumnoPlayModulo {

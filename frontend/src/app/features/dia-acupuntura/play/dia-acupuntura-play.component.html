@@ -127,9 +127,11 @@
                 (click)="seleccionarVideo(mod, vid)"
                 class="lesson-btn"
                 [class.lesson-btn--active]="videoActivo?.id === vid.id"
+                [disabled]="mod.bloqueado || vid.bloqueado"
+                [class.opacity-50]="mod.bloqueado || vid.bloqueado"
               >
                 <span class="material-symbols-outlined lesson-icon">
-                  {{ videoActivo?.id === vid.id ? 'play_arrow' : 'play_circle' }}
+                  {{ (mod.bloqueado || vid.bloqueado) ? 'lock' : (videoActivo?.id === vid.id ? 'play_arrow' : 'play_circle') }}
                 </span>
                 <div class="lesson-text">
                   <span class="lesson-name">{{ vid.titulo }}</span>

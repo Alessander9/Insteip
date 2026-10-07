@@ -357,6 +357,36 @@
       </div>
     </div>
 
+    <!-- Blocked video state: shown when student selects a locked individual video -->
+    <div *ngIf="selectedBlockedVideo" class="absolute inset-0 flex flex-col items-center justify-center text-slate-100 p-6 sm:p-10 bg-slate-950/95 text-center z-20 overflow-y-auto">
+      <div class="max-w-md flex flex-col items-center gap-4 animate-in fade-in zoom-in-95 duration-300">
+        <div class="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-[0_0_25px_rgba(245,158,11,0.2)]">
+          <span class="material-symbols-outlined text-3xl">lock</span>
+        </div>
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 text-[10px] font-black uppercase tracking-widest border border-amber-500/30 mb-2">
+            Clase {{ selectedBlockedVideo.orden }} • Contenido Restringido
+          </span>
+          <h3 class="text-base sm:text-lg font-black uppercase tracking-tight text-white mt-1">
+            {{ selectedBlockedVideo.titulo }}
+          </h3>
+          <p class="text-xs text-slate-400 leading-relaxed mt-2">
+            {{ selectedBlockedVideo.mensajeBloqueo || 'Esta clase no está disponible para tu cuenta en este momento. Coordina la habilitación con el equipo de soporte o administración.' }}
+          </p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center gap-3 mt-2 w-full justify-center">
+          <button
+            type="button"
+            (click)="solicitarHabilitacionVideoWhatsApp(selectedBlockedVideo)"
+            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#25D366] hover:bg-[#20bd5a] text-slate-950 font-black text-xs uppercase tracking-wider transition-all duration-200 shadow-lg hover:shadow-[#25D366]/30 active:scale-95">
+            <span class="material-symbols-outlined text-lg font-bold">chat</span>
+            <span>Solicitar Habilitación por WhatsApp</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div *ngIf="embedError" class="absolute inset-0 flex flex-col items-center justify-center text-slate-200 p-8 bg-slate-950/95 text-center z-20">
       <span class="material-symbols-outlined text-5xl mb-2 text-amber-400">videocam_off</span>
       <p class="text-xs font-black uppercase tracking-wider">No se pudo cargar el video</p>
@@ -438,7 +468,7 @@
             <button 
               *ngFor="let vid of mod.videos"
               (click)="onVideoClick(mod, vid)"
-              [ngClass]="currentVideo?.id === vid.id ? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-900 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800' : ((mod.bloqueado || isExpVideoLocked(mod, vid)) ? 'bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 border-dashed border-slate-200 dark:border-slate-800 hover:bg-amber-50/50 dark:hover:bg-amber-950/20' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200/60 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800')"
+              [ngClass]="currentVideo?.id === vid.id ? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-900 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800' : ((mod.bloqueado || vid.bloqueado || isExpVideoLocked(mod, vid)) ? 'bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 border-dashed border-slate-200 dark:border-slate-800 hover:bg-amber-50/50 dark:hover:bg-amber-950/20' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200/60 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800')"
               class="w-full text-left p-3 border dark:border-slate-800/70 text-xs flex items-center justify-between gap-3 transition-colors rounded-none group relative focus:outline-none">
               
               <!-- Left accent border for active state -->
@@ -446,13 +476,13 @@
 
               <div class="flex items-center gap-2 overflow-hidden">
                 <span 
-                  *ngIf="!mod.bloqueado && !isExpVideoLocked(mod, vid)"
+                  *ngIf="!mod.bloqueado && !vid.bloqueado && !isExpVideoLocked(mod, vid)"
                   [ngClass]="vid.completado ? 'text-emerald-600 dark:text-emerald-500 font-bold' : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-400'"
                   class="material-symbols-outlined text-sm font-semibold block shrink-0 select-none">
                   {{ vid.completado ? 'check_circle' : 'circle' }}
                 </span>
                 <span 
-                  *ngIf="mod.bloqueado || isExpVideoLocked(mod, vid)"
+                  *ngIf="mod.bloqueado || vid.bloqueado || isExpVideoLocked(mod, vid)"
                   class="material-symbols-outlined text-sm text-amber-500 dark:text-amber-400 block shrink-0 select-none">
                   lock
                 </span>
@@ -460,7 +490,8 @@
               </div>
               <div class="flex items-center gap-2 shrink-0">
                 <span *ngIf="mod.bloqueado" class="text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Requiere pago</span>
-                <span *ngIf="!mod.bloqueado && isExpVideoLocked(mod, vid)" class="text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Requiere matrícula</span>
+                <span *ngIf="!mod.bloqueado && vid.bloqueado" class="text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Restringido</span>
+                <span *ngIf="!mod.bloqueado && !vid.bloqueado && isExpVideoLocked(mod, vid)" class="text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Requiere matrícula</span>
                 <span class="text-[9px] font-mono text-slate-400 dark:text-slate-500">
                   {{ vid.duracionSegundos ? (vid.duracionSegundos / 60 | number:'1.0-0') + 'm' : '' }}
                 </span>
@@ -494,39 +525,62 @@
         <div *ngIf="activeTab === 'materiales'" class="p-4 sm:p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 animate-in fade-in slide-in-from-top-1 duration-200">
           <div class="space-y-4">
             <ng-container *ngFor="let mod of curso.modulos || []">
-              <div *ngIf="mod.materiales.length > 0" class="border border-slate-200 dark:border-slate-800 p-4 bg-slate-50/50 dark:bg-slate-800/30">
-                <span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/45 border border-indigo-200 dark:border-indigo-900 px-2.5 py-1 uppercase tracking-widest mb-3 inline-block">
-                  Módulo {{ mod.orden }}: {{ mod.nombre }}
-                </span>
+              <div *ngIf="mod.materiales.length > 0" class="border border-slate-200 dark:border-slate-800 p-4" [ngClass]="mod.bloqueado ? 'bg-amber-50/20 dark:bg-amber-950/10 border-amber-200/60 dark:border-amber-900/40' : 'bg-slate-50/50 dark:bg-slate-800/30'">
+                <div class="flex items-center gap-2 mb-3">
+                  <span class="text-[9px] font-black uppercase tracking-widest px-2.5 py-1 inline-block border"
+                    [ngClass]="mod.bloqueado ? 'text-amber-800 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/60 border-amber-300 dark:border-amber-800' : 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/45 border-indigo-200 dark:border-indigo-900'">
+                    Módulo {{ mod.orden }}: {{ mod.nombre }}
+                  </span>
+                  <span *ngIf="mod.bloqueado" class="text-[8px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/60 px-2 py-0.5 border border-amber-300 dark:border-amber-800">
+                    Módulo pendiente de pago
+                  </span>
+                </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
                     <div 
                       *ngFor="let mat of mod.materiales" 
-                      class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 flex justify-between items-center hover:border-slate-400 dark:hover:border-slate-600 transition-colors rounded-none group">
-                      <div class="flex items-center gap-2.5 overflow-hidden">
+                      class="border border-slate-200 dark:border-slate-800 p-3 flex justify-between items-center transition-colors rounded-none group"
+                      [ngClass]="mat.bloqueado ? 'bg-slate-50/70 dark:bg-slate-900/50 border-dashed opacity-80' : 'bg-white dark:bg-slate-900 hover:border-slate-400 dark:hover:border-slate-600'">
+                      <div class="flex items-center gap-2.5 overflow-hidden flex-1 mr-2">
                         <div [ngClass]="{
-                          'bg-red-50 text-red-700 border-red-100 dark:bg-red-950/40 dark:text-red-400 dark:border-red-900/50': getCleanFileType(mat.tipoArchivo) === 'PDF',
-                          'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-900/50': getCleanFileType(mat.tipoArchivo) === 'DOC',
-                          'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-900/50': getCleanFileType(mat.tipoArchivo) === 'IMG',
-                          'bg-slate-50 text-slate-700 border-slate-100 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700': getCleanFileType(mat.tipoArchivo) !== 'PDF' && getCleanFileType(mat.tipoArchivo) !== 'DOC' && getCleanFileType(mat.tipoArchivo) !== 'IMG'
+                          'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-900/50': mat.bloqueado,
+                          'bg-red-50 text-red-700 border-red-100 dark:bg-red-950/40 dark:text-red-400 dark:border-red-900/50': !mat.bloqueado && getCleanFileType(mat.tipoArchivo) === 'PDF',
+                          'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-900/50': !mat.bloqueado && getCleanFileType(mat.tipoArchivo) === 'DOC',
+                          'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-900/50': !mat.bloqueado && getCleanFileType(mat.tipoArchivo) === 'IMG',
+                          'bg-slate-50 text-slate-700 border-slate-100 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700': !mat.bloqueado && getCleanFileType(mat.tipoArchivo) !== 'PDF' && getCleanFileType(mat.tipoArchivo) !== 'DOC' && getCleanFileType(mat.tipoArchivo) !== 'IMG'
                         }" class="w-9 h-9 border flex items-center justify-center rounded-none shrink-0">
-                          <span class="material-symbols-outlined text-base">description</span>
+                          <span class="material-symbols-outlined text-base">{{ mat.bloqueado ? 'lock' : 'description' }}</span>
                         </div>
                         <div class="overflow-hidden">
                           <h4 class="text-xs font-bold text-slate-900 dark:text-white truncate uppercase tracking-tight group-hover:text-indigo-600 transition-colors">{{ mat.nombre }}</h4>
-                          <span class="text-[9px] text-slate-400 font-mono">
-                            {{ getCleanFileType(mat.tipoArchivo) }} • {{ formatBytes(mat.pesoBytes) }}
+                          <span class="text-[9px] text-slate-400 font-mono flex items-center gap-1.5 flex-wrap">
+                            <span>{{ getCleanFileType(mat.tipoArchivo) }} • {{ formatBytes(mat.pesoBytes) }}</span>
+                            <span *ngIf="mat.bloqueado" class="text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider text-[8px]">• Restringido</span>
                           </span>
                         </div>
                       </div>
-                      <button 
-                        (click)="descargarMaterial(mat.archivoUrl, mat.nombre, mat.tipoArchivo)"
-                        [title]="isExpUser ? 'Descargas restringidas en EXP INSTEIP' : 'Descargar material'"
-                        [ngClass]="isExpUser ? 'opacity-60 cursor-not-allowed bg-slate-100 dark:bg-slate-800' : ''"
-                        class="p-2 border border-slate-200 dark:border-slate-750 hover:border-slate-900 dark:hover:border-slate-300 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shrink-0">
-                        <span class="material-symbols-outlined text-sm block" *ngIf="!isExpUser">download</span>
-                        <span class="material-symbols-outlined text-sm block text-amber-500" *ngIf="isExpUser">lock</span>
-                      </button>
+
+                      <!-- Action Button -->
+                      <div class="shrink-0">
+                        <button 
+                          *ngIf="!mat.bloqueado"
+                          (click)="descargarMaterial(mat, mod)"
+                          [title]="isExpUser ? 'Descargas restringidas en EXP INSTEIP' : 'Descargar material'"
+                          [ngClass]="isExpUser ? 'opacity-60 cursor-not-allowed bg-slate-100 dark:bg-slate-800' : ''"
+                          class="p-2 border border-slate-200 dark:border-slate-750 hover:border-slate-900 dark:hover:border-slate-300 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                          <span class="material-symbols-outlined text-sm block" *ngIf="!isExpUser">download</span>
+                          <span class="material-symbols-outlined text-sm block text-amber-500" *ngIf="isExpUser">lock</span>
+                        </button>
+
+                        <button 
+                          *ngIf="mat.bloqueado"
+                          (click)="solicitarHabilitacionMaterialWhatsApp(mat, mod)"
+                          [title]="mat.mensajeBloqueo || 'Material bloqueado. Solicitar habilitación por WhatsApp'"
+                          class="px-2.5 py-1.5 border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-400 transition-colors flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider">
+                          <span class="material-symbols-outlined text-xs">lock</span>
+                          <span>Desbloquear</span>
+                        </button>
+                      </div>
                     </div>
                 </div>
               </div>

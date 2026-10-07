@@ -427,7 +427,61 @@ CREATE INDEX idx_matricula_modulos_matricula ON matricula_modulos_acceso(matricu
 CREATE INDEX idx_matricula_modulos_modulo ON matricula_modulos_acceso(modulo_id);
 
 -- =========================================================================
--- 17. TABLA: experiencias_usos (Prueba gratuita de 15 min / Experiencia INSTEIP)
+-- 17. TABLA: matricula_videos_acceso (Gestión Granular de Acceso por Video)
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS matricula_videos_acceso (
+    id BIGSERIAL PRIMARY KEY,
+    matricula_id BIGINT NOT NULL,
+    video_id BIGINT NOT NULL,
+    habilitado BOOLEAN DEFAULT TRUE NOT NULL,
+    fecha_habilitacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_video_acceso_matricula
+        FOREIGN KEY (matricula_id)
+        REFERENCES matriculas(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_video_acceso_video
+        FOREIGN KEY (video_id)
+        REFERENCES videos(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT uq_matricula_video_acceso
+        UNIQUE (matricula_id, video_id)
+);
+
+CREATE INDEX idx_matricula_videos_matricula ON matricula_videos_acceso(matricula_id);
+CREATE INDEX idx_matricula_videos_video ON matricula_videos_acceso(video_id);
+
+-- =========================================================================
+-- 18. TABLA: matricula_materiales_acceso (Gestión Granular de Acceso por Material/Archivo)
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS matricula_materiales_acceso (
+    id BIGSERIAL PRIMARY KEY,
+    matricula_id BIGINT NOT NULL,
+    material_id BIGINT NOT NULL,
+    habilitado BOOLEAN DEFAULT TRUE NOT NULL,
+    fecha_habilitacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_material_acceso_matricula
+        FOREIGN KEY (matricula_id)
+        REFERENCES matriculas(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_material_acceso_material
+        FOREIGN KEY (material_id)
+        REFERENCES materiales(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT uq_matricula_material_acceso
+        UNIQUE (matricula_id, material_id)
+);
+
+CREATE INDEX idx_matricula_materiales_matricula ON matricula_materiales_acceso(matricula_id);
+CREATE INDEX idx_matricula_materiales_material ON matricula_materiales_acceso(material_id);
+
+-- =========================================================================
+-- 19. TABLA: experiencias_usos (Prueba gratuita de 15 min / Experiencia INSTEIP)
 -- =========================================================================
 CREATE TABLE IF NOT EXISTS experiencias_usos (
     id            BIGSERIAL PRIMARY KEY,
@@ -444,5 +498,6 @@ CREATE INDEX IF NOT EXISTS idx_exp_usos_correo    ON experiencias_usos(correo);
 CREATE INDEX IF NOT EXISTS idx_exp_usos_ip        ON experiencias_usos(ip);
 CREATE INDEX IF NOT EXISTS idx_exp_usos_cookie    ON experiencias_usos(cookie_id);
 CREATE INDEX IF NOT EXISTS idx_exp_usos_expira_en ON experiencias_usos(expira_en);
+
 
 

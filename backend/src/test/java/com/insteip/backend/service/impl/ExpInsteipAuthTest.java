@@ -77,6 +77,9 @@ class ExpInsteipAuthTest {
     @Mock
     private MatriculaModuloAccesoRepository matriculaModuloAccesoRepository;
 
+    @Mock
+    private MatriculaMaterialAccesoRepository matriculaMaterialAccesoRepository;
+
     @InjectMocks
     private AuthServiceImpl authService;
 
@@ -88,7 +91,8 @@ class ExpInsteipAuthTest {
                 materialService,
                 usuarioRepository,
                 matriculaRepository,
-                matriculaModuloAccesoRepository
+                matriculaModuloAccesoRepository,
+                matriculaMaterialAccesoRepository
         );
     }
 

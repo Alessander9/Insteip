@@ -32,24 +32,45 @@ export class MatriculaService {
   }
 
   /**
-   * Obtiene la lista de módulos y su estado de acceso para una matrícula
+   * Obtiene la lista de módulos y videos con su estado de acceso para una matrícula
    */
   obtenerModulosAcceso(matriculaId: number): Observable<ModuloAccesoItem[]> {
     return this.http.get<ModuloAccesoItem[]>(`${this.apiUrl}/${matriculaId}/modulos-acceso`);
   }
 
   /**
-   * Habilita o bloquea el acceso de un módulo individual para una matrícula
+   * Habilita o bloquea el acceso de un módulo individual para una matrícula (Solo Admin)
    */
   cambiarAccesoModulo(matriculaId: number, moduloId: number, habilitado: boolean): Observable<void> {
     return this.http.patch<void>(`${this.apiUrl}/${matriculaId}/modulos/${moduloId}/acceso`, { habilitado });
   }
 
   /**
-   * Actualiza en masa los módulos habilitados para una matrícula
+   * Habilita o bloquea el acceso de un video individual para una matrícula (Solo Admin)
+   */
+  cambiarAccesoVideo(matriculaId: number, videoId: number, habilitado: boolean): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/${matriculaId}/videos/${videoId}/acceso`, { habilitado });
+  }
+
+  /**
+   * Cambia el estado de acceso de un material de apoyo individual para un alumno (Solo Admin)
+   */
+  cambiarAccesoMaterial(matriculaId: number, materialId: number, habilitado: boolean): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/${matriculaId}/materiales/${materialId}/acceso`, { habilitado });
+  }
+
+  /**
+   * Actualiza en masa los módulos habilitados para una matrícula (Solo Admin)
    */
   guardarModulosAccesoMasivo(matriculaId: number, modulosHabilitadosIds: number[]): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${matriculaId}/modulos-acceso`, modulosHabilitadosIds);
+  }
+
+  /**
+   * Actualiza en masa la configuración granular de módulos, videos y materiales (Solo Admin)
+   */
+  guardarAccesosMasivo(matriculaId: number, request: { modulosHabilitadosIds?: number[]; videosHabilitadosIds?: number[]; materialesHabilitadosIds?: number[] }): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${matriculaId}/accesos`, request);
   }
 
   /**

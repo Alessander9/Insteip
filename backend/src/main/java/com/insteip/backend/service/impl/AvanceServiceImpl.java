@@ -1,16 +1,16 @@
 package com.insteip.backend.service.impl;
 
-
 import lombok.RequiredArgsConstructor;
 import com.insteip.backend.domain.dto.avance.AvanceProgressRequest;
 import com.insteip.backend.domain.dto.avance.AvanceProgressResponse;
 import com.insteip.backend.domain.entity.AvanceVideo;
+import com.insteip.backend.domain.entity.Matricula;
+import com.insteip.backend.domain.entity.MatriculaVideoAcceso;
 import com.insteip.backend.domain.entity.Usuario;
 import com.insteip.backend.domain.entity.Video;
+import com.insteip.backend.domain.exception.BadRequestException;
 import com.insteip.backend.domain.exception.ResourceNotFoundException;
-import com.insteip.backend.repository.AvanceVideoRepository;
-import com.insteip.backend.repository.UsuarioRepository;
-import com.insteip.backend.repository.VideoRepository;
+import com.insteip.backend.repository.*;
 import com.insteip.backend.service.interfaces.AvanceService;
 import com.insteip.backend.service.interfaces.CertificadoService;
 import com.insteip.backend.infrastructure.util.ProgresoAcademicoUtils;
@@ -19,23 +19,21 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class AvanceServiceImpl implements AvanceService {
 
     private final AvanceVideoRepository avanceVideoRepository;
-
     private final UsuarioRepository usuarioRepository;
-
     private final VideoRepository videoRepository;
-
-    private final com.insteip.backend.repository.AvanceCursoRepository avanceCursoRepository;
-
-    private final com.insteip.backend.repository.ModuloRepository moduloRepository;
-
+    private final AvanceCursoRepository avanceCursoRepository;
+    private final ModuloRepository moduloRepository;
+    private final MatriculaRepository matriculaRepository;
+    private final MatriculaModuloAccesoRepository matriculaModuloAccesoRepository;
+    private final MatriculaVideoAccesoRepository matriculaVideoAccesoRepository;
     private final EntityManager entityManager;
-
     private final CertificadoService certificadoService;
 
     @Override
@@ -45,6 +43,35 @@ public class AvanceServiceImpl implements AvanceService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
         Video video = videoRepository.findById(request.getVideoId())
                 .orElseThrow(() -> new ResourceNotFoundException("Video no encontrado"));
+
+        if (video.getModulo() != null && video.getModulo().getCurso() != null) {
+            Long cursoId = video.getModulo().getCurso().getId();
+            Long moduloId = video.getModulo().getId();
+
+            Optional<Matricula> matriculaOpt = matriculaRepository.findByUsuarioIdAndCursoId(usuarioId, cursoId);
+            if (matriculaOpt.isPresent()) {
+                Matricula matricula = matriculaOpt.get();
+                if (Boolean.FALSE.equals(matricula.getEstado())) {
+                    throw new BadRequestException("Tu matrícula en este curso no se encuentra activa.");
+                }
+
+                // Validar acceso modular si tiene restricciones configuradas
+                if (matriculaModuloAccesoRepository.existsByMatriculaId(matricula.getId())) {
+                    boolean modHabilitado = matriculaModuloAccesoRepository
+                            .existsByMatriculaIdAndModuloIdAndHabilitadoTrue(matricula.getId(), moduloId);
+                    if (!modHabilitado) {
+                        throw new BadRequestException("No tienes acceso habilitado al módulo correspondiente a este video.");
+                    }
+                }
+
+                // Validar acceso por video si tiene registro explícito
+                Optional<MatriculaVideoAcceso> videoAccesoOpt = matriculaVideoAccesoRepository
+                        .findByMatriculaIdAndVideoId(matricula.getId(), video.getId());
+                if (videoAccesoOpt.isPresent() && Boolean.FALSE.equals(videoAccesoOpt.get().getHabilitado())) {
+                    throw new BadRequestException("No tienes acceso habilitado a este video.");
+                }
+            }
+        }
 
         AvanceVideo avance = avanceVideoRepository.findByUsuarioIdAndVideoId(usuarioId, request.getVideoId())
                 .orElseGet(() -> AvanceVideo.builder()
@@ -79,7 +106,7 @@ public class AvanceServiceImpl implements AvanceService {
         avance = avanceVideoRepository.save(avance);
 
         // Actualizar progreso del curso de forma consolidada en avance_cursos
-        updateCursoAvance(usuario, video.getModulo().getCurso());
+        updateCursoAvance(usuario, video.getModulo() != null ? video.getModulo().getCurso() : null);
 
         return AvanceProgressResponse.builder()
                 .videoId(video.getId())

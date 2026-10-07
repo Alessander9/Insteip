@@ -1,6 +1,7 @@
 package com.insteip.backend.controller;
 
 import lombok.RequiredArgsConstructor;
+import com.insteip.backend.domain.dto.matricula.ActualizarAccesosRequestDTO;
 import com.insteip.backend.domain.dto.matricula.MatriculaRequestDTO;
 import com.insteip.backend.domain.dto.matricula.MatriculaResponseDTO;
 import com.insteip.backend.domain.dto.matricula.ModuloAccesoDTO;
@@ -77,6 +78,12 @@ public class MatriculaController {
         return ResponseEntity.ok(matriculaService.listarModulosAcceso(id));
     }
 
+    @GetMapping("/{id}/accesos")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DOCENTE')")
+    public ResponseEntity<List<ModuloAccesoDTO>> listarAccesosCompletos(@PathVariable Long id) {
+        return ResponseEntity.ok(matriculaService.listarModulosAcceso(id));
+    }
+
     @PatchMapping("/{id}/modulos/{moduloId}/acceso")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<Void> actualizarModuloAcceso(
@@ -104,6 +111,56 @@ public class MatriculaController {
             @RequestBody List<Long> modulosHabilitadosIds) {
 
         matriculaService.actualizarModulosAccesoMasivo(id, modulosHabilitadosIds);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/videos/{videoId}/acceso")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<Void> actualizarVideoAcceso(
+            @PathVariable Long id,
+            @PathVariable Long videoId,
+            @RequestParam(required = false) Boolean habilitado,
+            @RequestBody(required = false) Map<String, Boolean> body) {
+
+        Boolean nuevoHabilitado = habilitado;
+        if (nuevoHabilitado == null && body != null) {
+            nuevoHabilitado = body.get("habilitado");
+        }
+        if (nuevoHabilitado == null) {
+            nuevoHabilitado = true;
+        }
+
+        matriculaService.actualizarVideoAcceso(id, videoId, nuevoHabilitado);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/materiales/{materialId}/acceso")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<Void> actualizarMaterialAcceso(
+            @PathVariable Long id,
+            @PathVariable Long materialId,
+            @RequestParam(required = false) Boolean habilitado,
+            @RequestBody(required = false) Map<String, Boolean> body) {
+
+        Boolean nuevoHabilitado = habilitado;
+        if (nuevoHabilitado == null && body != null) {
+            nuevoHabilitado = body.get("habilitado");
+        }
+        if (nuevoHabilitado == null) {
+            nuevoHabilitado = true;
+        }
+
+        matriculaService.actualizarMaterialAcceso(id, materialId, nuevoHabilitado);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/accesos")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<Void> actualizarAccesosMasivo(
+            @PathVariable Long id,
+            @RequestBody ActualizarAccesosRequestDTO request) {
+
+        matriculaService.actualizarAccesosMasivo(id, request);
         return ResponseEntity.noContent().build();
     }
 

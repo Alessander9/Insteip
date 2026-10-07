@@ -22,10 +22,36 @@ export interface MatriculaResponse {
   estado: boolean;
 }
 
+export interface VideoAccesoItem {
+  videoId: number;
+  titulo: string;
+  orden: number;
+  duracionSegundos: number;
+  habilitado: boolean;
+  fechaHabilitacion?: string;
+}
+
+export interface MaterialAccesoItem {
+  materialId: number;
+  nombre: string;
+  tipoArchivo?: string;
+  pesoBytes?: number;
+  habilitado: boolean;
+  fechaHabilitacion?: string;
+}
+
 export interface ModuloAccesoItem {
   moduloId: number;
   nombreModulo: string;
   orden: number;
   habilitado: boolean;
   fechaHabilitacion?: string;
+  videos?: VideoAccesoItem[];
+  materiales?: MaterialAccesoItem[];
+}
+
+export interface ActualizarAccesosRequest {
+  modulosHabilitadosIds?: number[];
+  videosHabilitadosIds?: number[];
+  materialesHabilitadosIds?: number[];
 }

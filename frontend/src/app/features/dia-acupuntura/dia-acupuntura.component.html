@@ -34,7 +34,8 @@
         Día de la <span class="text-gold">Acupuntura</span> 2026
       </h1>
       <p class="dia-hero__subtitle">
-        6 Talleres Magistrales con especialistas internacionales de la Medicina Tradicional China. Accede a tus clases en vivo, grabaciones de alta definición y material clínico exclusivo.
+        6 Talleres Magistrales con especialistas internacionales de la Medicina Tradicional China. Accede a tus clases
+        en vivo, grabaciones de alta definición y material clínico exclusivo.
       </p>
 
       <!-- FECHAS Y METADATA -->
@@ -113,28 +114,14 @@
         <form (ngSubmit)="iniciarSesion()" class="login-form">
           <div class="input-group">
             <span class="material-symbols-outlined input-icon">mail</span>
-            <input
-              type="email"
-              [(ngModel)]="correoInput"
-              name="correo"
-              placeholder="Tu correo electrónico"
-              required
-              autocomplete="email"
-              class="form-control"
-            />
+            <input type="email" [(ngModel)]="correoInput" name="correo" placeholder="Tu correo electrónico" required
+              autocomplete="email" class="form-control" />
           </div>
 
           <div class="input-group">
             <span class="material-symbols-outlined input-icon">lock</span>
-            <input
-              type="password"
-              [(ngModel)]="passwordInput"
-              name="password"
-              placeholder="Tu contraseña (o DNI)"
-              required
-              autocomplete="current-password"
-              class="form-control"
-            />
+            <input type="password" [(ngModel)]="passwordInput" name="password" placeholder="Tu contraseña" required
+              autocomplete="current-password" class="form-control" />
           </div>
 
           <button type="submit" [disabled]="cargandoLogin" class="btn btn--gold btn--login">
@@ -153,8 +140,9 @@
 
     <!-- ── SECCIÓN: VIDEO GENERAL DEL EVENTO (OPCIÓN 1) ────────── -->
     <section *ngIf="videoGeneral && videoGeneral.activo" class="dia-general-video-section">
-      <div class="general-video-card" [class.general-video-card--unlocked]="tieneAccesoVideoGeneral" [class.general-video-card--locked]="!tieneAccesoVideoGeneral">
-        
+      <div class="general-video-card" [class.general-video-card--unlocked]="tieneAccesoVideoGeneral"
+        [class.general-video-card--locked]="!tieneAccesoVideoGeneral">
+
         <!-- CABECERA DE LA SECCIÓN DE VIDEO -->
         <div class="general-video-header">
           <div class="general-video-badge">
@@ -164,7 +152,8 @@
 
           <div *ngIf="tieneAccesoVideoGeneral" class="access-pill access-pill--unlocked">
             <span class="material-symbols-outlined">verified</span>
-            <span>{{ esAdmin ? 'Acceso Administrador' : ('Acceso Desbloqueado · ' + totalInscritosUsuario + ' taller(es) matriculado(s)') }}</span>
+            <span>{{ esAdmin ? 'Acceso Administrador' : ('Acceso Desbloqueado · ' + totalInscritosUsuario + ' taller(es)
+              matriculado(s)') }}</span>
           </div>
 
           <div *ngIf="!tieneAccesoVideoGeneral" class="access-pill access-pill--locked">
@@ -176,13 +165,9 @@
         <!-- REPRODUCTOR DESBLOQUEADO (SI EL ALUMNO ESTÁ MATRICULADO EN AL MENOS 1 TALLER O ES ADMIN) -->
         <div *ngIf="tieneAccesoVideoGeneral && videoGeneralSafeUrl" class="general-video-player-wrap">
           <div class="video-responsive-container">
-            <iframe
-              [src]="videoGeneralSafeUrl"
-              [title]="videoGeneral.titulo"
-              frameborder="0"
+            <iframe [src]="videoGeneralSafeUrl" [title]="videoGeneral.titulo" frameborder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen
-            ></iframe>
+              allowfullscreen></iframe>
           </div>
         </div>
 
@@ -190,12 +175,14 @@
         <div *ngIf="tieneAccesoVideoGeneral && !videoGeneralSafeUrl" class="general-video-locked-wrap">
           <div class="locked-preview-backdrop">
             <div class="locked-overlay"></div>
-            <div class="locked-icon-badge" style="border-color: rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.15); color: #34d399;">
+            <div class="locked-icon-badge"
+              style="border-color: rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.15); color: #34d399;">
               <span class="material-symbols-outlined">verified</span>
             </div>
             <h3 class="locked-title">{{ videoGeneral.titulo }}</h3>
             <p class="locked-desc">
-              ¡Tienes acceso desbloqueado a esta transmisión! El video se encuentra en preparación o el enlace oficial se activará durante la sesión.
+              ¡Tienes acceso desbloqueado a esta transmisión! El video se encuentra en preparación o el enlace oficial
+              se activará durante la sesión.
             </p>
           </div>
         </div>
@@ -209,12 +196,14 @@
             </div>
             <h3 class="locked-title">{{ videoGeneral.titulo }}</h3>
             <p class="locked-desc">
-              Esta clase magistral general está disponible para todos los alumnos matriculados en al menos 1 taller de la jornada.
+              Esta clase magistral general está disponible para todos los alumnos matriculados en al menos 1 taller de
+              la jornada.
             </p>
 
             <div *ngIf="estaAutenticado" class="user-notice-badge">
               <span class="material-symbols-outlined">account_circle</span>
-              <span>Conectado como <strong>{{ usuarioCorreo }}</strong>. Aún no tienes talleres matriculados en este evento.</span>
+              <span>Conectado como <strong>{{ usuarioCorreo }}</strong>. Aún no tienes talleres matriculados en este
+                evento.</span>
             </div>
 
             <div class="locked-actions">
@@ -279,12 +268,8 @@
 
       <!-- GRID CARDS -->
       <div *ngIf="!cargando && !errorMensaje" class="workshops-grid">
-        <div 
-          *ngFor="let taller of talleres; let i = index" 
-          class="workshop-card"
-          [class.workshop-card--unlocked]="taller.inscrito"
-          [class.workshop-card--locked]="!taller.inscrito"
-        >
+        <div *ngFor="let taller of talleres; let i = index" class="workshop-card"
+          [class.workshop-card--unlocked]="taller.inscrito" [class.workshop-card--locked]="!taller.inscrito">
           <!-- IMAGEN & BADGES -->
           <div class="workshop-card__media">
             <img [src]="taller.imagenPortada" [alt]="taller.nombre" loading="lazy" />
@@ -323,23 +308,14 @@
           <!-- CARD FOOTER / BOTONES -->
           <div class="workshop-card__footer">
             <!-- BOTÓN ENTRAR (SI ESTÁ HABILITADO) -->
-            <button 
-              *ngIf="taller.inscrito" 
-              (click)="entrarAlTaller(taller)" 
-              class="btn btn--unlocked-action"
-            >
+            <button *ngIf="taller.inscrito" (click)="entrarAlTaller(taller)" class="btn btn--unlocked-action">
               <span class="material-symbols-outlined">play_circle</span>
               <span>Ingresar al Taller</span>
             </button>
 
             <!-- BOTÓN WHATSAPP (SI ESTÁ BLOQUEADO) -->
-            <a 
-              *ngIf="!taller.inscrito" 
-              [href]="obtenerLinkWhatsapp(taller)" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              class="btn btn--locked-action"
-            >
+            <a *ngIf="!taller.inscrito" [href]="obtenerLinkWhatsapp(taller)" target="_blank" rel="noopener noreferrer"
+              class="btn btn--locked-action">
               <span class="material-symbols-outlined">chat</span>
               <span>Inscribirme a este Taller</span>
             </a>

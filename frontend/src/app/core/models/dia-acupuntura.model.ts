@@ -75,3 +75,20 @@ export interface MatriculaResultadoResponse {
   matriculas: DetalleMatriculaDto[];
 }
 
+export interface VideoGeneralEvento {
+  youtubeUrl: string;
+  youtubeId: string;
+  titulo: string;
+  descripcion: string;
+  duracionMinutos: number;
+  activo: boolean;
+}
+
+export interface ActualizarVideoGeneralRequest {
+  youtubeUrl: string;
+  titulo?: string;
+  descripcion?: string;
+  duracionMinutos?: number;
+  activo?: boolean;
+}
+

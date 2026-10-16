@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { DiaAcupunturaService } from '../../../core/services/dia-acupuntura.service';
 import { MatriculaService } from '../../../core/services/matricula.service';
-import { ResumenInscritosEvento, TallerEvento, VideoEvento, MatriculaLoteEventoRequest, ActualizarVideoTallerRequest, MatriculaResultadoResponse } from '../../../core/models/dia-acupuntura.model';
+import { ResumenInscritosEvento, TallerEvento, VideoEvento, MatriculaLoteEventoRequest, ActualizarVideoTallerRequest, MatriculaResultadoResponse, VideoGeneralEvento, ActualizarVideoGeneralRequest } from '../../../core/models/dia-acupuntura.model';
 
 @Component({
   selector: 'app-dia-acupuntura-admin',
@@ -24,6 +24,19 @@ export class DiaAcupunturaAdminComponent implements OnInit {
   descargandoPdfId: number | null = null;
   mensajeExito = '';
   mensajeError = '';
+
+  // ── Video General del Evento ──
+  videoGeneral: VideoGeneralEvento | null = null;
+  formVideoGeneral: ActualizarVideoGeneralRequest = {
+    youtubeUrl: '',
+    titulo: 'Sesión Inaugural: Día de la Acupuntura',
+    descripcion: '',
+    duracionMinutos: 90,
+    activo: true
+  };
+  guardandoVideoGeneral = false;
+  mensajeExitoVideoGeneral = '';
+  mensajeErrorVideoGeneral = '';
 
   // Resultado de última matrícula
   resultadoMatricula: MatriculaResultadoResponse | null = null;
@@ -61,6 +74,7 @@ export class DiaAcupunturaAdminComponent implements OnInit {
 
   cargarDatos(): void {
     this.cargando = true;
+    this.cargarVideoGeneralAdmin();
     this.diaService.listarTalleres().subscribe({
       next: (talleresData) => {
         this.talleres = talleresData;
@@ -80,6 +94,69 @@ export class DiaAcupunturaAdminComponent implements OnInit {
         this.cargando = false;
       }
     });
+  }
+
+  cargarVideoGeneralAdmin(): void {
+    this.diaService.obtenerVideoGeneral().subscribe({
+      next: (data) => {
+        this.videoGeneral = data;
+        if (data) {
+          this.formVideoGeneral = {
+            youtubeUrl: data.youtubeUrl || '',
+            titulo: data.titulo || 'Sesión Inaugural: Día de la Acupuntura',
+            descripcion: data.descripcion || '',
+            duracionMinutos: data.duracionMinutos || 90,
+            activo: data.activo !== false
+          };
+        }
+      },
+      error: (err) => {
+        console.error('Error al cargar video general en admin', err);
+      }
+    });
+  }
+
+  guardarVideoGeneralAdmin(): void {
+    if (!this.formVideoGeneral.youtubeUrl || !this.formVideoGeneral.youtubeUrl.trim()) {
+      this.mensajeErrorVideoGeneral = 'Por favor ingresa la URL de YouTube para el video general.';
+      return;
+    }
+
+    this.guardandoVideoGeneral = true;
+    this.mensajeErrorVideoGeneral = '';
+    this.mensajeExitoVideoGeneral = '';
+
+    this.diaService.guardarVideoGeneral(this.formVideoGeneral).subscribe({
+      next: () => {
+        this.guardandoVideoGeneral = false;
+        this.mensajeExitoVideoGeneral = '¡Video General del Evento actualizado exitosamente!';
+        this.cargarVideoGeneralAdmin();
+        setTimeout(() => {
+          this.mensajeExitoVideoGeneral = '';
+        }, 5000);
+      },
+      error: (err) => {
+        this.guardandoVideoGeneral = false;
+        this.mensajeErrorVideoGeneral = err.error?.message || 'Error al guardar el video general.';
+      }
+    });
+  }
+
+  extraerYoutubeId(url: string | null | undefined): string | null {
+    if (!url || !url.trim()) return null;
+    const clean = url.trim();
+    if (/^[\w-]{11}$/.test(clean)) return clean;
+    const match = clean.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|live\/|shorts\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+    return match ? match[1] : null;
+  }
+
+  get youtubeIdDetectado(): string {
+    const id = this.extraerYoutubeId(this.formVideoGeneral?.youtubeUrl);
+    return id || (this.videoGeneral?.youtubeId || 'Ninguno');
+  }
+
+  get youtubeIdModalDetectado(): string | null {
+    return this.extraerYoutubeId(this.formVideo?.youtubeUrl);
   }
 
   // ── GESTIÓN DE VIDEOS / CLASES ─────────────────────────────

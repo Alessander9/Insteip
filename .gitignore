@@ -1,8 +1,6 @@
 node_modules
 backend/target/
-backend/uploads/backups/
-backend/uploads/certificados/
-backend/uploads/materiales/
+backend/uploads/
 frontend/.angular/cache/
 frontend/dist/
 run-logs/
@@ -29,3 +27,4 @@ scripts/tests/e2e/downloads/
 .codegraph/
 *.log
 .kiro/
+.atl/

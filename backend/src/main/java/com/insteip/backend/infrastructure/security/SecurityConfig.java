@@ -59,8 +59,9 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                 // Permitir TODAS las peticiones OPTIONS (preflight CORS del navegador)
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // Rutas públicas de autenticación, validación, chatbots, experiencia, demo, día de acupuntura y health check de actuator
-                .requestMatchers("/api/auth/login", "/api/auth/refresh", "/api/auth/logout", "/api/auth/forgot-password", "/api/auth/reset-password", "/api/certificados/validar/**", "/api/chatbot/**", "/api/anuncios-modal/activo", "/api/experiencias/**", "/api/demo/**", "/api/dia-acupuntura/talleres", "/actuator/health", "/actuator/info").permitAll()
+                .requestMatchers("/api/auth/login", "/api/auth/refresh", "/api/auth/logout", "/api/auth/forgot-password", "/api/auth/reset-password", "/api/certificados/validar/**", "/api/chatbot/**", "/api/anuncios-modal/activo", "/api/experiencias/**", "/api/demo/**", "/api/dia-acupuntura/talleres", "/api/dia-acupuntura/video-general", "/actuator/health", "/actuator/info").permitAll()
                 // Cualquier otra solicitud requiere estar autenticado
                 .anyRequest().authenticated()
             )

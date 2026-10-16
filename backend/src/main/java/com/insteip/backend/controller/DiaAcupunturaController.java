@@ -1,10 +1,6 @@
 package com.insteip.backend.controller;
 
-import com.insteip.backend.domain.dto.diaacupuntura.ActualizarVideoTallerRequest;
-import com.insteip.backend.domain.dto.diaacupuntura.MatriculaLoteEventoRequest;
-import com.insteip.backend.domain.dto.diaacupuntura.MatriculaResultadoResponse;
-import com.insteip.backend.domain.dto.diaacupuntura.ResumenInscritosEventoResponse;
-import com.insteip.backend.domain.dto.diaacupuntura.TallerEventoResponse;
+import com.insteip.backend.domain.dto.diaacupuntura.*;
 import com.insteip.backend.service.interfaces.DiaAcupunturaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -77,5 +73,21 @@ public class DiaAcupunturaController {
             @PathVariable Long videoId) {
         diaAcupunturaService.eliminarVideoTaller(id, videoId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/video-general")
+    public ResponseEntity<VideoGeneralEventoDto> obtenerVideoGeneral(Authentication authentication) {
+        String correo = (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName()))
+                ? authentication.getName()
+                : null;
+        return ResponseEntity.ok(diaAcupunturaService.obtenerVideoGeneral(correo));
+    }
+
+    @PostMapping("/admin/video-general")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<Void> guardarVideoGeneral(
+            @Valid @RequestBody ActualizarVideoGeneralRequest request) {
+        diaAcupunturaService.guardarVideoGeneral(request);
+        return ResponseEntity.ok().build();
     }
 }

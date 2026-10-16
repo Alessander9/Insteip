@@ -1,10 +1,7 @@
 package com.insteip.backend.service.impl;
 
-import com.insteip.backend.domain.dto.diaacupuntura.ActualizarVideoTallerRequest;
-import com.insteip.backend.domain.dto.diaacupuntura.MatriculaLoteEventoRequest;
-import com.insteip.backend.domain.dto.diaacupuntura.MatriculaResultadoResponse;
-import com.insteip.backend.domain.dto.diaacupuntura.ResumenInscritosEventoResponse;
-import com.insteip.backend.domain.dto.diaacupuntura.TallerEventoResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.insteip.backend.domain.dto.diaacupuntura.*;
 import com.insteip.backend.domain.entity.*;
 import com.insteip.backend.domain.exception.BadRequestException;
 import com.insteip.backend.domain.exception.ResourceNotFoundException;
@@ -12,10 +9,14 @@ import com.insteip.backend.repository.*;
 import com.insteip.backend.service.interfaces.DiaAcupunturaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -45,6 +46,10 @@ public class DiaAcupunturaServiceImpl implements DiaAcupunturaService {
     private final RolRepository rolRepository;
     private final AvanceVideoRepository avanceVideoRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Value("${application.storage.path:storage}")
+    private String storagePath;
 
     @Override
     @Transactional(readOnly = true)
@@ -357,9 +362,122 @@ public class DiaAcupunturaServiceImpl implements DiaAcupunturaService {
     }
 
     private String extraerYoutubeId(String url) {
-        if (url == null) return null;
-        Pattern pattern = Pattern.compile("(?:youtu\\.be/|youtube\\.com/(?:embed/|v/|watch\\?v=|watch\\?.+&v=))([\\w-]{11})");
-        Matcher matcher = pattern.matcher(url);
+        if (url == null || url.isBlank()) return null;
+        String clean = url.trim();
+        if (clean.matches("^[\\w-]{11}$")) {
+            return clean;
+        }
+        Pattern pattern = Pattern.compile("(?:youtu\\.be/|youtube\\.com/(?:embed/|v/|live/|shorts/|watch\\?v=|watch\\?.+&v=))([\\w-]{11})");
+        Matcher matcher = pattern.matcher(clean);
         return matcher.find() ? matcher.group(1) : null;
+    }
+
+    private Path getVideoGeneralFilePath() {
+        String base = (storagePath != null && !storagePath.isBlank()) ? storagePath : "storage";
+        return Paths.get(base, "dia-acupuntura-video-general.json");
+    }
+
+    @Override
+    public VideoGeneralEventoDto obtenerVideoGeneral(String correoAutenticado) {
+        VideoGeneralEventoDto dto = null;
+        try {
+            Path path = getVideoGeneralFilePath();
+            if (Files.exists(path)) {
+                dto = objectMapper.readValue(path.toFile(), VideoGeneralEventoDto.class);
+            }
+        } catch (Exception e) {
+            log.error("Error al leer archivo de video general del evento: {}", e.getMessage());
+        }
+
+        if (dto == null) {
+            // Configuración por defecto si aún no ha sido configurado por el administrador
+            dto = VideoGeneralEventoDto.builder()
+                    .titulo("Sesión Inaugural: Día de la Acupuntura")
+                    .descripcion("Transmisión magistral y apertura oficial de la Jornada Internacional de Acupuntura. Acceso exclusivo para participantes.")
+                    .youtubeUrl("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+                    .youtubeId("dQw4w9WgXcQ")
+                    .duracionMinutos(90)
+                    .activo(true)
+                    .build();
+        }
+
+        boolean tieneAcceso = false;
+        if (correoAutenticado != null && !correoAutenticado.trim().isEmpty()) {
+            Optional<Usuario> userOpt = usuarioRepository.findByCorreo(correoAutenticado.trim().toLowerCase());
+            if (userOpt.isPresent()) {
+                Usuario user = userOpt.get();
+                if (user.getRol() != null && "ADMINISTRADOR".equalsIgnoreCase(user.getRol().getNombre())) {
+                    tieneAcceso = true;
+                } else {
+                    List<Curso> cursosEvento = obtenerCursosEvento();
+                    Set<Long> idsEvento = cursosEvento.stream().map(Curso::getId).collect(Collectors.toSet());
+                    List<Matricula> matriculas = matriculaRepository.findByUsuarioIdAndEstadoTrue(user.getId());
+                    tieneAcceso = matriculas.stream()
+                            .anyMatch(m -> m.getCurso() != null && idsEvento.contains(m.getCurso().getId()));
+                }
+            }
+        }
+
+        // Si el usuario no tiene acceso, anonimizamos la URL e ID de YouTube protegiendo el streaming
+        if (!tieneAcceso) {
+            return VideoGeneralEventoDto.builder()
+                    .titulo(dto.getTitulo())
+                    .descripcion(dto.getDescripcion())
+                    .duracionMinutos(dto.getDuracionMinutos())
+                    .activo(dto.getActivo())
+                    .youtubeUrl(null)
+                    .youtubeId(null)
+                    .build();
+        }
+
+        return dto;
+    }
+
+    @Override
+    public void guardarVideoGeneral(ActualizarVideoGeneralRequest request) {
+        if (request.getYoutubeUrl() == null || request.getYoutubeUrl().trim().isEmpty()) {
+            throw new BadRequestException("La URL de YouTube es requerida.");
+        }
+
+        String url = request.getYoutubeUrl().trim();
+        String youtubeId = extraerYoutubeId(url);
+        if (youtubeId == null || youtubeId.isBlank()) {
+            throw new BadRequestException("No se pudo extraer un ID válido de YouTube de la URL proporcionada.");
+        }
+
+        String titulo = (request.getTitulo() != null && !request.getTitulo().trim().isEmpty())
+                ? request.getTitulo().trim()
+                : "Sesión Inaugural: Día de la Acupuntura";
+
+        String desc = (request.getDescripcion() != null && !request.getDescripcion().trim().isEmpty())
+                ? request.getDescripcion().trim()
+                : "Transmisión magistral y apertura oficial de la Jornada Internacional de Acupuntura.";
+
+        int duracionMin = (request.getDuracionMinutos() != null && request.getDuracionMinutos() > 0)
+                ? request.getDuracionMinutos()
+                : 90;
+
+        boolean activo = request.getActivo() == null || Boolean.TRUE.equals(request.getActivo());
+
+        VideoGeneralEventoDto dto = VideoGeneralEventoDto.builder()
+                .youtubeUrl(url)
+                .youtubeId(youtubeId)
+                .titulo(titulo)
+                .descripcion(desc)
+                .duracionMinutos(duracionMin)
+                .activo(activo)
+                .build();
+
+        try {
+            Path path = getVideoGeneralFilePath();
+            if (path.getParent() != null && !Files.exists(path.getParent())) {
+                Files.createDirectories(path.getParent());
+            }
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(path.toFile(), dto);
+            log.info("Video general del Día de la Acupuntura actualizado exitosamente. YouTube ID: {}", youtubeId);
+        } catch (Exception e) {
+            log.error("Error al persistir archivo de video general del evento: {}", e.getMessage(), e);
+            throw new BadRequestException("No se pudo guardar la configuración del video general: " + e.getMessage());
+        }
     }
 }

@@ -151,6 +151,109 @@
       </div>
     </section>
 
+    <!-- ── SECCIÓN: VIDEO GENERAL DEL EVENTO (OPCIÓN 1) ────────── -->
+    <section *ngIf="videoGeneral && videoGeneral.activo" class="dia-general-video-section">
+      <div class="general-video-card" [class.general-video-card--unlocked]="tieneAccesoVideoGeneral" [class.general-video-card--locked]="!tieneAccesoVideoGeneral">
+        
+        <!-- CABECERA DE LA SECCIÓN DE VIDEO -->
+        <div class="general-video-header">
+          <div class="general-video-badge">
+            <span class="material-symbols-outlined icon-live">play_circle</span>
+            <span>TRANSMISIÓN CENTRAL & SESIÓN INAUGURAL</span>
+          </div>
+
+          <div *ngIf="tieneAccesoVideoGeneral" class="access-pill access-pill--unlocked">
+            <span class="material-symbols-outlined">verified</span>
+            <span>{{ esAdmin ? 'Acceso Administrador' : ('Acceso Desbloqueado · ' + totalInscritosUsuario + ' taller(es) matriculado(s)') }}</span>
+          </div>
+
+          <div *ngIf="!tieneAccesoVideoGeneral" class="access-pill access-pill--locked">
+            <span class="material-symbols-outlined">lock</span>
+            <span>Exclusivo para Inscritos al Evento</span>
+          </div>
+        </div>
+
+        <!-- REPRODUCTOR DESBLOQUEADO (SI EL ALUMNO ESTÁ MATRICULADO EN AL MENOS 1 TALLER O ES ADMIN) -->
+        <div *ngIf="tieneAccesoVideoGeneral && videoGeneralSafeUrl" class="general-video-player-wrap">
+          <div class="video-responsive-container">
+            <iframe
+              [src]="videoGeneralSafeUrl"
+              [title]="videoGeneral.titulo"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+            ></iframe>
+          </div>
+        </div>
+
+        <!-- ACCESO CONCEDIDO PERO VIDEO AÚN SIN ENLACE O EN PREPARACIÓN -->
+        <div *ngIf="tieneAccesoVideoGeneral && !videoGeneralSafeUrl" class="general-video-locked-wrap">
+          <div class="locked-preview-backdrop">
+            <div class="locked-overlay"></div>
+            <div class="locked-icon-badge" style="border-color: rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.15); color: #34d399;">
+              <span class="material-symbols-outlined">verified</span>
+            </div>
+            <h3 class="locked-title">{{ videoGeneral.titulo }}</h3>
+            <p class="locked-desc">
+              ¡Tienes acceso desbloqueado a esta transmisión! El video se encuentra en preparación o el enlace oficial se activará durante la sesión.
+            </p>
+          </div>
+        </div>
+
+        <!-- CARÁTULA BLOQUEADA (SI NO ESTÁ AUTENTICADO O TIENE 0 TALLERES) -->
+        <div *ngIf="!tieneAccesoVideoGeneral" class="general-video-locked-wrap">
+          <div class="locked-preview-backdrop">
+            <div class="locked-overlay"></div>
+            <div class="locked-icon-badge">
+              <span class="material-symbols-outlined">lock</span>
+            </div>
+            <h3 class="locked-title">{{ videoGeneral.titulo }}</h3>
+            <p class="locked-desc">
+              Esta clase magistral general está disponible para todos los alumnos matriculados en al menos 1 taller de la jornada.
+            </p>
+
+            <div *ngIf="estaAutenticado" class="user-notice-badge">
+              <span class="material-symbols-outlined">account_circle</span>
+              <span>Conectado como <strong>{{ usuarioCorreo }}</strong>. Aún no tienes talleres matriculados en este evento.</span>
+            </div>
+
+            <div class="locked-actions">
+              <button *ngIf="!estaAutenticado" (click)="scrollAlLogin()" class="btn btn--gold">
+                <span class="material-symbols-outlined">key</span>
+                <span>Inicia Sesión Arriba para Ver</span>
+              </button>
+              <a [href]="whatsappUrl" target="_blank" rel="noopener noreferrer" class="btn btn--whatsapp-inline">
+                <span class="material-symbols-outlined">chat</span>
+                <span>Inscribirme por WhatsApp</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- METADATA Y DESCRIPCIÓN DEL VIDEO -->
+        <div class="general-video-info">
+          <h2 class="video-title">{{ videoGeneral.titulo }}</h2>
+          <p class="video-description">{{ videoGeneral.descripcion }}</p>
+
+          <div class="video-footer-meta">
+            <div class="meta-tag">
+              <span class="material-symbols-outlined">schedule</span>
+              <span>{{ videoGeneral.duracionMinutos || 90 }} minutos</span>
+            </div>
+            <div class="meta-tag">
+              <span class="material-symbols-outlined">workspace_premium</span>
+              <span>Ponencia Oficial INSTEIP</span>
+            </div>
+            <div class="meta-tag">
+              <span class="material-symbols-outlined">hd</span>
+              <span>1080p Full HD</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
     <!-- LISTADO DE TALLERES (GRID) -->
     <section class="dia-workshops-section">
       <div class="section-title-wrap">

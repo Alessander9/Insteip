@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { TallerEvento, MatriculaLoteEventoRequest, ResumenInscritosEvento, ActualizarVideoTallerRequest, MatriculaResultadoResponse } from '../models/dia-acupuntura.model';
+import { TallerEvento, MatriculaLoteEventoRequest, ResumenInscritosEvento, ActualizarVideoTallerRequest, MatriculaResultadoResponse, VideoGeneralEvento, ActualizarVideoGeneralRequest } from '../models/dia-acupuntura.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +13,14 @@ export class DiaAcupunturaService {
 
   listarTalleres(): Observable<TallerEvento[]> {
     return this.http.get<TallerEvento[]>(`${this.apiUrl}/talleres`);
+  }
+
+  obtenerVideoGeneral(): Observable<VideoGeneralEvento> {
+    return this.http.get<VideoGeneralEvento>(`${this.apiUrl}/video-general`);
+  }
+
+  guardarVideoGeneral(req: ActualizarVideoGeneralRequest): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/admin/video-general`, req);
   }
 
   obtenerResumenInscritos(): Observable<ResumenInscritosEvento[]> {

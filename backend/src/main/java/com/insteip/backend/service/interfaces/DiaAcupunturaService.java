@@ -1,10 +1,6 @@
 package com.insteip.backend.service.interfaces;
 
-import com.insteip.backend.domain.dto.diaacupuntura.ActualizarVideoTallerRequest;
-import com.insteip.backend.domain.dto.diaacupuntura.MatriculaLoteEventoRequest;
-import com.insteip.backend.domain.dto.diaacupuntura.MatriculaResultadoResponse;
-import com.insteip.backend.domain.dto.diaacupuntura.ResumenInscritosEventoResponse;
-import com.insteip.backend.domain.dto.diaacupuntura.TallerEventoResponse;
+import com.insteip.backend.domain.dto.diaacupuntura.*;
 
 import java.util.List;
 
@@ -15,4 +11,9 @@ public interface DiaAcupunturaService {
     MatriculaResultadoResponse matricularIndividual(MatriculaLoteEventoRequest request);
     void guardarVideoTaller(Long cursoId, Long videoId, ActualizarVideoTallerRequest request);
     void eliminarVideoTaller(Long cursoId, Long videoId);
+    default VideoGeneralEventoDto obtenerVideoGeneral() {
+        return obtenerVideoGeneral(null);
+    }
+    VideoGeneralEventoDto obtenerVideoGeneral(String correoAutenticado);
+    void guardarVideoGeneral(ActualizarVideoGeneralRequest request);
 }

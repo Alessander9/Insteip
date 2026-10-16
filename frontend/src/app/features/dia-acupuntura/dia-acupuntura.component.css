@@ -904,3 +904,258 @@
   border: 1px solid rgba(239, 68, 68, 0.35);
   color: #fca5a5;
 }
+
+/* ── SECCIÓN VIDEO GENERAL DEL EVENTO (OPCIÓN 1) ────────── */
+.dia-general-video-section {
+  margin-bottom: 3.5rem;
+  width: 100%;
+}
+
+.general-video-card {
+  background: linear-gradient(145deg, #101921 0%, #0c131a 100%);
+  border: 1px solid rgba(234, 179, 8, 0.28);
+  border-radius: 20px;
+  padding: 1.75rem;
+  box-shadow: 0 15px 40px -10px rgba(0, 0, 0, 0.6), 0 0 25px rgba(234, 179, 8, 0.08);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.general-video-card--unlocked {
+  border-color: rgba(234, 179, 8, 0.45);
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.7), 0 0 35px rgba(234, 179, 8, 0.12);
+}
+
+.general-video-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.general-video-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #eab308;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.general-video-badge .icon-live {
+  font-size: 1.25rem;
+  color: #eab308;
+}
+
+.access-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.access-pill--unlocked {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: #4ade80;
+}
+
+.access-pill--locked {
+  background: rgba(234, 179, 8, 0.12);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  color: #fbbf24;
+}
+
+/* Reproductor Embebido 16:9 */
+.general-video-player-wrap {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #000;
+}
+
+.video-responsive-container {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+  overflow: hidden;
+}
+
+.video-responsive-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Carátula Bloqueada */
+.general-video-locked-wrap {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #182531 0%, #0a1016 100%);
+  border: 1px solid rgba(234, 179, 8, 0.2);
+  padding: 3rem 1.5rem;
+  text-align: center;
+  position: relative;
+}
+
+.locked-preview-backdrop {
+  max-width: 650px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.locked-icon-badge {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(234, 179, 8, 0.12);
+  border: 2px solid rgba(234, 179, 8, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+  color: #eab308;
+}
+
+.locked-icon-badge span {
+  font-size: 2rem;
+}
+
+.locked-title {
+  color: #ffffff;
+  font-size: 1.45rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+
+.locked-desc {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.75rem;
+}
+
+.user-notice-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(234, 179, 8, 0.12);
+  border: 1px solid rgba(234, 179, 8, 0.35);
+  color: #fef08a;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 1.25rem;
+  text-align: left;
+}
+
+.user-notice-badge span.material-symbols-outlined {
+  font-size: 1.2rem;
+  color: #eab308;
+  flex-shrink: 0;
+}
+
+.locked-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.btn--whatsapp-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.4rem;
+  background: #25d366;
+  color: #ffffff;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn--whatsapp-inline:hover {
+  background: #20ba5a;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
+}
+
+/* Info del Video General */
+.general-video-info {
+  margin-top: 1.5rem;
+}
+
+.video-title {
+  color: #f8fafc;
+  font-size: 1.35rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  line-height: 1.35;
+}
+
+.video-description {
+  color: #94a3b8;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+}
+
+.video-footer-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.meta-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  color: #cbd5e1;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.meta-tag span.material-symbols-outlined {
+  font-size: 1.1rem;
+  color: #eab308;
+}
+
+@media (max-width: 640px) {
+  .general-video-card {
+    padding: 1.25rem;
+  }
+  .locked-title {
+    font-size: 1.2rem;
+  }
+  .general-video-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+

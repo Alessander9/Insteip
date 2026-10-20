@@ -64,6 +64,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   /** Controls the mobile slide-out sidebar drawer */
   sidebarOpen = false;
 
+  /** Controls desktop sidebar collapsed state */
+  sidebarCollapsed = false;
+
   toggleSidebar(): void {
     this.sidebarOpen = !this.sidebarOpen;
   }
@@ -72,7 +75,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.sidebarOpen = false;
   }
 
+  toggleDesktopSidebar(): void {
+    this.sidebarCollapsed = !this.sidebarCollapsed;
+    try {
+      localStorage.setItem('insteip_sidebar_collapsed', this.sidebarCollapsed ? 'true' : 'false');
+    } catch {
+      // Ignorar si localStorage no esta disponible
+    }
+  }
+
   ngOnInit(): void {
+    try {
+      const savedCollapsed = localStorage.getItem('insteip_sidebar_collapsed');
+      if (savedCollapsed === 'true') {
+        this.sidebarCollapsed = true;
+      }
+    } catch {
+      // Ignorar si localStorage no esta disponible
+    }
+
     this.expSub = this.authService.isExpUserSubject.subscribe(isExp => {
       this.isExpUser = isExp;
       if (isExp) {

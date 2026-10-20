@@ -37,3 +37,29 @@ nav a:hover .material-symbols-outlined {
 .status-active {
   animation: statusShimmer 2.5s ease-in-out infinite;
 }
+
+/* ── Transición fluida para el sidebar colapsable ── */
+aside.desktop-sidebar {
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+aside.desktop-sidebar.is-collapsed .sidebar-label,
+aside.desktop-sidebar.is-collapsed .sidebar-user-info,
+aside.desktop-sidebar.is-collapsed .sidebar-brand-text {
+  display: none;
+}
+
+aside.desktop-sidebar.is-collapsed .sidebar-link {
+  justify-content: center;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+aside.desktop-sidebar.is-collapsed .sidebar-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 0.15rem 0.35rem;
+  font-size: 9px;
+}
+

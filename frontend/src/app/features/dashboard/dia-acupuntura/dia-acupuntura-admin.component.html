@@ -615,38 +615,52 @@
         </div>
 
         <!-- LISTA DE ALUMNOS DEL TALLER -->
-        <div class="p-4">
-          <div *ngIf="item.alumnos && item.alumnos.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-            <div *ngFor="let a of alumnosFiltrados(item.alumnos)" class="p-3 bg-slate-50 dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2">
-              <div class="min-w-0 flex-1">
-                <div class="text-xs font-black text-slate-950 dark:text-white truncate" [title]="a.nombresCompletos">
-                  {{ a.nombresCompletos }}
-                </div>
-                <div class="text-[11px] text-slate-600 dark:text-slate-400 font-mono truncate">
-                  {{ a.correo }}
-                </div>
-                <div *ngIf="a.telefono" class="text-[10px] text-slate-500 dark:text-slate-500 font-mono mt-0.5">
-                  Tel: {{ a.telefono }}
+        <div class="p-4 sm:p-5">
+          <div *ngIf="item.alumnos && item.alumnos.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div 
+              *ngFor="let a of alumnosFiltrados(item.alumnos)" 
+              class="border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-4 shadow-sm hover:border-slate-400 dark:hover:border-slate-600 transition-all flex flex-col justify-between gap-3.5"
+            >
+              <!-- SECCIÓN SUPERIOR: IDENTIDAD Y CONTACTO -->
+              <div class="space-y-1.5">
+                <div class="flex items-start gap-2.5">
+                  <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 shrink-0 mt-0.5">
+                    <span class="material-symbols-outlined text-base">person</span>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <h5 class="text-xs font-black text-slate-950 dark:text-white uppercase leading-snug break-words" [title]="a.nombresCompletos">
+                      {{ a.nombresCompletos }}
+                    </h5>
+                    <div class="flex items-center gap-1 text-[11px] text-slate-600 dark:text-slate-400 font-mono mt-0.5 break-all">
+                      <span class="material-symbols-outlined text-[13px] text-slate-400 shrink-0">mail</span>
+                      <span>{{ a.correo }}</span>
+                    </div>
+                    <div *ngIf="a.telefono" class="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                      <span class="material-symbols-outlined text-[13px] text-emerald-500 shrink-0">call</span>
+                      <span>{{ a.telefono }}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <!-- ACCIONES ALUMNO -->
+              <!-- SECCIÓN INFERIOR: BOTONES BIEN DISTRIBUIDOS -->
+              <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80 grid grid-cols-3 gap-1.5">
                 <!-- BOTÓN SUBIR CERTIFICADO OFICIAL -->
                 <button
                   type="button"
                   (click)="abrirModalSubirCertificado(a, item.cursoId, item.cursoNombre)"
-                  class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[11px] uppercase flex items-center gap-1 shrink-0 transition-all active:scale-95 shadow-xs"
+                  class="py-2 px-1 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[10px] uppercase flex flex-col sm:flex-row items-center justify-center gap-1 transition-all active:scale-95 shadow-xs text-center"
                   title="Subir o actualizar Certificado Oficial en PDF"
                 >
                   <span class="material-symbols-outlined text-sm">workspace_premium</span>
                   <span>Certificado</span>
                 </button>
-              <div class="flex items-center gap-1.5 shrink-0">
+
                 <!-- BOTÓN EDITAR TALLERES -->
                 <button
                   type="button"
                   (click)="abrirModalEditarTalleres(a)"
-                  class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] uppercase flex items-center gap-1 shrink-0 transition-all active:scale-95 shadow-xs"
+                  class="py-2 px-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[10px] uppercase flex flex-col sm:flex-row items-center justify-center gap-1 transition-all active:scale-95 shadow-xs text-center"
                   title="Editar o asignar talleres a este alumno"
                 >
                   <span class="material-symbols-outlined text-sm font-bold">edit_note</span>
@@ -658,7 +672,7 @@
                   type="button"
                   (click)="descargarFicha(a.matriculaId, a.nombresCompletos, item.cursoNombre)"
                   [disabled]="descargandoPdfId === a.matriculaId"
-                  class="px-2.5 py-1.5 bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-black text-[11px] uppercase flex items-center gap-1 shrink-0 border border-slate-700 transition-all active:scale-95 shadow-xs"
+                  class="py-2 px-1 bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-black text-[10px] uppercase flex flex-col sm:flex-row items-center justify-center gap-1 border border-slate-700 transition-all active:scale-95 shadow-xs text-center"
                   title="Descargar Ficha Oficial en PDF"
                 >
                   <span *ngIf="descargandoPdfId !== a.matriculaId" class="material-symbols-outlined text-sm text-rose-400">picture_as_pdf</span>

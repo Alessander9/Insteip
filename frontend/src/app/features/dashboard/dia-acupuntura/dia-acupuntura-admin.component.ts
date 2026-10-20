@@ -2,9 +2,13 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { Observable, forkJoin } from 'rxjs';
 import { DiaAcupunturaService } from '../../../core/services/dia-acupuntura.service';
 import { MatriculaService } from '../../../core/services/matricula.service';
-import { ResumenInscritosEvento, TallerEvento, VideoEvento, MatriculaLoteEventoRequest, ActualizarVideoTallerRequest, MatriculaResultadoResponse, VideoGeneralEvento, ActualizarVideoGeneralRequest } from '../../../core/models/dia-acupuntura.model';
+import { AlumnoService } from '../../../core/services/alumno.service';
+import { CertificadoService } from '../../../core/services/certificado.service';
+import { AlumnoResponse } from '../../../core/models/alumno.model';
+import { ResumenInscritosEvento, TallerEvento, VideoEvento, MatriculaLoteEventoRequest, ActualizarVideoTallerRequest, MatriculaResultadoResponse, VideoGeneralEvento, ActualizarVideoGeneralRequest, AlumnoInscritoEvento } from '../../../core/models/dia-acupuntura.model';
 
 @Component({
   selector: 'app-dia-acupuntura-admin',
@@ -16,6 +20,21 @@ import { ResumenInscritosEvento, TallerEvento, VideoEvento, MatriculaLoteEventoR
 export class DiaAcupunturaAdminComponent implements OnInit {
   private diaService = inject(DiaAcupunturaService);
   private matriculaService = inject(MatriculaService);
+  private alumnoService = inject(AlumnoService);
+  private certificadoService = inject(CertificadoService);
+
+  // ── Modal Subir Certificado Oficial ──
+  modalSubirCertificadoAbierto = false;
+  alumnoCertificado: {
+    usuarioId: number;
+    nombresCompletos: string;
+    cursoId: number;
+    cursoNombre: string;
+  } | null = null;
+  archivoCertificadoSeleccionado: File | null = null;
+  subiendoCertificado = false;
+  mensajeExitoCertificado = '';
+  mensajeErrorCertificado = '';
 
   talleres: TallerEvento[] = [];
   resumen: ResumenInscritosEvento[] = [];
@@ -67,6 +86,35 @@ export class DiaAcupunturaAdminComponent implements OnInit {
   // Formulario Lote
   textoLote = '';
   modoLote = false;
+
+  // ── Filtro en vivo en Pestaña 3 (Reporte de Inscritos) ──
+  busquedaReporte = '';
+
+  // ── Modal de Búsqueda General de Alumno Existente ──
+  modalBuscarAlumnoAbierto = false;
+  busquedaAlumnoTerm = '';
+  alumnosEncontrados: AlumnoResponse[] = [];
+  buscandoAlumnos = false;
+
+  // ── Modal de Edición Directa de Talleres de Alumno ──
+  modalEditarTalleresAbierto = false;
+  alumnoEditando: {
+    usuarioId: number;
+    nombresCompletos: string;
+    nombres: string;
+    apellidos: string;
+    correo: string;
+    telefono?: string;
+  } | null = null;
+  talleresSeleccionadosEdit: { [cursoId: number]: boolean } = {};
+  matriculasPreviasEdit: { [cursoId: number]: number } = {}; // cursoId -> matriculaId
+  cargandoTalleresAlumno = false;
+  guardandoTalleresAlumno = false;
+
+  // ── Autocompletado en Tab 2 (Matrícula Individual) ──
+  busquedaTab2 = '';
+  alumnosSugeridosTab2: AlumnoResponse[] = [];
+  buscandoTab2 = false;
 
   ngOnInit(): void {
     this.cargarDatos();
@@ -146,7 +194,7 @@ export class DiaAcupunturaAdminComponent implements OnInit {
     if (!url || !url.trim()) return null;
     const clean = url.trim();
     if (/^[\w-]{11}$/.test(clean)) return clean;
-    const match = clean.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|live\/|shorts\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+    const match = clean.match(/(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/(?:embed\/|v\/|live\/|shorts\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
     return match ? match[1] : null;
   }
 
@@ -393,5 +441,289 @@ export class DiaAcupunturaAdminComponent implements OnInit {
 
   desmarcarTodosTalleres(): void {
     this.formIndividual.cursosSeleccionados = {};
+  }
+
+  // ── FILTRO EN VIVO PARA PESTAÑA 3 ──
+  alumnosFiltrados(alumnos: AlumnoInscritoEvento[] | undefined | null): AlumnoInscritoEvento[] {
+    if (!alumnos) return [];
+    if (!this.busquedaReporte || !this.busquedaReporte.trim()) return alumnos;
+    const q = this.busquedaReporte.toLowerCase().trim();
+    return alumnos.filter(a =>
+      (a.nombresCompletos || '').toLowerCase().includes(q) ||
+      (a.correo || '').toLowerCase().includes(q) ||
+      (a.telefono || '').toLowerCase().includes(q)
+    );
+  }
+
+  // ── GESTIÓN / EDICIÓN DIRECTA DE TALLERES DE UNA ALUMNA ──
+  abrirModalEditarTalleres(alumno: { usuarioId: number; nombresCompletos: string; correo: string; telefono?: string }): void {
+    const rawName = (alumno.nombresCompletos || '').trim();
+    const parts = rawName.split(/\s+/);
+    let nombres = rawName;
+    let apellidos = '';
+    if (parts.length >= 2) {
+      const half = Math.ceil(parts.length / 2);
+      nombres = parts.slice(0, half).join(' ');
+      apellidos = parts.slice(half).join(' ');
+    }
+
+    this.alumnoEditando = {
+      usuarioId: alumno.usuarioId,
+      nombresCompletos: alumno.nombresCompletos,
+      nombres,
+      apellidos: apellidos || 'Estudiante',
+      correo: alumno.correo,
+      telefono: alumno.telefono
+    };
+
+    this.talleresSeleccionadosEdit = {};
+    this.matriculasPreviasEdit = {};
+    this.modalEditarTalleresAbierto = true;
+    this.cargandoTalleresAlumno = true;
+    this.mensajeError = '';
+
+    // Cargar las matrículas actuales del usuario para marcar los checkboxes
+    this.matriculaService.listarPorUsuario(alumno.usuarioId).subscribe({
+      next: (matriculas) => {
+        this.cargandoTalleresAlumno = false;
+        const talleresEventoIds = new Set(this.talleres.map(t => t.id));
+        for (const m of (matriculas || [])) {
+          if (m.cursoId && talleresEventoIds.has(m.cursoId)) {
+            this.matriculasPreviasEdit[m.cursoId] = m.id;
+            if (m.estado !== false) {
+              this.talleresSeleccionadosEdit[m.cursoId] = true;
+            }
+          }
+        }
+      },
+      error: (err) => {
+        this.cargandoTalleresAlumno = false;
+        console.error('Error al cargar matrículas del usuario', err);
+      }
+    });
+  }
+
+  cerrarModalEditarTalleres(): void {
+    this.modalEditarTalleresAbierto = false;
+    this.alumnoEditando = null;
+    this.talleresSeleccionadosEdit = {};
+    this.matriculasPreviasEdit = {};
+  }
+
+  marcarTodosEdit(): void {
+    for (const t of this.talleres) {
+      this.talleresSeleccionadosEdit[t.id] = true;
+    }
+  }
+
+  desmarcarTodosEdit(): void {
+    this.talleresSeleccionadosEdit = {};
+  }
+
+  guardarEdicionTalleres(): void {
+    if (!this.alumnoEditando) return;
+
+    const cursosIdsSeleccionados = Object.keys(this.talleresSeleccionadosEdit)
+      .filter(k => this.talleresSeleccionadosEdit[+k])
+      .map(k => +k);
+
+    this.guardandoTalleresAlumno = true;
+    this.mensajeError = '';
+
+    // Si algún taller previo fue desmarcado, desactivar su matrícula
+    const desmarcarPeticiones: Observable<void>[] = [];
+    for (const [cursoIdStr, matriculaId] of Object.entries(this.matriculasPreviasEdit)) {
+      const cId = +cursoIdStr;
+      if (!this.talleresSeleccionadosEdit[cId] && matriculaId) {
+        desmarcarPeticiones.push(this.matriculaService.cambiarEstado(matriculaId, false));
+      }
+    }
+
+    const guardarNuevasMatriculas = () => {
+      if (cursosIdsSeleccionados.length === 0) {
+        this.guardandoTalleresAlumno = false;
+        this.mensajeExito = `Talleres actualizados para ${this.alumnoEditando?.nombresCompletos}.`;
+        this.cerrarModalEditarTalleres();
+        this.cargarDatos();
+        return;
+      }
+
+      const req: MatriculaLoteEventoRequest = {
+        correo: this.alumnoEditando!.correo,
+        nombres: this.alumnoEditando!.nombres,
+        apellidos: this.alumnoEditando!.apellidos,
+        telefono: this.alumnoEditando!.telefono || '',
+        cursosIds: cursosIdsSeleccionados
+      };
+
+      this.diaService.matricularIndividual(req).subscribe({
+        next: (res) => {
+          this.guardandoTalleresAlumno = false;
+          this.resultadoMatricula = res;
+          this.mensajeExito = `¡Talleres actualizados con éxito para ${res.nombresCompletos}! Inscrita en ${res.matriculas.length} taller(es).`;
+          this.cerrarModalEditarTalleres();
+          this.cargarDatos();
+        },
+        error: (err) => {
+          this.guardandoTalleresAlumno = false;
+          this.mensajeError = err.error?.message || 'Error al actualizar los talleres del alumno.';
+        }
+      });
+    };
+
+    if (desmarcarPeticiones.length > 0) {
+      forkJoin(desmarcarPeticiones).subscribe({
+        next: () => guardarNuevasMatriculas(),
+        error: (err) => {
+          console.warn('Error al desactivar matrículas desmarcadas', err);
+          guardarNuevasMatriculas();
+        }
+      });
+    } else {
+      guardarNuevasMatriculas();
+    }
+  }
+
+  // ── BUSCADOR GENERAL DE ALUMNA EXISTENTE (Pestaña 3) ──
+  abrirModalBuscarAlumno(): void {
+    this.modalBuscarAlumnoAbierto = true;
+    this.busquedaAlumnoTerm = '';
+    this.alumnosEncontrados = [];
+  }
+
+  cerrarModalBuscarAlumno(): void {
+    this.modalBuscarAlumnoAbierto = false;
+    this.busquedaAlumnoTerm = '';
+    this.alumnosEncontrados = [];
+  }
+
+  buscarAlumnosGeneral(): void {
+    if (!this.busquedaAlumnoTerm || !this.busquedaAlumnoTerm.trim()) {
+      this.alumnosEncontrados = [];
+      return;
+    }
+    this.buscandoAlumnos = true;
+    this.alumnoService.listarAlumnos(0, 20, this.busquedaAlumnoTerm.trim()).subscribe({
+      next: (page) => {
+        this.buscandoAlumnos = false;
+        this.alumnosEncontrados = page.content || [];
+      },
+      error: (err) => {
+        this.buscandoAlumnos = false;
+        console.error('Error al buscar alumnos', err);
+      }
+    });
+  }
+
+  seleccionarAlumnoParaEditar(alumno: AlumnoResponse): void {
+    this.cerrarModalBuscarAlumno();
+    this.abrirModalEditarTalleres({
+      usuarioId: alumno.id,
+      nombresCompletos: `${alumno.nombres} ${alumno.apellidos}`,
+      correo: alumno.correo,
+      telefono: alumno.telefono
+    });
+  }
+
+  // ── AUTOCOMPLETADO EN PESTAÑA 2 (Matrícula Individual) ──
+  buscarAlumnosTab2(): void {
+    if (!this.busquedaTab2 || !this.busquedaTab2.trim()) {
+      this.alumnosSugeridosTab2 = [];
+      return;
+    }
+    this.buscandoTab2 = true;
+    this.alumnoService.listarAlumnos(0, 10, this.busquedaTab2.trim()).subscribe({
+      next: (page) => {
+        this.buscandoTab2 = false;
+        this.alumnosSugeridosTab2 = page.content || [];
+      },
+      error: () => this.buscandoTab2 = false
+    });
+  }
+
+  abrirModalSubirCertificado(alumno: { usuarioId?: number; id?: number; nombresCompletos: string }, cursoId: number, cursoNombre: string): void {
+    const uId = alumno.usuarioId || (alumno as any).id;
+    this.alumnoCertificado = {
+      usuarioId: uId,
+      nombresCompletos: alumno.nombresCompletos,
+      cursoId: cursoId,
+      cursoNombre: cursoNombre
+    };
+    this.archivoCertificadoSeleccionado = null;
+    this.mensajeExitoCertificado = '';
+    this.mensajeErrorCertificado = '';
+    this.modalSubirCertificadoAbierto = true;
+  }
+
+  cerrarModalSubirCertificado(): void {
+    this.modalSubirCertificadoAbierto = false;
+    this.alumnoCertificado = null;
+    this.archivoCertificadoSeleccionado = null;
+    this.mensajeExitoCertificado = '';
+    this.mensajeErrorCertificado = '';
+  }
+
+  onArchivoCertificadoSeleccionado(event: any): void {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (!file.name.toLowerCase().endsWith('.pdf')) {
+        this.mensajeErrorCertificado = 'Solo se permiten archivos en formato PDF.';
+        this.archivoCertificadoSeleccionado = null;
+        return;
+      }
+      this.mensajeErrorCertificado = '';
+      this.archivoCertificadoSeleccionado = file;
+    }
+  }
+
+  guardarCertificadoOficial(): void {
+    if (!this.alumnoCertificado || !this.archivoCertificadoSeleccionado) {
+      this.mensajeErrorCertificado = 'Debes seleccionar un archivo PDF oficial.';
+      return;
+    }
+
+    this.subiendoCertificado = true;
+    this.mensajeExitoCertificado = '';
+    this.mensajeErrorCertificado = '';
+
+    this.certificadoService.subirCertificadoOficial(
+      this.alumnoCertificado.usuarioId,
+      this.alumnoCertificado.cursoId,
+      this.archivoCertificadoSeleccionado
+    ).subscribe({
+      next: (res) => {
+        this.subiendoCertificado = false;
+        this.mensajeExitoCertificado = '¡Certificado oficial subido exitosamente con código ' + res.codigo + '!';
+        setTimeout(() => {
+          this.cerrarModalSubirCertificado();
+        }, 1800);
+      },
+      error: (err) => {
+        this.subiendoCertificado = false;
+        this.mensajeErrorCertificado = err.error?.message || 'Error al subir el certificado oficial.';
+      }
+    });
+  }
+
+  seleccionarAlumnoTab2(alumno: AlumnoResponse): void {
+    this.formIndividual.nombres = alumno.nombres;
+    this.formIndividual.apellidos = alumno.apellidos;
+    this.formIndividual.correo = alumno.correo;
+    this.formIndividual.telefono = alumno.telefono || '';
+    this.alumnosSugeridosTab2 = [];
+    this.busquedaTab2 = `${alumno.nombres} ${alumno.apellidos} (${alumno.correo})`;
+
+    // Cargar talleres que ya tenía marcados
+    this.matriculaService.listarPorUsuario(alumno.id).subscribe({
+      next: (matriculas) => {
+        const talleresEventoIds = new Set(this.talleres.map(t => t.id));
+        this.formIndividual.cursosSeleccionados = {};
+        for (const m of (matriculas || [])) {
+          if (m.cursoId && talleresEventoIds.has(m.cursoId) && m.estado !== false) {
+            this.formIndividual.cursosSeleccionados[m.cursoId] = true;
+          }
+        }
+      }
+    });
   }
 }

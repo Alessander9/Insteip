@@ -436,6 +436,38 @@
       </div>
 
       <form (ngSubmit)="guardarMatriculaIndividual()" class="space-y-4">
+
+        <!-- AUTOCOMPLETADO PARA ALUMNA EXISTENTE -->
+        <div class="p-3.5 bg-amber-500/10 border-2 border-amber-500/40 relative">
+          <label class="block text-xs font-black uppercase text-amber-800 dark:text-amber-300 mb-1 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm font-bold">person_search</span>
+            <span>¿La alumna ya existe en el sistema? Búscala para autorellenar sus datos:</span>
+          </label>
+          <div class="relative">
+            <input
+              type="text"
+              [(ngModel)]="busquedaTab2"
+              (input)="buscarAlumnosTab2()"
+              name="busquedaTab2Input"
+              placeholder="Escribe su nombre, apellido o correo para buscar..."
+              class="w-full p-2.5 border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white font-bold text-xs outline-none focus:border-amber-500"
+            />
+            <div *ngIf="alumnosSugeridosTab2 && alumnosSugeridosTab2.length > 0" class="absolute z-30 left-0 right-0 mt-1 bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-2xl max-h-52 overflow-y-auto">
+              <div
+                *ngFor="let s of alumnosSugeridosTab2"
+                (click)="seleccionarAlumnoTab2(s)"
+                class="p-2.5 hover:bg-amber-50 dark:hover:bg-slate-800 cursor-pointer border-b border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors"
+              >
+                <div>
+                  <div class="text-xs font-black text-slate-950 dark:text-white">{{ s.nombres }} {{ s.apellidos }}</div>
+                  <div class="text-[11px] text-slate-600 dark:text-slate-400 font-mono">{{ s.correo }}</div>
+                </div>
+                <span class="text-[10px] font-black uppercase text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-2 py-0.5 border border-amber-300 dark:border-amber-700">Seleccionar</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-black text-slate-900 dark:text-white uppercase mb-1">Nombres *</label>
@@ -521,6 +553,38 @@
   <!-- TAB 3: REPORTE DE INSCRITOS & FICHAS PDF -->
   <!-- ═════════════════════════════════════════════════════════════ -->
   <div *ngIf="tabActiva === 'reporte'" class="space-y-6">
+
+    <!-- TOOLBAR DE GESTIÓN Y BÚSQUEDA RÁPIDA -->
+    <div class="border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div class="relative flex-1">
+        <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-base">search</span>
+        <input
+          type="text"
+          [(ngModel)]="busquedaReporte"
+          placeholder="Filtrar por nombre, correo o teléfono entre los alumnos inscritos..."
+          class="w-full pl-9 pr-8 py-2 border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-950 dark:text-white text-xs font-bold outline-none focus:border-amber-500"
+        />
+        <button
+          *ngIf="busquedaReporte"
+          type="button"
+          (click)="busquedaReporte = ''"
+          class="absolute right-2.5 top-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white font-bold text-lg"
+        >
+          &times;
+        </button>
+      </div>
+
+      <button
+        type="button"
+        (click)="abrirModalBuscarAlumno()"
+        class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs transition-all active:scale-95 shrink-0"
+        title="Buscar una alumna existente en la plataforma para asignarle sus talleres"
+      >
+        <span class="material-symbols-outlined text-base font-bold">person_search</span>
+        <span>+ Asignar Talleres a Alumno Existente</span>
+      </button>
+    </div>
+
     <!-- METRIC CARDS -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" *ngIf="!cargando">
       <div *ngFor="let item of resumen" class="border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm flex items-center justify-between">
@@ -553,7 +617,7 @@
         <!-- LISTA DE ALUMNOS DEL TALLER -->
         <div class="p-4">
           <div *ngIf="item.alumnos && item.alumnos.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-            <div *ngFor="let a of item.alumnos" class="p-3 bg-slate-50 dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2">
+            <div *ngFor="let a of alumnosFiltrados(item.alumnos)" class="p-3 bg-slate-50 dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2">
               <div class="min-w-0 flex-1">
                 <div class="text-xs font-black text-slate-950 dark:text-white truncate" [title]="a.nombresCompletos">
                   {{ a.nombresCompletos }}
@@ -566,17 +630,42 @@
                 </div>
               </div>
 
-              <!-- BOTÓN DESCARGA FICHA PDF -->
-              <button
-                (click)="descargarFicha(a.matriculaId, a.nombresCompletos, item.cursoNombre)"
-                [disabled]="descargandoPdfId === a.matriculaId"
-                class="px-2.5 py-1.5 bg-slate-900 dark:bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-white font-black text-[11px] uppercase flex items-center gap-1 shrink-0 border border-slate-700 transition-all active:scale-95 shadow-xs"
-                title="Descargar Ficha Oficial en PDF"
-              >
-                <span *ngIf="descargandoPdfId !== a.matriculaId" class="material-symbols-outlined text-sm text-rose-400">picture_as_pdf</span>
-                <span *ngIf="descargandoPdfId === a.matriculaId" class="inline-block w-3 h-3 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></span>
-                <span>{{ descargandoPdfId === a.matriculaId ? 'PDF...' : 'Ficha PDF' }}</span>
-              </button>
+              <!-- ACCIONES ALUMNO -->
+                <!-- BOTÓN SUBIR CERTIFICADO OFICIAL -->
+                <button
+                  type="button"
+                  (click)="abrirModalSubirCertificado(a, item.cursoId, item.cursoNombre)"
+                  class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[11px] uppercase flex items-center gap-1 shrink-0 transition-all active:scale-95 shadow-xs"
+                  title="Subir o actualizar Certificado Oficial en PDF"
+                >
+                  <span class="material-symbols-outlined text-sm">workspace_premium</span>
+                  <span>Certificado</span>
+                </button>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <!-- BOTÓN EDITAR TALLERES -->
+                <button
+                  type="button"
+                  (click)="abrirModalEditarTalleres(a)"
+                  class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] uppercase flex items-center gap-1 shrink-0 transition-all active:scale-95 shadow-xs"
+                  title="Editar o asignar talleres a este alumno"
+                >
+                  <span class="material-symbols-outlined text-sm font-bold">edit_note</span>
+                  <span>Talleres</span>
+                </button>
+
+                <!-- BOTÓN DESCARGA FICHA PDF -->
+                <button
+                  type="button"
+                  (click)="descargarFicha(a.matriculaId, a.nombresCompletos, item.cursoNombre)"
+                  [disabled]="descargandoPdfId === a.matriculaId"
+                  class="px-2.5 py-1.5 bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-black text-[11px] uppercase flex items-center gap-1 shrink-0 border border-slate-700 transition-all active:scale-95 shadow-xs"
+                  title="Descargar Ficha Oficial en PDF"
+                >
+                  <span *ngIf="descargandoPdfId !== a.matriculaId" class="material-symbols-outlined text-sm text-rose-400">picture_as_pdf</span>
+                  <span *ngIf="descargandoPdfId === a.matriculaId" class="inline-block w-3 h-3 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></span>
+                  <span>{{ descargandoPdfId === a.matriculaId ? 'PDF...' : 'Ficha PDF' }}</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -654,4 +743,280 @@
     </div>
   </div>
 
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <!-- MODAL 1: BUSCADOR GENERAL DE ALUMNO EXISTENTE -->
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <div *ngIf="modalBuscarAlumnoAbierto" class="fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 w-full max-w-lg shadow-2xl overflow-hidden animate-scaleIn">
+      <div class="p-4 border-b-2 border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950 flex items-center justify-between">
+        <div class="flex items-center gap-2 text-slate-950 dark:text-white font-black text-sm uppercase">
+          <span class="material-symbols-outlined text-amber-500 font-bold">person_search</span>
+          <span>Buscar Alumno Existente</span>
+        </div>
+        <button type="button" (click)="cerrarModalBuscarAlumno()" class="text-slate-500 hover:text-slate-900 dark:hover:text-white text-xl font-bold">&times;</button>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <p class="text-xs text-slate-600 dark:text-slate-400">
+          Escribe el nombre o correo del alumno para asignarle o modificarle sus talleres del Día de la Acupuntura:
+        </p>
+
+        <div class="flex gap-2">
+          <input
+            type="text"
+            [(ngModel)]="busquedaAlumnoTerm"
+            (keyup.enter)="buscarAlumnosGeneral()"
+            placeholder="Ej. Angie Yuriko o angiearakaki@insteip.com..."
+            class="flex-1 p-3 border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white text-xs font-bold focus:border-amber-500 outline-none"
+          />
+          <button
+            type="button"
+            (click)="buscarAlumnosGeneral()"
+            [disabled]="buscandoAlumnos"
+            class="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase flex items-center gap-1.5 shadow-xs"
+          >
+            <span *ngIf="!buscandoAlumnos" class="material-symbols-outlined text-sm font-bold">search</span>
+            <span *ngIf="buscandoAlumnos" class="inline-block w-3.5 h-3.5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></span>
+            <span>{{ buscandoAlumnos ? 'Buscando...' : 'Buscar' }}</span>
+          </button>
+        </div>
+
+        <!-- LISTA DE COINCIDENCIAS -->
+        <div *ngIf="alumnosEncontrados.length > 0" class="border-2 border-slate-200 dark:border-slate-800 divide-y divide-slate-200 dark:divide-slate-800 max-h-60 overflow-y-auto">
+          <div
+            *ngFor="let al of alumnosEncontrados"
+            (click)="seleccionarAlumnoParaEditar(al)"
+            class="p-3 bg-white dark:bg-slate-950 hover:bg-amber-50 dark:hover:bg-slate-800 cursor-pointer flex items-center justify-between transition-colors"
+          >
+            <div class="min-w-0 flex-1 pr-2">
+              <div class="text-xs font-black text-slate-950 dark:text-white truncate">
+                {{ al.nombres }} {{ al.apellidos }}
+              </div>
+              <div class="text-[11px] text-slate-600 dark:text-slate-400 font-mono truncate">
+                {{ al.correo }}
+              </div>
+            </div>
+            <span class="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] uppercase shrink-0">
+              Seleccionar
+            </span>
+          </div>
+        </div>
+
+        <div *ngIf="busquedaAlumnoTerm && !buscandoAlumnos && alumnosEncontrados.length === 0" class="py-4 text-center text-slate-500 text-xs font-bold">
+          No se encontraron alumnos con ese criterio de búsqueda.
+        </div>
+      </div>
+
+      <div class="p-4 bg-slate-100 dark:bg-slate-950 border-t-2 border-slate-200 dark:border-slate-800 flex items-center justify-end">
+        <button type="button" (click)="cerrarModalBuscarAlumno()" class="px-5 py-2.5 border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs uppercase">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <!-- MODAL 2: EDITAR / GESTIONAR TALLERES DE UNA ALUMNA -->
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <div *ngIf="modalEditarTalleresAbierto" class="fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 w-full max-w-2xl shadow-2xl overflow-hidden animate-scaleIn">
+      <div class="p-4 border-b-2 border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950 flex items-center justify-between">
+        <div class="flex items-center gap-2 text-slate-950 dark:text-white font-black text-sm uppercase">
+          <span class="material-symbols-outlined text-amber-500 font-bold">edit_note</span>
+          <span>Gestionar Talleres del Alumno</span>
+        </div>
+        <button type="button" (click)="cerrarModalEditarTalleres()" class="text-slate-500 hover:text-slate-900 dark:hover:text-white text-xl font-bold">&times;</button>
+      </div>
+
+      <div class="p-6 space-y-5">
+        <!-- DATOS DEL ALUMNO SELECCIONADO -->
+        <div class="p-4 bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <span class="text-[10px] font-black uppercase text-amber-700 dark:text-amber-400 block tracking-wider">Alumno / Participante:</span>
+            <h4 class="text-base font-black text-slate-950 dark:text-white uppercase leading-snug">
+              {{ alumnoEditando?.nombresCompletos }}
+            </h4>
+            <div class="text-xs font-mono text-slate-700 dark:text-slate-300 mt-0.5">
+              {{ alumnoEditando?.correo }} <span *ngIf="alumnoEditando?.telefono">· Tel: {{ alumnoEditando?.telefono }}</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              (click)="marcarTodosEdit()"
+              class="px-2.5 py-1 text-xs font-black uppercase bg-amber-500 text-slate-950 hover:bg-amber-400"
+            >
+              Todos (6)
+            </button>
+            <button
+              type="button"
+              (click)="desmarcarTodosEdit()"
+              class="px-2.5 py-1 text-xs font-bold uppercase bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700"
+            >
+              Ninguno
+            </button>
+          </div>
+        </div>
+
+        <!-- SPINNER CARGANDO ESTADO PREVIO -->
+        <div *ngIf="cargandoTalleresAlumno" class="py-8 text-center">
+          <div class="inline-block w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+          <p class="text-xs font-bold text-slate-600 dark:text-slate-400 mt-2">Cargando talleres actuales del alumno...</p>
+        </div>
+
+        <!-- LISTA DE LOS 6 TALLERES CHECKLIST -->
+        <div *ngIf="!cargandoTalleresAlumno" class="space-y-2">
+          <label class="block text-xs font-black text-slate-900 dark:text-white uppercase mb-2">
+            Marca los talleres oficiales en los que debe estar matriculado:
+          </label>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-72 overflow-y-auto pr-1">
+            <label
+              *ngFor="let t of talleres"
+              [ngClass]="talleresSeleccionadosEdit[t.id] ? 'border-amber-500 bg-amber-500/10' : 'border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-950'"
+              class="p-3.5 border-2 flex items-start gap-3 cursor-pointer transition-all hover:border-amber-400"
+            >
+              <input
+                type="checkbox"
+                [(ngModel)]="talleresSeleccionadosEdit[t.id]"
+                class="w-4 h-4 mt-0.5 accent-amber-500 cursor-pointer"
+              />
+              <div class="min-w-0 flex-1">
+                <span class="text-[10px] font-black uppercase font-mono text-amber-600 dark:text-amber-400 block">Taller #{{ t.orden }}</span>
+                <span class="text-xs font-black text-slate-950 dark:text-white leading-tight block">
+                  {{ t.nombre }}
+                </span>
+                <span class="text-[11px] text-slate-600 dark:text-slate-400 block mt-0.5">
+                  {{ t.docente }}
+                </span>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 bg-slate-100 dark:bg-slate-950 border-t-2 border-slate-200 dark:border-slate-800 flex items-center justify-end gap-3">
+        <button
+          type="button"
+          (click)="cerrarModalEditarTalleres()"
+          [disabled]="guardandoTalleresAlumno"
+          class="px-5 py-2.5 border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs uppercase"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          (click)="guardarEdicionTalleres()"
+          [disabled]="guardandoTalleresAlumno || cargandoTalleresAlumno"
+          class="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md transition-all active:scale-95"
+        >
+          <span *ngIf="!guardandoTalleresAlumno" class="material-symbols-outlined text-base font-bold">save</span>
+          <span *ngIf="guardandoTalleresAlumno" class="inline-block w-3.5 h-3.5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></span>
+          <span>{{ guardandoTalleresAlumno ? 'Guardando...' : 'Guardar Talleres' }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL PARA SUBIR CERTIFICADO OFICIAL (PDF) -->
+  <!-- ======================================================== -->
+  <div *ngIf="modalSubirCertificadoAbierto" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-150">
+    <div class="relative w-full max-w-lg bg-white dark:bg-slate-900 border-4 border-slate-950 dark:border-white shadow-2xl p-6 text-left">
+
+      <!-- Header Modal -->
+      <div class="flex items-start justify-between pb-4 border-b-2 border-slate-200 dark:border-slate-800">
+        <div>
+          <span class="text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-400 tracking-widest block">
+            Certificación Oficial INSTEIP
+          </span>
+          <h3 class="text-base font-black text-slate-950 dark:text-white uppercase leading-tight mt-0.5">
+            Subir Certificado Oficial (PDF)
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
+            Sube el certificado foliado y firmado para habilitar la descarga de la alumna.
+          </p>
+        </div>
+        <button
+          type="button"
+          (click)="cerrarModalSubirCertificado()"
+          class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-950 dark:hover:text-white border-2 border-transparent hover:border-slate-300 transition-colors"
+        >
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <!-- Datos del Alumno y Taller -->
+      <div class="my-4 p-3.5 bg-slate-100 dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-800 space-y-1">
+        <div class="text-xs text-slate-600 dark:text-slate-400">
+          <strong class="text-slate-900 dark:text-white uppercase">Alumna:</strong> {{ alumnoCertificado?.nombresCompletos }}
+        </div>
+        <div class="text-xs text-slate-600 dark:text-slate-400">
+          <strong class="text-slate-900 dark:text-white uppercase">Taller:</strong> {{ alumnoCertificado?.cursoNombre }}
+        </div>
+      </div>
+
+      <!-- Input de archivo PDF -->
+      <div class="space-y-3">
+        <label class="block text-xs font-black uppercase text-slate-900 dark:text-white">
+          Seleccionar Archivo PDF Oficial *
+        </label>
+        
+        <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 p-6 text-center bg-slate-50 dark:bg-slate-950/50 hover:border-emerald-500 transition-colors">
+          <input
+            type="file"
+            id="inputCertificadoPdf"
+            accept=".pdf,application/pdf"
+            (change)="onArchivoCertificadoSeleccionado($event)"
+            class="hidden"
+          />
+          <label for="inputCertificadoPdf" class="cursor-pointer block space-y-2">
+            <span class="material-symbols-outlined text-4xl text-emerald-600 dark:text-emerald-400">upload_file</span>
+            <div class="text-xs font-bold text-slate-900 dark:text-white">
+              {{ archivoCertificadoSeleccionado ? archivoCertificadoSeleccionado.name : 'Haz clic para seleccionar el PDF oficial' }}
+            </div>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400">
+              Solo formato .pdf (máximo 15 MB)
+            </p>
+          </label>
+        </div>
+
+        <!-- Mensajes -->
+        <div *ngIf="mensajeErrorCertificado" class="p-3 bg-rose-50 dark:bg-rose-950/60 border-2 border-rose-300 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs font-bold flex items-center gap-2">
+          <span class="material-symbols-outlined text-sm">error</span>
+          <span>{{ mensajeErrorCertificado }}</span>
+        </div>
+
+        <div *ngIf="mensajeExitoCertificado" class="p-3 bg-emerald-50 dark:bg-emerald-950/60 border-2 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-xs font-bold flex items-center gap-2">
+          <span class="material-symbols-outlined text-sm">check_circle</span>
+          <span>{{ mensajeExitoCertificado }}</span>
+        </div>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="mt-6 pt-4 border-t-2 border-slate-200 dark:border-slate-800 flex items-center justify-end gap-2">
+        <button
+          type="button"
+          (click)="cerrarModalSubirCertificado()"
+          [disabled]="subiendoCertificado"
+          class="px-4 py-2 border-2 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-black uppercase hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          (click)="guardarCertificadoOficial()"
+          [disabled]="subiendoCertificado || !archivoCertificadoSeleccionado"
+          class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-black uppercase flex items-center gap-1.5 transition-colors shadow-sm"
+        >
+          <span *ngIf="!subiendoCertificado" class="material-symbols-outlined text-sm">save</span>
+          <span *ngIf="subiendoCertificado" class="inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          <span>{{ subiendoCertificado ? 'Subiendo PDF...' : 'Guardar y Habilitar' }}</span>
+        </button>
+      </div>
+
+    </div>
+  </div>

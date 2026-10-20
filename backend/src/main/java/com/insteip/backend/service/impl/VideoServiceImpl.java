@@ -200,14 +200,14 @@ public class VideoServiceImpl implements VideoService {
     }
 
     private String extraerIdYoutube(String url) {
-        if (url == null) return null;
-        String pattern = "(?<=watch\\?v=|/videos/|embed/|youtu.be/|/v/|/e/|watch\\?v%3D|watch\\?feature=player_embedded&v=)[^#\\&\\?]*";
-        Pattern compiledPattern = Pattern.compile(pattern);
-        Matcher matcher = compiledPattern.matcher(url);
-        if (matcher.find()) {
-            return matcher.group();
+        if (url == null || url.isBlank()) return null;
+        String clean = url.trim();
+        if (clean.matches("^[\\w-]{11}$")) {
+            return clean;
         }
-        return null;
+        Pattern pattern = Pattern.compile("(?:youtu\\.be/|(?:www\\.|m\\.)?youtube\\.com/(?:embed/|v/|live/|shorts/|watch\\?v=|watch\\?.+&v=))([\\w-]{11})");
+        Matcher matcher = pattern.matcher(clean);
+        return matcher.find() ? matcher.group(1) : null;
     }
 
     private VideoResponseDTO convertToResponseDto(Video v) {

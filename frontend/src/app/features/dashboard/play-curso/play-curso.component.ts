@@ -1,8 +1,8 @@
-﻿import { Component, OnInit, OnDestroy, AfterViewInit, inject, NgZone, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, inject, NgZone, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AlumnoDashboardService, AlumnoPlayCourse, AlumnoPlayModulo, AlumnoPlayVideo, AlumnoPlayMaterial } from '../../../core/services/';
-import { CertificadoService } from '../../../core/services/';
+import { CertificadoService, EstadoCertificado } from '../../../core/services/';
 import { AuthService } from '../../../core/services/';
 import { ArchivoProtegidoService } from '../../../core/services/';
 import { VideoService } from '../../../core/services/';
@@ -68,6 +68,7 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
   nextChapterLabel = '';
   certificatePdfUrl: string | null = null;
   certificateCode: string | null = null;
+  estadoCertificado: EstadoCertificado | null = null;
   totalVideos = 0;
   completedVideos = 0;
   completionPercentage = 0;
@@ -763,7 +764,9 @@ export class PlayCursoComponent implements OnInit, OnDestroy, AfterViewInit {
         return;
       }
 
-      if (secondsSinceLastSave >= 15) {
+      // Guardar periódicamente cada 35 segundos de reproducción activa
+      // (el guardado en pausa, cambio de clase y cierre de pestaña sigue siendo inmediato)
+      if (secondsSinceLastSave >= 35) {
         this.saveCurrentProgress(false);
         secondsSinceLastSave = 0;
       }

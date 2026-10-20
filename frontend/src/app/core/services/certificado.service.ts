@@ -19,6 +19,21 @@ export interface CertificadoResponse {
   fechaEmision: string;
 }
 
+export interface EstadoCertificado {
+  cursoId: number;
+  cursoNombre: string;
+  porcentajeProgreso: number;
+  videosCompletados: number;
+  totalVideos: number;
+  esDiaAcupuntura: boolean;
+  umbralRequerido: number;
+  requisitoCumplido: boolean;
+  tieneCertificadoSubido: boolean;
+  certificadoId?: number;
+  codigoCertificado?: string;
+  urlDescarga?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -28,6 +43,18 @@ export class CertificadoService {
 
   generarCertificado(cursoId: number): Observable<CertificadoResponse> {
     return this.http.post<CertificadoResponse>(`${this.apiUrl}/generar/${cursoId}`, null);
+  }
+
+  obtenerEstadoCertificado(cursoId: number): Observable<EstadoCertificado> {
+    return this.http.get<EstadoCertificado>(`${this.apiUrl}/curso/${cursoId}/estado`);
+  }
+
+  subirCertificadoOficial(usuarioId: number, cursoId: number, archivo: File): Observable<CertificadoResponse> {
+    const formData = new FormData();
+    formData.append('usuarioId', String(usuarioId));
+    formData.append('cursoId', String(cursoId));
+    formData.append('archivo', archivo);
+    return this.http.post<CertificadoResponse>(`${this.apiUrl}/admin/subir`, formData);
   }
 
   validarCertificado(codigo: string): Observable<CertificadoResponse> {

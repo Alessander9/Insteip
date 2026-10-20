@@ -22,17 +22,31 @@ export class NotificacionService {
     this.iniciarPolling();
   }
 
+  private lastFetchTime = 0;
+
   private iniciarPolling(): void {
     // Consulta inicial si está autenticado
     if (this.authService.isLoggedIn()) {
       this.cargarNotificaciones().subscribe({ error: () => {} });
     }
 
-    // Polling ligero cada 45 segundos solo si está autenticado con catchError para no romper el stream
-    interval(45000).pipe(
-      filter(() => this.authService.isLoggedIn()),
+    // Polling inteligente cada 90 segundos solo si está autenticado Y la pestaña está visible
+    interval(90000).pipe(
+      filter(() => this.authService.isLoggedIn() && typeof document !== 'undefined' && document.visibilityState === 'visible'),
       switchMap(() => this.cargarNotificaciones().pipe(catchError(() => of(null))))
     ).subscribe();
+
+    // Al volver a la pestaña tras estar oculta, refrescar si pasaron más de 60 segundos
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && this.authService.isLoggedIn()) {
+          const now = Date.now();
+          if (now - this.lastFetchTime > 60000) {
+            this.cargarNotificaciones().subscribe({ error: () => {} });
+          }
+        }
+      });
+    }
   }
 
   cargarNotificaciones(limite: number = 20): Observable<NotificacionResumen> {
@@ -41,7 +55,10 @@ export class NotificacionService {
     }
 
     return this.http.get<NotificacionResumen>(`${this.apiUrl}/mis-notificaciones?limite=${limite}`).pipe(
-      tap(resumen => this.resumenSubject.next(resumen))
+      tap(resumen => {
+        this.lastFetchTime = Date.now();
+        this.resumenSubject.next(resumen);
+      })
     );
   }
 

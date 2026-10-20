@@ -104,6 +104,25 @@ public class CertificadoController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/curso/{cursoId}/estado")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ALUMNO')")
+    public ResponseEntity<com.insteip.backend.domain.dto.certificado.EstadoCertificadoDTO> obtenerEstadoCertificado(
+            @PathVariable Long cursoId,
+            Authentication authentication) {
+        Long usuarioId = getUsuarioId(authentication);
+        return ResponseEntity.ok(certificadoService.obtenerEstadoCertificado(usuarioId, cursoId));
+    }
+
+    @PostMapping("/admin/subir")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<CertificadoResponseDTO> subirCertificadoOficial(
+            @RequestParam("usuarioId") Long usuarioId,
+            @RequestParam("cursoId") Long cursoId,
+            @RequestParam("archivo") org.springframework.web.multipart.MultipartFile archivo) {
+        CertificadoResponseDTO dto = certificadoService.subirCertificadoOficial(usuarioId, cursoId, archivo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+    }
+
     @GetMapping("/{id}/download")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ALUMNO')")
     public ResponseEntity<byte[]> descargarCertificado(@PathVariable Long id, Authentication authentication) {
@@ -114,6 +133,27 @@ public class CertificadoController {
             }
         }
         Certificado cert = certificadoService.obtenerCertificado(id);
+
+        // Si quien descarga es ALUMNO, verificar condición de progreso
+        boolean esAdmin = authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMINISTRADOR"));
+
+        if (!esAdmin) {
+            Long usuarioAutenticadoId = getUsuarioId(authentication);
+            if (!cert.getUsuario().getId().equals(usuarioAutenticadoId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
+            com.insteip.backend.domain.dto.certificado.EstadoCertificadoDTO estado =
+                    certificadoService.obtenerEstadoCertificado(usuarioAutenticadoId, cert.getCurso().getId());
+
+            if (!estado.requisitoCumplido()) {
+                String mensaje = estado.esDiaAcupuntura()
+                        ? "Has completado el " + estado.porcentajeProgreso() + "% del taller. Necesitas al menos el 60% para descargar tu certificado oficial."
+                        : "El curso requiere el 100% de clases completadas para acceder a tu certificado oficial.";
+                throw new com.insteip.backend.domain.exception.BadRequestException(mensaje);
+            }
+        }
 
         Path basePath = Paths.get(storagePathSetting).toAbsolutePath().normalize().resolve("certificados");
         Path filePath = basePath.resolve(cert.getCodigo() + ".pdf").normalize();

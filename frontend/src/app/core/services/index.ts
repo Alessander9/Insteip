@@ -3,7 +3,7 @@ export { AlumnoService } from './alumno.service';
 export { ArchivoProtegidoService } from './archivo-protegido.service';
 export { AuditoriaService } from './auditoria.service';
 export { AuthService } from './auth.service';
-export { CertificadoService, CertificadoResponse } from './certificado.service';
+export { CertificadoService, CertificadoResponse, EstadoCertificado } from './certificado.service';
 export { ConfiguracionService } from './configuracion.service';
 export { CursoService } from './curso.service';
 export { DocenteDashboardService, DocenteCurso, DocenteEstudianteProgress } from './docente-dashboard.service';
@@ -24,5 +24,6 @@ export { EntregaTareaService } from './entrega-tarea.service';
 export { NotificacionService } from './notificacion.service';
 export { AnuncioModalService } from './anuncio-modal.service';
 export { ExperienciaService } from './experiencia.service';
+export { MetaPixelService } from './meta-pixel.service';
 
 

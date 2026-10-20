@@ -47,4 +47,8 @@ public class Certificado {
     @Builder.Default
     private LocalDateTime fechaEmision = LocalDateTime.now();
 
+    @Column(name = "es_subido_manualmente")
+    @Builder.Default
+    private Boolean esSubidoManualmente = false;
+
 }

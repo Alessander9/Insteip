@@ -7,6 +7,7 @@ import com.insteip.backend.domain.exception.ResourceNotFoundException;
 import com.insteip.backend.domain.exception.BadRequestException;
 import com.insteip.backend.repository.*;
 import com.insteip.backend.domain.dto.certificado.CertificadoResponseDTO;
+import com.insteip.backend.domain.dto.certificado.EstadoCertificadoDTO;
 import com.insteip.backend.service.interfaces.CertificadoService;
 import com.insteip.backend.infrastructure.util.ProgresoAcademicoUtils;
 import com.lowagie.text.*;
@@ -387,6 +388,151 @@ public class CertificadoServiceImpl implements CertificadoService {
                 cert.getNumeroRegistro(),
                 cert.getFechaEmision()
         ));
+    }
+
+    private boolean esTallerDiaAcupuntura(Curso curso) {
+        if (curso == null || curso.getNombre() == null) return false;
+        String nombreCursoNorm = curso.getNombre().trim().toLowerCase();
+        for (String oficial : DiaAcupunturaServiceImpl.NOMBRES_TALLERES_OFICIALES) {
+            if (oficial.trim().toLowerCase().equalsIgnoreCase(nombreCursoNorm) ||
+                nombreCursoNorm.contains(oficial.trim().toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int[] calcularMetricasProgreso(Long usuarioId, Curso curso) {
+        List<Modulo> modulos = moduloRepository.findByCursoIdOrderByOrdenAsc(curso.getId());
+        int totalVideos = 0;
+        int completedVideos = 0;
+
+        for (Modulo modulo : modulos) {
+            if (!modulo.getEstado()) continue;
+            List<Video> videos = videoRepository.findByModuloIdOrderByOrdenAsc(modulo.getId());
+            for (Video video : videos) {
+                if (!video.getEstado()) continue;
+                totalVideos++;
+                AvanceVideo avance = avanceVideoRepository.findByUsuarioIdAndVideoId(usuarioId, video.getId())
+                        .orElse(null);
+                if (ProgresoAcademicoUtils.isVideoCompletado(video, avance)) {
+                    completedVideos++;
+                }
+            }
+        }
+        return new int[]{completedVideos, totalVideos};
+    }
+
+    @Override
+    public EstadoCertificadoDTO obtenerEstadoCertificado(Long usuarioId, Long cursoId) {
+        Curso curso = cursoRepository.findById(cursoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado con id: " + cursoId));
+
+        int[] metricas = calcularMetricasProgreso(usuarioId, curso);
+        int completedVideos = metricas[0];
+        int totalVideos = metricas[1];
+        double porcentaje = totalVideos > 0 ? (completedVideos * 100.0) / totalVideos : 0.0;
+        porcentaje = Math.round(porcentaje * 10.0) / 10.0;
+
+        boolean esDiaAcupuntura = esTallerDiaAcupuntura(curso);
+        double umbral = esDiaAcupuntura ? 60.0 : 100.0;
+        boolean requisitoCumplido = totalVideos > 0 && porcentaje >= umbral;
+
+        Certificado cert = certificadoRepository.findByUsuarioIdAndCursoId(usuarioId, cursoId).orElse(null);
+        boolean tieneCertificadoSubido = cert != null;
+        Long certId = cert != null ? cert.getId() : null;
+        String codigoCert = cert != null ? cert.getCodigo() : null;
+        String urlDescarga = cert != null ? resolvePdfUrl(cert) : null;
+
+        return new EstadoCertificadoDTO(
+                curso.getId(),
+                curso.getNombre(),
+                porcentaje,
+                completedVideos,
+                totalVideos,
+                esDiaAcupuntura,
+                umbral,
+                requisitoCumplido,
+                tieneCertificadoSubido,
+                certId,
+                codigoCert,
+                urlDescarga
+        );
+    }
+
+    @Override
+    public CertificadoResponseDTO subirCertificadoOficial(Long usuarioId, Long cursoId, org.springframework.web.multipart.MultipartFile archivoPdf) {
+        if (archivoPdf == null || archivoPdf.isEmpty()) {
+            throw new BadRequestException("Debe seleccionar un archivo PDF válido.");
+        }
+
+        String originalName = archivoPdf.getOriginalFilename();
+        if (originalName == null || !originalName.toLowerCase().endsWith(".pdf")) {
+            throw new BadRequestException("Solo se permiten archivos en formato PDF.");
+        }
+
+        // Validar tamaño máx 15MB
+        if (archivoPdf.getSize() > 15 * 1024 * 1024) {
+            throw new BadRequestException("El archivo excede el tamaño máximo permitido (15 MB).");
+        }
+
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + usuarioId));
+        Curso curso = cursoRepository.findById(cursoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado con id: " + cursoId));
+
+        // Buscar si ya existe certificado para este alumno y curso
+        Certificado cert = certificadoRepository.findByUsuarioIdAndCursoId(usuarioId, cursoId).orElse(null);
+
+        String codigoUnico;
+        String numRegistro;
+        if (cert != null) {
+            codigoUnico = cert.getCodigo();
+            numRegistro = cert.getNumeroRegistro();
+        } else {
+            codigoUnico = "INS-2026-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+            numRegistro = "REG-" + (System.currentTimeMillis() / 1000);
+            cert = Certificado.builder()
+                    .usuario(usuario)
+                    .curso(curso)
+                    .codigo(codigoUnico)
+                    .numeroRegistro(numRegistro)
+                    .urlValidacion(frontendBaseUrl + "/certificados/validar/" + codigoUnico)
+                    .fechaEmision(LocalDateTime.now())
+                    .build();
+        }
+
+        // Guardar archivo físico con el nombre del código del certificado
+        String filename = codigoUnico + ".pdf";
+        Path targetPath = Paths.get(UPLOADS_DIR).resolve(filename);
+
+        try {
+            Files.copy(archivoPdf.getInputStream(), targetPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException("Error al almacenar el archivo PDF del certificado: " + e.getMessage());
+        }
+
+        cert.setArchivoPdf(resolvePdfUrl(cert));
+        cert.setEsSubidoManualmente(true);
+        cert.setUrlValidacion(frontendBaseUrl + "/certificados/validar/" + codigoUnico);
+        cert = certificadoRepository.save(cert);
+
+        auditoriaService.registrarEvento("CERTIFICADO", "SUBIR_OFICIAL",
+                "Subido certificado oficial para alumno ID: " + usuarioId + " en curso ID: " + cursoId + " con código: " + codigoUnico);
+
+        return new CertificadoResponseDTO(
+                cert.getId(),
+                usuario.getId(),
+                curso.getId(),
+                usuario.getNombres() + " " + usuario.getApellidos(),
+                usuario.getCorreo(),
+                curso.getNombre(),
+                cert.getCodigo(),
+                resolvePdfUrl(cert),
+                cert.getUrlValidacion(),
+                cert.getNumeroRegistro(),
+                cert.getFechaEmision()
+        );
     }
 }
 

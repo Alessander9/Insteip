@@ -367,7 +367,7 @@ public class DiaAcupunturaServiceImpl implements DiaAcupunturaService {
         if (clean.matches("^[\\w-]{11}$")) {
             return clean;
         }
-        Pattern pattern = Pattern.compile("(?:youtu\\.be/|youtube\\.com/(?:embed/|v/|live/|shorts/|watch\\?v=|watch\\?.+&v=))([\\w-]{11})");
+        Pattern pattern = Pattern.compile("(?:youtu\\.be/|(?:www\\.|m\\.)?youtube\\.com/(?:embed/|v/|live/|shorts/|watch\\?v=|watch\\?.+&v=))([\\w-]{11})");
         Matcher matcher = pattern.matcher(clean);
         return matcher.find() ? matcher.group(1) : null;
     }

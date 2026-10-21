@@ -153,15 +153,6 @@
                   <span class="material-symbols-outlined text-sm">visibility</span>
                   <span>Ver</span>
                 </button>
-                <!-- Validate link -->
-                <a 
-                  [href]="cert.urlValidacion" 
-                  target="_blank"
-                  title="Validar Certificado" 
-                  class="p-2 border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-none transition-colors inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider">
-                  <span class="material-symbols-outlined text-sm">verified_user</span>
-                  <span>Validar</span>
-                </a>
               </div>
             </td>
           </tr>
@@ -242,27 +233,18 @@
       </div>
 
       <!-- Modal Footer -->
-      <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 flex justify-between items-center">
-        <a 
-          [href]="selectedCertificado.urlValidacion" 
-          target="_blank"
-          class="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-sm">verified_user</span>
-          <span>Validar en Línea</span>
-        </a>
-        <div class="flex gap-2">
-          <button 
-            (click)="closeModal()" 
-            class="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold uppercase tracking-widest transition-colors">
-            Cerrar
-          </button>
-          <button 
-            (click)="descargarCertificado(selectedCertificado)"
-            class="px-4 py-2 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-sm">download</span>
-            <span>Descargar PDF</span>
-          </button>
-        </div>
+      <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 flex justify-end items-center gap-2">
+        <button 
+          (click)="closeModal()" 
+          class="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold uppercase tracking-widest transition-colors">
+          Cerrar
+        </button>
+        <button 
+          (click)="descargarCertificado(selectedCertificado)"
+          class="px-4 py-2 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm">download</span>
+          <span>Descargar</span>
+        </button>
       </div>
     </div>
   </div>

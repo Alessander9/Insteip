@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/certificados")
@@ -122,6 +123,17 @@ public class CertificadoController {
         CertificadoResponseDTO dto = certificadoService.subirCertificadoOficial(usuarioId, cursoId, archivo);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
+
+    @PostMapping("/admin/subir-lote")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<List<CertificadoResponseDTO>> subirCertificadosLote(
+            @RequestParam("usuarioId") Long usuarioId,
+            @RequestParam("cursosIds") List<Long> cursosIds,
+            @RequestParam("archivo") org.springframework.web.multipart.MultipartFile archivo) {
+        List<CertificadoResponseDTO> dtos = certificadoService.subirCertificadosLote(usuarioId, cursosIds, archivo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
+    }
+
 
     @GetMapping("/{id}/download")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ALUMNO')")

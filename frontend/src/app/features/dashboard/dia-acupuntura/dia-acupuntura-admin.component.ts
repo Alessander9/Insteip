@@ -28,10 +28,11 @@ export class DiaAcupunturaAdminComponent implements OnInit {
   alumnoCertificado: {
     usuarioId: number;
     nombresCompletos: string;
-    cursoId: number;
-    cursoNombre: string;
+    correo?: string;
+    talleresInscritos: { cursoId: number; cursoNombre: string; seleccionado: boolean }[];
   } | null = null;
   archivoCertificadoSeleccionado: File | null = null;
+  previewImagenCertificadoUrl: string | null = null;
   subiendoCertificado = false;
   mensajeExitoCertificado = '';
   mensajeErrorCertificado = '';
@@ -641,24 +642,54 @@ export class DiaAcupunturaAdminComponent implements OnInit {
     });
   }
 
-  abrirModalSubirCertificado(alumno: { usuarioId?: number; id?: number; nombresCompletos: string }, cursoId: number, cursoNombre: string): void {
+  abrirModalSubirCertificado(alumno: { usuarioId?: number; id?: number; nombresCompletos: string; correo?: string }, cursoId: number, cursoNombre: string): void {
     const uId = alumno.usuarioId || (alumno as any).id;
+
+    // Obtener todos los talleres del evento en los que este alumno está inscrito
+    const talleresInscritosMap = new Map<number, string>();
+    if (this.resumen && this.resumen.length > 0) {
+      for (const r of this.resumen) {
+        if (r.alumnos && r.alumnos.some(al => al.usuarioId === uId)) {
+          talleresInscritosMap.set(r.cursoId, r.cursoNombre);
+        }
+      }
+    }
+    // Asegurarse de que el curso desde donde se abrió el botón esté incluido
+    talleresInscritosMap.set(cursoId, cursoNombre);
+
+    const talleresInscritos = Array.from(talleresInscritosMap.entries()).map(([cId, cNombre]) => ({
+      cursoId: cId,
+      cursoNombre: cNombre,
+      seleccionado: true // Marcados por defecto
+    }));
+
     this.alumnoCertificado = {
       usuarioId: uId,
       nombresCompletos: alumno.nombresCompletos,
-      cursoId: cursoId,
-      cursoNombre: cursoNombre
+      correo: alumno.correo,
+      talleresInscritos
     };
     this.archivoCertificadoSeleccionado = null;
+    this.limpiarPreviewImagen();
     this.mensajeExitoCertificado = '';
     this.mensajeErrorCertificado = '';
     this.modalSubirCertificadoAbierto = true;
+  }
+
+  toggleSeleccionarTodosTalleresCertificado(marcar: boolean): void {
+    if (!this.alumnoCertificado) return;
+    this.alumnoCertificado.talleresInscritos.forEach(t => t.seleccionado = marcar);
+  }
+
+  get totalTalleresCertificadoSeleccionados(): number {
+    return this.alumnoCertificado?.talleresInscritos.filter(t => t.seleccionado).length || 0;
   }
 
   cerrarModalSubirCertificado(): void {
     this.modalSubirCertificadoAbierto = false;
     this.alumnoCertificado = null;
     this.archivoCertificadoSeleccionado = null;
+    this.limpiarPreviewImagen();
     this.mensajeExitoCertificado = '';
     this.mensajeErrorCertificado = '';
   }
@@ -666,19 +697,49 @@ export class DiaAcupunturaAdminComponent implements OnInit {
   onArchivoCertificadoSeleccionado(event: any): void {
     const file = event.target.files?.[0];
     if (file) {
-      if (!file.name.toLowerCase().endsWith('.pdf')) {
-        this.mensajeErrorCertificado = 'Solo se permiten archivos en formato PDF.';
+      const allowedExtensions = ['.pdf', '.jpg', '.jpeg', '.png', '.webp'];
+      const fileNameLower = file.name.toLowerCase();
+      const isValid = allowedExtensions.some(ext => fileNameLower.endsWith(ext));
+
+      if (!isValid) {
+        this.mensajeErrorCertificado = 'Solo se permiten archivos en formato PDF o imágenes (JPG, PNG, WebP).';
         this.archivoCertificadoSeleccionado = null;
+        this.limpiarPreviewImagen();
         return;
       }
+
       this.mensajeErrorCertificado = '';
       this.archivoCertificadoSeleccionado = file;
+
+      // Si es imagen, crear preview para mostrar miniatura interactiva
+      if (file.type.startsWith('image/') || /\.(jpg|jpeg|png|webp)$/i.test(file.name)) {
+        this.limpiarPreviewImagen();
+        this.previewImagenCertificadoUrl = URL.createObjectURL(file);
+      } else {
+        this.limpiarPreviewImagen();
+      }
+    }
+  }
+
+  private limpiarPreviewImagen(): void {
+    if (this.previewImagenCertificadoUrl) {
+      URL.revokeObjectURL(this.previewImagenCertificadoUrl);
+      this.previewImagenCertificadoUrl = null;
     }
   }
 
   guardarCertificadoOficial(): void {
     if (!this.alumnoCertificado || !this.archivoCertificadoSeleccionado) {
-      this.mensajeErrorCertificado = 'Debes seleccionar un archivo PDF oficial.';
+      this.mensajeErrorCertificado = 'Debes seleccionar un archivo (PDF o Imagen).';
+      return;
+    }
+
+    const cursosSeleccionados = this.alumnoCertificado.talleresInscritos
+      .filter(t => t.seleccionado)
+      .map(t => t.cursoId);
+
+    if (cursosSeleccionados.length === 0) {
+      this.mensajeErrorCertificado = 'Debes seleccionar al menos un taller para asignar el certificado.';
       return;
     }
 
@@ -686,14 +747,15 @@ export class DiaAcupunturaAdminComponent implements OnInit {
     this.mensajeExitoCertificado = '';
     this.mensajeErrorCertificado = '';
 
-    this.certificadoService.subirCertificadoOficial(
+    this.certificadoService.subirCertificadoOficialLote(
       this.alumnoCertificado.usuarioId,
-      this.alumnoCertificado.cursoId,
+      cursosSeleccionados,
       this.archivoCertificadoSeleccionado
     ).subscribe({
       next: (res) => {
         this.subiendoCertificado = false;
-        this.mensajeExitoCertificado = '¡Certificado oficial subido exitosamente con código ' + res.codigo + '!';
+        const total = res.length;
+        this.mensajeExitoCertificado = `¡Certificado subido y habilitado con éxito para ${total} taller(es)!`;
         setTimeout(() => {
           this.cerrarModalSubirCertificado();
         }, 1800);

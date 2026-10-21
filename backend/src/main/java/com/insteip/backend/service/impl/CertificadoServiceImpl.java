@@ -462,77 +462,131 @@ public class CertificadoServiceImpl implements CertificadoService {
 
     @Override
     public CertificadoResponseDTO subirCertificadoOficial(Long usuarioId, Long cursoId, org.springframework.web.multipart.MultipartFile archivoPdf) {
-        if (archivoPdf == null || archivoPdf.isEmpty()) {
-            throw new BadRequestException("Debe seleccionar un archivo PDF válido.");
+        List<CertificadoResponseDTO> resultados = subirCertificadosLote(usuarioId, List.of(cursoId), archivoPdf);
+        if (resultados.isEmpty()) {
+            throw new BadRequestException("No se pudo subir el certificado para el curso indicado.");
+        }
+        return resultados.get(0);
+    }
+
+    @Override
+    public List<CertificadoResponseDTO> subirCertificadosLote(Long usuarioId, List<Long> cursosIds, org.springframework.web.multipart.MultipartFile archivo) {
+        if (archivo == null || archivo.isEmpty()) {
+            throw new BadRequestException("Debe seleccionar un archivo válido (PDF o Imagen).");
         }
 
-        String originalName = archivoPdf.getOriginalFilename();
-        if (originalName == null || !originalName.toLowerCase().endsWith(".pdf")) {
-            throw new BadRequestException("Solo se permiten archivos en formato PDF.");
+        if (cursosIds == null || cursosIds.isEmpty()) {
+            throw new BadRequestException("Debe seleccionar al menos un curso para asignar el certificado.");
         }
 
-        // Validar tamaño máx 15MB
-        if (archivoPdf.getSize() > 15 * 1024 * 1024) {
-            throw new BadRequestException("El archivo excede el tamaño máximo permitido (15 MB).");
+        // Validar tamaño máx 20MB
+        if (archivo.getSize() > 20 * 1024 * 1024) {
+            throw new BadRequestException("El archivo excede el tamaño máximo permitido (20 MB).");
+        }
+
+        String originalName = archivo.getOriginalFilename();
+        String extension = "";
+        if (originalName != null && originalName.contains(".")) {
+            extension = originalName.substring(originalName.lastIndexOf(".")).toLowerCase();
+        }
+
+        byte[] pdfBytes;
+        try {
+            if (extension.equals(".pdf")) {
+                pdfBytes = archivo.getBytes();
+            } else if (extension.equals(".jpg") || extension.equals(".jpeg") || extension.equals(".png") || extension.equals(".webp")) {
+                pdfBytes = convertirImagenAPdfBytes(archivo.getBytes());
+            } else {
+                throw new BadRequestException("Formato no permitido. Solo se aceptan archivos PDF o imágenes (JPG, PNG, WebP).");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error al leer el archivo del certificado: " + e.getMessage());
         }
 
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + usuarioId));
-        Curso curso = cursoRepository.findById(cursoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado con id: " + cursoId));
 
-        // Buscar si ya existe certificado para este alumno y curso
-        Certificado cert = certificadoRepository.findByUsuarioIdAndCursoId(usuarioId, cursoId).orElse(null);
+        List<CertificadoResponseDTO> dtos = new java.util.ArrayList<>();
 
-        String codigoUnico;
-        String numRegistro;
-        if (cert != null) {
-            codigoUnico = cert.getCodigo();
-            numRegistro = cert.getNumeroRegistro();
-        } else {
-            codigoUnico = "INS-2026-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-            numRegistro = "REG-" + (System.currentTimeMillis() / 1000);
-            cert = Certificado.builder()
-                    .usuario(usuario)
-                    .curso(curso)
-                    .codigo(codigoUnico)
-                    .numeroRegistro(numRegistro)
-                    .urlValidacion(frontendBaseUrl + "/certificados/validar/" + codigoUnico)
-                    .fechaEmision(LocalDateTime.now())
-                    .build();
+        for (Long cursoId : cursosIds) {
+            Curso curso = cursoRepository.findById(cursoId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado con id: " + cursoId));
+
+            // Buscar si ya existe certificado para este alumno y curso
+            Certificado cert = certificadoRepository.findByUsuarioIdAndCursoId(usuarioId, cursoId).orElse(null);
+
+            String codigoUnico;
+            String numRegistro;
+            if (cert != null) {
+                codigoUnico = cert.getCodigo();
+                numRegistro = cert.getNumeroRegistro();
+            } else {
+                codigoUnico = "INS-2026-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+                numRegistro = "REG-" + (System.currentTimeMillis() / 1000);
+                cert = Certificado.builder()
+                        .usuario(usuario)
+                        .curso(curso)
+                        .codigo(codigoUnico)
+                        .numeroRegistro(numRegistro)
+                        .urlValidacion(frontendBaseUrl + "/certificados/validar/" + codigoUnico)
+                        .fechaEmision(LocalDateTime.now())
+                        .build();
+            }
+
+            // Guardar archivo físico con el nombre del código del certificado
+            String filename = codigoUnico + ".pdf";
+            Path targetPath = Paths.get(UPLOADS_DIR).resolve(filename);
+
+            try {
+                Files.write(targetPath, pdfBytes);
+            } catch (IOException e) {
+                throw new RuntimeException("Error al almacenar el archivo del certificado: " + e.getMessage());
+            }
+
+            cert.setArchivoPdf(resolvePdfUrl(cert));
+            cert.setEsSubidoManualmente(true);
+            cert.setUrlValidacion(frontendBaseUrl + "/certificados/validar/" + codigoUnico);
+            cert = certificadoRepository.save(cert);
+
+            auditoriaService.registrarEvento("CERTIFICADO", "SUBIR_OFICIAL",
+                    "Subido certificado oficial para alumno ID: " + usuarioId + " en curso ID: " + cursoId + " (" + curso.getNombre() + ") con código: " + codigoUnico);
+
+            dtos.add(new CertificadoResponseDTO(
+                    cert.getId(),
+                    usuario.getId(),
+                    curso.getId(),
+                    usuario.getNombres() + " " + usuario.getApellidos(),
+                    usuario.getCorreo(),
+                    curso.getNombre(),
+                    cert.getCodigo(),
+                    resolvePdfUrl(cert),
+                    cert.getUrlValidacion(),
+                    cert.getNumeroRegistro(),
+                    cert.getFechaEmision()
+            ));
         }
 
-        // Guardar archivo físico con el nombre del código del certificado
-        String filename = codigoUnico + ".pdf";
-        Path targetPath = Paths.get(UPLOADS_DIR).resolve(filename);
+        return dtos;
+    }
 
-        try {
-            Files.copy(archivoPdf.getInputStream(), targetPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException("Error al almacenar el archivo PDF del certificado: " + e.getMessage());
+    private byte[] convertirImagenAPdfBytes(byte[] imageBytes) {
+        try (java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream()) {
+            Document document = new Document(PageSize.A4.rotate(), 0, 0, 0, 0);
+            PdfWriter.getInstance(document, baos);
+            document.open();
+            Image img = Image.getInstance(imageBytes);
+            float pageWidth = PageSize.A4.rotate().getWidth();
+            float pageHeight = PageSize.A4.rotate().getHeight();
+            img.scaleToFit(pageWidth, pageHeight);
+            float x = (pageWidth - img.getScaledWidth()) / 2;
+            float y = (pageHeight - img.getScaledHeight()) / 2;
+            img.setAbsolutePosition(x, y);
+            document.add(img);
+            document.close();
+            return baos.toByteArray();
+        } catch (Exception e) {
+            throw new BadRequestException("Error al procesar la imagen del certificado: " + e.getMessage());
         }
-
-        cert.setArchivoPdf(resolvePdfUrl(cert));
-        cert.setEsSubidoManualmente(true);
-        cert.setUrlValidacion(frontendBaseUrl + "/certificados/validar/" + codigoUnico);
-        cert = certificadoRepository.save(cert);
-
-        auditoriaService.registrarEvento("CERTIFICADO", "SUBIR_OFICIAL",
-                "Subido certificado oficial para alumno ID: " + usuarioId + " en curso ID: " + cursoId + " con código: " + codigoUnico);
-
-        return new CertificadoResponseDTO(
-                cert.getId(),
-                usuario.getId(),
-                curso.getId(),
-                usuario.getNombres() + " " + usuario.getApellidos(),
-                usuario.getCorreo(),
-                curso.getNombre(),
-                cert.getCodigo(),
-                resolvePdfUrl(cert),
-                cert.getUrlValidacion(),
-                cert.getNumeroRegistro(),
-                cert.getFechaEmision()
-        );
     }
 }
 

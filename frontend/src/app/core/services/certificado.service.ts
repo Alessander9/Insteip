@@ -57,6 +57,15 @@ export class CertificadoService {
     return this.http.post<CertificadoResponse>(`${this.apiUrl}/admin/subir`, formData);
   }
 
+  subirCertificadoOficialLote(usuarioId: number, cursosIds: number[], archivo: File): Observable<CertificadoResponse[]> {
+    const formData = new FormData();
+    formData.append('usuarioId', String(usuarioId));
+    cursosIds.forEach(id => formData.append('cursosIds', String(id)));
+    formData.append('archivo', archivo);
+    return this.http.post<CertificadoResponse[]>(`${this.apiUrl}/admin/subir-lote`, formData);
+  }
+
+
   validarCertificado(codigo: string): Observable<CertificadoResponse> {
     return this.http.get<CertificadoResponse>(`${this.apiUrl}/validar/${codigo}`);
   }

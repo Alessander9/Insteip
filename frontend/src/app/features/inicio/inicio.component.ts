@@ -38,11 +38,11 @@ export class InicioComponent implements OnInit, OnDestroy, AfterViewInit {
       `https://www.youtube.com/embed/${this.YOUTUBE_VIDEO_ID}?autoplay=1&rel=0&modestbranding=1`
     );
     if (typeof window !== 'undefined' && window.sessionStorage) {
-      const shown = sessionStorage.getItem('insteip-welcome-modal-shown');
+      const shown = sessionStorage.getItem('insteip-ceteip-modal-shown');
       if (shown) {
         this.showVideoModal = false;
       } else {
-        sessionStorage.setItem('insteip-welcome-modal-shown', 'true');
+        sessionStorage.setItem('insteip-ceteip-modal-shown', 'true');
       }
     }
   }
